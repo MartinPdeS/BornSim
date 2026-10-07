@@ -1,0 +1,28 @@
+name: Package artifacts
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  wheel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install -e ".[dev]"
+      - run: make package-check PYTHON=python
+      - name: Verify installed wheel outside checkout
+        run: |
+          python -m venv "$RUNNER_TEMP/wheel-env"
+          "$RUNNER_TEMP/wheel-env/bin/python" -m pip install dist/*.whl
+          cd "$RUNNER_TEMP"
+          "$RUNNER_TEMP/wheel-env/bin/python" -c "import bornsim; print(bornsim.__version__); print(bornsim.optical_properties(bornsim.Medium(), 633e-9))"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: distributions
+          path: dist/

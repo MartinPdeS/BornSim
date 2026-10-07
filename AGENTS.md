@@ -1,0 +1,21 @@
+# Working on BornSim
+
+- The root `bornsim/` package contains the public Python API and Matplotlib plotting.
+- Keep `Source`, `Solver`, and `Result` implementations in `source.py`, `solver.py`, and `results.py`; `api.py` is a convenience import module.
+- `model.py` handles analytical first-order scattering. Keep voxel fields in `volume.py`, random-field generation in `media.py`, propagation in `green.py`, the `BornSeries` engine in `series.py`, and ensemble statistics in `ensemble.py`.
+- Use `BornSeries` instances for numerical Born calculations; do not add a free-function wrapper for that engine.
+- Preserve SI units in the API, amplitude interference, random seeds, and ensemble uncertainty. Distinguish finite-sample coefficients from infinite-medium transport coefficients.
+- Keep the linearized dielectric contrast and Green-tensor self-cell convention explicit. Do not claim universal Born convergence from decreasing terms.
+- BornSim constructors, functions, and methods require keyword-only arguments, apart from implicit `self` and `cls`. `add_structures(*structures)` is the explicit exception and takes positional shape objects.
+- Format BornSim calls supplying multiple arguments over multiple lines, with one argument per line and a trailing comma.
+- Assign constructed objects to named variables before calling their methods; keep solver configuration separate from `result = solver.solve(...)`.
+- Build structured examples with `StructuredMedium()` and in-place `add_background`/`add_structures` calls. Define shapes in named variables before adding them, and batch multiple shapes in argument order. Keep `Medium` abstract and distinguish background replacement from additive fluctuations.
+- Keep `if`, `elif`, and `else` statement headers on one line; use named conditions when needed.
+- Use Matplotlib for default medium plotting and documentation examples. Plotly is an optional explicitly selected backend; core plotting and docs builds must work without it.
+- Use four spaces and follow Ruff formatting. Do not use `from __future__ import annotations`.
+- Tests are grouped into `analytical`, `numerical`, and `packaging`; keep independent numerical references and validation coverage.
+- Reuse `.venv` and run `make check PYTHON=.venv/bin/python`; UI changes also need a real-browser check.
+- Run `make docs`, `make package-check`, `make release-check`, and `git diff --check` for packaging/documentation changes.
+- `README.rst` and `docs/source` use reStructuredText. Keep documentation examples runnable.
+- Keep version metadata in pyproject.toml, bornsim/_version.py, CITATION.cff, .zenodo.json, and conda.recipe/meta.yaml aligned using the release tools.
+- Release commands create commits/tags or push only when explicitly requested. Preserve unrelated work.

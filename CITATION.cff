@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use BornSim in research, please cite the software version used."
+title: "BornSim"
+type: software
+version: "0.1.0"
+authors:
+  - family-names: "Poinsinet de Sivry-Houle"
+    given-names: "Martin"
+abstract: >
+  Vector Born-series scattering from continuous random dielectric media,
+  with analytical first-order models and finite-volume numerical orders.
+license: "MIT"
+keywords:
+  - Born approximation
+  - light scattering
+  - random media
+  - tissue optics

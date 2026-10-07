@@ -1,0 +1,22 @@
+name: Documentation
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  documentation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install -e ".[documentation]"
+      - run: make docs PYTHON=python
+      - uses: actions/upload-artifact@v4
+        with:
+          name: documentation
+          path: docs/build/html

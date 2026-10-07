@@ -1,0 +1,23 @@
+name: Publish release
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: read
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install -e ".[testing,dev]"
+      - run: make check PYTHON=python
+      - run: python tools/check_release.py --version "${GITHUB_REF_NAME}"
+      - run: make package-check PYTHON=python
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}

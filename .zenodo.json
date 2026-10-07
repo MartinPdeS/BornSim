@@ -1,0 +1,17 @@
+{
+  "title": "BornSim",
+  "upload_type": "software",
+  "description": "Vector Born-series scattering from continuous random dielectric media.",
+  "creators": [
+    {
+      "name": "Poinsinet de Sivry-Houle, Martin"
+    }
+  ],
+  "license": "mit",
+  "version": "0.1.0",
+  "keywords": [
+    "Born approximation",
+    "light scattering",
+    "random media"
+  ]
+}

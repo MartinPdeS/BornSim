@@ -1,0 +1,11 @@
+include LICENSE README.rst CONTRIBUTING.md CITATION.cff .zenodo.json
+include makefile pytest.ini .coveragerc .pre-commit-config.yaml
+recursive-include docs *.py *.rst *.svg
+recursive-include tests *.py
+recursive-include tools *.py
+recursive-include conda.recipe *.yaml
+prune docs/build
+prune docs/source/auto_examples
+exclude docs/source/sg_execution_times.rst
+prune htmlcov
+prune development

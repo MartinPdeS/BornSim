@@ -1,0 +1,17 @@
+[run]
+source = bornsim
+branch = True
+relative_files = True
+omit =
+    bornsim/_version.py
+
+[report]
+skip_covered = True
+show_missing = True
+precision = 2
+
+[html]
+directory = htmlcov
+
+[xml]
+output = coverage.xml

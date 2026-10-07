@@ -1,0 +1,35 @@
+package:
+  name: bornsim
+  version: 0.1.0
+
+source:
+  path: ..
+
+build:
+  number: 0
+  script: "{{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv"
+
+requirements:
+  host:
+    - python {{ PY_VER }}.*
+    - pip
+    - setuptools >=77
+    - wheel
+  run:
+    - python {{ PY_VER }}.*
+    - numpy >=1.24,<3
+    - typedunit ==0.0.11
+    - matplotlib >=3.7,<4
+
+test:
+  imports:
+    - bornsim
+
+about:
+  license: MIT
+  license_file: LICENSE
+  summary: "Vector Born-series scattering from continuous random dielectric media"
+
+extra:
+  recipe-maintainers:
+    - MartinPdeS
