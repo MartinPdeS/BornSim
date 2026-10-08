@@ -1,33 +1,39 @@
 Examples
 ========
 
-.. toctree::
-   :maxdepth: 1
+Browse runnable examples by topic: random media, structured media, Born orders
+and interference, plotting and saving results, and numerical validation.
+The :doc:`medium_visualization` guide explains how to inspect input voxel
+fields and choose spatial views.
 
+.. toctree::
+   :maxdepth: 2
+
+   medium_visualization
    auto_examples/index
 
-Medium and source parameters
-----------------------------
+Random media
+------------
 
-Start with :doc:`auto_examples/analytical_scattering` for unitful optical
-properties and :doc:`auto_examples/wavelength_dependence` for a wavelength
+Start with :doc:`auto_examples/random_media/analytical_scattering` for unitful optical
+properties and :doc:`auto_examples/random_media/wavelength_dependence` for a wavelength
 sweep of total scattering, reduced scattering, and anisotropy. The sweep
 holds the material parameters constant and compares the short-correlation
 limit with a longer covariance length.
 
-:doc:`auto_examples/covariance_models` compares Gaussian and exponential
+:doc:`auto_examples/random_media/covariance_models` compares Gaussian and exponential
 spatial covariance at the same length parameter, showing both covariance
 profiles and their analytical phase functions. These length parameters have
 different definitions; equal values do not describe identical statistics.
 
-:doc:`auto_examples/random_medium` visualizes central slices and voxel
+:doc:`auto_examples/random_media/random_medium` visualizes central slices and voxel
 histograms from seeded three-dimensional volumes. It distinguishes the
 Gaussian one-point probability distribution from the choice of spatial
 covariance, and explains why a finite correlated sample need not have
 exactly the ensemble mean or variance.
 
-Custom geometry in a uniform background
----------------------------------------
+Structured media
+----------------
 
 ``Medium`` is the abstract interface. ``RandomMedium`` describes statistically
 homogeneous fluctuations; ``StructuredMedium`` composes geometric materials. ``Volume`` accepts an explicit
@@ -35,11 +41,14 @@ three-dimensional field and can therefore represent spatially structured
 media. Its background index is uniform, while its fluctuation array may vary
 from voxel to voxel.
 
-:doc:`auto_examples/dielectric_sphere` builds two constant-index spheres in a
+:doc:`auto_examples/structured_media/dielectric_sphere` builds two constant-index spheres in a
 homogeneous background and plots their voxelized geometry, full directional
 3D phase density and a selected physical meridian. The curved
 interface is voxelized and the dielectric contrast remains linearized;
 the example does not replace an exact Mie calculation.
+
+:doc:`auto_examples/structured_media/structured_media` combines finite layers,
+a sphere, and additive seeded random fluctuations in a custom voxel field.
 
 Normalized phase function
 -------------------------
@@ -61,7 +70,7 @@ radians. Its values retain units of inverse radians even when the plot's
 horizontal axis displays degrees. The mean cosine of the distribution is
 the anisotropy ``g``.
 
-See :doc:`auto_examples/phase_function` for the plot and its top-level code.
+See :doc:`auto_examples/random_media/phase_function` for the plot and its top-level code.
 
 A zero scattering coefficient has no normalized phase function. This example
 uses the analytical infinite-medium model. A single random volume's angular
@@ -112,21 +121,21 @@ Normalized phase plots do not infer errors by dividing those bars by the
 mean total coefficient: uncertainty in a ratio also depends on numerator-
 denominator covariance, which is not retained in the result.
 
-See :doc:`auto_examples/result_plots` for direct result plotting calls and
+See :doc:`auto_examples/results/result_plots` for direct result plotting calls and
 Matplotlib figures, including the 3D phase-function surface. Sphinx Gallery
 executes the examples and captures their figures when the documentation is built.
 
 Coherent terms and reusable results
 -----------------------------------
 
-:doc:`auto_examples/compare_orders` plots ensemble scattering through
+:doc:`auto_examples/born_orders/compare_orders` plots ensemble scattering through
 successive Born orders with sampling-error bars and per-realization field
-norms. :doc:`auto_examples/born_interference` shows why cumulative intensities
+norms. :doc:`auto_examples/born_orders/born_interference` shows why cumulative intensities
 cannot be reconstructed by summing isolated-term intensities: complex Born
 amplitudes interfere within each incident polarization. Its second panel
 shows the signed interference contribution for a fixed volume.
 
-:doc:`auto_examples/save_load_results` saves and restores a unitful numerical
+:doc:`auto_examples/results/save_load_results` saves and restores a unitful numerical
 result, inspects its provenance, and plots the restored data. It uses a
 temporary directory and retains complex amplitudes. Archives preserve result
 data and settings; they do not store the original voxel field.
@@ -137,16 +146,16 @@ Numerical validation
 The validation gallery separates four questions. None is answered by
 decreasing successive Born terms alone.
 
-* :doc:`auto_examples/grid_refinement` refines a fixed physical cube and
+* :doc:`auto_examples/validation/grid_refinement` refines a fixed physical cube and
   compares its first-order amplitude with an exact volume integral. It
   isolates midpoint-quadrature error without changing the input field.
-* :doc:`auto_examples/angular_convergence` increases polar and azimuth
+* :doc:`auto_examples/validation/angular_convergence` increases polar and azimuth
   integration independently on identical seeded volumes. Plot sampling is
   separate from solid-angle quadrature.
-* :doc:`auto_examples/ensemble_sampling` increases independent realization
+* :doc:`auto_examples/validation/ensemble_sampling` increases independent realization
   count at fixed geometry. Standard errors describe sampling uncertainty;
   they do not include discretization or finite-size error.
-* :doc:`auto_examples/finite_size_comparison` compares first-order finite
+* :doc:`auto_examples/validation/finite_size_comparison` compares first-order finite
   ensembles of increasing size with the analytical infinite-medium model.
   Finite windows, spectral synthesis, and limited resolution can produce
   differences that remain outside the sampling error bars.
@@ -155,9 +164,9 @@ Theory illustrations
 --------------------
 
 The :doc:`theory` section embeds simulated figures with the associated equations.
-:doc:`auto_examples/theory_random_fields` compares seeded field texture and
+:doc:`auto_examples/random_media/theory_random_fields` compares seeded field texture and
 empirical covariance with the discrete spectral and continuum predictions.
-:doc:`auto_examples/theory_directional_interference` verifies first-order
+:doc:`auto_examples/structured_media/theory_directional_interference` verifies first-order
 translation invariance and shows how relative sphere positions introduce
 azimuth-dependent interference. Both examples expose their grids, materials,
 seeds and numerical settings.

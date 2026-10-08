@@ -79,7 +79,7 @@ and 20 nm along y. Keep its radius plus the absolute offset within each box
 half-width to avoid clipping. Offsets aligned with the voxel spacing translate
 the existing sampled mask; other offsets resample the interface.
 
-The :doc:`auto_examples/dielectric_sphere` example also plots the sphere's
+The :doc:`auto_examples/structured_media/dielectric_sphere` example also plots the sphere's
 directional 3D phase function. It calls ``Solver.solve`` with the
 fixed generated volume to integrate a single deterministic sample over
 polar Gauss nodes and azimuth. This supplies the solid-angle
@@ -217,18 +217,67 @@ For browser rotation, hover values, volume level surfaces, and interactive HTML
 exports, install the optional ``BornSim[visualization]`` extra. It is not needed
 for the standard examples, documentation build, or Matplotlib plots.
 
+Interactive random-medium volumes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For random media, a volume view reveals connected high-index regions throughout
+the sample. Set ``field="index"`` and ``opacity_scale="increasing"`` to make
+low-index contours transparent and higher-index contours increasingly opaque.
+``opacity`` sets the maximum contour opacity. This emphasizes high absolute
+index, rather than large positive and negative fluctuations equally. Opacity
+is a display setting; it does not represent material absorption.
+The opacity ramp uses each sample's displayed index range, so equal opacity
+in two different samples need not represent the same refractive index.
+
+The following views use the same Gaussian and exponential samples as
+:doc:`auto_examples/random_media/random_medium`: seed 42, 16 voxels per axis,
+25 nm spacing, index standard deviation 0.01, and correlation length 75 nm.
+Drag to rotate and scroll to zoom. Each view includes Plotly and works offline.
+Interactive views are generated when the documentation is built with the
+optional visualization extra; builds without it retain the Matplotlib gallery.
+
+Gaussian covariance
+^^^^^^^^^^^^^^^^^^^
+
+.. raw:: html
+
+   <iframe src="_static/random-medium-gaussian.html" title="Gaussian random medium with increasing index opacity" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
+
+Exponential covariance
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. raw:: html
+
+   <iframe src="_static/random-medium-exponential.html" title="Exponential random medium with increasing index opacity" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
+
 .. code-block:: console
 
    .venv/bin/python -m pip install -e ".[visualization]"
 
 .. code-block:: python
 
+   from bornsim import Grid, RandomMedium
+
+   grid = Grid(
+       shape=(16, 16, 16),
+       spacing=25e-9,
+   )
+   medium = RandomMedium(
+       index_std=0.01,
+       correlation_length=75e-9,
+       correlation="gaussian",
+   )
+   volume = medium.to_volume(
+       grid=grid,
+       seed=42,
+   )
    figure = volume.plot_3d(
        backend="plotly",
        mode="volume",
-       field="delta_index",
-       surface_count=6,
-       opacity=0.15,
+       field="index",
+       surface_count=16,
+       opacity=0.2,
+       opacity_scale="increasing",
    )
    figure.write_html(
        file="medium.html",

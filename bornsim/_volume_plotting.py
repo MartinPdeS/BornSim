@@ -94,6 +94,7 @@ class _VolumePlotter:
         length_unit="nanometer",
         surface_count=8,
         opacity=None,
+        opacity_scale="uniform",
         slice_indices=None,
     ):
         """Validate rendering options and draw the selected 3D backend."""
@@ -104,6 +105,10 @@ class _VolumePlotter:
         modes = ("slices", "voxels") if backend == "matplotlib" else ("volume", "isosurface", "slices")
         if mode not in modes:
             raise ValueError(f"{backend} mode must be one of {modes}.")
+        if opacity_scale not in ("uniform", "increasing"):
+            raise ValueError("opacity_scale must be uniform or increasing.")
+        if opacity_scale != "uniform" and (backend != "plotly" or mode != "volume"):
+            raise ValueError("increasing opacity_scale is only supported for Plotly volume mode.")
         values, label = self._plot_field(field=field)
         count = _integer(
             value=surface_count,
@@ -208,6 +213,7 @@ class _VolumePlotter:
                 )
         else:
             trace = go.Volume if mode == "volume" else go.Isosurface
+            opacity_options = {"opacityscale": [[0, 0], [1, 1]]} if opacity_scale == "increasing" else {}
             traces = [
                 trace(
                     x=positions[..., 0].ravel(),
@@ -224,6 +230,7 @@ class _VolumePlotter:
                     colorbar=colorbar,
                     caps={"x_show": False, "y_show": False, "z_show": False},
                     hovertemplate=hover,
+                    **opacity_options,
                 )
             ]
         figure = go.Figure(data=traces)

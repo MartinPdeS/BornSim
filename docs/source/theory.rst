@@ -189,6 +189,27 @@ one additional internal propagation interaction. ``order=3`` retains the
 first three amplitude terms; it is neither a mesh-refinement level nor three
 independent samples.
 
+First-order Born approximation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Replace the internal field in the scattering integral by the incident field:
+:math:`\mathbf E(\mathbf r')\approx\mathbf E_{\rm inc}(\mathbf r')`.
+The resulting first-order scattered field is
+
+.. math::
+   :label: first-order-born
+
+   \mathbf E_{\rm sc}^{(1)}(\mathbf r)
+      =k_0^2\int_V\mathbf G(\mathbf r-\mathbf r')
+         \chi(\mathbf r')\mathbf E_{\rm inc}(\mathbf r')\,d^3r',\qquad
+   \mathbf E^{[1]}=\mathbf E_{\rm inc}+\mathbf E_{\rm sc}^{(1)}.
+
+This retains one scattering interaction. Contributions from different positions
+still interfere as complex amplitudes. Its accuracy requires the scattered
+field to perturb the internal illumination only weakly; small index contrast
+alone is insufficient for a thick sample with appreciable accumulated phase.
+BornSim uses the linearized contrast in :eq:`constitutive-model` at every order.
+
 Discrete Green interactions and open boundaries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -248,13 +269,13 @@ It can have either sign. Summing isolated intensities therefore cannot
 reconstruct the coherent cumulative intensity. Interference occurs within each
 incident polarization; the two incident polarizations are averaged incoherently.
 
-.. figure:: auto_examples/images/sphx_glr_born_interference_001.png
+.. figure:: auto_examples/born_orders/images/sphx_glr_born_interference_001.png
    :width: 95%
    :alt: Simulated cumulative and isolated Born intensities, with a signed interference contribution.
 
    Numerical Born terms for one seeded finite volume. The signed difference
    between coherent scattering and the sum of isolated intensities displays
-   the interference contribution. :doc:`Simulation code <auto_examples/born_interference>`.
+   the interference contribution. :doc:`Simulation code <auto_examples/born_orders/born_interference>`.
 
 Result stores :math:`D^{[M]}` in m\ :sup:`−1` sr\ :sup:`−1`.
 ``result.differential_cross_section`` multiplies it by the stored physical box
@@ -294,7 +315,7 @@ sphere can have the same intensity as a centred sphere, while a pair generally
 has a directionally asymmetric pattern. This simple factor describes first
 order; higher orders also include interactions between particles.
 
-.. figure:: auto_examples/images/sphx_glr_theory_directional_interference_001.png
+.. figure:: auto_examples/structured_media/images/sphx_glr_theory_directional_interference_001.png
    :width: 100%
    :alt: Two voxelized spheres, their azimuth-dependent phase density, and selected meridians compared with a translated single sphere.
 
@@ -302,9 +323,9 @@ order; higher orders also include interactions between particles.
    20 nm voxels and index 1.34 in a 1.33 background. Integer-voxel translation
    leaves the single-sphere curve unchanged, while two spheres produce
    different meridians. The simulation asserts translation invariance.
-   :doc:`Simulation code <auto_examples/theory_directional_interference>`.
+   :doc:`Simulation code <auto_examples/structured_media/theory_directional_interference>`.
 
-.. figure:: auto_examples/images/sphx_glr_theory_directional_interference_002.png
+.. figure:: auto_examples/structured_media/images/sphx_glr_theory_directional_interference_002.png
    :width: 75%
    :alt: Full three-dimensional phase density of the two-sphere simulation, without azimuth averaging.
 
@@ -415,15 +436,15 @@ mode is retained. The expected discrete normalized covariance is
 :math:`\operatorname{IFFT}(w/\overline w)`. Spectral truncation and finite box
 size change its relationship to the continuum covariance.
 
-.. figure:: auto_examples/images/sphx_glr_theory_random_fields_001.png
+.. figure:: auto_examples/random_media/images/sphx_glr_theory_random_fields_001.png
    :width: 95%
    :alt: Seeded index slices from Gaussian, exponential and Matérn covariance fields with a shared color scale.
 
    Seeded numerical index slices at equal standard deviation and length
    parameter. Covariance changes spatial texture, not the Gaussian probability
-   law. :doc:`Simulation code <auto_examples/theory_random_fields>`.
+   law. :doc:`Simulation code <auto_examples/random_media/theory_random_fields>`.
 
-.. figure:: auto_examples/images/sphx_glr_theory_random_fields_002.png
+.. figure:: auto_examples/random_media/images/sphx_glr_theory_random_fields_002.png
    :width: 85%
    :alt: Empirical covariance with standard-error bars from 32 independent fields, compared with discrete synthesis and continuum predictions.
 
@@ -515,14 +536,14 @@ Keep the following checks separate:
      - Volume and sampling
      - Sensitivity to additional interaction terms
 
-.. figure:: auto_examples/images/sphx_glr_grid_refinement_001.png
+.. figure:: auto_examples/validation/images/sphx_glr_grid_refinement_001.png
    :width: 75%
    :alt: First-order amplitude error decreasing with voxel refinement for a fixed cube, compared with a second-order reference slope.
 
    Refinement at fixed 180 nm cube size, compared with an independent exact
    first-order volume integral. This checks midpoint amplitude quadrature;
    it does not validate higher-order Green self interactions.
-   :doc:`Simulation code <auto_examples/grid_refinement>`.
+   :doc:`Simulation code <auto_examples/validation/grid_refinement>`.
 
 Sampling-error bars exclude geometry, constitutive, quadrature and finite-size
 bias. For reproducible calculations, retain Grid, AngularSampling, Material,

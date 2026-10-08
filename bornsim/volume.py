@@ -222,6 +222,7 @@ class Volume:
         length_unit="nanometer",
         surface_count=8,
         opacity=None,
+        opacity_scale="uniform",
         slice_indices=None,
     ):
         """Build a three-dimensional figure of the finite voxel medium.
@@ -248,6 +249,12 @@ class Volume:
         opacity : float, optional
             Surface opacity in (0, 1]. Default is 1 for Matplotlib and 0.15
             for Plotly. Slices are opaque in both backends.
+        opacity_scale : {'uniform', 'increasing'}, optional
+            Default 'uniform' gives all contours the same opacity. 'increasing'
+            is available only for Plotly volume mode and scales opacity from
+            zero at the lowest displayed contour to ``opacity`` at the highest.
+            Use field='index' to emphasize high refractive index, rather than
+            the magnitude of positive and negative fluctuations.
         slice_indices : tuple of int, optional
             One voxel index for each x, y, z plane, used only for slices.
             Defaults to the middle voxel along each axis.
@@ -291,5 +298,6 @@ class Volume:
             length_unit=length_unit,
             surface_count=surface_count,
             opacity=opacity,
+            opacity_scale=opacity_scale,
             slice_indices=slice_indices,
         )

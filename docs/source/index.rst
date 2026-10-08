@@ -6,7 +6,6 @@ BornSim documentation
 
    overview
    theory
-   medium_visualization
    api
    examples
    development

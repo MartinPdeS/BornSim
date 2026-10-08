@@ -91,6 +91,43 @@ def test_plotly_values_coordinates_units_and_levels(mode, trace_type, plotly_bac
     np.testing.assert_array_equal(volume.delta_index, before)
 
 
+def test_increasing_volume_opacity_preserves_absolute_index_and_sample(plotly_backend):
+    volume = Volume(
+        delta_index=np.linspace(-0.02, 0.03, 24).reshape(2, 3, 4),
+        spacing=40e-9,
+        background_index=1.33,
+    )
+    original = volume.delta_index.copy()
+    figure = volume.plot_3d(
+        backend="plotly",
+        mode="volume",
+        field="index",
+        opacity=0.2,
+        opacity_scale="increasing",
+    )
+    trace = figure.data[0]
+    np.testing.assert_array_equal(trace.value, (1.33 + original).ravel())
+    np.testing.assert_array_equal(volume.delta_index, original)
+    np.testing.assert_allclose(trace.opacityscale, [[0, 0], [1, 1]])
+    assert trace.opacity == 0.2
+    assert trace.colorbar.title.text == "Refractive index n"
+
+
+@pytest.mark.parametrize(
+    "settings",
+    [
+        {"opacity_scale": "unknown"},
+        {"opacity_scale": "increasing"},
+        {"backend": "plotly", "mode": "slices", "opacity_scale": "increasing"},
+        {"backend": "plotly", "mode": "isosurface", "opacity_scale": "increasing"},
+    ],
+)
+def test_opacity_scale_requires_a_plotly_volume(settings):
+    with pytest.raises(ValueError, match="opacity_scale"):
+        volume = sample()
+        volume.plot_3d(**settings)
+
+
 def test_slices_use_requested_voxel_planes_and_shared_color_domain(plotly_backend):
     volume = sample()
     figure = volume.plot_3d(
@@ -110,13 +147,15 @@ def test_slices_use_requested_voxel_planes_and_shared_color_domain(plotly_backen
     np.testing.assert_allclose(figure.data[0].x, volume.positions[0, :, :, 0] * 1e9)
 
 
-def test_uniform_medium_falls_back_to_visible_slices(plotly_backend):
+@pytest.mark.parametrize("opacity_scale", ["uniform", "increasing"])
+def test_uniform_medium_falls_back_to_visible_slices(opacity_scale, plotly_backend):
     volume = Volume(
         delta_index=np.zeros((2, 3, 4)),
         spacing=50e-9,
     )
     figure = volume.plot_3d(
         backend="plotly",
+        opacity_scale=opacity_scale,
     )
     assert len(figure.data) == 3
     assert all(trace.type == "surface" for trace in figure.data)

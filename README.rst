@@ -93,7 +93,7 @@ Use ``solver.solve_cut`` for unnormalized angular cuts, and
 passing the original Volume. Saved results retain the physical sample volume.
 
 ``result.plot_field_norms()`` shows numerical field terms per realization.
-See ``docs/examples/result_plots.py`` for direct plotting examples in the
+See ``docs/examples/results/result_plots.py`` for direct plotting examples in the
 Sphinx Gallery documentation.
 
 Results validate array shapes and physical ranges at construction.
