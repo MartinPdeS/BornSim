@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:12.810** total execution time for 17 files **from auto_examples**:
+**00:25.520** total execution time for 17 files **from auto_examples**:
 
 .. container::
 
@@ -33,53 +33,53 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_auto_examples_dielectric_sphere.py` (``dielectric_sphere.py``)
-     - 00:03.808
+     - 00:07.715
      - 0.0
    * - :ref:`sphx_glr_auto_examples_theory_directional_interference.py` (``theory_directional_interference.py``)
-     - 00:02.592
+     - 00:05.089
      - 0.0
    * - :ref:`sphx_glr_auto_examples_wavelength_dependence.py` (``wavelength_dependence.py``)
-     - 00:00.829
+     - 00:01.594
      - 0.0
    * - :ref:`sphx_glr_auto_examples_result_plots.py` (``result_plots.py``)
-     - 00:00.730
+     - 00:01.480
      - 0.0
    * - :ref:`sphx_glr_auto_examples_theory_random_fields.py` (``theory_random_fields.py``)
-     - 00:00.621
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_compare_orders.py` (``compare_orders.py``)
-     - 00:00.548
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_finite_size_comparison.py` (``finite_size_comparison.py``)
-     - 00:00.538
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_random_medium.py` (``random_medium.py``)
-     - 00:00.529
+     - 00:01.203
      - 0.0
    * - :ref:`sphx_glr_auto_examples_angular_convergence.py` (``angular_convergence.py``)
-     - 00:00.479
+     - 00:01.131
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_random_medium.py` (``random_medium.py``)
+     - 00:01.092
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_finite_size_comparison.py` (``finite_size_comparison.py``)
+     - 00:01.034
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_compare_orders.py` (``compare_orders.py``)
+     - 00:01.009
      - 0.0
    * - :ref:`sphx_glr_auto_examples_structured_media.py` (``structured_media.py``)
-     - 00:00.467
+     - 00:00.926
      - 0.0
    * - :ref:`sphx_glr_auto_examples_ensemble_sampling.py` (``ensemble_sampling.py``)
-     - 00:00.384
+     - 00:00.759
      - 0.0
    * - :ref:`sphx_glr_auto_examples_save_load_results.py` (``save_load_results.py``)
-     - 00:00.304
+     - 00:00.598
      - 0.0
    * - :ref:`sphx_glr_auto_examples_grid_refinement.py` (``grid_refinement.py``)
-     - 00:00.263
+     - 00:00.500
      - 0.0
    * - :ref:`sphx_glr_auto_examples_born_interference.py` (``born_interference.py``)
-     - 00:00.229
+     - 00:00.472
      - 0.0
    * - :ref:`sphx_glr_auto_examples_phase_function.py` (``phase_function.py``)
-     - 00:00.196
+     - 00:00.374
      - 0.0
    * - :ref:`sphx_glr_auto_examples_covariance_models.py` (``covariance_models.py``)
-     - 00:00.182
+     - 00:00.358
      - 0.0
    * - :ref:`sphx_glr_auto_examples_analytical_scattering.py` (``analytical_scattering.py``)
-     - 00:00.111
+     - 00:00.185
      - 0.0
