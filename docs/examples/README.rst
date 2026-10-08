@@ -5,6 +5,12 @@ These top-level scripts are executed by Sphinx Gallery. Each begins with a
 reStructuredText title and narrative description. Figures are displayed
 alongside their code in the generated documentation.
 
+Keep each separate figure in its own code cell: call ``plt.show()`` after
+plotting, then insert a ``# %%`` separator and narrative comments before
+creating the next figure. Multiple axes comparing related data may share a
+single figure. This keeps each gallery image beside the code that produced it
+and displays figures one at a time when running the scripts locally.
+
 Finite-medium examples include Matplotlib 3D views of the input field.
 Structured spheres use voxel geometry; random and layered fields use orthogonal
 slices. Ensemble examples show one labelled realization rather than an averaged

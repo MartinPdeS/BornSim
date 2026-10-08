@@ -40,6 +40,13 @@ result = ensemble_solver.ensemble(
 for index, coefficient in enumerate(result.mu_s.to("1 / meter").magnitude, start=1):
     print(f"Through order {index}: effective μs = {coefficient:.5g} m⁻¹")
 result.plot()
+plt.show()
+
+# %%
+# Field-term diagnostics
+# ----------------------
+# Compare field terms separately from the scattering curves. Decreasing
+# terms alone do not certify convergence of the Born series.
 result.plot_field_norms()
 plt.show()
 

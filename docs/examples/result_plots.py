@@ -46,6 +46,7 @@ result = solver.ensemble(
 # Differential scattering retains its physical units of inverse metres per
 # steradian. Ensemble results also show standard errors on this plot.
 result.plot(log_y=True)
+plt.show()
 
 # %%
 # Normalized phase function
@@ -53,12 +54,14 @@ result.plot(log_y=True)
 # Dividing by the integrated coefficient gives a density per steradian.
 # The normalization is over solid angle, including the ``sin(theta)`` measure.
 result.plot_phase_function(log_y=True)
+plt.show()
 
 # %%
 # Polar meridian cut
 # ------------------
 # The incident beam points towards 0 degrees, at the top of the plot.
 result.plot_phase_function(view="polar")
+plt.show()
 
 # %%
 # Three-dimensional directional surface
@@ -66,6 +69,7 @@ result.plot_phase_function(view="polar")
 # Plot the sampled polar and azimuth directions without azimuth averaging.
 # Here four realizations contribute to the ensemble intensity average.
 result.plot_phase_function(view="3d")
+plt.show()
 
 # %%
 # Numerical field terms

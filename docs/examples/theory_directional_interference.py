@@ -97,8 +97,13 @@ for result, azimuth, label, style in (
 axes[2].set(xlabel="Polar angle θ (degrees)", ylabel="p(θ, φ) (sr⁻¹)", title="Selected meridians")
 axes[2].legend(frameon=False)
 axes[2].grid(alpha=0.25)
-# Display the composite before opening a separate direction-space surface.
 plt.show()
+
+# %%
+# Three-dimensional directional phase density
+# -------------------------------------------
+# Inspect the pair's direction-space surface separately from the spatial
+# slice and meridian comparisons above, without azimuth averaging.
 phase_figure = pair_result.plot_phase_function(view="3d")
 phase_axis = phase_figure.axes[0]
 phase_axis.set_title("Two-sphere first-order phase density\nNo azimuth averaging")

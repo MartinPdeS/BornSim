@@ -35,7 +35,7 @@ models = (
     ("matern", "Matérn, ν = 3/2", "#009E73"),
 )
 figure, axes = plt.subplots(1, 3, figsize=(12, 4), layout="constrained")
-covariance_figure, covariance_axis = plt.subplots(figsize=(8, 5), layout="constrained")
+covariance_data = []
 lag = np.arange(9)
 distance = lag * grid.spacing
 extended = tuple(2 * count for count in grid.shape)
@@ -81,6 +81,19 @@ for axis, (correlation, label, color) in zip(axes, models):
     else:
         continuum = (1 + np.sqrt(3) * ratio) * np.exp(-np.sqrt(3) * ratio)
     samples = np.asarray(estimates) / sigma**2
+    covariance_data.append((label, color, samples, discrete, continuum))
+figure.colorbar(image, ax=axes, label="Index fluctuation δn", shrink=0.8)
+figure.suptitle("Seed 42 · same σn = 0.01 and ℓ = 60 nm · 20 nm voxels")
+plt.show()
+
+# %%
+# Compare sampled and predicted covariances
+# -----------------------------------------
+# Reuse the ensemble estimates above. Error bars describe realization
+# sampling; dashed curves use the discrete synthesis and dotted curves the
+# continuum covariance, which need not match on a finite grid.
+covariance_figure, covariance_axis = plt.subplots(figsize=(8, 5), layout="constrained")
+for label, color, samples, discrete, continuum in covariance_data:
     covariance_axis.errorbar(
         distance * 1e9,
         samples.mean(axis=0),
@@ -92,8 +105,6 @@ for axis, (correlation, label, color) in zip(axes, models):
     )
     covariance_axis.plot(distance * 1e9, discrete, color=color, linestyle="--")
     covariance_axis.plot(distance * 1e9, continuum, color=color, linestyle=":")
-figure.colorbar(image, ax=axes, label="Index fluctuation δn", shrink=0.8)
-figure.suptitle("Seed 42 · same σn = 0.01 and ℓ = 60 nm · 20 nm voxels")
 covariance_axis.set(
     xlabel="Separation along x (nm)",
     ylabel="Covariance / σn²",
