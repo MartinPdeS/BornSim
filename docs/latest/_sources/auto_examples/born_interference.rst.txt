@@ -150,7 +150,7 @@ Call plt.show() to display the figure; the gallery captures a static image.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.457 seconds)
+   **Total running time of the script:** (0 minutes 0.464 seconds)
 
 
 .. _sphx_glr_download_auto_examples_born_interference.py:
