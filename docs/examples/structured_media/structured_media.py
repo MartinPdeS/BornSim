@@ -14,6 +14,8 @@ Gaussian. A composed manual volume does not retain inferred generation
 metadata: keep the ingredients and seed for reproducibility.
 """
 
+import sys
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -69,6 +71,37 @@ combined = Volume(
     background_index=structure.background_index,
 )
 
+# %%
+# Inspect the structured medium in 3D
+# -----------------------------------
+# Inspect the deterministic layers and sphere before adding fluctuations.
+# Drag to rotate and scroll to zoom in the embedded browser volume.
+medium_figure = structured.plot_3d(
+    mode="volume",
+    field="index",
+    opacity_scale="increasing",
+)
+if "--no-browser" not in sys.argv:
+    medium_figure.show(renderer="browser")
+
+# %%
+# Inspect the combined medium in 3D
+# ---------------------------------
+# This interactive volume shows the sampled index used by the solver,
+# including the same seeded Matérn fluctuations as the scattering curves.
+# Higher-index regions are more opaque; opacity is a display setting.
+medium_figure = combined.plot_3d(
+    mode="volume",
+    field="index",
+    opacity_scale="increasing",
+)
+if "--no-browser" not in sys.argv:
+    medium_figure.show(renderer="browser")
+
+# %%
+# Scattering curves and a diagnostic cross-section
+# --------------------------------------------------
+# The slice checks exact voxel values after exploring the full volumes above.
 figure, axes = plt.subplots(1, 2, figsize=(10, 4), layout="constrained")
 image = axes[0].imshow(
     (combined.background_index + combined.delta_index[:, grid.shape[1] // 2, :]).T,
@@ -96,28 +129,4 @@ for order, curve in enumerate(cross_section.magnitude, start=1):
     )
 axes[1].set(xlabel="Scattering angle (degrees)", ylabel="dσ/dΩ (nm² sr⁻¹)")
 axes[1].legend(frameon=False)
-plt.show()
-
-# %%
-# Inspect the structured medium in 3D
-# -----------------------------------
-# Inspect the deterministic layers and sphere before adding fluctuations.
-# Rotation is available with an interactive Matplotlib backend.
-medium_figure = structured.plot_3d(
-    backend="matplotlib",
-    mode="slices",
-    field="index",
-)
-plt.show()
-# %%
-# Inspect the combined medium in 3D
-# ---------------------------------
-# These orthogonal slices show the sampled index used by the solver,
-# including the same seeded Matérn fluctuations as the scattering curves.
-# Call plt.show() to display the figure.
-medium_figure = combined.plot_3d(
-    backend="matplotlib",
-    mode="slices",
-    field="index",
-)
 plt.show()

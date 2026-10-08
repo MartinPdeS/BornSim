@@ -69,7 +69,7 @@ sphinx_gallery_conf = {
     "gallery_dirs": "auto_examples",
     "filename_pattern": r"\.py$",
     "capture_repr": (),
-    "image_scrapers": ("matplotlib",),
+    "image_scrapers": ("matplotlib", "gallery_config.plotly_scraper"),
     "abort_on_example_error": True,
     "download_all_examples": False,
     "backreferences_dir": None,

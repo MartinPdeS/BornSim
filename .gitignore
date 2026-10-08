@@ -14,5 +14,6 @@ dist/
 docs/build/
 docs/source/auto_examples/
 docs/source/sg_execution_times.rst
+docs/source/_static/gallery/
 
 .DS_Store

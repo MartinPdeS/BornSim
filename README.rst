@@ -267,7 +267,6 @@ slices, or sampled voxel geometry such as spheres.
 
 .. code-block:: python
 
-    import matplotlib.pyplot as plt
     from bornsim import Grid, RandomMedium
 
     medium = RandomMedium()
@@ -279,14 +278,14 @@ slices, or sampled voxel geometry such as spheres.
         seed=42,
     )
     figure = volume.plot_3d(
-        backend="matplotlib",
-        field="delta_index",
+        field="index",
+        opacity_scale="increasing",
         length_unit="nanometer",
     )
-    plt.show()
+    figure.show()
 
 Matplotlib figures rotate with an interactive backend and can be exported
-with ``figure.savefig()``. The documentation gallery shows static 3D images.
+with ``figure.savefig()``. The documentation gallery embeds interactive 3D volumes and phase surfaces.
 Plotly is included with BornSim and is the default for 3D views. Call
 ``figure.show()`` for browser interaction or ``figure.write_html()`` to export
 an interactive view. Angular and polar result plots use Matplotlib.

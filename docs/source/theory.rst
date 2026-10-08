@@ -325,12 +325,13 @@ order; higher orders also include interactions between particles.
    different meridians. The simulation asserts translation invariance.
    :doc:`Simulation code <auto_examples/structured_media/theory_directional_interference>`.
 
-.. figure:: auto_examples/structured_media/images/sphx_glr_theory_directional_interference_002.png
-   :width: 75%
-   :alt: Full three-dimensional phase density of the two-sphere simulation, without azimuth averaging.
+.. raw:: html
 
-   The pair's full phase-density surface retains every sampled azimuth.
-   Its radius is a density in direction space, not a position in the medium.
+   <iframe src="_static/gallery/theory_directional_interference-1.html" title="Interactive two-sphere phase density without azimuth averaging" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
+
+Drag to rotate the pair's full phase-density surface, which retains every
+sampled azimuth. Its radius is a density in direction space, not a position
+in the medium.
 
 Solid-angle normalization and angular sampling
 ----------------------------------------------
