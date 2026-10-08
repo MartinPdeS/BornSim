@@ -2,6 +2,15 @@ name: Verify Conda package
 
 on:
   workflow_dispatch:
+    inputs:
+      python-versions:
+        description: JSON list of Python versions to verify
+        type: string
+        default: '["3.11", "3.12", "3.13"]'
+      os-list:
+        description: JSON list of runner operating systems to verify
+        type: string
+        default: '["ubuntu-latest", "macos-latest", "windows-latest"]'
 
 permissions:
   contents: read
@@ -11,8 +20,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        python: ["3.11", "3.12", "3.13"]
+        os: ${{ fromJSON(inputs.os-list) }}
+        python: ${{ fromJSON(inputs.python-versions) }}
     uses: MartinPdeS/MPSActions/.github/workflows/build_conda_package.yml@v5
     with:
       os: ${{ matrix.os }}
@@ -20,3 +29,8 @@ jobs:
       package_name: bornsim
       recipe_path: conda.recipe
       test_import: bornsim
+      test_command: >-
+        python -c 'import json, sys; from pathlib import Path;
+        print(sys.executable); print(sys.path);
+        print([json.loads(p.read_text())["files"] for p in Path(sys.prefix).glob("conda-meta/bornsim-*.json")]);
+        import bornsim; print(bornsim.__version__)'
