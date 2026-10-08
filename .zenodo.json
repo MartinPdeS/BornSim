@@ -8,10 +8,11 @@
     }
   ],
   "license": "mit",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "keywords": [
     "Born approximation",
     "light scattering",
     "random media"
-  ]
+  ],
+  "publication_date": "2026-10-08"
 }
