@@ -1,3 +1,26 @@
+.. list-table::
+   :widths: 35 65
+   :header-rows: 1
+
+   * - Badge
+     - Status
+   * - Python versions
+     - |python|
+   * - Documentation
+     - |docs|
+   * - Continuous integration
+     - |tests|
+   * - Static quality checks
+     - |quality|
+   * - Test coverage
+     - |coverage|
+   * - Latest release tag
+     - |release|
+   * - Package publication
+     - |publication|
+   * - License
+     - |license|
+
 BornSim
 ========
 
@@ -377,3 +400,28 @@ orders, coherent amplitudes, phase normalization and ensemble uncertainty.
 Simulated figures connect these equations to random-field covariance,
 translation invariance, two-particle interference and voxel refinement.
 The figures link to runnable examples and state their numerical limitations.
+
+.. |python| image:: https://img.shields.io/badge/Python-3.11%2B-3776AB.svg
+   :alt: Python 3.11 or newer
+   :target: https://www.python.org/
+.. |docs| image:: https://github.com/MartinPdeS/BornSim/actions/workflows/deploy_documentation.yml/badge.svg
+   :alt: Documentation build status
+   :target: https://martinpdes.github.io/BornSim/docs/latest/
+.. |tests| image:: https://github.com/MartinPdeS/BornSim/actions/workflows/tests.yml/badge.svg
+   :alt: Test status
+   :target: https://github.com/MartinPdeS/BornSim/actions/workflows/tests.yml
+.. |quality| image:: https://github.com/MartinPdeS/BornSim/actions/workflows/quality.yml/badge.svg
+   :alt: Static quality check status
+   :target: https://github.com/MartinPdeS/BornSim/actions/workflows/quality.yml
+.. |coverage| image:: https://raw.githubusercontent.com/MartinPdeS/BornSim/python-coverage-comment-action-data/badge.svg
+   :alt: Test coverage
+   :target: https://github.com/MartinPdeS/BornSim/actions/workflows/deploy_coverage.yml
+.. |release| image:: https://img.shields.io/github/v/tag/MartinPdeS/BornSim.svg
+   :alt: Latest release tag
+   :target: https://github.com/MartinPdeS/BornSim/tags
+.. |publication| image:: https://github.com/MartinPdeS/BornSim/actions/workflows/deploy_release.yml/badge.svg
+   :alt: Package publication status
+   :target: https://github.com/MartinPdeS/BornSim/actions/workflows/deploy_release.yml
+.. |license| image:: https://img.shields.io/github/license/MartinPdeS/BornSim.svg
+   :alt: MIT license
+   :target: https://github.com/MartinPdeS/BornSim/blob/master/LICENSE
