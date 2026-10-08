@@ -1,0 +1,104 @@
+"""
+Theory figure: covariance and simulated random fields
+=====================================================
+
+Gaussian probability distributions and spatial covariance are separate
+choices. These simulations compare Gaussian, exponential and Matérn
+covariances using the same index standard deviation and length parameter.
+The plotted covariance estimate averages products within each realization,
+then averages independent realizations. No spatial sample mean is removed.
+
+Discrete spectral predictions include the finite periodic synthesis box and
+spectral truncation. Continuum covariance curves are reference functions,
+not exact descriptions of the sampled finite grid.
+"""
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+from bornsim import EnsembleSampling, Grid, RandomMedium
+from bornsim.units import ureg
+
+grid = Grid(
+    shape=(24, 24, 24),
+    spacing=20 * ureg.nanometer,
+)
+ensemble_sampling = EnsembleSampling(
+    realizations=32,
+    seed=42,
+)
+length = 60e-9
+sigma = 0.01
+models = (
+    ("gaussian", "Gaussian", "#0072B2"),
+    ("exponential", "Exponential", "#D55E00"),
+    ("matern", "Matérn, ν = 3/2", "#009E73"),
+)
+figure, axes = plt.subplots(1, 3, figsize=(12, 4), layout="constrained")
+covariance_figure, covariance_axis = plt.subplots(figsize=(8, 5), layout="constrained")
+lag = np.arange(9)
+distance = lag * grid.spacing
+extended = tuple(2 * count for count in grid.shape)
+wavevectors = [2 * np.pi * np.fft.fftfreq(count, grid.spacing) for count in extended]
+q_squared = sum(component**2 for component in np.meshgrid(*wavevectors, indexing="ij"))
+
+for axis, (correlation, label, color) in zip(axes, models):
+    medium = RandomMedium(
+        correlation=correlation,
+        smoothness=1.5,
+        correlation_length=length,
+        index_std=sigma,
+    )
+    estimates = []
+    for seed in ensemble_sampling.seeds:
+        volume = medium.to_volume(
+            grid=grid,
+            seed=seed,
+        )
+        field = volume.delta_index
+        products = [np.mean(field**2)]
+        for offset in lag[1:]:
+            products.append(np.mean(field[:-offset] * field[offset:]))
+        estimates.append(products)
+        if seed == ensemble_sampling.seed:
+            side_nm = grid.shape[0] * grid.spacing * 1e9
+            image = axis.imshow(
+                field[:, :, grid.shape[2] // 2].T,
+                origin="lower",
+                extent=(-side_nm / 2, side_nm / 2, -side_nm / 2, side_nm / 2),
+                cmap="RdBu_r",
+                vmin=-3 * sigma,
+                vmax=3 * sigma,
+            )
+    axis.set(title=label, xlabel="x (nm)", ylabel="y (nm)")
+    weight = medium.spectral_weight(q_squared=q_squared)
+    discrete = np.fft.ifftn(weight / weight.mean()).real[lag, 0, 0]
+    ratio = distance / length
+    if correlation == "gaussian":
+        continuum = np.exp(-(ratio**2) / 2)
+    elif correlation == "exponential":
+        continuum = np.exp(-ratio)
+    else:
+        continuum = (1 + np.sqrt(3) * ratio) * np.exp(-np.sqrt(3) * ratio)
+    samples = np.asarray(estimates) / sigma**2
+    covariance_axis.errorbar(
+        distance * 1e9,
+        samples.mean(axis=0),
+        yerr=samples.std(axis=0, ddof=1) / np.sqrt(ensemble_sampling.realizations),
+        fmt="o",
+        capsize=2,
+        color=color,
+        label=f"{label}: simulation",
+    )
+    covariance_axis.plot(distance * 1e9, discrete, color=color, linestyle="--")
+    covariance_axis.plot(distance * 1e9, continuum, color=color, linestyle=":")
+figure.colorbar(image, ax=axes, label="Index fluctuation δn", shrink=0.8)
+figure.suptitle("Seed 42 · same σn = 0.01 and ℓ = 60 nm · 20 nm voxels")
+covariance_axis.set(
+    xlabel="Separation along x (nm)",
+    ylabel="Covariance / σn²",
+    title="32 realizations: dashed = discrete synthesis; dotted = continuum",
+)
+covariance_axis.legend(frameon=False)
+covariance_axis.grid(alpha=0.25)
+plt.show()
