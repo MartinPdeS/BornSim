@@ -89,7 +89,7 @@ def test_invalid_solver_inputs():
         )
 
 
-def test_matplotlib_plotting_does_not_need_plotly(monkeypatch):
+def test_matplotlib_plotting_does_not_import_plotly(monkeypatch):
     original_import = builtins.__import__
 
     def without_plotly(name, *args, **kwargs):
@@ -126,7 +126,8 @@ def test_phase_function_normalization_and_rayleigh_limit():
     np.testing.assert_allclose(result.azimuth_average().phase_function.magnitude[0], phase)
 
 
-def test_3d_uniform_phase_is_a_sphere_and_polar_cut_is_closed():
+@pytest.mark.parametrize("backend", [None, "matplotlib"])
+def test_3d_uniform_phase_is_a_sphere_and_polar_cut_is_closed(backend):
     radius = 1 / (4 * np.pi)
     result = Result(
         source=Source(),
@@ -135,13 +136,24 @@ def test_3d_uniform_phase_is_a_sphere_and_polar_cut_is_closed():
         angles=[180, 90, 0] * ureg.degree,
         mu_s=np.array([2]) / ureg.meter,
     )
-    surface = result.plot_phase_function(view="3d")
-    axis = surface.axes[0]
-    assert axis.name == "3d"
-    np.testing.assert_allclose(axis.get_box_aspect(), np.repeat(axis.get_box_aspect()[0], 3))
-    colors = axis.collections[0].get_facecolors()
-    np.testing.assert_allclose(colors, np.broadcast_to(colors[0], colors.shape))
-    assert surface.axes[1].get_ylabel() == "p (sr⁻¹)"
+    surface = result.plot_phase_function(
+        view="3d",
+        backend=backend,
+    )
+    if backend is None:
+        trace = surface.data[0]
+        assert trace.type == "surface"
+        np.testing.assert_allclose(np.sqrt(trace.x**2 + trace.y**2 + trace.z**2), radius)
+        np.testing.assert_allclose(trace.surfacecolor, radius)
+        assert trace.colorbar.title.text == "p (sr⁻¹)"
+        assert surface.layout.scene.aspectmode == "data"
+    else:
+        axis = surface.axes[0]
+        assert axis.name == "3d"
+        np.testing.assert_allclose(axis.get_box_aspect(), np.repeat(axis.get_box_aspect()[0], 3))
+        colors = axis.collections[0].get_facecolors()
+        np.testing.assert_allclose(colors, np.broadcast_to(colors[0], colors.shape))
+        assert surface.axes[1].get_ylabel() == "p (sr⁻¹)"
     polar = result.plot_phase_function(view="polar").axes[0].lines[0]
     assert polar.get_xdata()[0] == 0
     assert polar.get_xdata()[-1] == 2 * np.pi
@@ -179,6 +191,7 @@ def test_plotting_rejects_invalid_views_orders_and_unavailable_norms():
         result.plot_phase_function(view="unknown")
     with pytest.raises(ValueError, match="log_y"):
         result.plot_phase_function(
+            backend="matplotlib",
             view="3d",
             log_y=True,
         )

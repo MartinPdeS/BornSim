@@ -107,6 +107,7 @@ preview_volume = medium.to_volume(
     seed=42,
 )
 medium_figure = preview_volume.plot_3d(
+    backend="matplotlib",
     mode="slices",
     field="delta_index",
 )

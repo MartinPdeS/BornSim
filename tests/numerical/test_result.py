@@ -266,6 +266,9 @@ def test_legacy_ensemble_3d_requires_directional_data_instead_of_assuming_symmet
         mu_s=[4 * np.pi],
     )
     with pytest.raises(ValueError, match="recompute with Solver.solve"):
-        result.plot_phase_function(view="3d")
+        result.plot_phase_function(
+            view="3d",
+            backend="matplotlib",
+        )
     # Existing angular data remain available without manufacturing azimuths.
     np.testing.assert_allclose(result.phase_function.magnitude, 1 / (4 * np.pi))

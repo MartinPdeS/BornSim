@@ -66,6 +66,7 @@ plt.show()
 # This is the finest grid. The index is constant throughout the sample;
 # orthogonal slices show the uniform cube and its physical extent.
 medium_figure = volume.plot_3d(
+    backend="matplotlib",
     mode="slices",
     field="index",
 )

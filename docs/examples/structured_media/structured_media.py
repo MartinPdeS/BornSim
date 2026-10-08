@@ -104,6 +104,7 @@ plt.show()
 # Inspect the deterministic layers and sphere before adding fluctuations.
 # Rotation is available with an interactive Matplotlib backend.
 medium_figure = structured.plot_3d(
+    backend="matplotlib",
     mode="slices",
     field="index",
 )
@@ -115,6 +116,7 @@ plt.show()
 # including the same seeded Matérn fluctuations as the scattering curves.
 # Call plt.show() to display the figure.
 medium_figure = combined.plot_3d(
+    backend="matplotlib",
     mode="slices",
     field="index",
 )

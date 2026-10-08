@@ -1,6 +1,6 @@
 include LICENSE README.rst CONTRIBUTING.md CITATION.cff .zenodo.json
 include makefile pytest.ini .coveragerc .pre-commit-config.yaml
-recursive-include docs *.py *.rst *.svg
+recursive-include docs *.py *.rst *.svg *.png
 recursive-include tests *.py
 recursive-include tools *.py
 recursive-include conda.recipe *.yaml

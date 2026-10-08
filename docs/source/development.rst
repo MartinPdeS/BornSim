@@ -41,7 +41,7 @@ arguments and delegate to internal helpers:
   schema, NPZ serialization and safe loading without pickle. Results are
   immutable and validated at construction; loading validates the archive.
 
-Import Matplotlib and optional Plotly only when a rendering method needs
+Import Matplotlib and Plotly only when a rendering method needs
 that backend. Rendering must preserve the stored data and SI units. Keep
 normalization mathematics on AngularData and angular integration on
 AngularSampling; renderers display those quantities without recomputing

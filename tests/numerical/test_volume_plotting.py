@@ -7,11 +7,6 @@ import pytest
 from bornsim import RandomMedium, Sphere, StructuredMedium, Volume
 
 
-@pytest.fixture
-def plotly_backend():
-    pytest.importorskip("plotly")
-
-
 def sample():
     return RandomMedium().to_volume(
         shape=(3, 4, 5),
@@ -67,11 +62,10 @@ def test_invalid_matplotlib_slice_settings(settings):
 
 
 @pytest.mark.parametrize("mode, trace_type", [("volume", "volume"), ("isosurface", "isosurface")])
-def test_plotly_values_coordinates_units_and_levels(mode, trace_type, plotly_backend):
+def test_default_plotly_values_coordinates_units_and_levels(mode, trace_type):
     volume = sample()
     before = volume.delta_index.copy()
     figure = volume.plot_3d(
-        backend="plotly",
         mode=mode,
         field="permittivity",
         length_unit="micrometer",
@@ -91,7 +85,7 @@ def test_plotly_values_coordinates_units_and_levels(mode, trace_type, plotly_bac
     np.testing.assert_array_equal(volume.delta_index, before)
 
 
-def test_increasing_volume_opacity_preserves_absolute_index_and_sample(plotly_backend):
+def test_increasing_volume_opacity_preserves_absolute_index_and_sample():
     volume = Volume(
         delta_index=np.linspace(-0.02, 0.03, 24).reshape(2, 3, 4),
         spacing=40e-9,
@@ -117,7 +111,7 @@ def test_increasing_volume_opacity_preserves_absolute_index_and_sample(plotly_ba
     "settings",
     [
         {"opacity_scale": "unknown"},
-        {"opacity_scale": "increasing"},
+        {"backend": "matplotlib", "opacity_scale": "increasing"},
         {"backend": "plotly", "mode": "slices", "opacity_scale": "increasing"},
         {"backend": "plotly", "mode": "isosurface", "opacity_scale": "increasing"},
     ],
@@ -128,7 +122,7 @@ def test_opacity_scale_requires_a_plotly_volume(settings):
         volume.plot_3d(**settings)
 
 
-def test_slices_use_requested_voxel_planes_and_shared_color_domain(plotly_backend):
+def test_slices_use_requested_voxel_planes_and_shared_color_domain():
     volume = sample()
     figure = volume.plot_3d(
         backend="plotly",
@@ -148,7 +142,7 @@ def test_slices_use_requested_voxel_planes_and_shared_color_domain(plotly_backen
 
 
 @pytest.mark.parametrize("opacity_scale", ["uniform", "increasing"])
-def test_uniform_medium_falls_back_to_visible_slices(opacity_scale, plotly_backend):
+def test_uniform_medium_falls_back_to_visible_slices(opacity_scale):
     volume = Volume(
         delta_index=np.zeros((2, 3, 4)),
         spacing=50e-9,
@@ -165,7 +159,7 @@ def test_uniform_medium_falls_back_to_visible_slices(opacity_scale, plotly_backe
     assert "δn=0" in figure.data[0].hovertemplate
 
 
-def test_structured_medium_and_html_export(tmp_path, plotly_backend):
+def test_structured_medium_and_html_export(tmp_path):
     volume = StructuredMedium(
         regions=[
             Sphere(
@@ -207,7 +201,7 @@ def test_invalid_visualization_settings(settings):
         sample().plot_3d(backend="plotly", **settings)
 
 
-def test_missing_optional_plotly_has_installation_guidance(monkeypatch):
+def test_matplotlib_backend_does_not_import_plotly(monkeypatch):
     original = builtins.__import__
 
     def without_plotly(name, globals=None, locals=None, fromlist=(), level=0):
@@ -216,13 +210,9 @@ def test_missing_optional_plotly_has_installation_guidance(monkeypatch):
         return original(name, globals, locals, fromlist, level)
 
     monkeypatch.setattr(builtins, "__import__", without_plotly)
-    figure = sample().plot_3d()
+    figure = sample().plot_3d(backend="matplotlib")
     figure.canvas.draw()
     assert figure.axes[0].name == "3d"
-    with pytest.raises(ImportError, match=r"BornSim\[visualization\]"):
-        sample().plot_3d(
-            backend="plotly",
-        )
 
 
 def test_matplotlib_3d_slices_preserve_every_cell_and_physical_extents(monkeypatch):
@@ -241,6 +231,7 @@ def test_matplotlib_3d_slices_preserve_every_cell_and_physical_extents(monkeypat
     volume = sample()
     before = volume.delta_index.copy()
     figure = volume.plot_3d(
+        backend="matplotlib",
         field="index",
         length_unit="micrometer",
         slice_indices=(0, 2, 4),
@@ -289,6 +280,7 @@ def test_matplotlib_voxels_show_the_sampled_sphere_mask(monkeypatch):
         spacing=50e-9,
     )
     figure = volume.plot_3d(
+        backend="matplotlib",
         mode="voxels",
         field="index",
     )
@@ -308,7 +300,7 @@ def test_matplotlib_uniform_medium_has_visible_geometry_and_single_color_tick(mo
         delta_index=np.zeros((2, 3, 4)),
         spacing=50e-9,
     )
-    figure = volume.plot_3d(mode=mode)
+    figure = volume.plot_3d(backend="matplotlib", mode=mode)
     figure.canvas.draw()
     assert figure.axes[0].collections
     np.testing.assert_array_equal(figure.axes[1].get_yticks(), [0])
@@ -318,8 +310,8 @@ def test_matplotlib_uniform_medium_has_visible_geometry_and_single_color_tick(mo
     "settings",
     [
         {"backend": "bad"},
-        {"mode": "volume"},
-        {"mode": "isosurface"},
+        {"backend": "matplotlib", "mode": "volume"},
+        {"backend": "matplotlib", "mode": "isosurface"},
         {"backend": "plotly", "mode": "voxels"},
         {"mode": "voxels", "slice_indices": (0, 0, 0)},
     ],

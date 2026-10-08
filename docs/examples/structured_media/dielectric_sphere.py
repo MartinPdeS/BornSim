@@ -78,6 +78,7 @@ volume = structure.to_volume(
 # The gallery captures this Matplotlib figure; plt.show() displays it locally.
 # Voxels show the actual staircase interface used by the solver.
 medium_figure = volume.plot_3d(
+    backend="matplotlib",
     mode="voxels",
     field="index",
 )
@@ -110,6 +111,7 @@ result = solver.solve(
 # coordinate. No realization or azimuth averaging is applied to the 3D view.
 # Check polar and azimuth quadrature refinement for quantitative calculations.
 phase_figure = result.plot_phase_function(
+    backend="matplotlib",
     view="3d",
 )
 plt.show()

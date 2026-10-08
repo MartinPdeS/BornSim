@@ -88,7 +88,7 @@ class _VolumePlotter:
     def plot_3d(
         self,
         *,
-        backend="matplotlib",
+        backend="plotly",
         mode=None,
         field="delta_index",
         length_unit="nanometer",
@@ -179,10 +179,8 @@ class _VolumePlotter:
                 opacity=alpha,
                 uniform=uniform,
             )
-        try:
-            import plotly.graph_objects as go
-        except ImportError as error:
-            raise ImportError("Install 'BornSim[visualization]' to use backend='plotly'.") from error
+        import plotly.graph_objects as go
+
         colorbar = {"title": label, **({"tickvals": [low]} if uniform else {})}
         hover = (
             f"x=%{{x:.4g}} {length_unit}<br>y=%{{y:.4g}} {length_unit}"

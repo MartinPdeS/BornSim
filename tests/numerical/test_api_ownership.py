@@ -167,7 +167,9 @@ def test_meridians_select_angles_without_interpolation_or_averaging():
     assert "90 degrees" in meridian.plot().axes[0].get_title()
     assert meridian.plot_phase_function().axes[0].get_ylabel()
     with pytest.raises(ValueError, match="full angular"):
-        meridian.plot_phase_function(view="3d")
+        meridian.plot_phase_function(
+            view="3d",
+        )
 
 
 def test_legacy_configuration_warns_and_keeps_values():

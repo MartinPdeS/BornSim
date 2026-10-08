@@ -13,7 +13,6 @@ does not recenter or rescale each realization to impose its mean or variance.
 Finite voxel resolution and the cropped synthesis box also affect statistics.
 """
 
-from importlib.util import find_spec
 import sys
 
 import matplotlib.pyplot as plt
@@ -82,16 +81,12 @@ plt.show()
 # The browser views show the same samples as the slices above. Low-index
 # regions are transparent and higher-index regions are more opaque. Opacity
 # does not represent absorption. Drag to rotate and scroll to zoom.
-# These views are exported with Plotly when the documentation is built with
-# the optional visualization extra. The Matplotlib examples require no Plotly.
-# Install ``BornSim[visualization]`` to enable these browser plots. Close the
-# first Matplotlib window to advance to these cells when running the script.
+# Plotly is installed with BornSim, and these browser views are included in
+# the documentation. Close the first Matplotlib window to advance to these
+# cells when running the script.
 # Pass ``--no-browser`` to construct the figures without opening browser tabs;
 # the documentation builder uses this option.
-plotly_available = find_spec("plotly") is not None
 show_browser = "--no-browser" not in sys.argv
-if not plotly_available:
-    print("Interactive 3D volumes need Plotly. Install it with: python -m pip install 'BornSim[visualization]'")
 
 # %%
 # Gaussian volume with increasing opacity
@@ -101,18 +96,16 @@ if not plotly_available:
 # .. raw:: html
 #
 #    <iframe src="../../_static/random-medium-gaussian.html" title="Gaussian random medium with increasing index opacity" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
-if plotly_available:
-    volume = volumes["gaussian"]
-    gaussian_figure = volume.plot_3d(
-        backend="plotly",
-        mode="volume",
-        field="index",
-        surface_count=16,
-        opacity=0.2,
-        opacity_scale="increasing",
-    )
-    if show_browser:
-        gaussian_figure.show(renderer="browser")
+volume = volumes["gaussian"]
+gaussian_figure = volume.plot_3d(
+    mode="volume",
+    field="index",
+    surface_count=16,
+    opacity=0.2,
+    opacity_scale="increasing",
+)
+if show_browser:
+    gaussian_figure.show(renderer="browser")
 
 # %%
 # Exponential volume with increasing opacity
@@ -122,18 +115,16 @@ if plotly_available:
 # .. raw:: html
 #
 #    <iframe src="../../_static/random-medium-exponential.html" title="Exponential random medium with increasing index opacity" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
-if plotly_available:
-    volume = volumes["exponential"]
-    exponential_figure = volume.plot_3d(
-        backend="plotly",
-        mode="volume",
-        field="index",
-        surface_count=16,
-        opacity=0.2,
-        opacity_scale="increasing",
-    )
-    if show_browser:
-        exponential_figure.show(renderer="browser")
+volume = volumes["exponential"]
+exponential_figure = volume.plot_3d(
+    mode="volume",
+    field="index",
+    surface_count=16,
+    opacity=0.2,
+    opacity_scale="increasing",
+)
+if show_browser:
+    exponential_figure.show(renderer="browser")
 
 # %%
 # Inspect the gaussian sample in 3D
@@ -142,6 +133,7 @@ if plotly_available:
 # Matplotlib permits rotation with an interactive backend.
 # Call plt.show() to display the figure; the gallery captures a static image.
 medium_figure = volumes["gaussian"].plot_3d(
+    backend="matplotlib",
     mode="slices",
     field="delta_index",
 )
@@ -153,6 +145,7 @@ plt.show()
 # Matplotlib permits rotation with an interactive backend.
 # Call plt.show() to display the figure; the gallery captures a static image.
 medium_figure = volumes["exponential"].plot_3d(
+    backend="matplotlib",
     mode="slices",
     field="delta_index",
 )

@@ -13,6 +13,6 @@ creating the next figure. Multiple axes comparing related data may share a
 single figure. This keeps each gallery image beside its plotting code and
 displays figures one at a time when running the scripts locally.
 
-Matplotlib works without Plotly. Rotation requires an interactive backend;
-the gallery captures static images. Optional browser views are available with
-``Volume.plot_3d(backend="plotly")`` and ``BornSim[visualization]``.
+Matplotlib rotation requires an interactive backend; the gallery captures
+static images. Plotly is included with BornSim for browser views through
+``Volume.plot_3d(backend="plotly")``.

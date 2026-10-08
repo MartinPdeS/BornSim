@@ -270,7 +270,10 @@ def test_single_structured_sample_phase_matches_unpolarized_dipole(centre):
     assert result.stderr is None
     assert result.kind == "volume"
     assert result.realizations is None
-    figure = result.plot_phase_function(view="3d")
+    figure = result.plot_phase_function(
+        view="3d",
+        backend="matplotlib",
+    )
     figure.canvas.draw()
     assert figure.axes[0].name == "3d"
 
@@ -347,7 +350,10 @@ def test_two_sphere_directional_phase_preserves_interference_and_3d_surface(monk
         return original(self, x, y, z, **kwargs)
 
     monkeypatch.setattr(Axes3D, "plot_surface", capture_surface)
-    figure = restored.plot_phase_function(view="3d")
+    figure = restored.plot_phase_function(
+        view="3d",
+        backend="matplotlib",
+    )
     figure.canvas.draw()
     np.testing.assert_allclose(captured["radius"][:, :-1], expected, rtol=1e-12)
     np.testing.assert_allclose(captured["radius"][:, -1], expected[:, 0], rtol=1e-12)

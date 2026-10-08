@@ -153,12 +153,18 @@ class _ResultPlotter:
             return f" · meridian phi = {degrees:g} degrees"
         return ""
 
-    def plot_phase_function(self, *, view="angular", order=None, log_y=False, azimuth=0):
+    def plot_phase_function(self, *, view="angular", order=None, log_y=False, azimuth=0, backend=None):
         """Render normalized densities while retaining directional 3D asymmetry."""
         if view != "angular" and getattr(self._result, "meridian_azimuth", None) is not None:
             raise ValueError("Use full angular data for polar or 3D plots; a selected meridian has only one side.")
         if view not in ("angular", "polar", "3d"):
             raise ValueError("view must be angular, polar, or 3d.")
+        if backend is None:
+            backend = "plotly" if view == "3d" else "matplotlib"
+        if backend not in ("matplotlib", "plotly"):
+            raise ValueError("backend must be matplotlib or plotly.")
+        if backend == "plotly" and view != "3d":
+            raise ValueError("The Plotly backend is only supported for the 3D phase view.")
         if log_y and view != "angular":
             raise ValueError("log_y is only supported for the angular view.")
         phase = self._result.phase_function.magnitude
@@ -189,7 +195,6 @@ class _ResultPlotter:
         )
         if insufficient_angular_coverage:
             raise ValueError("Polar and 3D views require at least three distinct angles spanning 0 to pi.")
-        plt = self._pyplot()
         title = (
             "Analytical phase function"
             if self._result.kind == "analytical"
@@ -198,9 +203,6 @@ class _ResultPlotter:
         meridian = self._select_azimuth(azimuth=azimuth)
         degrees = np.rad2deg(theta)
         if view == "3d":
-            from matplotlib.cm import ScalarMappable
-            from matplotlib.colors import Normalize
-
             selected = len(phase) - 1 if order is None else orders[0]
             if phase.ndim == 3:
                 phi = np.concatenate([self._result.azimuths.magnitude, [2 * np.pi]])
@@ -225,6 +227,39 @@ class _ResultPlotter:
             x = radius * sine * np.cos(phi)
             y = radius * sine * np.sin(phi)
             z = radius * np.cos(theta)[:, None]
+            if backend == "plotly":
+                import plotly.graph_objects as go
+
+                figure = go.Figure(
+                    data=[
+                        go.Surface(
+                            x=x,
+                            y=y,
+                            z=z,
+                            surfacecolor=radius,
+                            customdata=radius,
+                            colorscale="Viridis",
+                            cmin=0,
+                            cmax=float(radius.max()),
+                            colorbar={"title": "p (sr⁻¹)"},
+                            hovertemplate="Phase density p=%{customdata:.5g} sr⁻¹<extra></extra>",
+                        )
+                    ],
+                )
+                figure.update_layout(
+                    title=f"{title}<br>Through order {selected + 1} · {surface_label}",
+                    scene={
+                        "xaxis_title": "p ŝx (sr⁻¹)",
+                        "yaxis_title": "p ŝy (sr⁻¹)",
+                        "zaxis_title": "p ŝz (sr⁻¹); incidence +z",
+                        "aspectmode": "data",
+                    },
+                )
+                return figure
+            from matplotlib.cm import ScalarMappable
+            from matplotlib.colors import Normalize
+
+            plt = self._pyplot()
             norm = Normalize(vmin=0, vmax=float(radius.max()))
             cmap = plt.get_cmap("viridis")
             figure = plt.figure(figsize=(9, 6), layout="constrained")
@@ -250,6 +285,7 @@ class _ResultPlotter:
             axis.view_init(elev=20, azim=45)
             figure.colorbar(ScalarMappable(norm=norm, cmap=cmap), ax=axis, label="p (sr⁻¹)", shrink=0.75, pad=0.12)
         else:
+            plt = self._pyplot()
             opposite = None
             if phase.ndim == 3:
                 if view == "polar":

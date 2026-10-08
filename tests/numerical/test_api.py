@@ -56,7 +56,10 @@ def test_volume_preserves_amplitudes_and_interference():
             directions=directions,
         )
     with pytest.raises(ValueError, match="integrated mu_s"):
-        meridian.plot_phase_function(view="3d")
+        meridian.plot_phase_function(
+            view="3d",
+            backend="matplotlib",
+        )
     norms = result.plot_field_norms(log_y=False)
     np.testing.assert_array_equal(norms.axes[0].lines[0].get_ydata(), result.field_norms.magnitude)
     np.testing.assert_array_equal(norms.axes[0].lines[0].get_xdata(), [1, 2, 3])
@@ -116,9 +119,21 @@ def test_ensemble_preserves_seed_uncertainty_and_coefficients(realizations):
     assert len(phase_plot.axes[0].lines) == 1
     np.testing.assert_allclose(phase_plot.axes[0].lines[0].get_ydata(), phase[0, :, 0])
     assert not phase_plot.axes[0].containers
-    surface = result.plot_phase_function(view="3d")
+    surface = result.plot_phase_function(
+        view="3d",
+        backend="matplotlib",
+    )
     assert surface.axes[0].name == "3d"
     assert "Through order 2" in surface.axes[0].get_title()
+    interactive = result.plot_phase_function(view="3d")
+    trace = interactive.data[0]
+    expected_surface = np.concatenate([phase[-1], phase[-1, :, :1]], axis=-1)
+    np.testing.assert_allclose(trace.surfacecolor, expected_surface)
+    np.testing.assert_allclose(np.sqrt(trace.x**2 + trace.y**2 + trace.z**2), expected_surface)
+    assert trace.type == "surface"
+    assert "Through order 2" in interactive.layout.title.text
+    angular_surface = result.angular.plot_phase_function(view="3d")
+    np.testing.assert_allclose(angular_surface.data[0].surfacecolor, expected_surface)
     norms = result.plot_field_norms()
     assert len(norms.axes[0].lines) == realizations
     for index, trace in enumerate(norms.axes[0].lines):

@@ -104,7 +104,10 @@ plt.show()
 # -------------------------------------------
 # Inspect the pair's direction-space surface separately from the spatial
 # slice and meridian comparisons above, without azimuth averaging.
-phase_figure = pair_result.plot_phase_function(view="3d")
+phase_figure = pair_result.plot_phase_function(
+    view="3d",
+    backend="matplotlib",
+)
 phase_axis = phase_figure.axes[0]
 phase_axis.set_title("Two-sphere first-order phase density\nNo azimuth averaging")
 for coordinate_axis in (phase_axis.xaxis, phase_axis.yaxis, phase_axis.zaxis):

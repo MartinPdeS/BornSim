@@ -1,3 +1,9 @@
+.. image:: docs/source/_static/logo.png
+   :alt: BornSim logo
+   :width: 420
+
+.. documentation-content-start
+
 .. list-table::
    :widths: 35 65
    :header-rows: 1
@@ -254,9 +260,10 @@ scattering normalization.
 Three-dimensional media
 -----------------------
 
-``Volume.plot_3d()`` uses Matplotlib by default, with no additional dependency.
-Use orthogonal slices for random fields and ``mode="voxels"`` for sampled
-geometry such as spheres.
+``Volume.plot_3d()`` defaults to an interactive Plotly volume.
+``result.plot_phase_function(view="3d")`` defaults to a Plotly surface.
+Select ``backend="matplotlib"`` explicitly for static 3D figures, orthogonal
+slices, or sampled voxel geometry such as spheres.
 
 .. code-block:: python
 
@@ -272,6 +279,7 @@ geometry such as spheres.
         seed=42,
     )
     figure = volume.plot_3d(
+        backend="matplotlib",
         field="delta_index",
         length_unit="nanometer",
     )
@@ -279,8 +287,9 @@ geometry such as spheres.
 
 Matplotlib figures rotate with an interactive backend and can be exported
 with ``figure.savefig()``. The documentation gallery shows static 3D images.
-Install ``BornSim[visualization]`` and select ``backend="plotly"`` for browser
-interaction, volume/isosurface modes, and ``figure.write_html()`` exports.
+Plotly is included with BornSim and is the default for 3D views. Call
+``figure.show()`` for browser interaction or ``figure.write_html()`` to export
+an interactive view. Angular and polar result plots use Matplotlib.
 See the medium visualization documentation for units and rendering conventions.
 
 Numerical Born series

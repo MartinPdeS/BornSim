@@ -96,17 +96,18 @@ estimate of random sampling uncertainty.
 Three-dimensional media
 -----------------------
 
-``Volume.plot_3d()`` returns a Matplotlib figure by default. It needs no
-additional dependency and works for generated random fields, structured
-samples, and custom voxel arrays. Use ``plt.show()`` to display figures or
-``figure.savefig()`` to export PNG, SVG, or PDF. Rotation is available with
-an interactive Matplotlib backend; the documentation gallery displays static
-images. Constructing a figure opens no window.
+``Volume.plot_3d()`` returns a Plotly volume by default for generated random
+fields, structured samples, and custom voxel arrays. Call ``figure.show()``
+to display it or ``figure.write_html()`` to export an interactive view.
+Select ``backend="matplotlib"`` for static figures, then use ``plt.show()``
+or ``figure.savefig()``. Static gallery figures select Matplotlib explicitly.
+Constructing a figure opens no window.
 
 Random fields and orthogonal slices
 -----------------------------------
 
-The default ``mode="slices"`` shows one voxel plane along each axis. All selected
+With ``backend="matplotlib"``, the default ``mode="slices"`` shows one voxel
+plane along each axis. Plotly also supports explicit ``mode="slices"``. All selected
 cells are retained, with voxel-edge extents and a shared color scale. Select
 specific planes with ``slice_indices``; otherwise the middle voxels are used.
 
@@ -128,6 +129,7 @@ specific planes with ``slice_indices``; otherwise the middle voxels are used.
        seed=42,
    )
    figure = volume.plot_3d(
+       backend="matplotlib",
        field="delta_index",
        slice_indices=(4, 8, 12),
        length_unit="nanometer",
@@ -163,6 +165,7 @@ slices. For an entirely zero field, voxels display the full uniform box.
        ),
    )
    figure = volume.plot_3d(
+       backend="matplotlib",
        mode="voxels",
        field="index",
    )
@@ -203,6 +206,7 @@ is the random statistics' uniform background index.
        seed=42,
    )
    figure = volume.plot_3d(
+       backend="matplotlib",
        mode="slices",
        field="index",
    )
@@ -210,12 +214,13 @@ is the random statistics' uniform background index.
 
    plt.show()
 
-Optional Plotly backend
------------------------
+Plotly browser backend
+----------------------
 
 For browser rotation, hover values, volume level surfaces, and interactive HTML
-exports, install the optional ``BornSim[visualization]`` extra. It is not needed
-for the standard examples, documentation build, or Matplotlib plots.
+exports, select ``backend="plotly"``. Plotly is installed with BornSim;
+Plotly is the default for 3D views; angular and polar result plots use
+Matplotlib.
 
 Interactive random-medium volumes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -233,8 +238,8 @@ The following views use the same Gaussian and exponential samples as
 :doc:`auto_examples/random_media/random_medium`: seed 42, 16 voxels per axis,
 25 nm spacing, index standard deviation 0.01, and correlation length 75 nm.
 Drag to rotate and scroll to zoom. Each view includes Plotly and works offline.
-Interactive views are generated when the documentation is built with the
-optional visualization extra; builds without it retain the Matplotlib gallery.
+Interactive views are generated during the documentation build alongside
+the Matplotlib gallery.
 
 Gaussian covariance
 ^^^^^^^^^^^^^^^^^^^
@@ -249,10 +254,6 @@ Exponential covariance
 .. raw:: html
 
    <iframe src="_static/random-medium-exponential.html" title="Exponential random medium with increasing index opacity" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
-
-.. code-block:: console
-
-   .venv/bin/python -m pip install -e ".[visualization]"
 
 .. code-block:: python
 

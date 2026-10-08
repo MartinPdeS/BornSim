@@ -90,6 +90,7 @@ plt.show()
 # Matplotlib permits rotation with an interactive backend.
 # Call plt.show() to display the figure; the gallery captures a static image.
 medium_figure = volume.plot_3d(
+    backend="matplotlib",
     mode="slices",
     field="delta_index",
 )

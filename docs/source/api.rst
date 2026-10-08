@@ -176,7 +176,8 @@ these quantities with unit-vector coordinates in a read-only ``AngularData``.
 .. code-block:: python
 
    result = solver.solve(target=volume)
-   result.plot_phase_function(view="3d")
+   phase_figure = result.plot_phase_function(view="3d")
+   phase_figure.show()
    averaged = result.azimuth_average()
    averaged.plot()
    cut = solver.solve_cut(

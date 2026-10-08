@@ -470,7 +470,7 @@ class Result:
             )
         return self.phase_function
 
-    def plot_phase_function(self, *, view="angular", order=None, log_y=False, azimuth=0):
+    def plot_phase_function(self, *, view="angular", order=None, log_y=False, azimuth=0, backend=None):
         """Plot normalized phase functions as angular curves, polar cuts, or a surface.
 
         Parameters
@@ -486,12 +486,16 @@ class Result:
         log_y : bool, optional
             Logarithmic vertical scale for angular curves. Default is False;
             only supported with ``view='angular'``.
+        backend : {'plotly', 'matplotlib'}, optional
+            The 3D view defaults to Plotly. Angular and polar views use
+            Matplotlib. Select 'matplotlib' explicitly for a static 3D figure.
 
         Returns
         -------
-        figure : matplotlib.figure.Figure
-            Figure registered with pyplot, returned without displaying it.
-            Call ``matplotlib.pyplot.show()`` to display it. The 3D coordinates are probability-density radii, not spatial positions.
+        figure : matplotlib.figure.Figure or plotly.graph_objects.Figure
+            Returned without displaying it. Call ``figure.show()`` for Plotly,
+            or ``matplotlib.pyplot.show()`` for Matplotlib. The 3D coordinates
+            are probability-density radii, not spatial positions.
 
         Raises
         ------
@@ -520,8 +524,8 @@ class Result:
 
         >>> result = solver.solve(target=AnalyticalMedium())
         >>> figure = result.plot_phase_function(view="3d")
-        >>> figure.axes[0].name
-        '3d'
+        >>> figure.data[0].type
+        'surface'
         """
         from ._result_plotting import _ResultPlotter
 
@@ -532,6 +536,7 @@ class Result:
             order=order,
             log_y=log_y,
             azimuth=azimuth,
+            backend=backend,
         )
 
     def plot_field_norms(self, *, log_y=True):

@@ -20,6 +20,12 @@ extensions = [
     "sphinx_gallery.gen_gallery",
 ]
 html_theme = "pydata_sphinx_theme"
+html_static_path = ["_static"]
+html_logo = "_static/logo.png"
+html_favicon = "_static/favicon.png"
+html_theme_options = {
+    "logo": {"alt_text": "BornSim"},
+}
 exclude_patterns = []
 autodoc_typehints = "description"
 napoleon_google_docstring = False
@@ -47,27 +53,13 @@ sphinx_gallery_conf = {
 
 
 def write_interactive_media(app, exception):
-    """Export optional browser views without requiring Plotly for docs builds."""
+    """Export browser volume views for HTML documentation builds."""
     if exception is not None or app.builder.format != "html":
         return
     from pathlib import Path
 
     output = Path(app.outdir) / "_static"
     output.mkdir(exist_ok=True)
-    try:
-        import plotly  # noqa: F401
-    except ImportError:
-        message = (
-            "<!doctype html><html lang='en'><meta charset='utf-8'>"
-            "<title>Interactive random medium</title><body>"
-            "<p>This documentation build includes Matplotlib views. "
-            "To enable interactive volumes, install BornSim[visualization] "
-            "and rebuild the documentation.</p></body></html>"
-        )
-        for correlation in ("gaussian", "exponential"):
-            (output / f"random-medium-{correlation}.html").write_text(message, encoding="utf-8")
-        return
-
     from bornsim import Grid, RandomMedium
 
     grid = Grid(

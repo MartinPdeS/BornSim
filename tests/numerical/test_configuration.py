@@ -91,7 +91,10 @@ def test_full_solve_retains_coherent_directional_amplitudes_normalization_and_ar
         restored.directional_phase_function.magnitude, result.directional_phase_function.magnitude
     )
     assert restored.provenance["sampling"] == sampling.metadata
-    figure = restored.plot_phase_function(view="3d")
+    figure = restored.plot_phase_function(
+        view="3d",
+        backend="matplotlib",
+    )
     figure.canvas.draw()
 
 

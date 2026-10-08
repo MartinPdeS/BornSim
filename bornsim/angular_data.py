@@ -231,7 +231,7 @@ class AngularData:
             azimuth=azimuth,
         )
 
-    def plot_phase_function(self, *, view="angular", order=None, log_y=False, azimuth=0):
+    def plot_phase_function(self, *, view="angular", order=None, log_y=False, azimuth=0, backend=None):
         """Plot normalized directional densities with the same Result interface."""
         from ._result_plotting import _ResultPlotter
 
@@ -240,6 +240,7 @@ class AngularData:
             order=order,
             log_y=log_y,
             azimuth=azimuth,
+            backend=backend,
         )
 
     def __repr__(self):

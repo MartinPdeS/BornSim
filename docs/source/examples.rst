@@ -112,7 +112,8 @@ norms can still be plotted directly.
    result.plot()  # Differential scattering
    result.plot_phase_function()  # Density per steradian
    result.plot_phase_function(view="polar")
-   result.plot_phase_function(view="3d")
+   phase_figure = result.plot_phase_function(view="3d")
+   phase_figure.show()
    numerical.plot_field_norms()  # Per-realization diagnostics
    plt.show()
 

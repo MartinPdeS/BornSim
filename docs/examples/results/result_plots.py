@@ -68,7 +68,10 @@ plt.show()
 # -------------------------------------
 # Plot the sampled polar and azimuth directions without azimuth averaging.
 # Here four realizations contribute to the ensemble intensity average.
-result.plot_phase_function(view="3d")
+result.plot_phase_function(
+    view="3d",
+    backend="matplotlib",
+)
 plt.show()
 
 # %%
@@ -94,6 +97,7 @@ plt.show()
 # Matplotlib permits rotation with an interactive backend.
 # Call plt.show() to display the figure; the gallery captures a static image.
 medium_figure = volume.plot_3d(
+    backend="matplotlib",
     mode="slices",
     field="delta_index",
 )

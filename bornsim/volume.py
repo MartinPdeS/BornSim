@@ -216,7 +216,7 @@ class Volume:
     def plot_3d(
         self,
         *,
-        backend="matplotlib",
+        backend="plotly",
         mode=None,
         field="delta_index",
         length_unit="nanometer",
@@ -230,8 +230,8 @@ class Volume:
         Parameters
         ----------
         backend : {'matplotlib', 'plotly'}, optional
-            Default Matplotlib needs no additional dependency. Plotly requires
-            the optional visualization extra and supports browser interaction.
+            Default is Plotly for browser interaction. Select 'matplotlib'
+            explicitly for a Matplotlib figure.
         mode : str, optional
             Matplotlib supports 'slices' (default) and 'voxels'. Voxels display
             cells with nonzero index contrast, or the full box for a zero field.
@@ -269,9 +269,6 @@ class Volume:
 
         Raises
         ------
-        ImportError
-            If the optional Plotly dependency is unavailable. Install
-            ``BornSim[visualization]`` to enable backend='plotly'.
         ValueError
             If a mode, scalar field, display unit, or rendering setting is invalid.
 
