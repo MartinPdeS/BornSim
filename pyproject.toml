@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "BornSim"
-version = "0.2.3"
+version = "0.2.4"
 description = "Vector Born-series scattering from continuous random dielectric media"
 readme = "README.rst"
 license = "MIT"
