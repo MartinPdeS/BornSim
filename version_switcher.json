@@ -1,25 +1,22 @@
 [
-{
-  "name": "latest",
-  "version": "latest",
-  "url": "https://martinpdes.github.io/BornSim/docs/latest"
-}
-,
-{
-  "name": "v0.2.1",
-  "version": "v0.2.1",
-  "url": "https://martinpdes.github.io/BornSim/docs/v0.2.1"
-}
-,
-{
-  "name": "v0.2.0",
-  "version": "v0.2.0",
-  "url": "https://martinpdes.github.io/BornSim/docs/v0.2.0"
-}
-,
-{
-  "name": "0.0.0.0",
-  "version": "0.0.0.0",
-  "url": "https://martinpdes.github.io/BornSim/docs/0.0.0.0"
-}
+  {
+    "name": "latest",
+    "version": "latest",
+    "url": "https://martinpdes.github.io/BornSim/docs/latest"
+  },
+  {
+    "name": "v0.2.1",
+    "version": "v0.2.1",
+    "url": "https://martinpdes.github.io/BornSim/docs/v0.2.1"
+  },
+  {
+    "name": "v0.2.0",
+    "version": "v0.2.0",
+    "url": "https://martinpdes.github.io/BornSim/docs/v0.2.0"
+  },
+  {
+    "name": "0.0.0.0",
+    "version": "0.0.0.0",
+    "url": "https://martinpdes.github.io/BornSim/docs/0.0.0.0"
+  }
 ]
