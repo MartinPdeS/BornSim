@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Compare numerical Born orders &#8212; BornSim 0.2.4 documentation</title>
+    <title>Compare numerical Born orders &#8212; BornSim 0.2.5 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=6ffd866b"></script>
+    <script src="../../_static/documentation_options.js?v=cb850272"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -64,7 +64,7 @@
     <link rel="prev" title="Born orders and interference" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.4" />
+  <meta name="docsearch:version" content="0.2.5" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -495,7 +495,9 @@ The numerical ensemble retains amplitude interference and sampling errors.
 Integrated coefficients describe finite samples rather than an infinite
 medium. Error bars describe realization sampling, not discretization error.
 Field-term diagnostics alone do not certify convergence.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="nn">.</span><span class="nn">pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span><span class="w">
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span><span class="w">
+</span><span class="w">
+</span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="nn">.</span><span class="nn">pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span><span class="w">
 </span><span class="w">
 </span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.ensemble_sampling.EnsembleSampling" title="bornsim.EnsembleSampling"><span class="n">EnsembleSampling</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">Grid</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.media.RandomMedium" title="bornsim.RandomMedium"><span class="n">RandomMedium</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.solver.Solver" title="bornsim.Solver"><span class="n">Solver</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">Source</span></a><span class="w">
 </span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="nn">.</span><span class="nn">units</span><span class="w"> </span><span class="kn">import</span> <span class="n">ureg</span><span class="w">
@@ -545,20 +547,21 @@ terms alone do not certify convergence of the Born series.</p>
 <h2>Inspect one ensemble realization in 3D<a class="headerlink" href="#inspect-one-ensemble-realization-in-3d" title="Link to this heading">#</a></h2>
 <p>This is the first realization (seed 42) on the calculation grid,
 not an ensemble average or an infinite-medium material boundary.
-Matplotlib permits rotation with an interactive backend.
-Call plt.show() to display the figure; the gallery captures a static image.</p>
+Drag to rotate and scroll to zoom in the embedded browser view.
+Higher-index regions are more opaque; opacity is not absorption.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">preview_volume</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.media.RandomMedium.to_volume" title="bornsim.RandomMedium.to_volume"><span class="n">medium</span><span class="o">.</span><span class="n">to_volume</span></a><span class="p">(</span><span class="w">
 </span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="p">,</span><span class="w">
 </span>    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
 </span><span class="n">medium_figure</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.volume.Volume.plot_3d" title="bornsim.Volume.plot_3d"><span class="n">preview_volume</span><span class="o">.</span><span class="n">plot_3d</span></a><span class="p">(</span><span class="w">
-</span>    <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">matplotlib</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">slices</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>    <span class="n">field</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">delta_index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">volume</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">field</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">opacity_scale</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">increasing</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
-</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="k">if</span> <span class="s2">&quot;</span><span class="s2">--no-browser</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span><span class="w">
+</span>    <span class="n">medium_figure</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">renderer</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">browser</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<img src="../../_images/sphx_glr_compare_orders_003.png" srcset="../../_images/sphx_glr_compare_orders_003.png" alt="Index fluctuation δn: slices" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.003 seconds)</p>
+<iframe src="../../_static/gallery/compare_orders-1.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.690 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-born-orders-compare-orders-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/4128799c509e1616c1a7ea57a2006f3b/compare_orders.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">compare_orders.ipynb</span></code></a></p>

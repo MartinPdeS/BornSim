@@ -31,14 +31,15 @@ The two spheres are nonoverlapping. Their material index is 1.34 in a 1.33
 background; all calculations retain the linearized dielectric contrast.
 A 20 nm voxel grid is illustrative, not a claim of converged sphere geometry.
 
-.. GENERATED FROM PYTHON SOURCE LINES 15-102
+.. GENERATED FROM PYTHON SOURCE LINES 15-103
 
 .. code-block:: Python
 
 
+    import sys
+
     import matplotlib.pyplot as plt
     import numpy as np
-    from matplotlib.ticker import MaxNLocator
 
     from bornsim import AngularSampling, Grid, Material, Solver, Source, Sphere, StructuredMedium
     from bornsim.units import ureg
@@ -140,33 +141,29 @@ A 20 nm voxel grid is illustrative, not a claim of converged sphere geometry.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 103-107
+.. GENERATED FROM PYTHON SOURCE LINES 104-108
 
 Three-dimensional directional phase density
 -------------------------------------------
 Inspect the pair's direction-space surface separately from the spatial
 slice and meridian comparisons above, without azimuth averaging.
 
-.. GENERATED FROM PYTHON SOURCE LINES 107-116
+.. GENERATED FROM PYTHON SOURCE LINES 108-114
 
 .. code-block:: Python
 
     phase_figure = pair_result.plot_phase_function(
         view="3d",
-        backend="matplotlib",
     )
-    phase_axis = phase_figure.axes[0]
-    phase_axis.set_title("Two-sphere first-order phase density\nNo azimuth averaging")
-    for coordinate_axis in (phase_axis.xaxis, phase_axis.yaxis, phase_axis.zaxis):
-        coordinate_axis.set_major_locator(MaxNLocator(nbins=3))
-    plt.show()
+    phase_figure.update_layout(title="Two-sphere first-order phase density · no azimuth averaging")
+    if "--no-browser" not in sys.argv:
+        phase_figure.show(renderer="browser")
 
 
 
-.. image-sg:: /auto_examples/structured_media/images/sphx_glr_theory_directional_interference_002.png
-   :alt: Two-sphere first-order phase density No azimuth averaging
-   :srcset: /auto_examples/structured_media/images/sphx_glr_theory_directional_interference_002.png
-   :class: sphx-glr-single-img
+.. raw:: html
+
+   <iframe src="../../_static/gallery/theory_directional_interference-1.html" title="Two-sphere first-order phase density · no azimuth averaging" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
 
 
 
@@ -175,7 +172,7 @@ slice and meridian comparisons above, without azimuth averaging.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 5.152 seconds)
+   **Total running time of the script:** (0 minutes 4.878 seconds)
 
 
 .. _sphx_glr_download_auto_examples_structured_media_theory_directional_interference.py:

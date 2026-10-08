@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>BornSim &#8212; BornSim 0.2.4 documentation</title>
+    <title>BornSim &#8212; BornSim 0.2.5 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="_static/documentation_options.js?v=6ffd866b"></script>
+    <script src="_static/documentation_options.js?v=cb850272"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/sg-tags.js?v=d80f6fa4"></script>
@@ -64,7 +64,7 @@
     <link rel="prev" title="Theory and numerical methods" href="theory.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.4" />
+  <meta name="docsearch:version" content="0.2.5" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -717,8 +717,7 @@ scattering normalization.</p>
 <code class="docutils literal notranslate"><span class="pre">result.plot_phase_function(view=&quot;3d&quot;)</span></code> defaults to a Plotly surface.
 Select <code class="docutils literal notranslate"><span class="pre">backend=&quot;matplotlib&quot;</span></code> explicitly for static 3D figures, orthogonal
 slices, or sampled voxel geometry such as spheres.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">RandomMedium</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">RandomMedium</span>
 
 <span class="n">medium</span> <span class="o">=</span> <span class="n">RandomMedium</span><span class="p">()</span>
 <span class="n">volume</span> <span class="o">=</span> <span class="n">medium</span><span class="o">.</span><span class="n">to_volume</span><span class="p">(</span>
@@ -729,15 +728,15 @@ slices, or sampled voxel geometry such as spheres.</p>
     <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">figure</span> <span class="o">=</span> <span class="n">volume</span><span class="o">.</span><span class="n">plot_3d</span><span class="p">(</span>
-    <span class="n">backend</span><span class="o">=</span><span class="s2">"matplotlib"</span><span class="p">,</span>
-    <span class="n">field</span><span class="o">=</span><span class="s2">"delta_index"</span><span class="p">,</span>
+    <span class="n">field</span><span class="o">=</span><span class="s2">"index"</span><span class="p">,</span>
+    <span class="n">opacity_scale</span><span class="o">=</span><span class="s2">"increasing"</span><span class="p">,</span>
     <span class="n">length_unit</span><span class="o">=</span><span class="s2">"nanometer"</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">figure</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Matplotlib figures rotate with an interactive backend and can be exported
-with <code class="docutils literal notranslate"><span class="pre">figure.savefig()</span></code>. The documentation gallery shows static 3D images.
+with <code class="docutils literal notranslate"><span class="pre">figure.savefig()</span></code>. The documentation gallery embeds interactive 3D volumes and phase surfaces.
 Plotly is included with BornSim and is the default for 3D views. Call
 <code class="docutils literal notranslate"><span class="pre">figure.show()</span></code> for browser interaction or <code class="docutils literal notranslate"><span class="pre">figure.write_html()</span></code> to export
 an interactive view. Angular and polar result plots use Matplotlib.

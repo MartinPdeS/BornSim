@@ -27,10 +27,12 @@ independent of the integration nodes: adding points to an angular plot does
 not refine the integral. The finest calculation is a numerical reference,
 not an exact solution, and both quadrature axes need checking independently.
 
-.. GENERATED FROM PYTHON SOURCE LINES 11-45
+.. GENERATED FROM PYTHON SOURCE LINES 11-47
 
 .. code-block:: Python
 
+
+    import sys
 
     import matplotlib.pyplot as plt
     import numpy as np
@@ -72,14 +74,14 @@ not an exact solution, and both quadrature axes need checking independently.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 46-50
+.. GENERATED FROM PYTHON SOURCE LINES 48-52
 
 Refine one angular axis at a time
 ---------------------------------
 Identical consecutive seeds give the same volumes in every calculation.
 Voxel and finite-sample errors remain fixed throughout this comparison.
 
-.. GENERATED FROM PYTHON SOURCE LINES 50-98
+.. GENERATED FROM PYTHON SOURCE LINES 52-100
 
 .. code-block:: Python
 
@@ -143,16 +145,16 @@ Voxel and finite-sample errors remain fixed throughout this comparison.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 99-105
+.. GENERATED FROM PYTHON SOURCE LINES 101-107
 
 Inspect one ensemble realization in 3D
 --------------------------------------
 This is the first realization (seed 42) on the calculation grid,
 not an ensemble average or an infinite-medium material boundary.
-Matplotlib permits rotation with an interactive backend.
-Call plt.show() to display the figure; the gallery captures a static image.
+Drag to rotate and scroll to zoom in the embedded browser view.
+Higher-index regions are more opaque; opacity is not absorption.
 
-.. GENERATED FROM PYTHON SOURCE LINES 105-115
+.. GENERATED FROM PYTHON SOURCE LINES 107-118
 
 .. code-block:: Python
 
@@ -161,18 +163,18 @@ Call plt.show() to display the figure; the gallery captures a static image.
         seed=42,
     )
     medium_figure = preview_volume.plot_3d(
-        backend="matplotlib",
-        mode="slices",
-        field="delta_index",
+        mode="volume",
+        field="index",
+        opacity_scale="increasing",
     )
-    plt.show()
+    if "--no-browser" not in sys.argv:
+        medium_figure.show(renderer="browser")
 
 
 
-.. image-sg:: /auto_examples/validation/images/sphx_glr_angular_convergence_002.png
-   :alt: Index fluctuation δn: slices
-   :srcset: /auto_examples/validation/images/sphx_glr_angular_convergence_002.png
-   :class: sphx-glr-single-img
+.. raw:: html
+
+   <iframe src="../../_static/gallery/angular_convergence-1.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
 
 
 
@@ -181,7 +183,7 @@ Call plt.show() to display the figure; the gallery captures a static image.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.116 seconds)
+   **Total running time of the script:** (0 minutes 0.663 seconds)
 
 
 .. _sphx_glr_download_auto_examples_validation_angular_convergence.py:

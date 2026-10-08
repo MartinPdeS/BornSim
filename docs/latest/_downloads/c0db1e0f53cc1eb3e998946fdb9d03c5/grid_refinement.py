@@ -8,6 +8,8 @@ so this example isolates voxel midpoint-quadrature error. It does not test
 higher-order Green-tensor discretization or random-field synthesis.
 """
 
+import sys
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -61,13 +63,14 @@ plt.show()
 # Inspect the medium in 3D
 # ------------------------
 # Inspect the actual finite input sample with physical spatial axes.
-# Matplotlib permits rotation with an interactive backend.
-# Call plt.show() to display the figure; the gallery captures a static image.
+# Drag to rotate and scroll to zoom in the embedded browser view.
+# Higher-index regions are more opaque; opacity is not absorption.
 # This is the finest grid. The index is constant throughout the sample;
 # orthogonal slices show the uniform cube and its physical extent.
 medium_figure = volume.plot_3d(
-    backend="matplotlib",
-    mode="slices",
+    mode="volume",
     field="index",
+    opacity_scale="increasing",
 )
-plt.show()
+if "--no-browser" not in sys.argv:
+    medium_figure.show(renderer="browser")

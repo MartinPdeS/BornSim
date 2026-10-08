@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Examples &#8212; BornSim 0.2.4 documentation</title>
+    <title>Examples &#8212; BornSim 0.2.5 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="_static/documentation_options.js?v=6ffd866b"></script>
+    <script src="_static/documentation_options.js?v=cb850272"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/sg-tags.js?v=d80f6fa4"></script>
@@ -65,7 +65,7 @@
     <link rel="prev" title="BornSim" href="overview.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.4" />
+  <meta name="docsearch:version" content="0.2.5" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -552,8 +552,9 @@ limit with a longer covariance length.</p>
 spatial covariance at the same length parameter, showing both covariance
 profiles and their analytical phase functions. These length parameters have
 different definitions; equal values do not describe identical statistics.</p>
-<p><a class="reference internal" href="auto_examples/random_media/random_medium.html"><span class="doc">Visualize seeded three-dimensional random media</span></a> visualizes central slices and voxel
-histograms from seeded three-dimensional volumes. It distinguishes the
+<p><a class="reference internal" href="auto_examples/random_media/random_medium.html"><span class="doc">Visualize seeded three-dimensional random media</span></a> leads with interactive Gaussian
+and exponential volumes whose higher-index regions are more opaque. Central
+slices and voxel histograms follow as diagnostic checks. It distinguishes the
 Gaussian one-point probability distribution from the choice of spatial
 covariance, and explains why a finite correlated sample need not have
 exactly the ensemble mean or variance.</p>
@@ -593,8 +594,8 @@ the anisotropy <code class="docutils literal notranslate"><span class="pre">g</s
 uses the analytical infinite-medium model. A single random volume’s angular
 cut is insufficient to normalize a phase function over solid angle.</p>
 </section>
-<section id="matplotlib-result-plots-and-3d-directions">
-<h2>Matplotlib result plots and 3D directions<a class="headerlink" href="#matplotlib-result-plots-and-3d-directions" title="Link to this heading">#</a></h2>
+<section id="result-plots-and-interactive-3d-directions">
+<h2>Result plots and interactive 3D directions<a class="headerlink" href="#result-plots-and-interactive-3d-directions" title="Link to this heading">#</a></h2>
 <p>The medium occupies three spatial dimensions. Scattering directions lie on
 the unit sphere and are described by polar angle <code class="docutils literal notranslate"><span class="pre">theta</span></code> and azimuth
 <code class="docutils literal notranslate"><span class="pre">phi</span></code>. For the isotropic analytical medium under unpolarized illumination,
@@ -633,9 +634,10 @@ norms can still be plotted directly.</p>
 Normalized phase plots do not infer errors by dividing those bars by the
 mean total coefficient: uncertainty in a ratio also depends on numerator-
 denominator covariance, which is not retained in the result.</p>
-<p>See <a class="reference internal" href="auto_examples/results/result_plots.html"><span class="doc">Matplotlib result plots in 3D</span></a> for direct result plotting calls and
-Matplotlib figures, including the 3D phase-function surface. Sphinx Gallery
-executes the examples and captures their figures when the documentation is built.</p>
+<p>See <a class="reference internal" href="auto_examples/results/result_plots.html"><span class="doc">Result plots and interactive 3D views</span></a> for direct result plotting calls and
+Matplotlib angular figures and an interactive 3D phase-function surface.
+Sphinx Gallery executes the examples and embeds interactive Plotly volumes
+and surfaces alongside their cells when the documentation is built.</p>
 </section>
 <section id="coherent-terms-and-reusable-results">
 <h2>Coherent terms and reusable results<a class="headerlink" href="#coherent-terms-and-reusable-results" title="Link to this heading">#</a></h2>
@@ -708,7 +710,7 @@ seeds and numerical settings.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#random-media">Random media</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#structured-media">Structured media</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#normalized-phase-function">Normalized phase function</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#matplotlib-result-plots-and-3d-directions">Matplotlib result plots and 3D directions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#result-plots-and-interactive-3d-directions">Result plots and interactive 3D directions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#coherent-terms-and-reusable-results">Coherent terms and reusable results</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#numerical-validation">Numerical validation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#theory-illustrations">Theory illustrations</a></li>

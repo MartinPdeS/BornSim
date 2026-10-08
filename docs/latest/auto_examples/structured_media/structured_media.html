@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Layers and scatterers with numerical random fluctuations &#8212; BornSim 0.2.4 documentation</title>
+    <title>Layers and scatterers with numerical random fluctuations &#8212; BornSim 0.2.5 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=6ffd866b"></script>
+    <script src="../../_static/documentation_options.js?v=cb850272"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -64,7 +64,7 @@
     <link rel="prev" title="A dielectric sphere in a homogeneous background" href="dielectric_sphere.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.4" />
+  <meta name="docsearch:version" content="0.2.5" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -499,7 +499,9 @@ sample with edges, not an infinite planar stack calculation.</p>
 smoothness convention is <code class="docutils literal notranslate"><span class="pre">x=sqrt(2*nu)*r/ell</span></code>; probability statistics remain
 Gaussian. A composed manual volume does not retain inferred generation
 metadata: keep the ingredients and seed for reproducibility.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="nn">.</span><span class="nn">pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span><span class="w">
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span><span class="w">
+</span><span class="w">
+</span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="nn">.</span><span class="nn">pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span><span class="w">
 </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span><span class="w">
 </span><span class="w">
 </span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">Grid</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.geometry.Layer" title="bornsim.Layer"><span class="n">Layer</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.media.RandomMedium" title="bornsim.RandomMedium"><span class="n">RandomMedium</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.solver.Solver" title="bornsim.Solver"><span class="n">Solver</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">Source</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.geometry.Sphere" title="bornsim.Sphere"><span class="n">Sphere</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.geometry.StructuredMedium" title="bornsim.StructuredMedium"><span class="n">StructuredMedium</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">Volume</span></a><span class="w">
@@ -553,8 +555,38 @@ metadata: keep the ingredients and seed for reproducibility.</p>
 </span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="p">,</span><span class="w">
 </span>    <span class="n">background_index</span><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.geometry.StructuredMedium" title="bornsim.StructuredMedium"><span class="n">structure</span></a><span class="o">.</span><span class="n">background_index</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
-</span><span class="w">
-</span><span class="n">figure</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">constrained</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<section id="inspect-the-structured-medium-in-3d">
+<h2>Inspect the structured medium in 3D<a class="headerlink" href="#inspect-the-structured-medium-in-3d" title="Link to this heading">#</a></h2>
+<p>Inspect the deterministic layers and sphere before adding fluctuations.
+Drag to rotate and scroll to zoom in the embedded browser volume.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">medium_figure</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.volume.Volume.plot_3d" title="bornsim.Volume.plot_3d"><span class="n">structured</span><span class="o">.</span><span class="n">plot_3d</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">volume</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">field</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">opacity_scale</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">increasing</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="k">if</span> <span class="s2">&quot;</span><span class="s2">--no-browser</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span><span class="w">
+</span>    <span class="n">medium_figure</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">renderer</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">browser</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<iframe src="../../_static/gallery/structured_media-1.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe></section>
+<section id="inspect-the-combined-medium-in-3d">
+<h2>Inspect the combined medium in 3D<a class="headerlink" href="#inspect-the-combined-medium-in-3d" title="Link to this heading">#</a></h2>
+<p>This interactive volume shows the sampled index used by the solver,
+including the same seeded Matérn fluctuations as the scattering curves.
+Higher-index regions are more opaque; opacity is a display setting.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">medium_figure</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.volume.Volume.plot_3d" title="bornsim.Volume.plot_3d"><span class="n">combined</span><span class="o">.</span><span class="n">plot_3d</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">volume</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">field</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">opacity_scale</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">increasing</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="k">if</span> <span class="s2">&quot;</span><span class="s2">--no-browser</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span><span class="w">
+</span>    <span class="n">medium_figure</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">renderer</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">browser</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<iframe src="../../_static/gallery/structured_media-2.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe></section>
+<section id="scattering-curves-and-a-diagnostic-cross-section">
+<h2>Scattering curves and a diagnostic cross-section<a class="headerlink" href="#scattering-curves-and-a-diagnostic-cross-section" title="Link to this heading">#</a></h2>
+<p>The slice checks exact voxel values after exploring the full volumes above.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">figure</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">constrained</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span><span class="n">image</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="w">
 </span>    <span class="p">(</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">combined</span></a><span class="o">.</span><span class="n">background_index</span> <span class="o">+</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">combined</span></a><span class="o">.</span><span class="n">delta_index</span><span class="p">[</span><span class="p">:</span><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span><span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="p">:</span><span class="p">]</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="w">
 </span>    <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">lower</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
@@ -583,31 +615,7 @@ metadata: keep the ingredients and seed for reproducibility.</p>
 </span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="w">
 </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<img src="../../_images/sphx_glr_structured_media_001.png" srcset="../../_images/sphx_glr_structured_media_001.png" alt="Layers, sphere and Matérn fluctuations" class = "sphx-glr-single-img"/><section id="inspect-the-structured-medium-in-3d">
-<h2>Inspect the structured medium in 3D<a class="headerlink" href="#inspect-the-structured-medium-in-3d" title="Link to this heading">#</a></h2>
-<p>Inspect the deterministic layers and sphere before adding fluctuations.
-Rotation is available with an interactive Matplotlib backend.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">medium_figure</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.volume.Volume.plot_3d" title="bornsim.Volume.plot_3d"><span class="n">structured</span><span class="o">.</span><span class="n">plot_3d</span></a><span class="p">(</span><span class="w">
-</span>    <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">matplotlib</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">slices</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>    <span class="n">field</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span><span class="p">)</span><span class="w">
-</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
-</span></pre></div></div>
-<img src="../../_images/sphx_glr_structured_media_002.png" srcset="../../_images/sphx_glr_structured_media_002.png" alt="Refractive index n: slices" class = "sphx-glr-single-img"/></section>
-<section id="inspect-the-combined-medium-in-3d">
-<h2>Inspect the combined medium in 3D<a class="headerlink" href="#inspect-the-combined-medium-in-3d" title="Link to this heading">#</a></h2>
-<p>These orthogonal slices show the sampled index used by the solver,
-including the same seeded Matérn fluctuations as the scattering curves.
-Call plt.show() to display the figure.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">medium_figure</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.volume.Volume.plot_3d" title="bornsim.Volume.plot_3d"><span class="n">combined</span><span class="o">.</span><span class="n">plot_3d</span></a><span class="p">(</span><span class="w">
-</span>    <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">matplotlib</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">slices</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>    <span class="n">field</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span><span class="p">)</span><span class="w">
-</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
-</span></pre></div></div>
-<img src="../../_images/sphx_glr_structured_media_003.png" srcset="../../_images/sphx_glr_structured_media_003.png" alt="Refractive index n: slices" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.945 seconds)</p>
+<img src="../../_images/sphx_glr_structured_media_001.png" srcset="../../_images/sphx_glr_structured_media_001.png" alt="Layers, sphere and Matérn fluctuations" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.443 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-structured-media-structured-media-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/642dc7e2a368e8009cda8ccc24822251/structured_media.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">structured_media.ipynb</span></code></a></p>
@@ -648,6 +656,7 @@ Call plt.show() to display the figure.</p>
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inspect-the-structured-medium-in-3d">Inspect the structured medium in 3D</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inspect-the-combined-medium-in-3d">Inspect the combined medium in 3D</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scattering-curves-and-a-diagnostic-cross-section">Scattering curves and a diagnostic cross-section</a></li>
 </ul>
   </nav></div>
 

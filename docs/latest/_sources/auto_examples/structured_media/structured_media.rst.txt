@@ -32,10 +32,12 @@ smoothness convention is ``x=sqrt(2*nu)*r/ell``; probability statistics remain
 Gaussian. A composed manual volume does not retain inferred generation
 metadata: keep the ingredients and seed for reproducibility.
 
-.. GENERATED FROM PYTHON SOURCE LINES 16-101
+.. GENERATED FROM PYTHON SOURCE LINES 16-74
 
 .. code-block:: Python
 
+
+    import sys
 
     import matplotlib.pyplot as plt
     import numpy as np
@@ -92,6 +94,84 @@ metadata: keep the ingredients and seed for reproducibility.
         background_index=structure.background_index,
     )
 
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 75-79
+
+Inspect the structured medium in 3D
+-----------------------------------
+Inspect the deterministic layers and sphere before adding fluctuations.
+Drag to rotate and scroll to zoom in the embedded browser volume.
+
+.. GENERATED FROM PYTHON SOURCE LINES 79-87
+
+.. code-block:: Python
+
+    medium_figure = structured.plot_3d(
+        mode="volume",
+        field="index",
+        opacity_scale="increasing",
+    )
+    if "--no-browser" not in sys.argv:
+        medium_figure.show(renderer="browser")
+
+
+
+
+.. raw:: html
+
+   <iframe src="../../_static/gallery/structured_media-1.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 88-93
+
+Inspect the combined medium in 3D
+---------------------------------
+This interactive volume shows the sampled index used by the solver,
+including the same seeded Matérn fluctuations as the scattering curves.
+Higher-index regions are more opaque; opacity is a display setting.
+
+.. GENERATED FROM PYTHON SOURCE LINES 93-101
+
+.. code-block:: Python
+
+    medium_figure = combined.plot_3d(
+        mode="volume",
+        field="index",
+        opacity_scale="increasing",
+    )
+    if "--no-browser" not in sys.argv:
+        medium_figure.show(renderer="browser")
+
+
+
+
+.. raw:: html
+
+   <iframe src="../../_static/gallery/structured_media-2.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 102-105
+
+Scattering curves and a diagnostic cross-section
+--------------------------------------------------
+The slice checks exact voxel values after exploring the full volumes above.
+
+.. GENERATED FROM PYTHON SOURCE LINES 105-133
+
+.. code-block:: Python
+
     figure, axes = plt.subplots(1, 2, figsize=(10, 4), layout="constrained")
     image = axes[0].imshow(
         (combined.background_index + combined.delta_index[:, grid.shape[1] // 2, :]).T,
@@ -123,7 +203,6 @@ metadata: keep the ingredients and seed for reproducibility.
 
 
 
-
 .. image-sg:: /auto_examples/structured_media/images/sphx_glr_structured_media_001.png
    :alt: Layers, sphere and Matérn fluctuations
    :srcset: /auto_examples/structured_media/images/sphx_glr_structured_media_001.png
@@ -133,69 +212,10 @@ metadata: keep the ingredients and seed for reproducibility.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 102-106
-
-Inspect the structured medium in 3D
------------------------------------
-Inspect the deterministic layers and sphere before adding fluctuations.
-Rotation is available with an interactive Matplotlib backend.
-
-.. GENERATED FROM PYTHON SOURCE LINES 106-112
-
-.. code-block:: Python
-
-    medium_figure = structured.plot_3d(
-        backend="matplotlib",
-        mode="slices",
-        field="index",
-    )
-    plt.show()
-
-
-
-.. image-sg:: /auto_examples/structured_media/images/sphx_glr_structured_media_002.png
-   :alt: Refractive index n: slices
-   :srcset: /auto_examples/structured_media/images/sphx_glr_structured_media_002.png
-   :class: sphx-glr-single-img
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 113-118
-
-Inspect the combined medium in 3D
----------------------------------
-These orthogonal slices show the sampled index used by the solver,
-including the same seeded Matérn fluctuations as the scattering curves.
-Call plt.show() to display the figure.
-
-.. GENERATED FROM PYTHON SOURCE LINES 118-124
-
-.. code-block:: Python
-
-    medium_figure = combined.plot_3d(
-        backend="matplotlib",
-        mode="slices",
-        field="index",
-    )
-    plt.show()
-
-
-
-.. image-sg:: /auto_examples/structured_media/images/sphx_glr_structured_media_003.png
-   :alt: Refractive index n: slices
-   :srcset: /auto_examples/structured_media/images/sphx_glr_structured_media_003.png
-   :class: sphx-glr-single-img
-
-
-
-
-
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.945 seconds)
+   **Total running time of the script:** (0 minutes 0.443 seconds)
 
 
 .. _sphx_glr_download_auto_examples_structured_media_structured_media.py:

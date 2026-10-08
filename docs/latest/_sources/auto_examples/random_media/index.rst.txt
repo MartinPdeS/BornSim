@@ -90,7 +90,7 @@ analytical first-order scattering, phase functions, and wavelength dependence.
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Inspect a central slice and a voxel histogram for each spatial covariance model. A slice shows one plane of a three-dimensional volume. Its color gives the dimensionless index fluctuation relative to the background index.">
+    <div class="sphx-glr-thumbcontainer" tooltip="Explore the full three-dimensional sample for each spatial covariance model. Drag to rotate, scroll to zoom, and hover to inspect the refractive index. Low-index regions are transparent and stronger-index regions are more opaque. Opacity is a display setting, not absorption. Histograms and central slices follow as secondary checks of the same seeded fields.">
 
 .. only:: html
 

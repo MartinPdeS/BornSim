@@ -26,10 +26,12 @@ grid. Its first-order amplitude has an independent closed-form reference,
 so this example isolates voxel midpoint-quadrature error. It does not test
 higher-order Green-tensor discretization or random-field synthesis.
 
-.. GENERATED FROM PYTHON SOURCE LINES 10-60
+.. GENERATED FROM PYTHON SOURCE LINES 10-62
 
 .. code-block:: Python
 
+
+    import sys
 
     import matplotlib.pyplot as plt
     import numpy as np
@@ -92,33 +94,33 @@ higher-order Green-tensor discretization or random-field synthesis.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 61-68
+.. GENERATED FROM PYTHON SOURCE LINES 63-70
 
 Inspect the medium in 3D
 ------------------------
 Inspect the actual finite input sample with physical spatial axes.
-Matplotlib permits rotation with an interactive backend.
-Call plt.show() to display the figure; the gallery captures a static image.
+Drag to rotate and scroll to zoom in the embedded browser view.
+Higher-index regions are more opaque; opacity is not absorption.
 This is the finest grid. The index is constant throughout the sample;
 orthogonal slices show the uniform cube and its physical extent.
 
-.. GENERATED FROM PYTHON SOURCE LINES 68-74
+.. GENERATED FROM PYTHON SOURCE LINES 70-77
 
 .. code-block:: Python
 
     medium_figure = volume.plot_3d(
-        backend="matplotlib",
-        mode="slices",
+        mode="volume",
         field="index",
+        opacity_scale="increasing",
     )
-    plt.show()
+    if "--no-browser" not in sys.argv:
+        medium_figure.show(renderer="browser")
 
 
 
-.. image-sg:: /auto_examples/validation/images/sphx_glr_grid_refinement_002.png
-   :alt: Refractive index n: slices (uniform field)
-   :srcset: /auto_examples/validation/images/sphx_glr_grid_refinement_002.png
-   :class: sphx-glr-single-img
+.. raw:: html
+
+   <iframe src="../../_static/gallery/grid_refinement-1.html" title="Refractive index n: slices (uniform field)" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
 
 
 
@@ -127,7 +129,7 @@ orthogonal slices show the uniform cube and its physical extent.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.498 seconds)
+   **Total running time of the script:** (0 minutes 0.268 seconds)
 
 
 .. _sphx_glr_download_auto_examples_validation_grid_refinement.py:

@@ -27,10 +27,12 @@ Integrated coefficients describe finite samples rather than an infinite
 medium. Error bars describe realization sampling, not discretization error.
 Field-term diagnostics alone do not certify convergence.
 
-.. GENERATED FROM PYTHON SOURCE LINES 11-45
+.. GENERATED FROM PYTHON SOURCE LINES 11-47
 
 .. code-block:: Python
 
+
+    import sys
 
     import matplotlib.pyplot as plt
 
@@ -85,14 +87,14 @@ Field-term diagnostics alone do not certify convergence.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 46-50
+.. GENERATED FROM PYTHON SOURCE LINES 48-52
 
 Field-term diagnostics
 ----------------------
 Compare field terms separately from the scattering curves. Decreasing
 terms alone do not certify convergence of the Born series.
 
-.. GENERATED FROM PYTHON SOURCE LINES 50-53
+.. GENERATED FROM PYTHON SOURCE LINES 52-55
 
 .. code-block:: Python
 
@@ -111,16 +113,16 @@ terms alone do not certify convergence of the Born series.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 54-60
+.. GENERATED FROM PYTHON SOURCE LINES 56-62
 
 Inspect one ensemble realization in 3D
 --------------------------------------
 This is the first realization (seed 42) on the calculation grid,
 not an ensemble average or an infinite-medium material boundary.
-Matplotlib permits rotation with an interactive backend.
-Call plt.show() to display the figure; the gallery captures a static image.
+Drag to rotate and scroll to zoom in the embedded browser view.
+Higher-index regions are more opaque; opacity is not absorption.
 
-.. GENERATED FROM PYTHON SOURCE LINES 60-70
+.. GENERATED FROM PYTHON SOURCE LINES 62-73
 
 .. code-block:: Python
 
@@ -129,18 +131,18 @@ Call plt.show() to display the figure; the gallery captures a static image.
         seed=42,
     )
     medium_figure = preview_volume.plot_3d(
-        backend="matplotlib",
-        mode="slices",
-        field="delta_index",
+        mode="volume",
+        field="index",
+        opacity_scale="increasing",
     )
-    plt.show()
+    if "--no-browser" not in sys.argv:
+        medium_figure.show(renderer="browser")
 
 
 
-.. image-sg:: /auto_examples/born_orders/images/sphx_glr_compare_orders_003.png
-   :alt: Index fluctuation δn: slices
-   :srcset: /auto_examples/born_orders/images/sphx_glr_compare_orders_003.png
-   :class: sphx-glr-single-img
+.. raw:: html
+
+   <iframe src="../../_static/gallery/compare_orders-1.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
 
 
 
@@ -149,7 +151,7 @@ Call plt.show() to display the figure; the gallery captures a static image.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.003 seconds)
+   **Total running time of the script:** (0 minutes 0.690 seconds)
 
 
 .. _sphx_glr_download_auto_examples_born_orders_compare_orders.py:

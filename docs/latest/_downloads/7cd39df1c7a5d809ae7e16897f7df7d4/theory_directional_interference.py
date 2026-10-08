@@ -13,9 +13,10 @@ background; all calculations retain the linearized dielectric contrast.
 A 20 nm voxel grid is illustrative, not a claim of converged sphere geometry.
 """
 
+import sys
+
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.ticker import MaxNLocator
 
 from bornsim import AngularSampling, Grid, Material, Solver, Source, Sphere, StructuredMedium
 from bornsim.units import ureg
@@ -106,10 +107,7 @@ plt.show()
 # slice and meridian comparisons above, without azimuth averaging.
 phase_figure = pair_result.plot_phase_function(
     view="3d",
-    backend="matplotlib",
 )
-phase_axis = phase_figure.axes[0]
-phase_axis.set_title("Two-sphere first-order phase density\nNo azimuth averaging")
-for coordinate_axis in (phase_axis.xaxis, phase_axis.yaxis, phase_axis.zaxis):
-    coordinate_axis.set_major_locator(MaxNLocator(nbins=3))
-plt.show()
+phase_figure.update_layout(title="Two-sphere first-order phase density · no azimuth averaging")
+if "--no-browser" not in sys.argv:
+    phase_figure.show(renderer="browser")

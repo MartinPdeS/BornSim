@@ -9,6 +9,8 @@ not refine the integral. The finest calculation is a numerical reference,
 not an exact solution, and both quadrature axes need checking independently.
 """
 
+import sys
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -100,15 +102,16 @@ plt.show()
 # --------------------------------------
 # This is the first realization (seed 42) on the calculation grid,
 # not an ensemble average or an infinite-medium material boundary.
-# Matplotlib permits rotation with an interactive backend.
-# Call plt.show() to display the figure; the gallery captures a static image.
+# Drag to rotate and scroll to zoom in the embedded browser view.
+# Higher-index regions are more opaque; opacity is not absorption.
 preview_volume = medium.to_volume(
     grid=grid,
     seed=42,
 )
 medium_figure = preview_volume.plot_3d(
-    backend="matplotlib",
-    mode="slices",
-    field="delta_index",
+    mode="volume",
+    field="index",
+    opacity_scale="increasing",
 )
-plt.show()
+if "--no-browser" not in sys.argv:
+    medium_figure.show(renderer="browser")

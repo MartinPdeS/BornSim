@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Visualize seeded three-dimensional random media &#8212; BornSim 0.2.4 documentation</title>
+    <title>Visualize seeded three-dimensional random media &#8212; BornSim 0.2.5 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=6ffd866b"></script>
+    <script src="../../_static/documentation_options.js?v=cb850272"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -64,7 +64,7 @@
     <link rel="prev" title="Wavelength dependence of scattering and anisotropy" href="wavelength_dependence.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.4" />
+  <meta name="docsearch:version" content="0.2.5" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -490,9 +490,11 @@ to download the full example code.</p>
 </div>
 <section class="sphx-glr-example-title" id="visualize-seeded-three-dimensional-random-media">
 <span id="sphx-glr-auto-examples-random-media-random-medium-py"></span><h1>Visualize seeded three-dimensional random media<a class="headerlink" href="#visualize-seeded-three-dimensional-random-media" title="Link to this heading">#</a></h1>
-<p>Inspect a central slice and a voxel histogram for each spatial covariance
-model. A slice shows one plane of a three-dimensional volume. Its color gives
-the dimensionless index fluctuation relative to the background index.</p>
+<p>Explore the full three-dimensional sample for each spatial covariance model.
+Drag to rotate, scroll to zoom, and hover to inspect the refractive index.
+Low-index regions are transparent and stronger-index regions are more opaque.
+Opacity is a display setting, not absorption. Histograms and central slices
+follow as secondary checks of the same seeded fields.</p>
 <p>Both models have Gaussian one-point probability distributions. Correlated
 voxels in one finite sample are not independent observations, so a voxel
 histogram need not match the ensemble Gaussian density closely. BornSim
@@ -504,7 +506,6 @@ Finite voxel resolution and the cropped synthesis box also affect statistics.</p
 </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span><span class="w">
 </span><span class="w">
 </span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">Grid</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.media.RandomMedium" title="bornsim.RandomMedium"><span class="n">RandomMedium</span></a><span class="w">
-</span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="nn">.</span><span class="nn">media</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-function reference internal" href="../../api.html#bornsim.media.random_volume" title="bornsim.random_volume"><span class="n">random_volume</span></a><span class="w">
 </span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="nn">.</span><span class="nn">units</span><span class="w"> </span><span class="kn">import</span> <span class="n">ureg</span><span class="w">
 </span><span class="w">
 </span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span><span class="w">
@@ -519,22 +520,62 @@ Finite voxel resolution and the cropped synthesis box also affect statistics.</p
 </span><span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span> <span class="o">*</span> <span class="n">sigma</span><span class="p">,</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">sigma</span><span class="p">,</span> <span class="mi">301</span><span class="p">)</span><span class="w">
 </span><span class="n">gaussian_density</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">values</span><span class="o">*</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sigma</span><span class="o">*</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigma</span><span class="p">)</span><span class="w">
 </span><span class="n">volumes</span> <span class="o">=</span> <span class="p">{</span><span class="p">}</span><span class="w">
-</span><span class="n">figure</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">constrained</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
-</span><span class="w">
-</span><span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">correlation</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">gaussian</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">exponential</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">)</span><span class="p">:</span><span class="w">
+</span><span class="k">for</span> <span class="n">correlation</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;</span><span class="s2">gaussian</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">exponential</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">:</span><span class="w">
 </span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.media.RandomMedium" title="bornsim.RandomMedium"><span class="n">medium</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.media.RandomMedium" title="bornsim.RandomMedium"><span class="n">RandomMedium</span></a><span class="p">(</span><span class="w">
 </span>        <span class="n">index_std</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span><span class="w">
 </span>        <span class="n">correlation_length</span><span class="o">=</span><span class="mi">75</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span><span class="w">
 </span>        <span class="n">correlation</span><span class="o">=</span><span class="n">correlation</span><span class="p">,</span><span class="w">
 </span>    <span class="p">)</span><span class="w">
-</span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">volume</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-function reference internal" href="../../api.html#bornsim.media.random_volume" title="bornsim.random_volume"><span class="n">random_volume</span></a><span class="p">(</span><span class="w">
-</span>        <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.media.RandomMedium" title="bornsim.RandomMedium"><span class="n">medium</span></a><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.media.RandomMedium" title="bornsim.RandomMedium"><span class="n">medium</span></a><span class="p">,</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">volume</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.media.RandomMedium.to_volume" title="bornsim.RandomMedium.to_volume"><span class="n">medium</span><span class="o">.</span><span class="n">to_volume</span></a><span class="p">(</span><span class="w">
 </span>        <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="p">,</span><span class="w">
 </span>        <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span><span class="w">
 </span>    <span class="p">)</span><span class="w">
 </span>    <span class="n">volumes</span><span class="p">[</span><span class="n">correlation</span><span class="p">]</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">volume</span></a><span class="w">
+</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">correlation</span><span class="si">}</span><span class="s2">: sample mean = </span><span class="si">{</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">volume</span></a><span class="o">.</span><span class="n">delta_index</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="p">)</span><span class="si">:</span><span class="s2">.4g</span><span class="si">}</span><span class="s2">, sample std = </span><span class="si">{</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">volume</span></a><span class="o">.</span><span class="n">delta_index</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="p">)</span><span class="si">:</span><span class="s2">.4g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>gaussian: sample mean = 0.005049, sample std = 0.01101
+exponential: sample mean = 0.005348, sample std = 0.01069
+</pre></div>
+</div>
+<section id="gaussian-volume-with-increasing-opacity">
+<h2>Gaussian volume with increasing opacity<a class="headerlink" href="#gaussian-volume-with-increasing-opacity" title="Link to this heading">#</a></h2>
+<p>View the full Gaussian sample first. The opacity ramp uses this sample’s
+index range; equal opacity across different samples need not mean equal index.
+Pass <code class="docutils literal notranslate"><span class="pre">--no-browser</span></code> to run without opening tabs, as the docs builder does.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">volume</span></a> <span class="o">=</span> <span class="n">volumes</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">gaussian</span><span class="s2">&quot;</span><span class="p">]</span><span class="w">
+</span><span class="n">gaussian_figure</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.volume.Volume.plot_3d" title="bornsim.Volume.plot_3d"><span class="n">volume</span><span class="o">.</span><span class="n">plot_3d</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">field</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">surface_count</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span><span class="w">
+</span>    <span class="n">opacity</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="w">
+</span>    <span class="n">opacity_scale</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">increasing</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="k">if</span> <span class="s2">&quot;</span><span class="s2">--no-browser</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span><span class="w">
+</span>    <span class="n">gaussian_figure</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">renderer</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">browser</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<iframe src="../../_static/gallery/random_medium-1.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe></section>
+<section id="exponential-volume-with-increasing-opacity">
+<h2>Exponential volume with increasing opacity<a class="headerlink" href="#exponential-volume-with-increasing-opacity" title="Link to this heading">#</a></h2>
+<p>Compare the exponential sample in its own interactive view with the same
+rendering settings. Correlation length conventions differ between models.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">volume</span></a> <span class="o">=</span> <span class="n">volumes</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">exponential</span><span class="s2">&quot;</span><span class="p">]</span><span class="w">
+</span><span class="n">exponential_figure</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.volume.Volume.plot_3d" title="bornsim.Volume.plot_3d"><span class="n">volume</span><span class="o">.</span><span class="n">plot_3d</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">field</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">surface_count</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span><span class="w">
+</span>    <span class="n">opacity</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="w">
+</span>    <span class="n">opacity_scale</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">increasing</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="k">if</span> <span class="s2">&quot;</span><span class="s2">--no-browser</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span><span class="w">
+</span>    <span class="n">exponential_figure</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">renderer</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">browser</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<iframe src="../../_static/gallery/random_medium-2.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe></section>
+<section id="secondary-checks-central-slices-and-one-point-distributions">
+<h2>Secondary checks: central slices and one-point distributions<a class="headerlink" href="#secondary-checks-central-slices-and-one-point-distributions" title="Link to this heading">#</a></h2>
+<p>Slices show one sampled plane, while histograms describe the finite field’s
+one-point distribution. Neither replaces the complete spatial volume above.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">figure</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">constrained</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">correlation</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">gaussian</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">exponential</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">)</span><span class="p">:</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">volume</span></a> <span class="o">=</span> <span class="n">volumes</span><span class="p">[</span><span class="n">correlation</span><span class="p">]</span><span class="w">
 </span>    <span class="n">image_axis</span><span class="p">,</span> <span class="n">histogram_axis</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">row</span><span class="p">]</span><span class="w">
-</span>    <span class="c1"># Array axes are x, y, z. Transpose so image columns follow x.</span><span class="w">
 </span>    <span class="n">image</span> <span class="o">=</span> <span class="n">image_axis</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="w">
 </span>        <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">volume</span></a><span class="o">.</span><span class="n">delta_index</span><span class="p">[</span><span class="p">:</span><span class="p">,</span> <span class="p">:</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span><span class="o">/</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="w">
 </span>        <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">lower</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
@@ -555,84 +596,10 @@ Finite voxel resolution and the cropped synthesis box also affect statistics.</p
 </span>    <span class="p">)</span><span class="w">
 </span>    <span class="n">histogram_axis</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Index fluctuation δn</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Probability density</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">One-point distribution</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span>    <span class="n">histogram_axis</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">upper right</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span><span class="w">
-</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">correlation</span><span class="si">}</span><span class="s2">: sample mean = </span><span class="si">{</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">volume</span></a><span class="o">.</span><span class="n">delta_index</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="p">)</span><span class="si">:</span><span class="s2">.4g</span><span class="si">}</span><span class="s2">, sample std = </span><span class="si">{</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">volume</span></a><span class="o">.</span><span class="n">delta_index</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="p">)</span><span class="si">:</span><span class="s2">.4g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
-</span><span class="w">
 </span><span class="n">figure</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">Seed 42; shared color scale; ensemble σn = 0.01</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<img src="../../_images/sphx_glr_random_medium_001.png" srcset="../../_images/sphx_glr_random_medium_001.png" alt="Seed 42; shared color scale; ensemble σn = 0.01, Gaussian covariance; z = 12.5 nm, One-point distribution, Exponential covariance; z = 12.5 nm, One-point distribution" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>gaussian: sample mean = 0.005049, sample std = 0.01101
-exponential: sample mean = 0.005348, sample std = 0.01069
-</pre></div>
-</div>
-<section id="interactive-volumes-with-index-dependent-opacity">
-<h2>Interactive volumes with index-dependent opacity<a class="headerlink" href="#interactive-volumes-with-index-dependent-opacity" title="Link to this heading">#</a></h2>
-<p>The browser views show the same samples as the slices above. Low-index
-regions are transparent and higher-index regions are more opaque. Opacity
-does not represent absorption. Drag to rotate and scroll to zoom.
-Plotly is installed with BornSim, and these browser views are included in
-the documentation. Close the first Matplotlib window to advance to these
-cells when running the script.
-Pass <code class="docutils literal notranslate"><span class="pre">--no-browser</span></code> to construct the figures without opening browser tabs;
-the documentation builder uses this option.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">show_browser</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s2">--no-browser</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="w">
-</span></pre></div></div>
-</section>
-<section id="gaussian-volume-with-increasing-opacity">
-<h2>Gaussian volume with increasing opacity<a class="headerlink" href="#gaussian-volume-with-increasing-opacity" title="Link to this heading">#</a></h2>
-<p>The same Gaussian sample is displayed throughout its three-dimensional box.</p>
-<iframe src="../../_static/random-medium-gaussian.html" title="Gaussian random medium with increasing index opacity" width="100%" height="560" loading="lazy" style="border:0;"></iframe><div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">volume</span></a> <span class="o">=</span> <span class="n">volumes</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">gaussian</span><span class="s2">&quot;</span><span class="p">]</span><span class="w">
-</span><span class="n">gaussian_figure</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.volume.Volume.plot_3d" title="bornsim.Volume.plot_3d"><span class="n">volume</span><span class="o">.</span><span class="n">plot_3d</span></a><span class="p">(</span><span class="w">
-</span>    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">volume</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>    <span class="n">field</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>    <span class="n">surface_count</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span><span class="w">
-</span>    <span class="n">opacity</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="w">
-</span>    <span class="n">opacity_scale</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">increasing</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span><span class="p">)</span><span class="w">
-</span><span class="k">if</span> <span class="n">show_browser</span><span class="p">:</span><span class="w">
-</span>    <span class="n">gaussian_figure</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">renderer</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">browser</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
-</span></pre></div></div>
-</section>
-<section id="exponential-volume-with-increasing-opacity">
-<h2>Exponential volume with increasing opacity<a class="headerlink" href="#exponential-volume-with-increasing-opacity" title="Link to this heading">#</a></h2>
-<p>Compare the exponential sample in its own cell with the same display settings.</p>
-<iframe src="../../_static/random-medium-exponential.html" title="Exponential random medium with increasing index opacity" width="100%" height="560" loading="lazy" style="border:0;"></iframe><div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">volume</span></a> <span class="o">=</span> <span class="n">volumes</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">exponential</span><span class="s2">&quot;</span><span class="p">]</span><span class="w">
-</span><span class="n">exponential_figure</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.volume.Volume.plot_3d" title="bornsim.Volume.plot_3d"><span class="n">volume</span><span class="o">.</span><span class="n">plot_3d</span></a><span class="p">(</span><span class="w">
-</span>    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">volume</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>    <span class="n">field</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>    <span class="n">surface_count</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span><span class="w">
-</span>    <span class="n">opacity</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="w">
-</span>    <span class="n">opacity_scale</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">increasing</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span><span class="p">)</span><span class="w">
-</span><span class="k">if</span> <span class="n">show_browser</span><span class="p">:</span><span class="w">
-</span>    <span class="n">exponential_figure</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">renderer</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">browser</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
-</span></pre></div></div>
-</section>
-<section id="inspect-the-gaussian-sample-in-3d">
-<h2>Inspect the gaussian sample in 3D<a class="headerlink" href="#inspect-the-gaussian-sample-in-3d" title="Link to this heading">#</a></h2>
-<p>Inspect the actual finite input sample with physical spatial axes.
-Matplotlib permits rotation with an interactive backend.
-Call plt.show() to display the figure; the gallery captures a static image.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">medium_figure</span> <span class="o">=</span> <span class="n">volumes</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">gaussian</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot_3d</span><span class="p">(</span><span class="w">
-</span>    <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">matplotlib</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">slices</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>    <span class="n">field</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">delta_index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span><span class="p">)</span><span class="w">
-</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
-</span></pre></div></div>
-<img src="../../_images/sphx_glr_random_medium_002.png" srcset="../../_images/sphx_glr_random_medium_002.png" alt="Index fluctuation δn: slices" class = "sphx-glr-single-img"/></section>
-<section id="inspect-the-exponential-sample-in-3d">
-<h2>Inspect the exponential sample in 3D<a class="headerlink" href="#inspect-the-exponential-sample-in-3d" title="Link to this heading">#</a></h2>
-<p>Inspect the actual finite input sample with physical spatial axes.
-Matplotlib permits rotation with an interactive backend.
-Call plt.show() to display the figure; the gallery captures a static image.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">medium_figure</span> <span class="o">=</span> <span class="n">volumes</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">exponential</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot_3d</span><span class="p">(</span><span class="w">
-</span>    <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">matplotlib</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">slices</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>    <span class="n">field</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">delta_index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span><span class="p">)</span><span class="w">
-</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
-</span></pre></div></div>
-<img src="../../_images/sphx_glr_random_medium_003.png" srcset="../../_images/sphx_glr_random_medium_003.png" alt="Index fluctuation δn: slices" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.335 seconds)</p>
+<img src="../../_images/sphx_glr_random_medium_001.png" srcset="../../_images/sphx_glr_random_medium_001.png" alt="Seed 42; shared color scale; ensemble σn = 0.01, Gaussian covariance; z = 12.5 nm, One-point distribution, Exponential covariance; z = 12.5 nm, One-point distribution" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.667 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-random-media-random-medium-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/8042f9bb9e17927311831c0aabfd3fcb/random_medium.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">random_medium.ipynb</span></code></a></p>
@@ -671,11 +638,9 @@ Call plt.show() to display the figure; the gallery captures a static image.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interactive-volumes-with-index-dependent-opacity">Interactive volumes with index-dependent opacity</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gaussian-volume-with-increasing-opacity">Gaussian volume with increasing opacity</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exponential-volume-with-increasing-opacity">Exponential volume with increasing opacity</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inspect-the-gaussian-sample-in-3d">Inspect the gaussian sample in 3D</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inspect-the-exponential-sample-in-3d">Inspect the exponential sample in 3D</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#secondary-checks-central-slices-and-one-point-distributions">Secondary checks: central slices and one-point distributions</a></li>
 </ul>
   </nav></div>
 

@@ -1,8 +1,94 @@
 Medium visualization
 ====================
 
-Voxel cross-sections
---------------------
+Interactive three-dimensional volumes
+-------------------------------------
+
+Start with the interactive volumes below. Drag to rotate, scroll to zoom,
+and hover to inspect the index. Plotly is included with BornSim and is the
+default for 3D views. Angular and polar result plots use Matplotlib.
+
+Interactive random-medium volumes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For random media, a volume view reveals connected high-index regions throughout
+the sample. Set ``field="index"`` and ``opacity_scale="increasing"`` to make
+low-index contours transparent and higher-index contours increasingly opaque.
+``opacity`` sets the maximum contour opacity. This emphasizes high absolute
+index, rather than large positive and negative fluctuations equally. Opacity
+is a display setting; it does not represent material absorption.
+The opacity ramp uses each sample's displayed index range, so equal opacity
+in two different samples need not represent the same refractive index.
+
+The following views use the same Gaussian and exponential samples as
+:doc:`auto_examples/random_media/random_medium`: seed 42, 16 voxels per axis,
+25 nm spacing, index standard deviation 0.01, and correlation length 75 nm.
+Drag to rotate and scroll to zoom. Each view includes Plotly and works offline.
+Interactive views are generated during the documentation build alongside
+interactive gallery examples.
+
+Gaussian covariance
+^^^^^^^^^^^^^^^^^^^
+
+.. raw:: html
+
+   <iframe src="_static/random-medium-gaussian.html" title="Gaussian random medium with increasing index opacity" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
+
+Exponential covariance
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. raw:: html
+
+   <iframe src="_static/random-medium-exponential.html" title="Exponential random medium with increasing index opacity" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
+
+.. code-block:: python
+
+   from bornsim import Grid, RandomMedium
+
+   grid = Grid(
+       shape=(16, 16, 16),
+       spacing=25e-9,
+   )
+   medium = RandomMedium(
+       index_std=0.01,
+       correlation_length=75e-9,
+       correlation="gaussian",
+   )
+   volume = medium.to_volume(
+       grid=grid,
+       seed=42,
+   )
+   figure = volume.plot_3d(
+       mode="volume",
+       field="index",
+       surface_count=16,
+       opacity=0.2,
+       opacity_scale="increasing",
+   )
+   figure.write_html(
+       file="medium.html",
+       include_plotlyjs=True,
+   )
+
+Plotly also supports ``mode="isosurface"`` and ``mode="slices"``; its default
+mode is ``volume``. Uniform fields fall back to slices. The HTML export includes
+Plotly itself and works offline. Call ``figure.show()`` to display a Plotly
+figure. See its official `3D isosurface documentation
+<https://plotly.com/python/3d-isosurface-plots/>`_ and
+`rendering documentation <https://plotly.com/python/renderers/>`_.
+
+Three-dimensional media
+-----------------------
+
+``Volume.plot_3d()`` returns a Plotly volume by default for generated random
+fields, structured samples, and custom voxel arrays. Call ``figure.show()``
+to display it or ``figure.write_html()`` to export an interactive view.
+Select ``backend="matplotlib"`` for static figures, then use ``plt.show()``
+or ``figure.savefig()``. The gallery embeds interactive 3D views alongside their plotting cells.
+Constructing a figure opens no window.
+
+Secondary views: voxel cross-sections
+--------------------------------------
 
 ``Volume.plot_slice()`` builds a Matplotlib figure with physical axis labels,
 an equal spatial aspect ratio, and a colorbar. It handles axis orientation and
@@ -92,16 +178,6 @@ and azimuth, so interference between multiple structures remains visible.
 No azimuth averaging is applied to the 3D view. Increase ``azimuth_samples``
 to resolve finer azimuthal features. One deterministic sample provides no
 estimate of random sampling uncertainty.
-
-Three-dimensional media
------------------------
-
-``Volume.plot_3d()`` returns a Plotly volume by default for generated random
-fields, structured samples, and custom voxel arrays. Call ``figure.show()``
-to display it or ``figure.write_html()`` to export an interactive view.
-Select ``backend="matplotlib"`` for static figures, then use ``plt.show()``
-or ``figure.savefig()``. Static gallery figures select Matplotlib explicitly.
-Constructing a figure opens no window.
 
 Random fields and orthogonal slices
 -----------------------------------
@@ -206,91 +282,10 @@ is the random statistics' uniform background index.
        seed=42,
    )
    figure = volume.plot_3d(
-       backend="matplotlib",
-       mode="slices",
        field="index",
-   )
-   import matplotlib.pyplot as plt
-
-   plt.show()
-
-Plotly browser backend
-----------------------
-
-For browser rotation, hover values, volume level surfaces, and interactive HTML
-exports, select ``backend="plotly"``. Plotly is installed with BornSim;
-Plotly is the default for 3D views; angular and polar result plots use
-Matplotlib.
-
-Interactive random-medium volumes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-For random media, a volume view reveals connected high-index regions throughout
-the sample. Set ``field="index"`` and ``opacity_scale="increasing"`` to make
-low-index contours transparent and higher-index contours increasingly opaque.
-``opacity`` sets the maximum contour opacity. This emphasizes high absolute
-index, rather than large positive and negative fluctuations equally. Opacity
-is a display setting; it does not represent material absorption.
-The opacity ramp uses each sample's displayed index range, so equal opacity
-in two different samples need not represent the same refractive index.
-
-The following views use the same Gaussian and exponential samples as
-:doc:`auto_examples/random_media/random_medium`: seed 42, 16 voxels per axis,
-25 nm spacing, index standard deviation 0.01, and correlation length 75 nm.
-Drag to rotate and scroll to zoom. Each view includes Plotly and works offline.
-Interactive views are generated during the documentation build alongside
-the Matplotlib gallery.
-
-Gaussian covariance
-^^^^^^^^^^^^^^^^^^^
-
-.. raw:: html
-
-   <iframe src="_static/random-medium-gaussian.html" title="Gaussian random medium with increasing index opacity" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
-
-Exponential covariance
-^^^^^^^^^^^^^^^^^^^^^^
-
-.. raw:: html
-
-   <iframe src="_static/random-medium-exponential.html" title="Exponential random medium with increasing index opacity" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
-
-.. code-block:: python
-
-   from bornsim import Grid, RandomMedium
-
-   grid = Grid(
-       shape=(16, 16, 16),
-       spacing=25e-9,
-   )
-   medium = RandomMedium(
-       index_std=0.01,
-       correlation_length=75e-9,
-       correlation="gaussian",
-   )
-   volume = medium.to_volume(
-       grid=grid,
-       seed=42,
-   )
-   figure = volume.plot_3d(
-       backend="plotly",
-       mode="volume",
-       field="index",
-       surface_count=16,
-       opacity=0.2,
        opacity_scale="increasing",
    )
-   figure.write_html(
-       file="medium.html",
-       include_plotlyjs=True,
-   )
-
-Plotly also supports ``mode="isosurface"`` and ``mode="slices"``; its default
-mode is ``volume``. Uniform fields fall back to slices. The HTML export includes
-Plotly itself and works offline. Call ``figure.show()`` to display a Plotly
-figure. See its official `3D isosurface documentation
-<https://plotly.com/python/3d-isosurface-plots/>`_ and
-`rendering documentation <https://plotly.com/python/renderers/>`_.
+   figure.show()
 
 Interpretation and performance
 ------------------------------
@@ -308,10 +303,12 @@ surfaces interpolate between voxel centres and can make curved interfaces
 appear smoother than the solver's staircase mask. Neither visualization
 replaces checks of voxel refinement for quantitative calculations.
 
-The current grid limit is 32 voxels per axis (32,768 samples). Random fields
-are usually clearer as slices; filled voxel views reveal only the outer faces.
+The current grid limit is 32 voxels per axis (32,768 samples). Interactive
+volume views reveal high-index regions throughout random fields;
+slices remain useful for inspecting exact voxel values. Filled voxel views
+reveal only the outer faces.
 Dense or transparent Matplotlib scenes can have depth-ordering limitations;
 see the `mplot3d FAQ <https://matplotlib.org/stable/api/toolkits/mplot3d/faq.html>`_.
-Use opaque voxels (the default) and slices for routine inspection. Plotly
+Use slices or opaque voxels when checking the sampled geometry. Plotly
 rendering depends on browser graphics support and surface count; changing
 surface count changes visualization, not numerical resolution.

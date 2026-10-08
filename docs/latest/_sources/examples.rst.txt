@@ -66,8 +66,9 @@ spatial covariance at the same length parameter, showing both covariance
 profiles and their analytical phase functions. These length parameters have
 different definitions; equal values do not describe identical statistics.
 
-:doc:`auto_examples/random_media/random_medium` visualizes central slices and voxel
-histograms from seeded three-dimensional volumes. It distinguishes the
+:doc:`auto_examples/random_media/random_medium` leads with interactive Gaussian
+and exponential volumes whose higher-index regions are more opaque. Central
+slices and voxel histograms follow as diagnostic checks. It distinguishes the
 Gaussian one-point probability distribution from the choice of spatial
 covariance, and explains why a finite correlated sample need not have
 exactly the ensemble mean or variance.
@@ -116,8 +117,8 @@ A zero scattering coefficient has no normalized phase function. This example
 uses the analytical infinite-medium model. A single random volume's angular
 cut is insufficient to normalize a phase function over solid angle.
 
-Matplotlib result plots and 3D directions
------------------------------------------
+Result plots and interactive 3D directions
+------------------------------------------
 
 The medium occupies three spatial dimensions. Scattering directions lie on
 the unit sphere and are described by polar angle ``theta`` and azimuth
@@ -163,8 +164,9 @@ mean total coefficient: uncertainty in a ratio also depends on numerator-
 denominator covariance, which is not retained in the result.
 
 See :doc:`auto_examples/results/result_plots` for direct result plotting calls and
-Matplotlib figures, including the 3D phase-function surface. Sphinx Gallery
-executes the examples and captures their figures when the documentation is built.
+Matplotlib angular figures and an interactive 3D phase-function surface.
+Sphinx Gallery executes the examples and embeds interactive Plotly volumes
+and surfaces alongside their cells when the documentation is built.
 
 Coherent terms and reusable results
 -----------------------------------

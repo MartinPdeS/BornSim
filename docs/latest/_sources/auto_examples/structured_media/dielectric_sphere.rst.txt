@@ -34,10 +34,12 @@ before interpreting them quantitatively. BornSim uses the linearized
 dielectric contrast ``2 * n0 * delta_n`` at all Born orders, rather than
 ``n_sphere**2 - n0**2``. This weak-contrast example is not an exact Mie solution.
 
-.. GENERATED FROM PYTHON SOURCE LINES 18-25
+.. GENERATED FROM PYTHON SOURCE LINES 18-27
 
 .. code-block:: Python
 
+
+    import sys
 
     import matplotlib.pyplot as plt
     import numpy as np
@@ -52,7 +54,7 @@ dielectric contrast ``2 * n0 * delta_n`` at all Born orders, rather than
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 26-34
+.. GENERATED FROM PYTHON SOURCE LINES 28-36
 
 Build a spherical index mask
 ----------------------------
@@ -63,7 +65,7 @@ The sphere is offset by 40 nm in x and 20 nm in y. Set this vector to zero
 for a centred sphere. Keep abs(centre[a]) + radius below half the box size
 on every axis to avoid clipping. Grid-aligned offsets translate the same mask.
 
-.. GENERATED FROM PYTHON SOURCE LINES 34-74
+.. GENERATED FROM PYTHON SOURCE LINES 36-76
 
 .. code-block:: Python
 
@@ -114,38 +116,38 @@ on every axis to avoid clipping. Grid-aligned offsets translate the same mask.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 75-80
+.. GENERATED FROM PYTHON SOURCE LINES 77-82
 
 Inspect the medium in 3D
 ------------------------
 Inspect the actual finite input sample with physical spatial axes.
-The gallery captures this Matplotlib figure; plt.show() displays it locally.
-Voxels show the actual staircase interface used by the solver.
+The gallery embeds an interactive volume; drag to rotate and scroll to zoom.
+Level surfaces interpolate the sampled staircase interface.
 
-.. GENERATED FROM PYTHON SOURCE LINES 80-87
+.. GENERATED FROM PYTHON SOURCE LINES 82-90
 
 .. code-block:: Python
 
     medium_figure = volume.plot_3d(
-        backend="matplotlib",
-        mode="voxels",
+        mode="volume",
         field="index",
+        opacity_scale="increasing",
     )
-    plt.show()
+    if "--no-browser" not in sys.argv:
+        medium_figure.show(renderer="browser")
 
 
 
 
-.. image-sg:: /auto_examples/structured_media/images/sphx_glr_dielectric_sphere_001.png
-   :alt: Refractive index n: voxels
-   :srcset: /auto_examples/structured_media/images/sphx_glr_dielectric_sphere_001.png
-   :class: sphx-glr-single-img
+.. raw:: html
+
+   <iframe src="../../_static/gallery/dielectric_sphere-1.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
 
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 88-94
+.. GENERATED FROM PYTHON SOURCE LINES 91-97
 
 Compute coherent scattering through three Born orders
 -----------------------------------------------------
@@ -154,7 +156,7 @@ divided by the entire voxel-box volume. Multiplying by that physical volume
 recovers a differential cross section, which avoids treating the empty
 background portion of the box as part of an intrinsic transport coefficient.
 
-.. GENERATED FROM PYTHON SOURCE LINES 94-104
+.. GENERATED FROM PYTHON SOURCE LINES 97-107
 
 .. code-block:: Python
 
@@ -175,7 +177,7 @@ background portion of the box as part of an intrinsic transport coefficient.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 105-113
+.. GENERATED FROM PYTHON SOURCE LINES 108-116
 
 Three-dimensional phase function
 ---------------------------------
@@ -186,36 +188,35 @@ structures. Its radius is a probability density per steradian, not a spatial
 coordinate. No realization or azimuth averaging is applied to the 3D view.
 Check polar and azimuth quadrature refinement for quantitative calculations.
 
-.. GENERATED FROM PYTHON SOURCE LINES 113-119
+.. GENERATED FROM PYTHON SOURCE LINES 116-122
 
 .. code-block:: Python
 
     phase_figure = result.plot_phase_function(
-        backend="matplotlib",
         view="3d",
     )
-    plt.show()
+    if "--no-browser" not in sys.argv:
+        phase_figure.show(renderer="browser")
 
 
 
 
-.. image-sg:: /auto_examples/structured_media/images/sphx_glr_dielectric_sphere_002.png
-   :alt: Directional finite-sample phase function Through order 3 · full azimuthal distribution
-   :srcset: /auto_examples/structured_media/images/sphx_glr_dielectric_sphere_002.png
-   :class: sphx-glr-single-img
+.. raw:: html
+
+   <iframe src="../../_static/gallery/dielectric_sphere-2.html" title="Directional finite-sample phase function&lt;br&gt;Through order 3 · full azimuthal distribution" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
 
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 120-124
+.. GENERATED FROM PYTHON SOURCE LINES 123-127
 
 Select a physical meridian
 ---------------------------
 Select the sampled phi = 90 degree plane without averaging or interpolation.
 The curve keeps the full solve's solid-angle normalization.
 
-.. GENERATED FROM PYTHON SOURCE LINES 124-127
+.. GENERATED FROM PYTHON SOURCE LINES 127-130
 
 .. code-block:: Python
 
@@ -225,9 +226,9 @@ The curve keeps the full solve's solid-angle normalization.
 
 
 
-.. image-sg:: /auto_examples/structured_media/images/sphx_glr_dielectric_sphere_003.png
+.. image-sg:: /auto_examples/structured_media/images/sphx_glr_dielectric_sphere_001.png
    :alt: Directional finite-sample phase function · meridian phi = 90 degrees
-   :srcset: /auto_examples/structured_media/images/sphx_glr_dielectric_sphere_003.png
+   :srcset: /auto_examples/structured_media/images/sphx_glr_dielectric_sphere_001.png
    :class: sphx-glr-single-img
 
 
@@ -237,7 +238,7 @@ The curve keeps the full solve's solid-angle normalization.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 7.769 seconds)
+   **Total running time of the script:** (0 minutes 5.772 seconds)
 
 
 .. _sphx_glr_download_auto_examples_structured_media_dielectric_sphere.py:

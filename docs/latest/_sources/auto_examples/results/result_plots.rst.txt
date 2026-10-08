@@ -18,11 +18,12 @@
 .. _sphx_glr_auto_examples_results_result_plots.py:
 
 
-Matplotlib result plots in 3D
-=============================
+Result plots and interactive 3D views
+=====================================
 
 Use plotting methods directly on a result, then call ``plt.show()`` to
-display the Matplotlib figures. Sphinx Gallery captures them in the docs.
+display angular Matplotlib figures. The docs embed interactive Plotly
+volumes and phase surfaces; drag to rotate and scroll to zoom.
 
 The phase surface represents directions on a sphere. Its radius and color
 are probability densities in inverse steradians, not spatial coordinates.
@@ -31,10 +32,12 @@ Use result.azimuth_average() to request an averaged curve explicitly.
 The 3D surface retains each azimuth direction, showing directional structure
 in the ensemble intensity average.
 
-.. GENERATED FROM PYTHON SOURCE LINES 15-43
+.. GENERATED FROM PYTHON SOURCE LINES 16-46
 
 .. code-block:: Python
 
+
+    import sys
 
     import matplotlib.pyplot as plt
 
@@ -70,14 +73,14 @@ in the ensemble intensity average.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 44-48
+.. GENERATED FROM PYTHON SOURCE LINES 47-51
 
 Differential scattering
 -----------------------
 Differential scattering retains its physical units of inverse metres per
 steradian. Ensemble results also show standard errors on this plot.
 
-.. GENERATED FROM PYTHON SOURCE LINES 48-51
+.. GENERATED FROM PYTHON SOURCE LINES 51-54
 
 .. code-block:: Python
 
@@ -96,14 +99,14 @@ steradian. Ensemble results also show standard errors on this plot.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 52-56
+.. GENERATED FROM PYTHON SOURCE LINES 55-59
 
 Normalized phase function
 -------------------------
 Dividing by the integrated coefficient gives a density per steradian.
 The normalization is over solid angle, including the ``sin(theta)`` measure.
 
-.. GENERATED FROM PYTHON SOURCE LINES 56-59
+.. GENERATED FROM PYTHON SOURCE LINES 59-62
 
 .. code-block:: Python
 
@@ -122,13 +125,13 @@ The normalization is over solid angle, including the ``sin(theta)`` measure.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 60-63
+.. GENERATED FROM PYTHON SOURCE LINES 63-66
 
 Polar meridian cut
 ------------------
 The incident beam points towards 0 degrees, at the top of the plot.
 
-.. GENERATED FROM PYTHON SOURCE LINES 63-66
+.. GENERATED FROM PYTHON SOURCE LINES 66-69
 
 .. code-block:: Python
 
@@ -147,36 +150,33 @@ The incident beam points towards 0 degrees, at the top of the plot.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 67-71
+.. GENERATED FROM PYTHON SOURCE LINES 70-74
 
 Three-dimensional directional surface
 -------------------------------------
 Plot the sampled polar and azimuth directions without azimuth averaging.
 Here four realizations contribute to the ensemble intensity average.
 
-.. GENERATED FROM PYTHON SOURCE LINES 71-77
+.. GENERATED FROM PYTHON SOURCE LINES 74-78
 
 .. code-block:: Python
 
-    result.plot_phase_function(
-        view="3d",
-        backend="matplotlib",
-    )
-    plt.show()
+    phase_figure = result.plot_phase_function(view="3d")
+    if "--no-browser" not in sys.argv:
+        phase_figure.show(renderer="browser")
 
 
 
 
-.. image-sg:: /auto_examples/results/images/sphx_glr_result_plots_004.png
-   :alt: Directional finite-sample phase function Through order 3 · full azimuthal distribution
-   :srcset: /auto_examples/results/images/sphx_glr_result_plots_004.png
-   :class: sphx-glr-single-img
+.. raw:: html
+
+   <iframe src="../../_static/gallery/result_plots-1.html" title="Directional finite-sample phase function&lt;br&gt;Through order 3 · full azimuthal distribution" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
 
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 78-83
+.. GENERATED FROM PYTHON SOURCE LINES 79-84
 
 Numerical field terms
 ---------------------
@@ -184,7 +184,7 @@ A fixed random volume need not be axisymmetric. Its field norms can be
 inspected without inferring a normalized phase function from one cut.
 Decreasing terms do not certify Born convergence.
 
-.. GENERATED FROM PYTHON SOURCE LINES 83-93
+.. GENERATED FROM PYTHON SOURCE LINES 84-94
 
 .. code-block:: Python
 
@@ -201,40 +201,40 @@ Decreasing terms do not certify Born convergence.
 
 
 
-.. image-sg:: /auto_examples/results/images/sphx_glr_result_plots_005.png
+.. image-sg:: /auto_examples/results/images/sphx_glr_result_plots_004.png
    :alt: Born field terms Decreasing terms do not certify convergence
-   :srcset: /auto_examples/results/images/sphx_glr_result_plots_005.png
+   :srcset: /auto_examples/results/images/sphx_glr_result_plots_004.png
    :class: sphx-glr-single-img
 
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 94-99
+.. GENERATED FROM PYTHON SOURCE LINES 95-100
 
 Inspect the medium in 3D
 ------------------------
 Inspect the actual finite input sample with physical spatial axes.
-Matplotlib permits rotation with an interactive backend.
-Call plt.show() to display the figure; the gallery captures a static image.
+Drag to rotate and scroll to zoom in the embedded browser view.
+Higher-index regions are more opaque; opacity is not absorption.
 
-.. GENERATED FROM PYTHON SOURCE LINES 99-105
+.. GENERATED FROM PYTHON SOURCE LINES 100-107
 
 .. code-block:: Python
 
     medium_figure = volume.plot_3d(
-        backend="matplotlib",
-        mode="slices",
-        field="delta_index",
+        mode="volume",
+        field="index",
+        opacity_scale="increasing",
     )
-    plt.show()
+    if "--no-browser" not in sys.argv:
+        medium_figure.show(renderer="browser")
 
 
 
-.. image-sg:: /auto_examples/results/images/sphx_glr_result_plots_006.png
-   :alt: Index fluctuation δn: slices
-   :srcset: /auto_examples/results/images/sphx_glr_result_plots_006.png
-   :class: sphx-glr-single-img
+.. raw:: html
+
+   <iframe src="../../_static/gallery/result_plots-2.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
 
 
 
@@ -243,7 +243,7 @@ Call plt.show() to display the figure; the gallery captures a static image.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.408 seconds)
+   **Total running time of the script:** (0 minutes 0.842 seconds)
 
 
 .. _sphx_glr_download_auto_examples_results_result_plots.py:

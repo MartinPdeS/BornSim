@@ -17,6 +17,8 @@ to identify the exact input. Exact regeneration depends on software versions.
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+import sys
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -75,11 +77,12 @@ plt.show()
 # Inspect the medium in 3D
 # ------------------------
 # Inspect the actual finite input sample with physical spatial axes.
-# Matplotlib permits rotation with an interactive backend.
-# Call plt.show() to display the figure; the gallery captures a static image.
+# Drag to rotate and scroll to zoom in the embedded browser view.
+# Higher-index regions are more opaque; opacity is not absorption.
 medium_figure = volume.plot_3d(
-    backend="matplotlib",
-    mode="slices",
-    field="delta_index",
+    mode="volume",
+    field="index",
+    opacity_scale="increasing",
 )
-plt.show()
+if "--no-browser" not in sys.argv:
+    medium_figure.show(renderer="browser")

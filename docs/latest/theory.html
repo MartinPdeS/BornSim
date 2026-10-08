@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Theory and numerical methods &#8212; BornSim 0.2.4 documentation</title>
+    <title>Theory and numerical methods &#8212; BornSim 0.2.5 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="_static/documentation_options.js?v=6ffd866b"></script>
+    <script src="_static/documentation_options.js?v=cb850272"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/sg-tags.js?v=d80f6fa4"></script>
@@ -65,7 +65,7 @@
     <link rel="prev" title="Guide" href="guide.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.4" />
+  <meta name="docsearch:version" content="0.2.5" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -488,28 +488,28 @@ requires the relevant refinement checks.</p>
 <nav class="contents local" id="on-this-page">
 <p class="topic-title">On this page</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="#model-notation-and-units" id="id10">Model, notation and units</a></p></li>
-<li><p><a class="reference internal" href="#geometry-and-the-finite-domain" id="id11">Geometry and the finite domain</a></p></li>
-<li><p><a class="reference internal" href="#from-maxwell-s-equation-to-born-orders" id="id12">From Maxwell’s equation to Born orders</a></p>
+<li><p><a class="reference internal" href="#model-notation-and-units" id="id9">Model, notation and units</a></p></li>
+<li><p><a class="reference internal" href="#geometry-and-the-finite-domain" id="id10">Geometry and the finite domain</a></p></li>
+<li><p><a class="reference internal" href="#from-maxwell-s-equation-to-born-orders" id="id11">From Maxwell’s equation to Born orders</a></p>
 <ul>
-<li><p><a class="reference internal" href="#first-order-born-approximation" id="id13">First-order Born approximation</a></p></li>
-<li><p><a class="reference internal" href="#discrete-green-interactions-and-open-boundaries" id="id14">Discrete Green interactions and open boundaries</a></p></li>
+<li><p><a class="reference internal" href="#first-order-born-approximation" id="id12">First-order Born approximation</a></p></li>
+<li><p><a class="reference internal" href="#discrete-green-interactions-and-open-boundaries" id="id13">Discrete Green interactions and open boundaries</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#amplitudes-interference-and-cross-sections" id="id15">Amplitudes, interference and cross sections</a></p>
+<li><p><a class="reference internal" href="#amplitudes-interference-and-cross-sections" id="id14">Amplitudes, interference and cross sections</a></p>
 <ul>
-<li><p><a class="reference internal" href="#first-order-structure-and-directional-asymmetry" id="id16">First-order structure and directional asymmetry</a></p></li>
+<li><p><a class="reference internal" href="#first-order-structure-and-directional-asymmetry" id="id15">First-order structure and directional asymmetry</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#solid-angle-normalization-and-angular-sampling" id="id17">Solid-angle normalization and angular sampling</a></p></li>
-<li><p><a class="reference internal" href="#random-fields-and-whittlematern-covariance" id="id18">Random fields and Whittle–Matérn covariance</a></p></li>
-<li><p><a class="reference internal" href="#ensembles-and-uncertainty" id="id19">Ensembles and uncertainty</a></p></li>
-<li><p><a class="reference internal" href="#resolution-convergence-and-interpretation" id="id20">Resolution, convergence and interpretation</a></p></li>
-<li><p><a class="reference internal" href="#further-reading" id="id21">Further reading</a></p></li>
+<li><p><a class="reference internal" href="#solid-angle-normalization-and-angular-sampling" id="id16">Solid-angle normalization and angular sampling</a></p></li>
+<li><p><a class="reference internal" href="#random-fields-and-whittlematern-covariance" id="id17">Random fields and Whittle–Matérn covariance</a></p></li>
+<li><p><a class="reference internal" href="#ensembles-and-uncertainty" id="id18">Ensembles and uncertainty</a></p></li>
+<li><p><a class="reference internal" href="#resolution-convergence-and-interpretation" id="id19">Resolution, convergence and interpretation</a></p></li>
+<li><p><a class="reference internal" href="#further-reading" id="id20">Further reading</a></p></li>
 </ul>
 </nav>
 <section id="model-notation-and-units">
-<h2><a class="toc-backref" href="#id10" role="doc-backlink">Model, notation and units</a><a class="headerlink" href="#model-notation-and-units" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Model, notation and units</a><a class="headerlink" href="#model-notation-and-units" title="Link to this heading">#</a></h2>
 <p>The exterior background has a real, uniform refractive index <span class="math notranslate nohighlight">\(n_0\)</span>.
 A Volume stores the real scalar field</p>
 <div class="math notranslate nohighlight">
@@ -578,7 +578,7 @@ magnetic contrast or tensor permittivity. Positive permittivity alone does not
 establish weak-contrast accuracy.</p>
 </section>
 <section id="geometry-and-the-finite-domain">
-<h2><a class="toc-backref" href="#id11" role="doc-backlink">Geometry and the finite domain</a><a class="headerlink" href="#geometry-and-the-finite-domain" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Geometry and the finite domain</a><a class="headerlink" href="#geometry-and-the-finite-domain" title="Link to this heading">#</a></h2>
 <p>Grid gives voxel-centre coordinates and the physical box volume:</p>
 <div class="math notranslate nohighlight">
 \[r_{i,a}=\left(i-\frac{N_a-1}{2}\right)h,\qquad
@@ -643,7 +643,7 @@ uniform; there is no layered-background Green function or transfer-matrix
 solver.</p>
 </section>
 <section id="from-maxwell-s-equation-to-born-orders">
-<h2><a class="toc-backref" href="#id12" role="doc-backlink">From Maxwell’s equation to Born orders</a><a class="headerlink" href="#from-maxwell-s-equation-to-born-orders" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">From Maxwell’s equation to Born orders</a><a class="headerlink" href="#from-maxwell-s-equation-to-born-orders" title="Link to this heading">#</a></h2>
 <p>The vector wave equation in this model is</p>
 <div class="math notranslate nohighlight">
 \[\nabla\times\nabla\times\mathbf E-k^2\mathbf E
@@ -672,7 +672,7 @@ one additional internal propagation interaction. <code class="docutils literal n
 first three amplitude terms; it is neither a mesh-refinement level nor three
 independent samples.</p>
 <section id="first-order-born-approximation">
-<h3><a class="toc-backref" href="#id13" role="doc-backlink">First-order Born approximation</a><a class="headerlink" href="#first-order-born-approximation" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">First-order Born approximation</a><a class="headerlink" href="#first-order-born-approximation" title="Link to this heading">#</a></h3>
 <p>Replace the internal field in the scattering integral by the incident field:
 <span class="math notranslate nohighlight">\(\mathbf E(\mathbf r')\approx\mathbf E_{\rm inc}(\mathbf r')\)</span>.
 The resulting first-order scattered field is</p>
@@ -688,7 +688,7 @@ alone is insufficient for a thick sample with appreciable accumulated phase.
 BornSim uses the linearized contrast in <a class="reference internal" href="#equation-constitutive-model">(1)</a> at every order.</p>
 </section>
 <section id="discrete-green-interactions-and-open-boundaries">
-<h3><a class="toc-backref" href="#id14" role="doc-backlink">Discrete Green interactions and open boundaries</a><a class="headerlink" href="#discrete-green-interactions-and-open-boundaries" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Discrete Green interactions and open boundaries</a><a class="headerlink" href="#discrete-green-interactions-and-open-boundaries" title="Link to this heading">#</a></h3>
 <p>Off-diagonal voxel interactions use midpoint quadrature,
 <span class="math notranslate nohighlight">\(k_0^2h^3\mathbf G(\mathbf r_i-\mathbf r_j)\)</span>.
 The singular diagonal uses an <strong>equal-volume spherical self cell</strong>, with
@@ -710,7 +710,7 @@ matrix comparisons are described in <a class="reference internal" href="developm
 </section>
 </section>
 <section id="amplitudes-interference-and-cross-sections">
-<h2><a class="toc-backref" href="#id15" role="doc-backlink">Amplitudes, interference and cross sections</a><a class="headerlink" href="#amplitudes-interference-and-cross-sections" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id14" role="doc-backlink">Amplitudes, interference and cross sections</a><a class="headerlink" href="#amplitudes-interference-and-cross-sections" title="Link to this heading">#</a></h2>
 <p>For observation direction <span class="math notranslate nohighlight">\(\hat{\mathbf s}\)</span>, the isolated order-m
 far-field amplitude of polarization p is</p>
 <div class="math notranslate nohighlight">
@@ -747,7 +747,7 @@ volume to recover m<sup>2</sup> sr<sup>−1</sup>. The volume includes backgroun
 voxels. These finite-sample coefficients are not automatically intrinsic
 infinite-medium transport coefficients.</p>
 <section id="first-order-structure-and-directional-asymmetry">
-<h3><a class="toc-backref" href="#id16" role="doc-backlink">First-order structure and directional asymmetry</a><a class="headerlink" href="#first-order-structure-and-directional-asymmetry" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id15" role="doc-backlink">First-order structure and directional asymmetry</a><a class="headerlink" href="#first-order-structure-and-directional-asymmetry" title="Link to this heading">#</a></h3>
 <p>At first order, the amplitude samples the spatial Fourier transform of the
 contrast at the scattering wavevector</p>
 <div class="math notranslate nohighlight">
@@ -780,18 +780,13 @@ different meridians. The simulation asserts translation invariance.
 <a class="reference internal" href="auto_examples/structured_media/theory_directional_interference.html"><span class="doc">Simulation code</span></a>.</span><a class="headerlink" href="#id4" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
-<figure class="align-default" id="id5">
-<a class="reference internal image-reference" href="_images/sphx_glr_theory_directional_interference_002.png"><img alt="Full three-dimensional phase density of the two-sphere simulation, without azimuth averaging." src="_images/sphx_glr_theory_directional_interference_002.png" style="width: 75%;" />
-</a>
-<figcaption>
-<p><span class="caption-text">The pair’s full phase-density surface retains every sampled azimuth.
-Its radius is a density in direction space, not a position in the medium.</span><a class="headerlink" href="#id5" title="Link to this image">#</a></p>
-</figcaption>
-</figure>
+<iframe src="_static/gallery/theory_directional_interference-1.html" title="Interactive two-sphere phase density without azimuth averaging" width="100%" height="560" loading="lazy" style="border:0;"></iframe><p>Drag to rotate the pair’s full phase-density surface, which retains every
+sampled azimuth. Its radius is a density in direction space, not a position
+in the medium.</p>
 </section>
 </section>
 <section id="solid-angle-normalization-and-angular-sampling">
-<h2><a class="toc-backref" href="#id17" role="doc-backlink">Solid-angle normalization and angular sampling</a><a class="headerlink" href="#solid-angle-normalization-and-angular-sampling" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id16" role="doc-backlink">Solid-angle normalization and angular sampling</a><a class="headerlink" href="#solid-angle-normalization-and-angular-sampling" title="Link to this heading">#</a></h2>
 <p>Directions are <span class="math notranslate nohighlight">\(\hat{\mathbf s}=(\sin\theta\cos\phi,
 \sin\theta\sin\phi,\cos\theta)\)</span>, with <span class="math notranslate nohighlight">\(d\Omega=\sin\theta\,d\theta\,d\phi\)</span>.
 For each cumulative Born order,</p>
@@ -827,7 +822,7 @@ A single meridian is insufficient to infer that marginal or <span class="math no
 Consequently <code class="docutils literal notranslate"><span class="pre">solve_cut</span></code> does not infer integrated coefficients from a cut.</p>
 </section>
 <section id="random-fields-and-whittlematern-covariance">
-<h2><a class="toc-backref" href="#id18" role="doc-backlink">Random fields and Whittle–Matérn covariance</a><a class="headerlink" href="#random-fields-and-whittlematern-covariance" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id17" role="doc-backlink">Random fields and Whittle–Matérn covariance</a><a class="headerlink" href="#random-fields-and-whittlematern-covariance" title="Link to this heading">#</a></h2>
 <p>RandomMedium describes a stationary isotropic <strong>Gaussian probability field</strong>
 with ensemble mean zero and point variance <span class="math notranslate nohighlight">\(\sigma_n^2\)</span>.
 The covariance describes spatial correlations:
@@ -868,23 +863,23 @@ mean and variance fluctuate; samples are not recentered or rescaled and the DC
 mode is retained. The expected discrete normalized covariance is
 <span class="math notranslate nohighlight">\(\operatorname{IFFT}(w/\overline w)\)</span>. Spectral truncation and finite box
 size change its relationship to the continuum covariance.</p>
-<figure class="align-default" id="id6">
+<figure class="align-default" id="id5">
 <a class="reference internal image-reference" href="_images/sphx_glr_theory_random_fields_001.png"><img alt="Seeded index slices from Gaussian, exponential and Matérn covariance fields with a shared color scale." src="_images/sphx_glr_theory_random_fields_001.png" style="width: 95%;" />
 </a>
 <figcaption>
 <p><span class="caption-text">Seeded numerical index slices at equal standard deviation and length
 parameter. Covariance changes spatial texture, not the Gaussian probability
-law. <a class="reference internal" href="auto_examples/random_media/theory_random_fields.html"><span class="doc">Simulation code</span></a>.</span><a class="headerlink" href="#id6" title="Link to this image">#</a></p>
+law. <a class="reference internal" href="auto_examples/random_media/theory_random_fields.html"><span class="doc">Simulation code</span></a>.</span><a class="headerlink" href="#id5" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
-<figure class="align-default" id="id7">
+<figure class="align-default" id="id6">
 <a class="reference internal image-reference" href="_images/sphx_glr_theory_random_fields_002.png"><img alt="Empirical covariance with standard-error bars from 32 independent fields, compared with discrete synthesis and continuum predictions." src="_images/sphx_glr_theory_random_fields_002.png" style="width: 85%;" />
 </a>
 <figcaption>
 <p><span class="caption-text">Covariance estimates from 32 independent realizations. Error bars describe
 uncertainty across realizations. Dashed curves predict discrete synthesis;
 dotted curves show the continuum convention. Samples are not demeaned.
-Differences from continuum curves can persist beyond sampling uncertainty.</span><a class="headerlink" href="#id7" title="Link to this image">#</a></p>
+Differences from continuum curves can persist beyond sampling uncertainty.</span><a class="headerlink" href="#id6" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <p>At first order, random-field covariance connects to scattering through the
@@ -901,7 +896,7 @@ Gaussian or exponential models; it is distinct from these finite simulations.
 This section introduces no additional analytical solver.</p>
 </section>
 <section id="ensembles-and-uncertainty">
-<h2><a class="toc-backref" href="#id19" role="doc-backlink">Ensembles and uncertainty</a><a class="headerlink" href="#ensembles-and-uncertainty" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id18" role="doc-backlink">Ensembles and uncertainty</a><a class="headerlink" href="#ensembles-and-uncertainty" title="Link to this heading">#</a></h2>
 <p>A fixed structure or a single realized random volume uses <code class="docutils literal notranslate"><span class="pre">solve</span></code>. An ensemble
 uses independent random fields or random backgrounds generated from the ordered
 seeds in EnsembleSampling. Duplicate seeds are rejected because repeated fields
@@ -926,14 +921,14 @@ omit those covariances. Phase plots do not infer uncertainty in the ratio
 numerator–denominator covariance.</p>
 </section>
 <section id="resolution-convergence-and-interpretation">
-<h2><a class="toc-backref" href="#id20" role="doc-backlink">Resolution, convergence and interpretation</a><a class="headerlink" href="#resolution-convergence-and-interpretation" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id19" role="doc-backlink">Resolution, convergence and interpretation</a><a class="headerlink" href="#resolution-convergence-and-interpretation" title="Link to this heading">#</a></h2>
 <p>The Born expansion is a Neumann series for <span class="math notranslate nohighlight">\(\mathcal A=\mathcal K\chi\)</span>.
 For a fixed finite discrete matrix, spectral radius <span class="math notranslate nohighlight">\(\rho(\mathcal A)&lt;1\)</span>
 is sufficient for convergence. Decreasing observed field norms over a few
 orders does not establish universal convergence or discretization accuracy.</p>
 <p>Keep the following checks separate:</p>
-<div class="pst-scrollable-table-container"><table class="table" id="id8">
-<caption><span class="caption-text">What each refinement changes</span><a class="headerlink" href="#id8" title="Link to this table">#</a></caption>
+<div class="pst-scrollable-table-container"><table class="table" id="id7">
+<caption><span class="caption-text">What each refinement changes</span><a class="headerlink" href="#id7" title="Link to this table">#</a></caption>
 <colgroup>
 <col style="width: 27.0%" />
 <col style="width: 36.0%" />
@@ -969,14 +964,14 @@ orders does not establish universal convergence or discretization accuracy.</p>
 </tbody>
 </table>
 </div>
-<figure class="align-default" id="id9">
+<figure class="align-default" id="id8">
 <a class="reference internal image-reference" href="_images/sphx_glr_grid_refinement_001.png"><img alt="First-order amplitude error decreasing with voxel refinement for a fixed cube, compared with a second-order reference slope." src="_images/sphx_glr_grid_refinement_001.png" style="width: 75%;" />
 </a>
 <figcaption>
 <p><span class="caption-text">Refinement at fixed 180 nm cube size, compared with an independent exact
 first-order volume integral. This checks midpoint amplitude quadrature;
 it does not validate higher-order Green self interactions.
-<a class="reference internal" href="auto_examples/validation/grid_refinement.html"><span class="doc">Simulation code</span></a>.</span><a class="headerlink" href="#id9" title="Link to this image">#</a></p>
+<a class="reference internal" href="auto_examples/validation/grid_refinement.html"><span class="doc">Simulation code</span></a>.</span><a class="headerlink" href="#id8" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <p>Sampling-error bars exclude geometry, constitutive, quadrature and finite-size
@@ -987,7 +982,7 @@ store the original voxel field. See <a class="reference internal" href="api.html
 for runnable refinement and uncertainty studies.</p>
 </section>
 <section id="further-reading">
-<h2><a class="toc-backref" href="#id21" role="doc-backlink">Further reading</a><a class="headerlink" href="#further-reading" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id20" role="doc-backlink">Further reading</a><a class="headerlink" href="#further-reading" title="Link to this heading">#</a></h2>
 <p>For the connection between index covariance spectra and vector first-order
 random-medium scattering, see Rogers, Çapoğlu and Backman (2009),
 <a class="reference external" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3839346/">Nonscalar elastic light scattering from continuous media in the Born approximation</a>. Compare length parameters,

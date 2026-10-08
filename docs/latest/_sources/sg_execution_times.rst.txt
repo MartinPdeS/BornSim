@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:26.089** total execution time for 17 files **from all galleries**:
+**00:19.967** total execution time for 17 files **from all galleries**:
 
 .. container::
 
@@ -33,53 +33,53 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_auto_examples_structured_media_dielectric_sphere.py` (``../examples/structured_media/dielectric_sphere.py``)
-     - 00:07.769
+     - 00:05.772
      - 0.0
    * - :ref:`sphx_glr_auto_examples_structured_media_theory_directional_interference.py` (``../examples/structured_media/theory_directional_interference.py``)
-     - 00:05.152
+     - 00:04.878
      - 0.0
    * - :ref:`sphx_glr_auto_examples_random_media_wavelength_dependence.py` (``../examples/random_media/wavelength_dependence.py``)
-     - 00:01.637
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_results_result_plots.py` (``../examples/results/result_plots.py``)
-     - 00:01.408
+     - 00:01.669
      - 0.0
    * - :ref:`sphx_glr_auto_examples_random_media_theory_random_fields.py` (``../examples/random_media/theory_random_fields.py``)
-     - 00:01.356
+     - 00:01.201
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_random_media_random_medium.py` (``../examples/random_media/random_medium.py``)
-     - 00:01.335
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_validation_angular_convergence.py` (``../examples/validation/angular_convergence.py``)
-     - 00:01.116
+   * - :ref:`sphx_glr_auto_examples_results_result_plots.py` (``../examples/results/result_plots.py``)
+     - 00:00.842
      - 0.0
    * - :ref:`sphx_glr_auto_examples_validation_finite_size_comparison.py` (``../examples/validation/finite_size_comparison.py``)
-     - 00:01.039
+     - 00:00.820
      - 0.0
    * - :ref:`sphx_glr_auto_examples_born_orders_compare_orders.py` (``../examples/born_orders/compare_orders.py``)
-     - 00:01.003
+     - 00:00.690
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_structured_media_structured_media.py` (``../examples/structured_media/structured_media.py``)
-     - 00:00.945
+   * - :ref:`sphx_glr_auto_examples_random_media_random_medium.py` (``../examples/random_media/random_medium.py``)
+     - 00:00.667
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_validation_angular_convergence.py` (``../examples/validation/angular_convergence.py``)
+     - 00:00.663
      - 0.0
    * - :ref:`sphx_glr_auto_examples_validation_ensemble_sampling.py` (``../examples/validation/ensemble_sampling.py``)
-     - 00:00.761
+     - 00:00.549
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_results_save_load_results.py` (``../examples/results/save_load_results.py``)
-     - 00:00.621
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_validation_grid_refinement.py` (``../examples/validation/grid_refinement.py``)
-     - 00:00.498
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_born_orders_born_interference.py` (``../examples/born_orders/born_interference.py``)
-     - 00:00.479
+   * - :ref:`sphx_glr_auto_examples_structured_media_structured_media.py` (``../examples/structured_media/structured_media.py``)
+     - 00:00.443
      - 0.0
    * - :ref:`sphx_glr_auto_examples_random_media_phase_function.py` (``../examples/random_media/phase_function.py``)
-     - 00:00.422
+     - 00:00.377
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_results_save_load_results.py` (``../examples/results/save_load_results.py``)
+     - 00:00.350
      - 0.0
    * - :ref:`sphx_glr_auto_examples_random_media_covariance_models.py` (``../examples/random_media/covariance_models.py``)
-     - 00:00.359
+     - 00:00.317
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_validation_grid_refinement.py` (``../examples/validation/grid_refinement.py``)
+     - 00:00.268
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_born_orders_born_interference.py` (``../examples/born_orders/born_interference.py``)
+     - 00:00.253
      - 0.0
    * - :ref:`sphx_glr_auto_examples_random_media_analytical_scattering.py` (``../examples/random_media/analytical_scattering.py``)
-     - 00:00.188
+     - 00:00.209
      - 0.0

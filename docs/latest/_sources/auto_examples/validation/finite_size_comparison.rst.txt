@@ -28,10 +28,12 @@ divided by sample volume; they are not automatically intrinsic transport
 coefficients. A finite window and finite synthesis box change the spectrum,
 and voxel resolution remains a separate source of error.
 
-.. GENERATED FROM PYTHON SOURCE LINES 12-76
+.. GENERATED FROM PYTHON SOURCE LINES 12-78
 
 .. code-block:: Python
 
+
+    import sys
 
     import matplotlib.pyplot as plt
     import numpy as np
@@ -109,24 +111,24 @@ and voxel resolution remains a separate source of error.
 
  .. code-block:: none
 
-    120 nm cube: μs = 0.7954126902831686 / meter, g = 0.013367158313236606 dimensionless
+    120 nm cube: μs = 0.7954126902831686 / meter, g = 0.0133671583132366 dimensionless
     240 nm cube: μs = 3.36443097460754 / meter, g = 0.2074324975735994 dimensionless
-    360 nm cube: μs = 5.027407224500178 / meter, g = 0.07803243578340681 dimensionless
+    360 nm cube: μs = 5.027407224500177 / meter, g = 0.07803243578340681 dimensionless
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 77-84
+.. GENERATED FROM PYTHON SOURCE LINES 79-86
 
 Inspect one ensemble realization in 3D
 --------------------------------------
 This is the first realization (seed 42) on the calculation grid,
 not an ensemble average or an infinite-medium material boundary.
-Matplotlib permits rotation with an interactive backend.
-Call plt.show() to display the figure; the gallery captures a static image.
+Drag to rotate and scroll to zoom in the embedded browser view.
+Higher-index regions are more opaque; opacity is not absorption.
 Use the largest of the three finite cubes compared above.
 
-.. GENERATED FROM PYTHON SOURCE LINES 84-94
+.. GENERATED FROM PYTHON SOURCE LINES 86-97
 
 .. code-block:: Python
 
@@ -135,18 +137,18 @@ Use the largest of the three finite cubes compared above.
         seed=42,
     )
     medium_figure = preview_volume.plot_3d(
-        backend="matplotlib",
-        mode="slices",
-        field="delta_index",
+        mode="volume",
+        field="index",
+        opacity_scale="increasing",
     )
-    plt.show()
+    if "--no-browser" not in sys.argv:
+        medium_figure.show(renderer="browser")
 
 
 
-.. image-sg:: /auto_examples/validation/images/sphx_glr_finite_size_comparison_002.png
-   :alt: Index fluctuation δn: slices
-   :srcset: /auto_examples/validation/images/sphx_glr_finite_size_comparison_002.png
-   :class: sphx-glr-single-img
+.. raw:: html
+
+   <iframe src="../../_static/gallery/finite_size_comparison-1.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
 
 
 
@@ -155,7 +157,7 @@ Use the largest of the three finite cubes compared above.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.039 seconds)
+   **Total running time of the script:** (0 minutes 0.820 seconds)
 
 
 .. _sphx_glr_download_auto_examples_validation_finite_size_comparison.py:

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Save results and inspect calculation provenance &#8212; BornSim 0.2.4 documentation</title>
+    <title>Save results and inspect calculation provenance &#8212; BornSim 0.2.5 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=6ffd866b"></script>
+    <script src="../../_static/documentation_options.js?v=cb850272"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -61,10 +61,10 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Numerical validation" href="../validation/index.html" />
-    <link rel="prev" title="Matplotlib result plots in 3D" href="result_plots.html" />
+    <link rel="prev" title="Result plots and interactive 3D views" href="result_plots.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.4" />
+  <meta name="docsearch:version" content="0.2.5" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -502,6 +502,8 @@ to identify the exact input. Exact regeneration depends on software versions.</p
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span><span class="w">
 </span><span class="kn">from</span><span class="w"> </span><span class="nn">tempfile</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemporaryDirectory</span><span class="w">
 </span><span class="w">
+</span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span><span class="w">
+</span><span class="w">
 </span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="nn">.</span><span class="nn">pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span><span class="w">
 </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span><span class="w">
 </span><span class="w">
@@ -546,7 +548,7 @@ temporary directory is removed. Loading preserves the recorded versions.</p>
 </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">Wavelength:</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.results.Result" title="bornsim.Result"><span class="n">restored</span></a><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">wavelength</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">nanometer</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">)</span><span class="w">
 </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">Complex amplitudes retained:</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">iscomplexobj</span><span class="p">(</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-property reference internal" href="../../api.html#bornsim.results.Result.amplitudes" title="bornsim.Result.amplitudes"><span class="n">restored</span><span class="o">.</span><span class="n">amplitudes</span><span class="o">.</span><span class="n">magnitude</span></a><span class="p">)</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>BornSim version: 0.2.4
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>BornSim version: 0.2.5
 NumPy version: 2.4.6
 Seed: 42
 Grid: {'shape': [4, 4, 4], 'spacing_m': 4e-08, 'background_index': 1.33, 'delta_index_sha256': '39eebae5451b18724582fa44a4b06553e73898e5e176dc87be3ebd90b9ed4467'}
@@ -573,16 +575,17 @@ coefficients. They are not infinite-medium material transport coefficients.</p>
 <section id="inspect-the-medium-in-3d">
 <h2>Inspect the medium in 3D<a class="headerlink" href="#inspect-the-medium-in-3d" title="Link to this heading">#</a></h2>
 <p>Inspect the actual finite input sample with physical spatial axes.
-Matplotlib permits rotation with an interactive backend.
-Call plt.show() to display the figure; the gallery captures a static image.</p>
+Drag to rotate and scroll to zoom in the embedded browser view.
+Higher-index regions are more opaque; opacity is not absorption.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">medium_figure</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.volume.Volume.plot_3d" title="bornsim.Volume.plot_3d"><span class="n">volume</span><span class="o">.</span><span class="n">plot_3d</span></a><span class="p">(</span><span class="w">
-</span>    <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">matplotlib</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">slices</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>    <span class="n">field</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">delta_index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">volume</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">field</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">opacity_scale</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">increasing</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
-</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="k">if</span> <span class="s2">&quot;</span><span class="s2">--no-browser</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span><span class="w">
+</span>    <span class="n">medium_figure</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">renderer</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">browser</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<img src="../../_images/sphx_glr_save_load_results_003.png" srcset="../../_images/sphx_glr_save_load_results_003.png" alt="Index fluctuation δn: slices" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.621 seconds)</p>
+<iframe src="../../_static/gallery/save_load_results-1.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.350 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-results-save-load-results-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/cd5669e623f7de1201c41b07ba479253/save_load_results.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">save_load_results.ipynb</span></code></a></p>

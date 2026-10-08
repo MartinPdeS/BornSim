@@ -16,6 +16,8 @@ dielectric contrast ``2 * n0 * delta_n`` at all Born orders, rather than
 ``n_sphere**2 - n0**2``. This weak-contrast example is not an exact Mie solution.
 """
 
+import sys
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -75,14 +77,15 @@ volume = structure.to_volume(
 # Inspect the medium in 3D
 # ------------------------
 # Inspect the actual finite input sample with physical spatial axes.
-# The gallery captures this Matplotlib figure; plt.show() displays it locally.
-# Voxels show the actual staircase interface used by the solver.
+# The gallery embeds an interactive volume; drag to rotate and scroll to zoom.
+# Level surfaces interpolate the sampled staircase interface.
 medium_figure = volume.plot_3d(
-    backend="matplotlib",
-    mode="voxels",
+    mode="volume",
     field="index",
+    opacity_scale="increasing",
 )
-plt.show()
+if "--no-browser" not in sys.argv:
+    medium_figure.show(renderer="browser")
 
 # %%
 # Compute coherent scattering through three Born orders
@@ -111,10 +114,10 @@ result = solver.solve(
 # coordinate. No realization or azimuth averaging is applied to the 3D view.
 # Check polar and azimuth quadrature refinement for quantitative calculations.
 phase_figure = result.plot_phase_function(
-    backend="matplotlib",
     view="3d",
 )
-plt.show()
+if "--no-browser" not in sys.argv:
+    phase_figure.show(renderer="browser")
 
 # %%
 # Select a physical meridian

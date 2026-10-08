@@ -26,10 +26,12 @@ Born order. Curves show the estimated mean with one-standard-error bars.
 One realization has unknown error, represented by NaN. Standard errors
 measure sampling uncertainty, not voxel, quadrature, or finite-size error.
 
-.. GENERATED FROM PYTHON SOURCE LINES 10-63
+.. GENERATED FROM PYTHON SOURCE LINES 10-65
 
 .. code-block:: Python
 
+
+    import sys
 
     import matplotlib.pyplot as plt
     import numpy as np
@@ -95,7 +97,7 @@ measure sampling uncertainty, not voxel, quadrature, or finite-size error.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 64-69
+.. GENERATED FROM PYTHON SOURCE LINES 66-71
 
 Sampling error at a fixed direction
 -----------------------------------
@@ -103,7 +105,7 @@ These are nested ensembles, using the first N consecutive seeds. Their
 estimates are correlated across N. A realized error need not decrease
 monotonically; the N**(-1/2) guide describes independent-sample scaling.
 
-.. GENERATED FROM PYTHON SOURCE LINES 69-79
+.. GENERATED FROM PYTHON SOURCE LINES 71-81
 
 .. code-block:: Python
 
@@ -129,16 +131,16 @@ monotonically; the N**(-1/2) guide describes independent-sample scaling.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 80-86
+.. GENERATED FROM PYTHON SOURCE LINES 82-88
 
 Inspect one ensemble realization in 3D
 --------------------------------------
 This is the first realization (seed 42) on the calculation grid,
 not an ensemble average or an infinite-medium material boundary.
-Matplotlib permits rotation with an interactive backend.
-Call plt.show() to display the figure; the gallery captures a static image.
+Drag to rotate and scroll to zoom in the embedded browser view.
+Higher-index regions are more opaque; opacity is not absorption.
 
-.. GENERATED FROM PYTHON SOURCE LINES 86-96
+.. GENERATED FROM PYTHON SOURCE LINES 88-99
 
 .. code-block:: Python
 
@@ -147,18 +149,18 @@ Call plt.show() to display the figure; the gallery captures a static image.
         seed=42,
     )
     medium_figure = preview_volume.plot_3d(
-        backend="matplotlib",
-        mode="slices",
-        field="delta_index",
+        mode="volume",
+        field="index",
+        opacity_scale="increasing",
     )
-    plt.show()
+    if "--no-browser" not in sys.argv:
+        medium_figure.show(renderer="browser")
 
 
 
-.. image-sg:: /auto_examples/validation/images/sphx_glr_ensemble_sampling_003.png
-   :alt: Index fluctuation δn: slices
-   :srcset: /auto_examples/validation/images/sphx_glr_ensemble_sampling_003.png
-   :class: sphx-glr-single-img
+.. raw:: html
+
+   <iframe src="../../_static/gallery/ensemble_sampling-1.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
 
 
 
@@ -167,7 +169,7 @@ Call plt.show() to display the figure; the gallery captures a static image.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.761 seconds)
+   **Total running time of the script:** (0 minutes 0.549 seconds)
 
 
 .. _sphx_glr_download_auto_examples_validation_ensemble_sampling.py:
