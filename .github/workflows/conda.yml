@@ -25,7 +25,7 @@ jobs:
         run: |
           conda install -y conda-build
           conda build conda.recipe --python "$PY_VER" --output-folder conda-output
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: conda-${{ matrix.os }}-${{ matrix.python }}
           path: conda-output/
