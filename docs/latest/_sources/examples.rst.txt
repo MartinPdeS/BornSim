@@ -8,9 +8,49 @@ fields and choose spatial views.
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
 
    medium_visualization
    auto_examples/index
+
+.. grid:: 1 2 3 3
+   :gutter: 2
+
+   .. grid-item-card:: Random media
+      :link: auto_examples/random_media/index
+      :link-type: doc
+
+      Seeded fields, covariance models, and wavelength dependence.
+
+   .. grid-item-card:: Structured media
+      :link: auto_examples/structured_media/index
+      :link-type: doc
+
+      Spheres, layers, and coherent directional scattering.
+
+   .. grid-item-card:: Born orders
+      :link: auto_examples/born_orders/index
+      :link-type: doc
+
+      Cumulative scattering and interference between complex amplitudes.
+
+   .. grid-item-card:: Results
+      :link: auto_examples/results/index
+      :link-type: doc
+
+      Plot, save, and reload unitful scattering results.
+
+   .. grid-item-card:: Validation
+      :link: auto_examples/validation/index
+      :link-type: doc
+
+      Grid, angular, ensemble, and finite-size comparisons.
+
+   .. grid-item-card:: Medium visualization
+      :link: medium_visualization
+      :link-type: doc
+
+      Interactive 3D volumes, opacity, slices, and voxel geometry.
 
 Random media
 ------------
