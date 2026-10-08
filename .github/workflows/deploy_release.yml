@@ -40,5 +40,13 @@ jobs:
       package_name: bornsim
       recipe_path: conda.recipe
       test_import: bornsim
+      # Invoke the test prefix directly: the shared workflow's login shell
+      # can reactivate base while conda run prepares the test environment.
+      test_command: >-
+        if [ \"$RUNNER_OS\" = Windows ]; then
+          \"$RUNNER_TEMP/conda-package-test/python.exe\" -c 'import bornsim; print(bornsim.__version__)';
+        else
+          \"$RUNNER_TEMP/conda-package-test/bin/python\" -c 'import bornsim; print(bornsim.__version__)';
+        fi
     secrets:
       ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}
