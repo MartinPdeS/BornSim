@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Print the next semantic-version tag from the highest existing release tag."""
+"""Print the next semantic-version tag, using project metadata before the first tag."""
 
 import argparse
 from pathlib import Path
 import re
 import subprocess
 import sys
+import tomllib
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -29,7 +30,11 @@ def latest_version() -> tuple[int, int, int]:
         if match is not None:
             versions.append(tuple(int(match.group(name)) for name in ("major", "minor", "patch")))
     if not versions:
-        raise RuntimeError("no semantic-version tag was found")
+        project_version = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]["version"]
+        match = TAG_PATTERN.fullmatch(f"v{project_version}")
+        if match is None:
+            raise RuntimeError("project version must use MAJOR.MINOR.PATCH before the first release tag")
+        return tuple(int(match.group(name)) for name in ("major", "minor", "patch"))
     return max(versions)
 
 
