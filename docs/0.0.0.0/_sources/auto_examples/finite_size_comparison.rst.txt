@@ -109,9 +109,9 @@ and voxel resolution remains a separate source of error.
 
  .. code-block:: none
 
-    120 nm cube: μs = 0.7954126902831686 / meter, g = 0.0133671583132366 dimensionless
+    120 nm cube: μs = 0.7954126902831686 / meter, g = 0.013367158313236606 dimensionless
     240 nm cube: μs = 3.36443097460754 / meter, g = 0.2074324975735994 dimensionless
-    360 nm cube: μs = 5.027407224500177 / meter, g = 0.07803243578340681 dimensionless
+    360 nm cube: μs = 5.027407224500178 / meter, g = 0.07803243578340681 dimensionless
 
 
 
@@ -154,7 +154,7 @@ Use the largest of the three finite cubes compared above.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.551 seconds)
+   **Total running time of the script:** (0 minutes 1.017 seconds)
 
 
 .. _sphx_glr_download_auto_examples_finite_size_comparison.py:

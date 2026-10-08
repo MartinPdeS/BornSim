@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:13.351** total execution time for 17 files **from all galleries**:
+**00:25.035** total execution time for 17 files **from all galleries**:
 
 .. container::
 
@@ -33,53 +33,53 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_auto_examples_dielectric_sphere.py` (``../examples/dielectric_sphere.py``)
-     - 00:03.954
+     - 00:07.627
      - 0.0
    * - :ref:`sphx_glr_auto_examples_theory_directional_interference.py` (``../examples/theory_directional_interference.py``)
-     - 00:02.619
+     - 00:05.066
      - 0.0
    * - :ref:`sphx_glr_auto_examples_wavelength_dependence.py` (``../examples/wavelength_dependence.py``)
-     - 00:00.881
+     - 00:01.591
      - 0.0
    * - :ref:`sphx_glr_auto_examples_result_plots.py` (``../examples/result_plots.py``)
-     - 00:00.776
+     - 00:01.407
      - 0.0
    * - :ref:`sphx_glr_auto_examples_theory_random_fields.py` (``../examples/theory_random_fields.py``)
-     - 00:00.661
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_compare_orders.py` (``../examples/compare_orders.py``)
-     - 00:00.576
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_random_medium.py` (``../examples/random_medium.py``)
-     - 00:00.568
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_finite_size_comparison.py` (``../examples/finite_size_comparison.py``)
-     - 00:00.551
+     - 00:01.162
      - 0.0
    * - :ref:`sphx_glr_auto_examples_angular_convergence.py` (``../examples/angular_convergence.py``)
-     - 00:00.504
+     - 00:01.090
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_random_medium.py` (``../examples/random_medium.py``)
+     - 00:01.060
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_finite_size_comparison.py` (``../examples/finite_size_comparison.py``)
+     - 00:01.017
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_compare_orders.py` (``../examples/compare_orders.py``)
+     - 00:00.998
      - 0.0
    * - :ref:`sphx_glr_auto_examples_structured_media.py` (``../examples/structured_media.py``)
-     - 00:00.503
+     - 00:00.888
      - 0.0
    * - :ref:`sphx_glr_auto_examples_ensemble_sampling.py` (``../examples/ensemble_sampling.py``)
-     - 00:00.411
+     - 00:00.735
      - 0.0
    * - :ref:`sphx_glr_auto_examples_save_load_results.py` (``../examples/save_load_results.py``)
-     - 00:00.312
+     - 00:00.577
      - 0.0
    * - :ref:`sphx_glr_auto_examples_grid_refinement.py` (``../examples/grid_refinement.py``)
-     - 00:00.281
+     - 00:00.477
      - 0.0
    * - :ref:`sphx_glr_auto_examples_born_interference.py` (``../examples/born_interference.py``)
-     - 00:00.252
+     - 00:00.457
      - 0.0
    * - :ref:`sphx_glr_auto_examples_phase_function.py` (``../examples/phase_function.py``)
-     - 00:00.201
+     - 00:00.360
      - 0.0
    * - :ref:`sphx_glr_auto_examples_covariance_models.py` (``../examples/covariance_models.py``)
-     - 00:00.190
+     - 00:00.342
      - 0.0
    * - :ref:`sphx_glr_auto_examples_analytical_scattering.py` (``../examples/analytical_scattering.py``)
-     - 00:00.112
+     - 00:00.181
      - 0.0
