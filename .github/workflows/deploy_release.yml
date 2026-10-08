@@ -1,23 +1,44 @@
 name: Publish release
+
 on:
   push:
     tags: ["v*"]
+
 permissions:
   contents: read
+
 jobs:
-  release:
+  validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-python@v5
+      - name: Set up Python and CI dependencies
+        uses: MartinPdeS/MPSActions/actions/setup-python@0f5927acf88b25b5d253421e508387897096a2cc
         with:
           python-version: "3.11"
-      - run: python -m pip install -e ".[testing,dev]"
+          fetch-depth: "0"
+          install-command: >-
+            python -m pip install --upgrade pip && python -m pip install -e ".[testing,dev]"
       - run: make check PYTHON=python
       - run: python tools/check_release.py --version "${GITHUB_REF_NAME}"
       - run: make package-check PYTHON=python
-      - uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          password: ${{ secrets.PYPI_API_TOKEN }}
+
+  pypi:
+    needs: validate
+    uses: MartinPdeS/MPSActions/.github/workflows/publish_pure_package_to_PyPi.yml@v5
+    with:
+      python-version: "3.11"
+      test-command: "python -c 'import bornsim; print(bornsim.__version__)'"
+    secrets:
+      PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+
+  conda:
+    needs: validate
+    uses: MartinPdeS/MPSActions/.github/workflows/publish_compiled_package_to_anaconda.yml@v3
+    with:
+      python_versions: '["3.11", "3.12", "3.13"]'
+      os_list: '["ubuntu-latest", "macos-latest", "windows-latest"]'
+      package_name: bornsim
+      recipe_path: conda.recipe
+      test_import: bornsim
+    secrets:
+      ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}

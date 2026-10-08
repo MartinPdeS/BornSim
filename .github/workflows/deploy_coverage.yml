@@ -1,0 +1,33 @@
+name: Deploy coverage
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  coverage:
+    name: Run tests and generate coverage data
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python and CI dependencies
+        uses: MartinPdeS/MPSActions/actions/setup-python@0f5927acf88b25b5d253421e508387897096a2cc
+        with:
+          python-version: "3.11"
+          fetch-depth: "0"
+          install-command: >-
+            python -m pip install --upgrade pip && python -m pip install -e ".[testing]"
+      - name: Run pytest with coverage
+        run: python -m pytest --config-file=pytest.ini --cov-report=xml:coverage.xml
+      - name: Post coverage comment
+        uses: py-cov-action/python-coverage-comment-action@a05be3d2e8a6272d3ef5fb2840ab20368bb2eb71
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MINIMUM_GREEN: 90
+          MINIMUM_ORANGE: 50
+          COVERAGE_PATH: .
