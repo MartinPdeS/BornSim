@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "If you use BornSim in research, please cite the software version used."
 title: "BornSim"
 type: software
-version: "0.2.2"
+version: "0.2.3"
 authors:
   - family-names: "Poinsinet de Sivry-Houle"
     given-names: "Martin"
