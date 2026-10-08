@@ -1,0 +1,751 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="dark">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bornsim.model &#8212; BornSim 0.2.5 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "dark";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
+
+    <script src="../../_static/documentation_options.js?v=cb850272"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/bornsim/model';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.19.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/BornSim/documentation_page/version_switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.2.5';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.2.5" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="dark">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-dark" alt="BornSim"/>
+    <img src="../../_static/logo.png" class="logo__image only-light pst-js-only" alt="BornSim"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Start
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../guide.html">
+    Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../resources.html">
+    Resources
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MartinPdeS/BornSim" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Start
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../guide.html">
+    Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../resources.html">
+    Resources
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MartinPdeS/BornSim" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">bornsim.model</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for bornsim.model</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Vector first-order Born model, with SI lengths and unpolarized light.</span>
+
+<span class="sd">The dielectric covariance uses the weak-fluctuation linearization</span>
+<span class="sd">C_epsilon(r) = 4 n_background**2 C_n(r). The spectral convention is</span>
+<span class="sd">Phi(q) = integral C(r) exp(-i q.r) d^3 r (no Fourier prefactor).</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">_si</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">RandomMedium</span>
+
+
+<div class="viewcode-block" id="AnalyticalMedium">
+<a class="viewcode-back" href="../../api.html#bornsim.model.AnalyticalMedium">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnalyticalMedium</span><span class="p">(</span><span class="n">RandomMedium</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Define random-medium statistics for the existing analytical first-order model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    background_index : float or Quantity, optional</span>
+<span class="sd">        Positive, finite background refractive index. Dimensionless quantities</span>
+<span class="sd">        and refractive-index units are accepted. Default is 1.33.</span>
+<span class="sd">    index_std : float or Quantity, optional</span>
+<span class="sd">        Nonnegative, finite standard deviation of index fluctuations, not their</span>
+<span class="sd">        variance. Dimensionless; default is 0.01.</span>
+<span class="sd">    correlation_length : float or Quantity, optional</span>
+<span class="sd">        Positive, finite covariance length. Bare numbers mean metres;</span>
+<span class="sd">        compatible length quantities are converted to metres. Default is 100 nm.</span>
+<span class="sd">    correlation : {'gaussian', 'exponential'}, optional</span>
+<span class="sd">        Spatial covariance model. Default is 'gaussian'.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    background_index, index_std : float</span>
+<span class="sd">        Dimensionless statistics stored as numeric SI values.</span>
+<span class="sd">    correlation_length : float</span>
+<span class="sd">        Covariance length stored in metres.</span>
+<span class="sd">    correlation : str</span>
+<span class="sd">        Selected spatial covariance model.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If a statistic is nonfinite, outside its allowed range, nonscalar,</span>
+<span class="sd">        has incompatible units, or the covariance model is unsupported.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This concrete subclass replaces the former directly instantiated Medium.</span>
+<span class="sd">    It retains the existing first-order Gaussian and exponential formulas,</span>
+<span class="sd">    and inherits numerical voxel generation from RandomMedium.</span>
+<span class="sd">    The index covariance is ``index_std**2 * exp(-r**2 / (2 * ell**2))``</span>
+<span class="sd">    for Gaussian correlation and ``index_std**2 * exp(-r / ell)`` for</span>
+<span class="sd">    exponential correlation, where ``ell = correlation_length``. Equal length</span>
+<span class="sd">    parameters therefore do not imply identical correlation profiles.</span>
+<span class="sd">    Dielectric contrast is linearized as ``delta_epsilon = 2 * n0 * delta_n``.</span>
+<span class="sd">    The Gaussian probability distribution used by :func:`random_volume` is</span>
+<span class="sd">    independent of this choice of spatial covariance.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from bornsim import AnalyticalMedium</span>
+<span class="sd">    &gt;&gt;&gt; from bornsim.units import ureg</span>
+<span class="sd">    &gt;&gt;&gt; medium = AnalyticalMedium(correlation_length=100 * ureg.nanometer)</span>
+<span class="sd">    &gt;&gt;&gt; medium.correlation</span>
+<span class="sd">    'gaussian'</span>
+<span class="sd">    """</span>
+
+    <span class="n">background_index</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.33</span>
+    <span class="n">index_std</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span>
+    <span class="n">correlation_length</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">100e-9</span>
+    <span class="n">correlation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"gaussian"</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">correlation</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"gaussian"</span><span class="p">,</span> <span class="s2">"exponential"</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"AnalyticalMedium correlation must be gaussian or exponential."</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="angular_scattering">
+<a class="viewcode-back" href="../../api.html#bornsim.model.angular_scattering">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">angular_scattering</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">medium</span><span class="p">:</span> <span class="n">AnalyticalMedium</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span> <span class="n">theta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Evaluate the unpolarized first-order differential scattering coefficient.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    medium : AnalyticalMedium</span>
+<span class="sd">        Background index and isotropic fluctuation statistics.</span>
+<span class="sd">    wavelength : float or Quantity</span>
+<span class="sd">        Positive, finite vacuum wavelength. Bare numbers mean metres.</span>
+<span class="sd">    theta : array_like or Quantity</span>
+<span class="sd">        Finite polar scattering angles in [0, pi]. Bare numbers mean radians;</span>
+<span class="sd">        angular quantities may use degrees or radians. Scalars are accepted.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    differential : numpy.ndarray or numpy scalar</span>
+<span class="sd">        Differential scattering coefficient in m^-1 sr^-1, with the same shape</span>
+<span class="sd">        as ``theta``. Returns numeric SI values, even for quantity inputs.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the wavelength is nonpositive, nonfinite, nonscalar, or has</span>
+<span class="sd">        incompatible units, or angles are invalid or have incompatible units.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    optical_properties : Integrate the coefficient and its angular moments.</span>
+<span class="sd">    bornsim.solver.Solver.solve : Return analytical curves as unitful results.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    With ``k0 = 2*pi/wavelength`` and ``q = 2*n0*k0*sin(theta/2)``, the</span>
+<span class="sd">    coefficient is ``k0**4 * Phi_epsilon(q) * (1 + cos(theta)**2) / (32*pi**2)``.</span>
+<span class="sd">    The spectral convention is the three-dimensional Fourier transform without</span>
+<span class="sd">    an additional normalization prefactor. The dielectric covariance follows</span>
+<span class="sd">    ``C_epsilon = 4 * n0**2 * C_n`` under weak-fluctuation linearization.</span>
+
+<span class="sd">    For nonzero total scattering, the phase function per steradian is this</span>
+<span class="sd">    coefficient divided by ``optical_properties(...)["mu_s"]``. Its integral</span>
+<span class="sd">    over solid angle is one; it is not a probability density per polar angle.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from bornsim import AnalyticalMedium, angular_scattering</span>
+<span class="sd">    &gt;&gt;&gt; from bornsim.units import ureg</span>
+<span class="sd">    &gt;&gt;&gt; curve = angular_scattering(</span>
+<span class="sd">    ...     medium=AnalyticalMedium(),</span>
+<span class="sd">    ...     wavelength=633 * ureg.nanometer,</span>
+<span class="sd">    ...     theta=[0, 90, 180] * ureg.degree,</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; curve.shape</span>
+<span class="sd">    (3,)</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">medium</span><span class="p">,</span> <span class="n">AnalyticalMedium</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"Analytical scattering requires an AnalyticalMedium."</span><span class="p">)</span>
+    <span class="n">wavelength</span> <span class="o">=</span> <span class="n">_si</span><span class="p">(</span>
+        <span class="n">value</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span>
+        <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">"wavelength"</span><span class="p">,</span>
+        <span class="n">scalar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">wavelength</span><span class="p">)</span> <span class="ow">or</span> <span class="n">wavelength</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"wavelength must be finite and positive."</span><span class="p">)</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">_si</span><span class="p">(</span>
+        <span class="n">value</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span>
+        <span class="n">unit</span><span class="o">=</span><span class="s2">"radian"</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">"theta"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">((</span><span class="n">theta</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">theta</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"theta must be finite and between 0 and pi."</span><span class="p">)</span>
+    <span class="n">k0</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">wavelength</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k0</span> <span class="o">*</span> <span class="n">medium</span><span class="o">.</span><span class="n">background_index</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">ell</span> <span class="o">=</span> <span class="n">medium</span><span class="o">.</span><span class="n">correlation_length</span>
+    <span class="n">variance</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">medium</span><span class="o">.</span><span class="n">background_index</span> <span class="o">*</span> <span class="n">medium</span><span class="o">.</span><span class="n">index_std</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="k">if</span> <span class="n">medium</span><span class="o">.</span><span class="n">correlation</span> <span class="o">==</span> <span class="s2">"gaussian"</span><span class="p">:</span>
+        <span class="n">spectrum</span> <span class="o">=</span> <span class="n">variance</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">**</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">ell</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">q</span> <span class="o">*</span> <span class="n">ell</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">spectrum</span> <span class="o">=</span> <span class="n">variance</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">ell</span><span class="o">**</span><span class="mi">3</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">q</span> <span class="o">*</span> <span class="n">ell</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="k">return</span> <span class="n">k0</span><span class="o">**</span><span class="mi">4</span> <span class="o">/</span> <span class="p">(</span><span class="mi">16</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">spectrum</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span></div>
+
+
+
+<div class="viewcode-block" id="optical_properties">
+<a class="viewcode-back" href="../../api.html#bornsim.model.optical_properties">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">optical_properties</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">medium</span><span class="p">:</span> <span class="n">AnalyticalMedium</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span> <span class="n">quadrature_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Integrate analytical scattering and its moments over solid angle.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    medium : AnalyticalMedium</span>
+<span class="sd">        Background index and isotropic fluctuation statistics.</span>
+<span class="sd">    wavelength : float or Quantity</span>
+<span class="sd">        Positive, finite vacuum wavelength; bare numbers mean metres.</span>
+<span class="sd">    quadrature_order : int, optional</span>
+<span class="sd">        Number of Gauss-Legendre nodes in the cosine of the scattering angle.</span>
+<span class="sd">        Must be at least 16; default is 256.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    properties : dict</span>
+<span class="sd">        Numeric SI values under the following keys:</span>
+
+<span class="sd">        * ``mu_s`` : total scattering coefficient in m^-1.</span>
+<span class="sd">        * ``g`` : dimensionless mean cosine of the scattering angle, or</span>
+<span class="sd">          ``None`` if ``mu_s`` is zero.</span>
+<span class="sd">        * ``mu_s_prime`` : reduced scattering coefficient in m^-1, equal to</span>
+<span class="sd">          ``mu_s * (1 - g)`` when ``g`` is defined.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the quadrature order, wavelength, or wavelength units are invalid.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    angular_scattering : Evaluate the integrand at arbitrary polar angles.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Axial symmetry gives ``mu_s = 2*pi*integral(beta(theta)*sin(theta), theta)``</span>
+<span class="sd">    over [0, pi], where ``beta`` is the differential coefficient. The</span>
+<span class="sd">    anisotropy uses the same integral with an additional ``cos(theta)`` factor.</span>
+<span class="sd">    These coefficients describe the analytical infinite-medium first-order</span>
+<span class="sd">    model, unlike the finite-sample coefficients from numerical ensembles.</span>
+<span class="sd">    Increase ``quadrature_order`` to check strongly forward-peaked cases.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from bornsim import AnalyticalMedium, optical_properties</span>
+<span class="sd">    &gt;&gt;&gt; optical_properties(</span>
+<span class="sd">    ...     medium=AnalyticalMedium(index_std=0),</span>
+<span class="sd">    ...     wavelength=633e-9,</span>
+<span class="sd">    ... )</span>
+<span class="sd">    {'mu_s': 0.0, 'g': None, 'mu_s_prime': 0.0}</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">quadrature_order</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">quadrature_order</span> <span class="o">&lt;</span> <span class="mi">16</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"quadrature_order must be an integer of at least 16."</span><span class="p">)</span>
+    <span class="n">cosine</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polynomial</span><span class="o">.</span><span class="n">legendre</span><span class="o">.</span><span class="n">leggauss</span><span class="p">(</span><span class="n">quadrature_order</span><span class="p">)</span>
+    <span class="n">differential</span> <span class="o">=</span> <span class="n">angular_scattering</span><span class="p">(</span>
+        <span class="n">medium</span><span class="o">=</span><span class="n">medium</span><span class="p">,</span>
+        <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span>
+        <span class="n">theta</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">cosine</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">mu_s</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span> <span class="o">*</span> <span class="n">differential</span><span class="p">))</span>
+    <span class="n">mu_s_prime</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cosine</span><span class="p">)</span> <span class="o">*</span> <span class="n">differential</span><span class="p">))</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span> <span class="o">*</span> <span class="n">cosine</span> <span class="o">*</span> <span class="n">differential</span><span class="p">)</span> <span class="o">/</span> <span class="n">mu_s</span><span class="p">)</span> <span class="k">if</span> <span class="n">mu_s</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"mu_s"</span><span class="p">:</span> <span class="n">mu_s</span><span class="p">,</span> <span class="s2">"g"</span><span class="p">:</span> <span class="n">g</span><span class="p">,</span> <span class="s2">"mu_s_prime"</span><span class="p">:</span> <span class="n">mu_s_prime</span><span class="p">}</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Martin Poinsinet de Sivry-Houle.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.19.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
