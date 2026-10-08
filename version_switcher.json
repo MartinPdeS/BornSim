@@ -5,6 +5,11 @@
     "url": "https://martinpdes.github.io/BornSim/docs/latest/"
   },
   {
+    "name": "v0.2.5",
+    "version": "v0.2.5",
+    "url": "https://martinpdes.github.io/BornSim/docs/v0.2.5/"
+  },
+  {
     "name": "v0.2.4",
     "version": "v0.2.4",
     "url": "https://martinpdes.github.io/BornSim/docs/v0.2.4/"
@@ -23,10 +28,5 @@
     "name": "v0.2.1",
     "version": "v0.2.1",
     "url": "https://martinpdes.github.io/BornSim/docs/v0.2.1/"
-  },
-  {
-    "name": "v0.2.0",
-    "version": "v0.2.0",
-    "url": "https://martinpdes.github.io/BornSim/docs/v0.2.0/"
   }
 ]
