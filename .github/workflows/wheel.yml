@@ -21,7 +21,18 @@ jobs:
           python -m venv "$RUNNER_TEMP/wheel-env"
           "$RUNNER_TEMP/wheel-env/bin/python" -m pip install dist/*.whl
           cd "$RUNNER_TEMP"
-          "$RUNNER_TEMP/wheel-env/bin/python" -c "import bornsim; print(bornsim.__version__); print(bornsim.optical_properties(bornsim.Medium(), 633e-9))"
+          "$RUNNER_TEMP/wheel-env/bin/python" - <<'PY'
+          import bornsim
+          from bornsim.model import AnalyticalMedium, optical_properties
+
+          medium = AnalyticalMedium()
+          properties = optical_properties(
+              medium=medium,
+              wavelength=633e-9,
+          )
+          print(bornsim.__version__)
+          print(properties)
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: distributions

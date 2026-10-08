@@ -1,4 +1,5 @@
 import builtins
+import unicodedata
 
 import numpy as np
 import pytest
@@ -39,8 +40,9 @@ def test_matplotlib_slice_orientation_extents_and_units(normal, dimension):
     half_width = volume.delta_index.shape[horizontal] * 0.04 / 2
     half_height = volume.delta_index.shape[vertical] * 0.04 / 2
     np.testing.assert_allclose(image.get_extent(), [-half_width, half_width, -half_height, half_height])
-    assert axis.get_xlabel() == f"{'xyz'[horizontal]} (μm)"
-    assert axis.get_ylabel() == f"{'xyz'[vertical]} (μm)"
+    # Pint versions may format micro as U+00B5 or U+03BC; both mean micrometres.
+    assert unicodedata.normalize("NFKC", axis.get_xlabel()) == f"{'xyz'[horizontal]} (μm)"
+    assert unicodedata.normalize("NFKC", axis.get_ylabel()) == f"{'xyz'[vertical]} (μm)"
     assert image.get_clim() == (expected.min(), expected.max())
 
 
