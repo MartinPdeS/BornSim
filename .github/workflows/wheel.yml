@@ -1,40 +1,22 @@
 name: Wheel smoke test
+
 on:
-  push:
-    branches: [master]
   pull_request:
     branches: [master]
+  push:
+    branches: [master]
+
 permissions:
   contents: read
+
 jobs:
   wheel:
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Python and CI dependencies
-        uses: MartinPdeS/MPSActions/actions/setup-python@0f5927acf88b25b5d253421e508387897096a2cc
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
         with:
           python-version: "3.11"
-          install-command: >-
-            python -m pip install --upgrade pip && python -m pip install -e ".[dev]"
-      - run: make package-check PYTHON=python
-      - name: Verify installed wheel outside checkout
-        run: |
-          python -m venv "$RUNNER_TEMP/wheel-env"
-          "$RUNNER_TEMP/wheel-env/bin/python" -m pip install dist/*.whl
-          cd "$RUNNER_TEMP"
-          "$RUNNER_TEMP/wheel-env/bin/python" - <<'PY'
-          import bornsim
-          from bornsim.model import AnalyticalMedium, optical_properties
-
-          medium = AnalyticalMedium()
-          properties = optical_properties(
-              medium=medium,
-              wavelength=633e-9,
-          )
-          print(bornsim.__version__)
-          print(properties)
-          PY
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
-        with:
-          name: distributions
-          path: dist/
+      - run: python -m pip install --upgrade pip build
+      - run: python -m build --wheel
+      - run: python tools/check_wheel.py dist/*.whl

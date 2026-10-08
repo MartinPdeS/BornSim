@@ -25,8 +25,7 @@ jobs:
     with:
       python-version: "3.11"
       package-name: "BornSim"
-      apt-package: jq
-      fail-on-sphinx-warning: true
+      apt-package: xvfb jq
       deploy-pages: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')) }}
 
   prune_documentation_versions:

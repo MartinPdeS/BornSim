@@ -4,26 +4,48 @@ on:
   push:
     branches: ["**"]
   pull_request:
-    branches: [master]
+    branches: ["master"]
 
 permissions:
   contents: write
-  pull-requests: write
+  pages: write
+  id-token: write
 
 jobs:
   coverage:
     name: Run tests and generate coverage data
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Python and CI dependencies
-        uses: MartinPdeS/MPSActions/actions/setup-python@0f5927acf88b25b5d253421e508387897096a2cc
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
         with:
           python-version: "3.11"
-          fetch-depth: "0"
-          install-command: >-
-            python -m pip install --upgrade pip && python -m pip install -e ".[testing]"
+
+      - name: Install headless dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb
+
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      - name: Install package and test dependencies
+        run: |
+          python -m pip install --upgrade pip wheel build
+          python -m pip install -e ".[testing]"
+
       - name: Run pytest with coverage
-        run: python -m pytest --config-file=pytest.ini --cov-report=xml:coverage.xml
+        run: |
+          python -m pytest \
+            --cov=bornsim \
+            --import-mode=importlib \
+            --cov-config=.coveragerc \
+            --cov-report=term-missing \
+            --cov-report=xml:coverage.xml \
+            tests \
+            --config-file=pytest.ini
+
       - name: Post coverage comment
         uses: py-cov-action/python-coverage-comment-action@a05be3d2e8a6272d3ef5fb2840ab20368bb2eb71
         with:

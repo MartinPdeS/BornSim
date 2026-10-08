@@ -7,9 +7,11 @@ from zipfile import ZipFile
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("directory", type=Path)
+    parser.add_argument("paths", type=Path, nargs="+", help="Wheel files or directories containing wheels.")
     args = parser.parse_args()
-    wheels = list(args.directory.glob("*.whl"))
+    wheels = []
+    for path in args.paths:
+        wheels.extend(path.glob("*.whl") if path.is_dir() else [path])
     if not wheels:
         raise SystemExit("No wheel found.")
     for wheel in wheels:
