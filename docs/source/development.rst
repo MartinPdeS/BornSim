@@ -47,6 +47,22 @@ normalization mathematics on AngularData and angular integration on
 AngularSampling; renderers display those quantities without recomputing
 scattering or discarding directional asymmetry.
 
+Documentation versions
+----------------------
+
+The header version dropdown follows the same layout as PyMieSim. ``latest``
+tracks ``master``; tagged releases are published under their own
+``docs/vX.Y.Z`` directories. A branch build updates only ``latest``, so
+later development changes do not overwrite released documentation.
+
+The deployment retains the five newest release versions plus ``latest``
+and regenerates ``version_switcher.json`` on the ``documentation_page``
+branch. Tagged builds set the ``tag`` environment variable to the release
+tag so the dropdown selects the matching version. Local builds default to
+``latest``; to check a release label locally, run::
+
+   tag=v0.2.3 make docs PYTHON=.venv/bin/python
+
 Theory figures and reproducibility
 ----------------------------------
 

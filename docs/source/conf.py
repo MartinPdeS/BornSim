@@ -1,6 +1,7 @@
 """BornSim documentation configuration."""
 
 from pathlib import Path
+import os
 import sys
 
 sys.path.insert(0, str(Path(__file__).parent))
@@ -18,6 +19,7 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.viewcode",
     "sphinx_gallery.gen_gallery",
+    "sphinx_design",
 ]
 html_theme = "pydata_sphinx_theme"
 html_static_path = ["_static"]
@@ -25,6 +27,36 @@ html_logo = "_static/logo.png"
 html_favicon = "_static/favicon.png"
 html_theme_options = {
     "logo": {"alt_text": "BornSim"},
+    "show_nav_level": 0,
+    "navbar_align": "left",
+    "navbar_end": ["version-switcher", "theme-switcher", "navbar-icon-links"],
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/MartinPdeS/BornSim",
+            "icon": "fa-brands fa-github",
+        },
+    ],
+    "show_prev_next": False,
+    "show_version_warning_banner": True,
+    "footer_start": ["copyright"],
+    "footer_end": ["sphinx-version", "theme-version"],
+    "pygments_light_style": "default",
+    "pygments_dark_style": "github-dark",
+    "switcher": {
+        "json_url": "https://raw.githubusercontent.com/MartinPdeS/BornSim/documentation_page/version_switcher.json",
+        "version_match": os.getenv("tag", "latest"),
+    },
+    # The deployment regenerates this remote manifest after the build.
+    "check_switcher": False,
+}
+html_context = {
+    "github_url": "https://github.com",
+    "github_user": "MartinPdeS",
+    "github_repo": "BornSim",
+    "github_version": "master" if os.getenv("tag", "latest") == "latest" else os.environ["tag"],
+    "doc_path": "docs/source",
+    "default_mode": "dark",
 }
 exclude_patterns = []
 autodoc_typehints = "description"

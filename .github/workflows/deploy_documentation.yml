@@ -39,6 +39,7 @@ jobs:
       - name: Build documentation
         env:
           MPLBACKEND: Agg
+          tag: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || 'latest' }}
         run: make docs PYTHON=python
 
       - name: Verify Born equations and interactive volumes
@@ -70,17 +71,19 @@ jobs:
           DOCUMENTATION_BRANCH: documentation_page
         run: |
           set -Eeuo pipefail
-          documentation_version="$(git describe --tags --abbrev=0)"
+          documentation_version="latest"
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            documentation_version="${GITHUB_REF_NAME}"
+          fi
           documentation_output="${GITHUB_WORKSPACE}/docs/build/html"
           cd documentation-site
           mkdir -p docs
-          rm -rf "docs/${documentation_version}" docs/latest
+          rm -rf "docs/${documentation_version}"
           cp -R "${documentation_output}" "docs/${documentation_version}"
-          cp -R "${documentation_output}" docs/latest
           touch .nojekyll
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -f "docs/${documentation_version}" docs/latest .nojekyll
+          git add -f "docs/${documentation_version}" .nojekyll
           if ! git diff --cached --quiet; then
             git commit -m "Update documentation for ${documentation_version} [skip ci]"
             git push origin "HEAD:${DOCUMENTATION_BRANCH}"
@@ -111,7 +114,7 @@ jobs:
               -maxdepth 1 \
               -type d \
               -printf "%f\n" \
-              | grep -v "^latest$" \
+              | awk '/^v[0-9]+\.[0-9]+\.[0-9]+$/' \
               | sort -V -r
           )
 
@@ -130,7 +133,7 @@ jobs:
               -maxdepth 1 \
               -type d \
               -printf "%f\n" \
-              | grep -v "^latest$" \
+              | awk '/^v[0-9]+\.[0-9]+\.[0-9]+$/' \
               | sort -V -r
           )
 
@@ -141,13 +144,13 @@ jobs:
               {
                 name: "latest",
                 version: "latest",
-                url: ($base_url + "/latest")
+                url: ($base_url + "/latest/")
               }
             ] + [
               $versions[] | {
                 name: .,
                 version: .,
-                url: ($base_url + "/" + .)
+                url: ($base_url + "/" + . + "/")
               }
             ]' > version_switcher.json
 
