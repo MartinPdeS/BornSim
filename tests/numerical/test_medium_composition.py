@@ -1,18 +1,17 @@
 """Validate editable composition against independent voxel references."""
 
-import json
+from bornsim.medium.random_medium import WhittleMaternMedium
 
+from bornsim import Grid
+import json
 import numpy as np
 import pytest
-
-from bornsim import Layer, RandomMedium, Sphere, StructuredMedium
+from bornsim import Layer, Sphere, StructuredMedium
 from bornsim.units import ureg
 
 
 def test_background_and_structures_update_in_place_with_last_structure_winning():
-    medium = StructuredMedium(
-        background_refractive_index=1.33,
-    )
+    medium = StructuredMedium(background_refractive_index=1.33)
 
     assert medium.add_background(refractive_index=1.3) is None
 
@@ -27,16 +26,15 @@ def test_background_and_structures_update_in_place_with_last_structure_winning()
         refractive_index=1.32,
     )
 
-    returned = medium.add_structures(
-        layer,
-        sphere,
-    )
+    returned = medium.add_structures(layer, sphere)
 
     assert returned is None
 
     volume = medium.to_volume(
-        shape=(3, 3, 3),
-        spacing=5e-08 * ureg.meter,
+        grid=Grid(
+            shape=(3, 3, 3),
+            spacing=5e-08 * ureg.meter,
+        )
     )
 
     expected = np.full((3, 3, 3), 1.31 - 1.3)
@@ -51,17 +49,14 @@ def test_background_and_structures_update_in_place_with_last_structure_winning()
 
 
 def test_random_background_seed_and_structure_replacement():
-    statistics = RandomMedium(
+    statistics = WhittleMaternMedium(
         background_refractive_index=1.3,
         refractive_index_std=0.005,
-        correlation_length=100e-9 * ureg.meter,
-        correlation="matern",
+        correlation_length=1e-07 * ureg.meter,
         smoothness=1.5,
     )
 
-    medium = StructuredMedium(
-        background_refractive_index=1.33,
-    )
+    medium = StructuredMedium(background_refractive_index=1.33)
 
     medium.add_background(medium=statistics)
 
@@ -70,26 +65,30 @@ def test_random_background_seed_and_structure_replacement():
         refractive_index=1.31,
     )
 
-    medium.add_structures(
-        sphere,
-    )
+    medium.add_structures(sphere)
 
     background = statistics.to_volume(
-        shape=(3, 3, 3),
-        spacing=5e-08 * ureg.meter,
         seed=42,
+        grid=Grid(
+            shape=(3, 3, 3),
+            spacing=5e-08 * ureg.meter,
+        ),
     )
 
     first = medium.to_volume(
-        shape=(3, 3, 3),
-        spacing=5e-08 * ureg.meter,
         seed=42,
+        grid=Grid(
+            shape=(3, 3, 3),
+            spacing=5e-08 * ureg.meter,
+        ),
     )
 
     repeated = medium.to_volume(
-        shape=(3, 3, 3),
-        spacing=5e-08 * ureg.meter,
         seed=42,
+        grid=Grid(
+            shape=(3, 3, 3),
+            spacing=5e-08 * ureg.meter,
+        ),
     )
 
     expected = background.delta_refractive_index.copy()
@@ -101,9 +100,11 @@ def test_random_background_seed_and_structure_replacement():
     np.testing.assert_array_equal(repeated.delta_refractive_index, first.delta_refractive_index)
 
     changed = medium.to_volume(
-        shape=(3, 3, 3),
-        spacing=5e-08 * ureg.meter,
         seed=43,
+        grid=Grid(
+            shape=(3, 3, 3),
+            spacing=5e-08 * ureg.meter,
+        ),
     )
 
     assert not np.array_equal(changed.delta_refractive_index, first.delta_refractive_index)
@@ -116,32 +117,29 @@ def test_random_background_seed_and_structure_replacement():
 
 
 def test_replacing_background_retains_absolute_structure_indices_and_old_volumes():
-    medium = StructuredMedium(
-        background_refractive_index=1.33,
-    )
+    medium = StructuredMedium(background_refractive_index=1.33)
 
     sphere = Sphere(
         radius=2e-08 * ureg.meter,
         refractive_index=1.34,
     )
 
-    medium.add_structures(
-        sphere,
-    )
+    medium.add_structures(sphere)
 
-    statistics = RandomMedium(
+    statistics = WhittleMaternMedium(
         background_refractive_index=1.33,
         refractive_index_std=0.01,
-        correlation_length=100e-9 * ureg.meter,
-        correlation="matern",
+        correlation_length=1e-07 * ureg.meter,
         smoothness=1.5,
     )
 
     medium.add_background(medium=statistics)
 
     previous = medium.to_volume(
-        shape=(3, 3, 3),
-        spacing=5e-08 * ureg.meter,
+        grid=Grid(
+            shape=(3, 3, 3),
+            spacing=5e-08 * ureg.meter,
+        )
     )
 
     snapshot = previous.delta_refractive_index.copy()
@@ -149,8 +147,10 @@ def test_replacing_background_retains_absolute_structure_indices_and_old_volumes
     medium.add_background(refractive_index=1.3)
 
     current = medium.to_volume(
-        shape=(3, 3, 3),
-        spacing=5e-08 * ureg.meter,
+        grid=Grid(
+            shape=(3, 3, 3),
+            spacing=5e-08 * ureg.meter,
+        )
     )
 
     expected = np.zeros((3, 3, 3))
@@ -177,11 +177,10 @@ def test_replacing_background_retains_absolute_structure_indices_and_old_volumes
         (
             {
                 "refractive_index": 1.3,
-                "medium": RandomMedium(
+                "medium": WhittleMaternMedium(
                     background_refractive_index=1.33,
                     refractive_index_std=0.01,
-                    correlation_length=100e-9 * ureg.meter,
-                    correlation="matern",
+                    correlation_length=1e-07 * ureg.meter,
                     smoothness=1.5,
                 ),
             },
@@ -190,9 +189,7 @@ def test_replacing_background_retains_absolute_structure_indices_and_old_volumes
     ],
 )
 def test_invalid_background_is_atomic(arguments, error):
-    medium = StructuredMedium(
-        background_refractive_index=1.33,
-    )
+    medium = StructuredMedium(background_refractive_index=1.33)
 
     before = medium.metadata
 
@@ -203,27 +200,19 @@ def test_invalid_background_is_atomic(arguments, error):
 
 
 def test_invalid_structure_batch_is_atomic_and_empty_batch_preserves_state():
-    medium = StructuredMedium(
-        background_refractive_index=1.33,
-    )
+    medium = StructuredMedium(background_refractive_index=1.33)
 
     sphere = Sphere(
         radius=1 * ureg.meter,
         refractive_index=1.34,
     )
 
-    medium.add_structures(
-        sphere,
-    )
+    medium.add_structures(sphere)
 
     before = medium.metadata
 
     with pytest.raises(TypeError, match="structures must"):
-        medium.add_structures(
-            sphere,
-            object(),
-            sphere,
-        )
+        medium.add_structures(sphere, object(), sphere)
 
     assert medium.metadata == before
 

@@ -3,6 +3,12 @@ Examples
 
 Browse runnable examples by topic: random media, structured media, Born orders
 and interference, plotting and saving results, and numerical validation.
+Each gallery example includes a three-dimensional view of its input medium.
+Ensemble examples show a labelled seeded realization on the calculation grid;
+that view is one finite sample, rather than the ensemble average. Comparisons
+of covariance models, correlation lengths, or sphere arrangements show each
+medium separately. Each figure has its own code cell and output, including
+individual three-dimensional views in comparisons.
 The :doc:`medium_visualization` guide explains how to inspect input voxel
 fields and choose spatial views.
 
@@ -55,15 +61,16 @@ fields and choose spatial views.
 Random media
 ------------
 
-Start with :doc:`auto_examples/random_media/analytical_scattering` for unitful optical
-properties and :doc:`auto_examples/random_media/wavelength_dependence` for a wavelength
-sweep of total scattering, reduced scattering, and anisotropy. The sweep
-holds the material parameters constant and compares the short-correlation
-limit with a longer covariance length.
+:doc:`auto_examples/random_media/random_spheres` generates seeded, fully contained
+nonoverlapping spheres with an explicit count, radius, and refractive indices.
+
+Start with :doc:`auto_examples/random_media/random_medium` for seeded samples,
+and :doc:`auto_examples/random_media/wavelength_dependence` for numerical
+finite-sample ensemble coefficients across wavelengths.
 
 :doc:`auto_examples/random_media/covariance_models` compares Gaussian and exponential
 spatial covariance at the same length parameter, showing both covariance
-profiles and their analytical phase functions. These length parameters have
+profiles and their numerical ensemble phase functions. These length parameters have
 different definitions; equal values do not describe identical statistics.
 
 :doc:`auto_examples/random_media/random_medium` leads with interactive Gaussian
@@ -76,7 +83,7 @@ exactly the ensemble mean or variance.
 Structured media
 ----------------
 
-``Medium`` is the abstract interface. ``RandomMedium`` describes statistically
+``Medium`` is the abstract interface. ``GaussianMedium`` describes statistically
 homogeneous fluctuations; ``StructuredMedium`` composes geometric materials. ``Volume`` accepts an explicit
 three-dimensional field and can therefore represent spatially structured
 media. Its background refractive index is uniform, while its fluctuation array may vary
@@ -150,17 +157,17 @@ norms can still be plotted directly.
 
    import matplotlib.pyplot as plt
 
-   result.plot()  # Differential scattering
+   result.plot()
 
-   result.plot_phase_function()  # Density per steradian
+   result.plot_phase_function()
 
-   result.plot_phase_function(view="polar")
+   result.plot_phase_function(view='polar')
 
-   phase_figure = result.plot_phase_function(view="3d")
+   phase_figure = result.plot_phase_function(view='3d')
 
    phase_figure.show()
 
-   numerical.plot_field_norms()  # Per-realization diagnostics
+   numerical.plot_field_norms()
 
    plt.show()
 

@@ -1,8 +1,9 @@
 """Numerical ensemble quadrature and realization sampling uncertainty."""
 
+from typing import Any
 import numpy as np
 from ._validation import _integer
-from .media import Medium
+from .medium import Medium
 from .grid import Grid
 from .sampling import AngularSampling
 from .ensemble_sampling import EnsembleSampling
@@ -14,105 +15,24 @@ def ensemble_scattering(
     *,
     medium: Medium,
     wavelength: Quantity,
-    grid=None,
-    sampling=None,
-    shape=None,
-    spacing=None,
-    order=3,
-    ensemble_sampling=None,
-    realizations=None,
-    seed=None,
-    angles=None,
-    azimuth_samples=None,
-    polar_samples=None,
-):
-    """Retain directional intensities and integrate sampled-volume scattering.
+    grid: Grid,
+    sampling: AngularSampling | None = None,
+    order: int = 3,
+    ensemble_sampling: EnsembleSampling | None = None,
+) -> dict[str, Any]:
+    """Run numerical Born ensembles on an explicit Grid.
 
-    Parameters
-    ----------
-    medium : Medium
-        Random medium or structure with a random background, sampled at
-        consecutive seeds. Deterministic volumes use Solver.solve.
-    grid : Grid, optional
-        Shared spatial configuration. Cannot be combined with shape or spacing.
-    sampling : AngularSampling, optional
-        Shared output and integration settings. Cannot be combined with
-        individual angular keywords.
-    wavelength : Quantity
-        Positive, finite vacuum wavelength; length values require explicit units.
-    shape : tuple of int, optional
-        Three grid dimensions, each from 2 to 32. Default is (12, 12, 12).
-    spacing : Quantity, optional
-        Positive, finite cubic voxel spacing; length values require explicit units.
-        Default is 50 nm.
-    order : int, optional
-        Highest cumulative Born order, from 1 to 12. Default is 3.
-    realizations : int, optional
-        Independent sample count, from 1 to 32. Default is 4.
-    seed : int, optional
-        First seed, from 0 to 2**32 - 1. Default is 0. Consecutive seeds are
-        used, and the last seed must also lie in this range.
-    angles : array_like or Quantity, optional
-        One-dimensional plot angles in [0, pi], with 1 to 181 observations.
-        Angular values require explicit units. Default is 121 evenly spaced angles.
-    azimuth_samples : int, optional
-        Uniform azimuth sample count, from 4 to 32. Default is 8.
-    polar_samples : int, optional
-        Gauss-Legendre node count, from 16 to 128. Default is 32. Integration
-        nodes are independent of the supplied plot angles.
+    A random Medium generates one Volume per ordered seed in EnsembleSampling.
+    AngularSampling defines output observations and independent integration
+    quadrature. Complex amplitudes interfere within each realization; intensities
+    are averaged across realizations. The returned dictionary contains numeric
+    SI directional intensities, isolated-term intensities, integrated moments,
+    standard errors, per-realization field norms, and diagnostic warnings.
+    Angles and azimuths retain quantities from the sampling configuration.
 
-    Returns
-    -------
-    ensemble : dict
-        Numeric SI arrays and metadata with the following keys:
-
-        * ``angles`` : radians, shape (observation,).
-        * ``azimuths`` : radians, shape (azimuth,), uniform in [0, 2*pi).
-        * ``directional_differential`` : cumulative intensities in
-          m^-1 sr^-1, shape (order, observation, azimuth), averaged only
-          over realizations, preserving directional asymmetry.
-        * ``mean`` : azimuth-averaged cumulative scattering in m^-1 sr^-1, shape
-          (order, observation).
-        * ``stderr`` : standard error of mean curves, same shape and units;
-          NaN for one realization.
-        * ``terms`` : mean isolated-term curves, same shape and units.
-        * ``mu_s`` and ``mu_s_prime`` : finite-sample effective total and
-          reduced scattering coefficients in m^-1, shape (order,).
-        * ``g`` : dimensionless anisotropy, shape (order,); NaN for zero scattering.
-        * ``field_norms`` : relative norms, shape (realization, order).
-        * ``warnings`` : sorted tuple of numerical diagnostic messages.
-        * ``realizations`` : independent sample count.
-
-    Raises
-    ------
-    ValueError
-        If grid, wavelength, units, angles, order, sample counts, or seed range
-        are invalid, generated linearized permittivity is nonpositive, or the
-        synchronous work estimate exceeds 100 million voxel-direction-order
-        operations across all realizations.
-
-    See Also
-    --------
-    bornsim.media.Medium.to_volume : Generate each seeded or deterministic sample.
-    bornsim.series.BornSeries : Compute per-sample coherent amplitudes and intensities.
-    bornsim.solver.Solver.ensemble : Return unitful ensemble data with plotting.
-
-    Notes
-    -----
-    Interference is preserved within each realization. Intensities, not random
-    amplitudes, are then averaged over realizations and azimuth. Standard
-    errors use the sample standard deviation divided by the square root of
-    the realization count; they exclude discretization and finite-size bias.
-    Anisotropy is computed from averaged angular moments.
-    Directional data retain each azimuth for the 3D phase surface;
-    one-dimensional curves remain azimuth averages. With one random sample,
-    sampling errors are unknown (NaN). A deterministic structure has no
-    realization sampling and must use Solver.solve.
-
-    The coefficients are finite-sample cross sections divided by volume,
-    not automatically infinite-medium transport coefficients. Check grid,
-    angular integration, sample size, synthesis box, and realization count.
-    """
+    Coefficients are finite-sample cross sections divided by voxel-box volume.
+    Standard errors describe realization sampling; one realization produces NaN.
+    Check spatial, angular, finite-size, and ensemble convergence separately."""
 
     if not isinstance(medium, Medium):
         raise TypeError("medium must be a Medium.")
@@ -127,32 +47,23 @@ def ensemble_scattering(
         scalar=True,
     )
 
-    grid = Grid._resolve(
-        grid=grid,
-        shape=shape,
-        spacing=spacing,
-    )
+    grid = Grid._resolve(grid=grid)
 
-    sampling = AngularSampling._resolve(
-        sampling=sampling,
-        angles=angles,
-        polar_samples=polar_samples,
-        azimuth_samples=azimuth_samples,
-    )
+    sampling = AngularSampling._resolve(sampling=sampling)
 
     shape, spacing = grid.shape, grid.spacing
 
-    ensemble_sampling = EnsembleSampling._resolve(
-        ensemble_sampling=ensemble_sampling,
-        realizations=realizations,
-        seed=seed,
-    )
+    ensemble_sampling = EnsembleSampling._resolve(ensemble_sampling=ensemble_sampling)
 
     realizations = ensemble_sampling.realizations
 
     order = _integer(value=order, name="order", low=1, high=12)
 
-    sampling.check_work(grid=grid, order=order, realizations=realizations)
+    sampling.check_work(
+        grid=grid,
+        order=order,
+        realizations=realizations,
+    )
 
     if medium.background_refractive_index is None:
         raise ValueError("Set an explicit background refractive index before solving an ensemble.")
@@ -213,7 +124,7 @@ def ensemble_scattering(
 
     statistics = metadata.get("background", metadata)
 
-    correlation_length_m = statistics.get("correlation_length_m")
+    correlation_length_m = statistics.get("correlation_length_m") if isinstance(statistics, dict) else None
 
     correlation_length = None if correlation_length_m is None else correlation_length_m * ureg.meter
 

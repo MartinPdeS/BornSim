@@ -8,12 +8,14 @@ One realization has unknown error, represented by NaN. Standard errors
 measure sampling uncertainty, not voxel, quadrature, or finite-size error.
 """
 
+from bornsim.medium.random_medium import GaussianMedium
+
 import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from bornsim import EnsembleSampling, Grid, AngularSampling, RandomMedium, Solver, Source
+from bornsim import EnsembleSampling, Grid, AngularSampling, Solver, Source
 from bornsim.units import ureg
 
 grid = Grid(
@@ -21,15 +23,16 @@ grid = Grid(
     spacing=40 * ureg.nanometer,
 )
 
-medium = RandomMedium(
-    correlation="gaussian",
+medium = GaussianMedium(
     correlation_length=80 * ureg.nanometer,
     background_refractive_index=1.33,
     refractive_index_std=0.01,
 )
 
+source_configuration_1 = Source(wavelength=633 * ureg.nanometer)
+
 solver = Solver(
-    source=Source(wavelength=633 * ureg.nanometer),
+    source=source_configuration_1,
     order=1,
 )
 
@@ -50,13 +53,15 @@ errors = []
 figure, axis = plt.subplots(layout="constrained")
 
 for count in counts:
+    ensemble_sampling_configuration_1 = EnsembleSampling(
+        realizations=count,
+        seed=42,
+    )
+
     result = solver.ensemble(
         medium=medium,
         grid=grid,
-        ensemble_sampling=EnsembleSampling(
-            realizations=count,
-            seed=42,
-        ),
+        ensemble_sampling=ensemble_sampling_configuration_1,
         sampling=sampling,
     )
 

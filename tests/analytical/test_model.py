@@ -1,30 +1,32 @@
+from bornsim.medium.random_medium import GaussianMedium, ExponentialMedium
 import numpy as np
 import pytest
-from bornsim import AnalyticalMedium
-from bornsim.model import angular_scattering, optical_properties
+from .reference import infinite_medium_scattering, infinite_medium_properties
 from bornsim.units import ureg
 
 
 @pytest.mark.parametrize("correlation", ["gaussian", "exponential"])
 def test_quadratic_contrast_scaling(correlation):
-    low = optical_properties(
-        medium=AnalyticalMedium(
+    low = infinite_medium_properties(
+        medium={
+            "gaussian": GaussianMedium,
+            "exponential": ExponentialMedium,
+        }[correlation](
             refractive_index_std=0.01,
-            correlation=correlation,
             background_refractive_index=1.33,
-            correlation_length=100e-9 * ureg.meter,
-            smoothness=1.5,
+            correlation_length=1e-07 * ureg.meter,
         ),
         wavelength=6.33e-07 * ureg.meter,
     )
 
-    high = optical_properties(
-        medium=AnalyticalMedium(
+    high = infinite_medium_properties(
+        medium={
+            "gaussian": GaussianMedium,
+            "exponential": ExponentialMedium,
+        }[correlation](
             refractive_index_std=0.02,
-            correlation=correlation,
             background_refractive_index=1.33,
-            correlation_length=100e-9 * ureg.meter,
-            smoothness=1.5,
+            correlation_length=1e-07 * ureg.meter,
         ),
         wavelength=6.33e-07 * ureg.meter,
     )
@@ -39,15 +41,13 @@ def test_quadratic_contrast_scaling(correlation):
 
 
 def test_small_correlation_length_analytic_limit():
-    medium = AnalyticalMedium(
+    medium = GaussianMedium(
         correlation_length=1e-12 * ureg.meter,
         background_refractive_index=1.33,
         refractive_index_std=0.01,
-        correlation="gaussian",
-        smoothness=1.5,
     )
 
-    k0 = 2 * np.pi / 633e-9
+    k0 = 2 * np.pi / 6.33e-07
 
     spectrum = (
         (2 * medium.background_refractive_index * medium.refractive_index_std) ** 2
@@ -57,24 +57,22 @@ def test_small_correlation_length_analytic_limit():
 
     expected = k0**4 * spectrum / (6 * np.pi)
 
-    result = optical_properties(
+    result = infinite_medium_properties(
         medium=medium,
         wavelength=6.33e-07 * ureg.meter,
     )
 
-    assert result["mu_s"].to("1 / meter").magnitude == pytest.approx(expected, rel=1e-7)
+    assert result["mu_s"].to("1 / meter").magnitude == pytest.approx(expected, rel=1e-07)
 
-    assert result["g"] == pytest.approx(0, abs=1e-8)
+    assert result["g"] == pytest.approx(0, abs=1e-08)
 
 
 def test_zero_contrast():
-    assert optical_properties(
-        medium=AnalyticalMedium(
+    assert infinite_medium_properties(
+        medium=GaussianMedium(
             refractive_index_std=0,
             background_refractive_index=1.33,
-            correlation_length=100e-9 * ureg.meter,
-            correlation="gaussian",
-            smoothness=1.5,
+            correlation_length=1e-07 * ureg.meter,
         ),
         wavelength=6.33e-07 * ureg.meter,
     ) == {"mu_s": 0 * (1 / ureg.meter), "g": None, "mu_s_prime": 0 * (1 / ureg.meter)}
@@ -82,18 +80,19 @@ def test_zero_contrast():
 
 @pytest.mark.parametrize("correlation", ["gaussian", "exponential"])
 def test_independent_angular_integration(correlation):
-    medium = AnalyticalMedium(
+    medium = {
+        "gaussian": GaussianMedium,
+        "exponential": ExponentialMedium,
+    }[correlation](
         correlation_length=2.5e-07 * ureg.meter,
-        correlation=correlation,
         background_refractive_index=1.33,
         refractive_index_std=0.01,
-        smoothness=1.5,
     )
 
     theta = np.linspace(0, np.pi, 100001)
 
     intensity = (
-        angular_scattering(
+        infinite_medium_scattering(
             medium=medium,
             wavelength=6.33e-07 * ureg.meter,
             theta=theta * ureg.radian,
@@ -108,12 +107,12 @@ def test_independent_angular_integration(correlation):
         * np.sum((intensity[1:] * np.sin(theta[1:]) + intensity[:-1] * np.sin(theta[:-1])) * np.diff(theta) / 2)
     )
 
-    result = optical_properties(
+    result = infinite_medium_properties(
         medium=medium,
         wavelength=6.33e-07 * ureg.meter,
     )
 
-    assert result["mu_s"].to("1 / meter").magnitude == pytest.approx(reference, rel=1e-7)
+    assert result["mu_s"].to("1 / meter").magnitude == pytest.approx(reference, rel=1e-07)
 
     assert 0 < result["g"] < 1
 
@@ -124,18 +123,15 @@ def test_independent_angular_integration(correlation):
         {"background_refractive_index": 0},
         {"refractive_index_std": -1},
         {"correlation_length": float("nan") * ureg.meter},
-        {"correlation": "unknown"},
     ],
 )
 def test_invalid_medium(kwargs):
     with pytest.raises(ValueError):
-        AnalyticalMedium(
+        GaussianMedium(
             **{
                 "background_refractive_index": 1.33,
                 "refractive_index_std": 0.01,
-                "correlation_length": 100e-9 * ureg.meter,
-                "correlation": "gaussian",
-                "smoothness": 1.5,
+                "correlation_length": 1e-07 * ureg.meter,
                 **kwargs,
             }
         )
@@ -143,26 +139,22 @@ def test_invalid_medium(kwargs):
 
 def test_invalid_wavelength_and_angle():
     with pytest.raises(ValueError):
-        angular_scattering(
-            medium=AnalyticalMedium(
+        infinite_medium_scattering(
+            medium=GaussianMedium(
                 background_refractive_index=1.33,
                 refractive_index_std=0.01,
-                correlation_length=100e-9 * ureg.meter,
-                correlation="gaussian",
-                smoothness=1.5,
+                correlation_length=1e-07 * ureg.meter,
             ),
             wavelength=0 * ureg.meter,
             theta=[0] * ureg.radian,
         )
 
     with pytest.raises(ValueError):
-        angular_scattering(
-            medium=AnalyticalMedium(
+        infinite_medium_scattering(
+            medium=GaussianMedium(
                 background_refractive_index=1.33,
                 refractive_index_std=0.01,
-                correlation_length=100e-9 * ureg.meter,
-                correlation="gaussian",
-                smoothness=1.5,
+                correlation_length=1e-07 * ureg.meter,
             ),
             wavelength=6.33e-07 * ureg.meter,
             theta=[-1] * ureg.radian,

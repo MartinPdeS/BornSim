@@ -1,11 +1,11 @@
 """Reproducible independent-realization sampling configurations."""
 
 from dataclasses import dataclass
-import warnings
+from collections.abc import Sequence
 from ._validation import _integer
 
 
-@dataclass(frozen=True, kw_only=True)
+@dataclass(frozen=True, kw_only=True, init=False)
 class EnsembleSampling:
     """Choose consecutive seeds or an explicit ordered set of distinct seeds.
 
@@ -15,16 +15,22 @@ class EnsembleSampling:
     seeds are rejected because they do not provide independent uncertainty.
     """
 
-    realizations: int | None = None
-    seed: int | None = None
-    seeds: tuple | None = None
+    realizations: int
+    seed: int
+    seeds: tuple[int, ...]
 
-    def __post_init__(self):
-        if self.seeds is not None:
-            if self.realizations is not None or self.seed is not None:
+    def __init__(
+        self,
+        *,
+        realizations: int | None = None,
+        seed: int | None = None,
+        seeds: Sequence[int] | None = None,
+    ) -> None:
+        if seeds is not None:
+            if realizations is not None or seed is not None:
                 raise ValueError("Supply seeds or realizations/seed, not both.")
 
-            values = tuple(self.seeds)
+            values = tuple(seeds)
 
             _integer(value=len(values), name="realizations", low=1, high=32)
 
@@ -33,11 +39,9 @@ class EnsembleSampling:
             if len(set(seeds)) != len(seeds):
                 raise ValueError("seeds must be distinct for independent realizations.")
         else:
-            count = _integer(
-                value=4 if self.realizations is None else self.realizations, name="realizations", low=1, high=32
-            )
+            count = _integer(value=4 if realizations is None else realizations, name="realizations", low=1, high=32)
 
-            first = _integer(value=0 if self.seed is None else self.seed, name="seed", low=0, high=2**32 - 1)
+            first = _integer(value=0 if seed is None else seed, name="seed", low=0, high=2**32 - 1)
 
             if first + count - 1 > 2**32 - 1:
                 raise ValueError("seed range exceeds the supported maximum.")
@@ -57,19 +61,11 @@ class EnsembleSampling:
         return {"realizations": self.realizations, "seeds": list(getattr(self, "seeds"))}
 
     @classmethod
-    def _resolve(cls, *, ensemble_sampling=None, realizations=None, seed=None):
-        if ensemble_sampling is not None:
-            if not isinstance(ensemble_sampling, cls):
-                raise TypeError("ensemble_sampling must be an EnsembleSampling.")
+    def _resolve(cls, *, ensemble_sampling: "EnsembleSampling | None" = None) -> "EnsembleSampling":
+        if ensemble_sampling is None:
+            return cls()
 
-            if realizations is not None or seed is not None:
-                raise ValueError("Supply ensemble_sampling or realizations/seed, not both.")
+        if not isinstance(ensemble_sampling, cls):
+            raise TypeError("ensemble_sampling must be an EnsembleSampling.")
 
-            return ensemble_sampling
-
-        if realizations is not None or seed is not None:
-            warnings.warn(
-                "Use EnsembleSampling instead of realizations/seed keywords.", DeprecationWarning, stacklevel=3
-            )
-
-        return cls(realizations=realizations, seed=seed)
+        return ensemble_sampling

@@ -17,7 +17,7 @@ class _ResultValidator:
             raise ValueError("realizations is only available for an ensemble.")
 
         if result.kind != "volume" and result.directions is not None:
-            raise ValueError("analytical and ensemble results require angles and no directions.")
+            raise ValueError("ensemble results require angles and no directions.")
 
         if result.differential.ndim == 3 and result.directions is not None:
             raise ValueError("Full data require angles and azimuths without cut directions.")
@@ -84,6 +84,3 @@ class _ResultValidator:
 
         if incomplete_integrals:
             raise ValueError("integrated coefficients are unavailable for a single-volume angular cut.")
-
-        if result.kind == "analytical" and (result.field_norms is not None or result.term_differential is not None):
-            raise ValueError("field_norms and term_differential are only available for numerical results.")

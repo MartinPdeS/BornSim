@@ -1,24 +1,25 @@
+from bornsim.medium.random_medium import WhittleMaternMedium
+from bornsim import Grid
 import builtins
 import unicodedata
-
 import numpy as np
 import pytest
-
-from bornsim import RandomMedium, Sphere, StructuredMedium, Volume
+from bornsim import Sphere, StructuredMedium, Volume
 from bornsim.units import ureg
 
 
 def sample():
-    return RandomMedium(
+    return WhittleMaternMedium(
         background_refractive_index=1.33,
         refractive_index_std=0.01,
-        correlation_length=100e-9 * ureg.meter,
-        correlation="matern",
+        correlation_length=1e-07 * ureg.meter,
         smoothness=1.5,
     ).to_volume(
-        shape=(3, 4, 5),
-        spacing=4e-08 * ureg.meter,
         seed=42,
+        grid=Grid(
+            shape=(3, 4, 5),
+            spacing=4e-08 * ureg.meter,
+        ),
     )
 
 
@@ -26,8 +27,11 @@ def sample():
 def test_matplotlib_slice_orientation_extents_and_units(normal, dimension):
     volume = Volume(
         delta_refractive_index=np.arange(24).reshape(2, 3, 4) / 1000,
-        spacing=4e-08 * ureg.meter,
         background_refractive_index=1.33,
+        grid=Grid(
+            shape=np.shape(np.arange(24).reshape(2, 3, 4) / 1000),
+            spacing=4e-08 * ureg.meter,
+        ),
     )
 
     figure = volume.plot_slice(
@@ -55,7 +59,6 @@ def test_matplotlib_slice_orientation_extents_and_units(normal, dimension):
 
     np.testing.assert_allclose(image.get_extent(), [-half_width, half_width, -half_height, half_height])
 
-    # Pint versions may format micro as U+00B5 or U+03BC; both mean micrometres.
     assert unicodedata.normalize("NFKC", axis.get_xlabel()) == f"{'xyz'[horizontal]} (μm)"
 
     assert unicodedata.normalize("NFKC", axis.get_ylabel()) == f"{'xyz'[vertical]} (μm)"
@@ -66,8 +69,11 @@ def test_matplotlib_slice_orientation_extents_and_units(normal, dimension):
 def test_even_grid_slice_title_and_symmetric_contrast_scale():
     volume = Volume(
         delta_refractive_index=np.arange(24).reshape(2, 3, 4) / 1000,
-        spacing=2e-08 * ureg.meter,
         background_refractive_index=1.33,
+        grid=Grid(
+            shape=np.shape(np.arange(24).reshape(2, 3, 4) / 1000),
+            spacing=2e-08 * ureg.meter,
+        ),
     )
 
     figure = volume.plot_slice(field="delta_refractive_index")
@@ -80,8 +86,7 @@ def test_even_grid_slice_title_and_symmetric_contrast_scale():
 
 
 @pytest.mark.parametrize(
-    "settings",
-    [{"normal": "q"}, {"index": -1}, {"index": True}, {"field": "bad"}, {"length_unit": "second"}],
+    "settings", [{"normal": "q"}, {"index": -1}, {"index": True}, {"field": "bad"}, {"length_unit": "second"}]
 )
 def test_invalid_matplotlib_slice_settings(settings):
     with pytest.raises(ValueError):
@@ -105,11 +110,11 @@ def test_default_plotly_values_coordinates_units_and_levels(mode, trace_type):
 
     assert trace.type == trace_type
 
-    np.testing.assert_allclose(trace.x, volume.positions[..., 0].ravel() * 1e6)
+    np.testing.assert_allclose(trace.x, volume.positions[..., 0].ravel() * 1000000.0)
 
-    np.testing.assert_allclose(trace.y, volume.positions[..., 1].ravel() * 1e6)
+    np.testing.assert_allclose(trace.y, volume.positions[..., 1].ravel() * 1000000.0)
 
-    np.testing.assert_allclose(trace.z, volume.positions[..., 2].ravel() * 1e6)
+    np.testing.assert_allclose(trace.z, volume.positions[..., 2].ravel() * 1000000.0)
 
     expected = (
         volume.background_refractive_index**2 + 2 * volume.background_refractive_index * volume.delta_refractive_index
@@ -131,8 +136,11 @@ def test_default_plotly_values_coordinates_units_and_levels(mode, trace_type):
 def test_increasing_volume_opacity_preserves_absolute_refractive_index_and_sample():
     volume = Volume(
         delta_refractive_index=np.linspace(-0.02, 0.03, 24).reshape(2, 3, 4),
-        spacing=4e-08 * ureg.meter,
         background_refractive_index=1.33,
+        grid=Grid(
+            shape=np.shape(np.linspace(-0.02, 0.03, 24).reshape(2, 3, 4)),
+            spacing=4e-08 * ureg.meter,
+        ),
     )
 
     original = volume.delta_refractive_index.copy()
@@ -197,17 +205,20 @@ def test_slices_use_requested_voxel_planes_and_shared_color_domain():
 
         assert trace.cmax == expected.max()
 
-    assert sum(trace.showscale for trace in figure.data) == 1
+    assert sum((trace.showscale for trace in figure.data)) == 1
 
-    np.testing.assert_allclose(figure.data[0].x, volume.positions[0, :, :, 0] * 1e9)
+    np.testing.assert_allclose(figure.data[0].x, volume.positions[0, :, :, 0] * 1000000000.0)
 
 
 @pytest.mark.parametrize("opacity_scale", ["uniform", "increasing"])
 def test_uniform_medium_falls_back_to_visible_slices(opacity_scale):
     volume = Volume(
         delta_refractive_index=np.zeros((2, 3, 4)),
-        spacing=5e-08 * ureg.meter,
         background_refractive_index=1.33,
+        grid=Grid(
+            shape=np.shape(np.zeros((2, 3, 4))),
+            spacing=5e-08 * ureg.meter,
+        ),
     )
 
     figure = volume.plot_3d(
@@ -217,7 +228,7 @@ def test_uniform_medium_falls_back_to_visible_slices(opacity_scale):
 
     assert len(figure.data) == 3
 
-    assert all(trace.type == "surface" for trace in figure.data)
+    assert all((trace.type == "surface" for trace in figure.data))
 
     assert "uniform field" in figure.layout.title.text
 
@@ -238,11 +249,16 @@ def test_structured_medium_and_html_export(tmp_path):
         ],
         background_refractive_index=1.33,
     ).to_volume(
-        shape=(8, 8, 8),
-        spacing=2.5e-08 * ureg.meter,
+        grid=Grid(
+            shape=(8, 8, 8),
+            spacing=2.5e-08 * ureg.meter,
+        )
     )
 
-    figure = volume.plot_3d(backend="plotly", mode="isosurface")
+    figure = volume.plot_3d(
+        backend="plotly",
+        mode="isosurface",
+    )
 
     assert np.max(figure.data[0].value) == pytest.approx(0.01)
 
@@ -273,7 +289,10 @@ def test_structured_medium_and_html_export(tmp_path):
 )
 def test_invalid_visualization_settings(settings):
     with pytest.raises(ValueError):
-        sample().plot_3d(backend="plotly", **settings)
+        sample().plot_3d(
+            backend="plotly",
+            **settings,
+        )
 
 
 def test_matplotlib_backend_does_not_import_plotly(monkeypatch):
@@ -371,22 +390,20 @@ def test_matplotlib_voxels_show_the_sampled_sphere_mask(monkeypatch):
 
     monkeypatch.setattr(Axes3D, "voxels", record_voxels)
 
-    medium = StructuredMedium(
-        background_refractive_index=1.33,
-    )
+    medium = StructuredMedium(background_refractive_index=1.33)
 
     sphere = Sphere(
         radius=2e-08 * ureg.meter,
         refractive_index=1.34,
     )
 
-    medium.add_structures(
-        sphere,
-    )
+    medium.add_structures(sphere)
 
     volume = medium.to_volume(
-        shape=(3, 3, 3),
-        spacing=5e-08 * ureg.meter,
+        grid=Grid(
+            shape=(3, 3, 3),
+            spacing=5e-08 * ureg.meter,
+        )
     )
 
     figure = volume.plot_3d(
@@ -416,11 +433,17 @@ def test_matplotlib_voxels_show_the_sampled_sphere_mask(monkeypatch):
 def test_matplotlib_uniform_medium_has_visible_geometry_and_single_color_tick(mode):
     volume = Volume(
         delta_refractive_index=np.zeros((2, 3, 4)),
-        spacing=5e-08 * ureg.meter,
         background_refractive_index=1.33,
+        grid=Grid(
+            shape=np.shape(np.zeros((2, 3, 4))),
+            spacing=5e-08 * ureg.meter,
+        ),
     )
 
-    figure = volume.plot_3d(backend="matplotlib", mode=mode)
+    figure = volume.plot_3d(
+        backend="matplotlib",
+        mode=mode,
+    )
 
     figure.canvas.draw()
 

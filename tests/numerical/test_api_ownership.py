@@ -1,21 +1,14 @@
 """Immutable angular ownership, materials and reproducible direction selection."""
 
+from bornsim.medium.random_medium import WhittleMaternMedium
+
+from bornsim import EnsembleSampling
+from bornsim import AngularSampling
+from bornsim import Grid
 from dataclasses import FrozenInstanceError
 import numpy as np
 import pytest
-from bornsim import (
-    AngularSampling,
-    EnsembleSampling,
-    Grid,
-    Material,
-    Result,
-    Rotation,
-    Solver,
-    Source,
-    Sphere,
-    StructuredMedium,
-    RandomMedium,
-)
+from bornsim import Material, Result, Rotation, Solver, Source, Sphere, StructuredMedium
 from bornsim.units import ureg
 
 
@@ -25,11 +18,10 @@ def problem():
         spacing=3e-08 * ureg.meter,
     )
 
-    medium = RandomMedium(
+    medium = WhittleMaternMedium(
         refractive_index_std=0.001,
         background_refractive_index=1.33,
-        correlation_length=100e-9 * ureg.meter,
-        correlation="matern",
+        correlation_length=1e-07 * ureg.meter,
         smoothness=1.5,
     )
 
@@ -40,16 +32,17 @@ def problem():
     )
 
     solver = Solver(
-        source=Source(
-            wavelength=633e-9 * ureg.meter,
-        ),
+        source=Source(wavelength=6.33e-07 * ureg.meter),
         order=2,
         sampling=sampling,
     )
 
-    volume = medium.to_volume(grid=grid, seed=42)
+    volume = medium.to_volume(
+        grid=grid,
+        seed=42,
+    )
 
-    return grid, medium, solver, volume
+    return (grid, medium, solver, volume)
 
 
 def test_result_owns_one_angular_object_and_is_immutable(tmp_path):
@@ -63,11 +56,7 @@ def test_result_owns_one_angular_object_and_is_immutable(tmp_path):
 
     assert result.amplitudes is result.angular.amplitudes
 
-    clone = Result(
-        source=result.source,
-        kind=result.kind,
-        angular=result.angular,
-    )
+    clone = Result(source=result.source, kind=result.kind, angular=result.angular)
 
     assert clone.angular is result.angular
 
@@ -121,9 +110,7 @@ def test_material_shared_across_shapes_and_transforms():
 
     assert sphere.refractive_index == material.refractive_index
 
-    medium = StructuredMedium(
-        background_refractive_index=1.33,
-    )
+    medium = StructuredMedium(background_refractive_index=1.33)
 
     medium.add_background(material=Material(refractive_index=1.33))
 
@@ -163,7 +150,12 @@ def test_explicit_ensemble_seeds_match_independent_samples_and_archive(tmp_path)
     )
 
     samples = [
-        solver.solve(target=medium.to_volume(grid=grid, seed=seed)).differential.magnitude
+        solver.solve(
+            target=medium.to_volume(
+                grid=grid,
+                seed=seed,
+            )
+        ).differential.magnitude
         for seed in configuration.seeds
     ]
 
@@ -184,7 +176,7 @@ def test_explicit_ensemble_seeds_match_independent_samples_and_archive(tmp_path)
 
     assert consecutive.seeds == (42, 43, 44)
 
-    with pytest.raises(ValueError, match="not both"):
+    with pytest.raises(TypeError):
         solver.ensemble(
             medium=medium,
             grid=grid,
@@ -243,21 +235,4 @@ def test_meridians_select_angles_without_interpolation_or_averaging():
     assert meridian.plot_phase_function().axes[0].get_ylabel()
 
     with pytest.raises(ValueError, match="full angular"):
-        meridian.plot_phase_function(
-            view="3d",
-        )
-
-
-def test_legacy_configuration_warns_and_keeps_values():
-    with pytest.warns(DeprecationWarning, match="Grid"):
-        grid = Grid._resolve(shape=(2, 2, 2), spacing=3e-08 * ureg.meter)
-
-    assert grid.shape == (2, 2, 2)
-
-    with pytest.warns(DeprecationWarning, match="AngularSampling"):
-        AngularSampling._resolve(angles=[0] * ureg.radian)
-
-    with pytest.warns(DeprecationWarning, match="EnsembleSampling"):
-        configuration = EnsembleSampling._resolve(realizations=2, seed=42)
-
-    assert configuration.seeds == (42, 43)
+        meridian.plot_phase_function(view="3d")

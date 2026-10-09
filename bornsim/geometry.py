@@ -9,7 +9,8 @@ from dataclasses import asdict, dataclass, field, replace
 import numpy as np
 from typing import Any
 from .units import _refractive_index_values, Quantity, validate_units, ureg
-from .media import Medium, RandomMedium
+from .medium import Medium
+from .medium.random_medium import RandomFieldMedium
 from .volume import Volume
 from .grid import Grid
 from .rotation import Rotation
@@ -487,7 +488,7 @@ class StructuredMedium(Medium):
     background_refractive_index: float | None = None
     overlap: str = "replace"
     warn_on_clipping: bool = False
-    _background: RandomMedium | None = field(default=None, init=False, repr=False)
+    _background: RandomFieldMedium | None = field(default=None, init=False, repr=False)
 
     def __post_init__(self) -> None:
         regions = tuple(self.regions)
@@ -510,7 +511,7 @@ class StructuredMedium(Medium):
         """Set the background in place, retaining all existing structures.
 
         Supply exactly one of ``refractive_index`` (a positive uniform refractive index)
-        or ``medium`` (RandomMedium statistics). A random background is sampled
+        or ``medium`` (RandomFieldMedium statistics). A random background is sampled
         with to_volume(seed=...) and fills only voxels outside structures.
         The exterior scattering background remains uniform at background_refractive_index.
         Replacing a background changes the reference n0, not structures'
@@ -527,8 +528,8 @@ class StructuredMedium(Medium):
             raise ValueError("Supply exactly one of refractive_index or medium.")
 
         if medium is not None:
-            if not isinstance(medium, RandomMedium):
-                raise TypeError("medium must be a RandomMedium.")
+            if not isinstance(medium, RandomFieldMedium):
+                raise TypeError("medium must be a RandomFieldMedium.")
 
             background = replace(medium)
 
@@ -612,35 +613,18 @@ class StructuredMedium(Medium):
 
         return metadata
 
-    def to_volume(
-        self,
-        *,
-        grid: Grid | None = None,
-        shape: tuple[int, int, int] | None = None,
-        spacing: Quantity | None = None,
-        seed: int = 0,
-    ) -> Volume:
-        """Sample regions on cubic voxels and return a validated :class:`Volume`.
+    def to_volume(self, *, grid: Grid, seed: int = 0) -> Volume:
+        """Voxelize this medium on an explicit Grid.
 
-        Pass a shared Grid as grid. Legacy shape and spacing keywords are
-        also supported, but cannot be combined with grid.
-        Shape contains three integers from 2 to 32. Spacing is positive, in
-        metres or compatible units. Coordinates are ``(i-(N-1)/2)*spacing``.
-        Interfaces use centre membership; check refinement at fixed dimensions.
-        For a random background, seed selects the realization. Structures replace
-        that background at their voxel centres; fluctuations are not added inside
-        structures. Uniform backgrounds ignore seed. Keep metadata and seed to
-        reproduce a composed sample, whose Volume is a manual field.
-        """
+        An explicit background is required. Ordered shapes set absolute refractive
+        indices; overlap follows replace, preserve, or error. A random background
+        uses the supplied seed; structures replace that background inside their
+        masks rather than adding fluctuations."""
 
         if self.background_refractive_index is None:
             raise ValueError("Set a background with add_background before generating a volume.")
 
-        grid = Grid._resolve(
-            grid=grid,
-            shape=shape,
-            spacing=spacing,
-        )
+        grid = Grid._resolve(grid=grid)
 
         if self.overlap not in ("replace", "preserve", "error"):
             raise ValueError("overlap must be replace, preserve, or error.")

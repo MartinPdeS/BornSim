@@ -1,8 +1,11 @@
+from bornsim.medium.random_medium import GaussianMedium, ExponentialMedium
+from bornsim import EnsembleSampling
+from bornsim import AngularSampling
 import numpy as np
 import pytest
-from bornsim import RandomMedium, Volume
+from bornsim import Volume
 from bornsim.series import BornSeries
-from bornsim.media import random_volume
+from bornsim import Grid
 from bornsim.ensemble import ensemble_scattering
 from bornsim.green import GreenOperator
 from bornsim.units import ureg
@@ -48,7 +51,6 @@ def independent_matrix(volume, wavelength):
 
                 blocks[i, :, j, :] = k0**2 * volume.spacing.to("meter").magnitude ** 3 * tensor
             else:
-                # Independent radial Gauss integration + contact term.
                 a = (3 * volume.spacing.to("meter").magnitude ** 3 / (4 * np.pi)) ** (1 / 3)
 
                 nodes, weights = np.polynomial.legendre.leggauss(40)
@@ -57,7 +59,7 @@ def independent_matrix(volume, wavelength):
 
                 integrated = np.sum(weights * radial * np.exp(1j * k * radial)) * a / 2
 
-                blocks[i, :, j, :] = k0**2 * ((2 / 3) * integrated - 1 / (3 * k * k)) * np.eye(3)
+                blocks[i, :, j, :] = k0**2 * (2 / 3 * integrated - 1 / (3 * k * k)) * np.eye(3)
 
     return blocks.reshape(3 * n, 3 * n)
 
@@ -65,8 +67,11 @@ def independent_matrix(volume, wavelength):
 def test_fft_matches_independent_nonperiodic_matrix():
     volume = Volume(
         delta_refractive_index=np.zeros((2, 3, 2)),
-        spacing=4.5e-08 * ureg.meter,
         background_refractive_index=1.33,
+        grid=Grid(
+            shape=np.shape(np.zeros((2, 3, 2))),
+            spacing=4.5e-08 * ureg.meter,
+        ),
     )
 
     operator = GreenOperator(
@@ -78,7 +83,7 @@ def test_fft_matches_independent_nonperiodic_matrix():
 
     source = np.random.default_rng(3).normal(size=(2, 3, 2, 2, 3)) + 1j
 
-    reference = independent_matrix(volume, 633e-9) @ source.reshape(-1, 2, 3).transpose(0, 2, 1).reshape(-1, 2)
+    reference = independent_matrix(volume, 6.33e-07) @ source.reshape(-1, 2, 3).transpose(0, 2, 1).reshape(-1, 2)
 
     actual = operator.apply(source=source).reshape(-1, 2, 3).transpose(0, 2, 1).reshape(-1, 2)
 
@@ -90,19 +95,23 @@ def test_series_converges_toward_direct_linear_solve():
 
     volume = Volume(
         delta_refractive_index=delta,
-        spacing=4e-08 * ureg.meter,
         background_refractive_index=1.33,
+        grid=Grid(
+            shape=np.shape(delta),
+            spacing=4e-08 * ureg.meter,
+        ),
     )
 
     xyz = volume.positions.to("meter").magnitude.reshape(-1, 3)
 
     incident = (
-        np.exp(1j * 2 * np.pi / 633e-9 * volume.background_refractive_index * xyz[:, 2])[:, None, None] * np.eye(3)[:2]
+        np.exp(1j * 2 * np.pi / 6.33e-07 * volume.background_refractive_index * xyz[:, 2])[:, None, None]
+        * np.eye(3)[:2]
     )
 
     contrast = 2 * volume.background_refractive_index * delta.ravel()
 
-    matrix = independent_matrix(volume, 633e-9) * np.repeat(contrast, 3)[None, :]
+    matrix = independent_matrix(volume, 6.33e-07) * np.repeat(contrast, 3)[None, :]
 
     incident_flat = incident.transpose(0, 2, 1).reshape(-1, 2)
 
@@ -117,11 +126,11 @@ def test_series_converges_toward_direct_linear_solve():
 
     observation = directions()
 
-    phase = np.exp(-1j * 2 * np.pi / 633e-9 * volume.background_refractive_index * (observation @ xyz.T))
+    phase = np.exp(-1j * 2 * np.pi / 6.33e-07 * volume.background_refractive_index * (observation @ xyz.T))
 
     amplitude = (
         np.einsum("dn,npv,n->dpv", phase, exact, contrast)
-        * (2 * np.pi / 633e-9) ** 2
+        * (2 * np.pi / 6.33e-07) ** 2
         * volume.spacing.to("meter").magnitude ** 3
         / (4 * np.pi)
     )
@@ -129,56 +138,68 @@ def test_series_converges_toward_direct_linear_solve():
     amplitude -= observation[:, None, :] * np.einsum("dv,dpv->dp", observation, amplitude)[..., None]
 
     result = BornSeries(
-        shape=volume.delta_refractive_index.shape,
-        spacing=volume.spacing.to("meter"),
         background_refractive_index=volume.background_refractive_index,
         wavelength=6.33e-07 * ureg.meter,
         directions=Directions(vectors=observation),
         order=3,
+        grid=Grid(
+            shape=volume.delta_refractive_index.shape,
+            spacing=volume.spacing.to("meter"),
+        ),
     ).solve(volume=volume)
 
     errors = np.linalg.norm((np.cumsum(result.amplitudes, axis=0) - amplitude).reshape(3, -1), axis=1)
 
     assert errors[2] < errors[1] < errors[0]
 
-    assert errors[2] / np.linalg.norm(amplitude) < 1e-4
+    assert errors[2] / np.linalg.norm(amplitude) < 0.0001
 
 
 def test_each_amplitude_scales_with_its_order_and_interferes():
     volume = Volume(
         delta_refractive_index=np.ones((2, 2, 2)) * 0.08,
-        spacing=4.5e-08 * ureg.meter,
         background_refractive_index=1.33,
+        grid=Grid(
+            shape=np.shape(np.ones((2, 2, 2)) * 0.08),
+            spacing=4.5e-08 * ureg.meter,
+        ),
     )
 
     first = BornSeries(
-        shape=volume.delta_refractive_index.shape,
-        spacing=volume.spacing.to("meter"),
         background_refractive_index=volume.background_refractive_index,
         wavelength=6.33e-07 * ureg.meter,
         directions=Directions(vectors=directions()),
         order=3,
+        grid=Grid(
+            shape=volume.delta_refractive_index.shape,
+            spacing=volume.spacing.to("meter"),
+        ),
     ).solve(volume=volume)
 
     second = BornSeries(
-        shape=volume.delta_refractive_index.shape,
-        spacing=volume.spacing.to("meter"),
         background_refractive_index=1.33,
         wavelength=6.33e-07 * ureg.meter,
         directions=Directions(vectors=directions()),
         order=3,
+        grid=Grid(
+            shape=volume.delta_refractive_index.shape,
+            spacing=volume.spacing.to("meter"),
+        ),
     ).solve(
         volume=Volume(
             delta_refractive_index=volume.delta_refractive_index * 2,
-            spacing=volume.spacing.to("meter"),
             background_refractive_index=1.33,
+            grid=Grid(
+                shape=np.shape(volume.delta_refractive_index * 2),
+                spacing=volume.spacing.to("meter"),
+            ),
         )
     )
 
     for index in range(3):
         np.testing.assert_allclose(second.amplitudes[index], first.amplitudes[index] * 2 ** (index + 1), atol=1e-22)
 
-    assert not np.allclose(first.differential[-1], first.term_differential.sum(axis=0), rtol=1e-5, atol=0)
+    assert not np.allclose(first.differential[-1], first.term_differential.sum(axis=0), rtol=1e-05, atol=0)
 
     np.testing.assert_allclose(first.differential[0], first.term_differential[0])
 
@@ -186,20 +207,27 @@ def test_each_amplitude_scales_with_its_order_and_interferes():
 def test_first_order_forward_amplitude_normalization_and_transversality():
     volume = Volume(
         delta_refractive_index=np.ones((2, 3, 2)) * 0.01,
-        spacing=3e-08 * ureg.meter,
         background_refractive_index=1.33,
+        grid=Grid(
+            shape=np.shape(np.ones((2, 3, 2)) * 0.01),
+            spacing=3e-08 * ureg.meter,
+        ),
     )
 
     result = BornSeries(
-        shape=volume.delta_refractive_index.shape,
-        spacing=volume.spacing.to("meter"),
         background_refractive_index=volume.background_refractive_index,
         wavelength=6.33e-07 * ureg.meter,
         directions=Directions(vectors=directions()),
         order=1,
+        grid=Grid(
+            shape=volume.delta_refractive_index.shape,
+            spacing=volume.spacing.to("meter"),
+        ),
     ).solve(volume=volume)
 
-    expected = (2 * np.pi / 633e-9) ** 2 * (2 * volume.background_refractive_index * 0.01) * volume.volume / (4 * np.pi)
+    expected = (
+        (2 * np.pi / 6.33e-07) ** 2 * (2 * volume.background_refractive_index * 0.01) * volume.volume / (4 * np.pi)
+    )
 
     np.testing.assert_allclose(result.amplitudes[0, 0], expected * np.eye(3)[:2], atol=1e-22)
 
@@ -207,58 +235,57 @@ def test_first_order_forward_amplitude_normalization_and_transversality():
 
 
 def test_zero_contrast_and_seed_reproducibility():
-    medium = RandomMedium(
-        correlation="gaussian",
+    medium = GaussianMedium(
         refractive_index_std=0,
         background_refractive_index=1.33,
-        correlation_length=100e-9 * ureg.meter,
-        smoothness=1.5,
+        correlation_length=1e-07 * ureg.meter,
     )
 
-    volume = random_volume(
-        medium=medium,
-        shape=(3, 3, 3),
+    volume = medium.to_volume(
         seed=4,
-        spacing=50e-9 * ureg.meter,
+        grid=Grid(
+            shape=(3, 3, 3),
+            spacing=5e-08 * ureg.meter,
+        ),
     )
 
     result = BornSeries(
-        shape=volume.delta_refractive_index.shape,
-        spacing=volume.spacing.to("meter"),
         background_refractive_index=volume.background_refractive_index,
         wavelength=6.33e-07 * ureg.meter,
         directions=Directions(vectors=directions()),
         order=3,
+        grid=Grid(
+            shape=volume.delta_refractive_index.shape,
+            spacing=volume.spacing.to("meter"),
+        ),
     ).solve(volume=volume)
 
     assert not np.any(result.amplitudes)
 
     assert not np.any(result.field_norms)
 
-    a = random_volume(
-        medium=RandomMedium(
-            correlation="gaussian",
-            background_refractive_index=1.33,
-            refractive_index_std=0.01,
-            correlation_length=100e-9 * ureg.meter,
-            smoothness=1.5,
-        ),
-        shape=(4, 4, 4),
+    a = GaussianMedium(
+        background_refractive_index=1.33,
+        refractive_index_std=0.01,
+        correlation_length=1e-07 * ureg.meter,
+    ).to_volume(
         seed=10,
-        spacing=50e-9 * ureg.meter,
+        grid=Grid(
+            shape=(4, 4, 4),
+            spacing=5e-08 * ureg.meter,
+        ),
     )
 
-    b = random_volume(
-        medium=RandomMedium(
-            correlation="gaussian",
-            background_refractive_index=1.33,
-            refractive_index_std=0.01,
-            correlation_length=100e-9 * ureg.meter,
-            smoothness=1.5,
-        ),
-        shape=(4, 4, 4),
+    b = GaussianMedium(
+        background_refractive_index=1.33,
+        refractive_index_std=0.01,
+        correlation_length=1e-07 * ureg.meter,
+    ).to_volume(
         seed=10,
-        spacing=50e-9 * ureg.meter,
+        grid=Grid(
+            shape=(4, 4, 4),
+            spacing=5e-08 * ureg.meter,
+        ),
     )
 
     np.testing.assert_array_equal(a.delta_refractive_index, b.delta_refractive_index)
@@ -267,38 +294,41 @@ def test_zero_contrast_and_seed_reproducibility():
 
     assert not np.array_equal(
         a.delta_refractive_index,
-        random_volume(
-            medium=RandomMedium(
-                correlation="gaussian",
-                background_refractive_index=1.33,
-                refractive_index_std=0.01,
-                correlation_length=100e-9 * ureg.meter,
-                smoothness=1.5,
-            ),
-            shape=(4, 4, 4),
+        GaussianMedium(
+            background_refractive_index=1.33,
+            refractive_index_std=0.01,
+            correlation_length=1e-07 * ureg.meter,
+        )
+        .to_volume(
             seed=11,
-            spacing=50e-9 * ureg.meter,
-        ).delta_refractive_index,
+            grid=Grid(
+                shape=(4, 4, 4),
+                spacing=5e-08 * ureg.meter,
+            ),
+        )
+        .delta_refractive_index,
     )
 
 
 @pytest.mark.parametrize("correlation", ["gaussian", "exponential"])
 def test_random_field_expected_variance_without_sample_normalization(correlation):
-    medium = RandomMedium(
+    medium = {
+        "gaussian": GaussianMedium,
+        "exponential": ExponentialMedium,
+    }[correlation](
         refractive_index_std=0.02,
         correlation_length=5e-08 * ureg.meter,
-        correlation=correlation,
         background_refractive_index=1.33,
-        smoothness=1.5,
     )
 
     fields = np.array(
         [
-            random_volume(
-                medium=medium,
-                shape=(8, 8, 8),
-                spacing=5e-08 * ureg.meter,
+            medium.to_volume(
                 seed=seed,
+                grid=Grid(
+                    shape=(8, 8, 8),
+                    spacing=5e-08 * ureg.meter,
+                ),
             ).delta_refractive_index
             for seed in range(100)
         ]
@@ -306,16 +336,14 @@ def test_random_field_expected_variance_without_sample_normalization(correlation
 
     assert np.mean(fields**2) == pytest.approx(medium.refractive_index_std**2, rel=0.06)
 
-    assert np.std(fields.mean(axis=(1, 2, 3))) > 1e-4
+    assert np.std(fields.mean(axis=(1, 2, 3))) > 0.0001
 
 
 def test_ensemble_mean_and_error_against_manual_realizations():
-    medium = RandomMedium(
-        correlation="gaussian",
+    medium = GaussianMedium(
         background_refractive_index=1.33,
         refractive_index_std=0.01,
-        correlation_length=100e-9 * ureg.meter,
-        smoothness=1.5,
+        correlation_length=1e-07 * ureg.meter,
     )
 
     angles = np.array([0.0, 0.7, np.pi])
@@ -323,13 +351,19 @@ def test_ensemble_mean_and_error_against_manual_realizations():
     ensemble = ensemble_scattering(
         medium=medium,
         wavelength=6.33e-07 * ureg.meter,
-        shape=(3, 3, 3),
         order=3,
-        realizations=3,
-        seed=12,
-        angles=angles * ureg.radian,
-        azimuth_samples=4,
-        spacing=50e-9 * ureg.meter,
+        grid=Grid(
+            shape=(3, 3, 3),
+            spacing=5e-08 * ureg.meter,
+        ),
+        sampling=AngularSampling(
+            angles=angles * ureg.radian,
+            azimuth_samples=4,
+        ),
+        ensemble_sampling=EnsembleSampling(
+            realizations=3,
+            seed=12,
+        ),
     )
 
     phi = np.arange(4) * np.pi / 2
@@ -341,19 +375,22 @@ def test_ensemble_mean_and_error_against_manual_realizations():
     curves = np.array(
         [
             BornSeries(
-                shape=(3, 3, 3),
-                spacing=5e-08 * ureg.meter,
                 background_refractive_index=medium.background_refractive_index,
                 wavelength=6.33e-07 * ureg.meter,
                 directions=Directions(vectors=observe),
                 order=3,
+                grid=Grid(
+                    shape=(3, 3, 3),
+                    spacing=5e-08 * ureg.meter,
+                ),
             )
             .solve(
-                volume=random_volume(
-                    medium=medium,
-                    shape=(3, 3, 3),
+                volume=medium.to_volume(
                     seed=seed,
-                    spacing=50e-9 * ureg.meter,
+                    grid=Grid(
+                        shape=(3, 3, 3),
+                        spacing=5e-08 * ureg.meter,
+                    ),
                 )
             )
             .differential.reshape(3, 3, 4)
@@ -373,17 +410,22 @@ def test_ensemble_mean_and_error_against_manual_realizations():
 def test_invalid_order(order):
     with pytest.raises(ValueError):
         BornSeries(
-            shape=(2, 2, 2),
-            spacing=5e-08 * ureg.meter,
             background_refractive_index=1.33,
             wavelength=6.33e-07 * ureg.meter,
             directions=Directions(vectors=directions()),
             order=order,
+            grid=Grid(
+                shape=(2, 2, 2),
+                spacing=5e-08 * ureg.meter,
+            ),
         ).solve(
             volume=Volume(
                 delta_refractive_index=np.zeros((2, 2, 2)),
-                spacing=5e-08 * ureg.meter,
                 background_refractive_index=1.33,
+                grid=Grid(
+                    shape=np.shape(np.zeros((2, 2, 2))),
+                    spacing=5e-08 * ureg.meter,
+                ),
             )
         )
 
@@ -392,56 +434,64 @@ def test_invalid_shapes_directions_and_work_limits():
     with pytest.raises(ValueError):
         Volume(
             delta_refractive_index=np.zeros((1, 2, 3)),
-            spacing=5e-08 * ureg.meter,
             background_refractive_index=1.33,
+            grid=Grid(
+                shape=np.shape(np.zeros((1, 2, 3))),
+                spacing=5e-08 * ureg.meter,
+            ),
         )
 
     volume = Volume(
         delta_refractive_index=np.zeros((2, 2, 2)),
-        spacing=5e-08 * ureg.meter,
         background_refractive_index=1.33,
+        grid=Grid(
+            shape=np.shape(np.zeros((2, 2, 2))),
+            spacing=5e-08 * ureg.meter,
+        ),
     )
 
     with pytest.raises(ValueError):
         BornSeries(
-            shape=volume.delta_refractive_index.shape,
-            spacing=volume.spacing.to("meter"),
             background_refractive_index=volume.background_refractive_index,
             wavelength=6.33e-07 * ureg.meter,
             directions=Directions(vectors=[[0, 0, 2]]),
+            grid=Grid(
+                shape=volume.delta_refractive_index.shape,
+                spacing=volume.spacing.to("meter"),
+            ),
         ).solve(volume=volume)
 
     with pytest.raises(ValueError, match="too large"):
         ensemble_scattering(
-            medium=RandomMedium(
-                correlation="gaussian",
+            medium=GaussianMedium(
                 background_refractive_index=1.33,
                 refractive_index_std=0.01,
-                correlation_length=100e-9 * ureg.meter,
-                smoothness=1.5,
+                correlation_length=1e-07 * ureg.meter,
             ),
             wavelength=6.33e-07 * ureg.meter,
-            shape=(32, 32, 32),
             order=12,
-            realizations=32,
-            spacing=50e-9 * ureg.meter,
+            grid=Grid(
+                shape=(32, 32, 32),
+                spacing=5e-08 * ureg.meter,
+            ),
+            ensemble_sampling=EnsembleSampling(realizations=32),
         )
 
 
 def test_single_realization_uncertainty_is_unknown():
     result = ensemble_scattering(
-        medium=RandomMedium(
-            correlation="gaussian",
+        medium=GaussianMedium(
             refractive_index_std=0,
             background_refractive_index=1.33,
-            correlation_length=100e-9 * ureg.meter,
-            smoothness=1.5,
+            correlation_length=1e-07 * ureg.meter,
         ),
         wavelength=6.33e-07 * ureg.meter,
-        shape=(2, 2, 2),
-        realizations=1,
-        angles=[0, 1] * ureg.radian,
-        spacing=50e-9 * ureg.meter,
+        grid=Grid(
+            shape=(2, 2, 2),
+            spacing=5e-08 * ureg.meter,
+        ),
+        sampling=AngularSampling(angles=[0, 1] * ureg.radian),
+        ensemble_sampling=EnsembleSampling(realizations=1),
     )
 
     assert np.all(np.isnan(result["stderr"]))
@@ -450,9 +500,9 @@ def test_single_realization_uncertainty_is_unknown():
 
 
 def test_first_order_grid_refinement_toward_uniform_cube_integral():
-    length = 180e-9
+    length = 1.8e-07
 
-    wavelength = 633e-9
+    wavelength = 6.33e-07
 
     background = 1.33
 
@@ -471,17 +521,22 @@ def test_first_order_grid_refinement_toward_uniform_cube_integral():
     for cells in (2, 4, 8):
         volume = Volume(
             delta_refractive_index=np.full((cells,) * 3, contrast / (2 * background)),
-            spacing=length / cells * ureg.meter,
             background_refractive_index=background,
+            grid=Grid(
+                shape=np.shape(np.full((cells,) * 3, contrast / (2 * background))),
+                spacing=length / cells * ureg.meter,
+            ),
         )
 
         result = BornSeries(
-            shape=volume.delta_refractive_index.shape,
-            spacing=volume.spacing.to("meter"),
             background_refractive_index=volume.background_refractive_index,
             wavelength=wavelength * ureg.meter,
             directions=Directions(vectors=observe),
             order=1,
+            grid=Grid(
+                shape=volume.delta_refractive_index.shape,
+                spacing=volume.spacing.to("meter"),
+            ),
         ).solve(volume=volume)
 
         errors.append(abs(result.amplitudes[0, 0, 1, 1] - expected))
@@ -490,21 +545,20 @@ def test_first_order_grid_refinement_toward_uniform_cube_integral():
 
 
 def test_gaussian_neighbor_covariance():
-    medium = RandomMedium(
-        correlation="gaussian",
+    medium = GaussianMedium(
         refractive_index_std=0.02,
         correlation_length=1e-07 * ureg.meter,
         background_refractive_index=1.33,
-        smoothness=1.5,
     )
 
     fields = np.array(
         [
-            random_volume(
-                medium=medium,
-                shape=(12,) * 3,
-                spacing=5e-08 * ureg.meter,
+            medium.to_volume(
                 seed=seed,
+                grid=Grid(
+                    shape=(12,) * 3,
+                    spacing=5e-08 * ureg.meter,
+                ),
             ).delta_refractive_index
             for seed in range(100)
         ]
@@ -513,7 +567,7 @@ def test_gaussian_neighbor_covariance():
     covariance = np.mean(fields[:, :-1] * fields[:, 1:])
 
     expected = medium.refractive_index_std**2 * np.exp(
-        -0.5 * (50e-9 / medium.correlation_length.to("meter").magnitude) ** 2
+        -0.5 * (5e-08 / medium.correlation_length.to("meter").magnitude) ** 2
     )
 
     assert covariance == pytest.approx(expected, rel=0.08)
@@ -522,62 +576,77 @@ def test_gaussian_neighbor_covariance():
 def test_warning_when_higher_terms_grow():
     volume = Volume(
         delta_refractive_index=np.full((2,) * 3, 3.0),
-        spacing=4e-08 * ureg.meter,
         background_refractive_index=1.33,
+        grid=Grid(
+            shape=np.shape(np.full((2,) * 3, 3.0)),
+            spacing=4e-08 * ureg.meter,
+        ),
     )
 
     result = BornSeries(
-        shape=volume.delta_refractive_index.shape,
-        spacing=volume.spacing.to("meter"),
         background_refractive_index=volume.background_refractive_index,
         wavelength=6.33e-07 * ureg.meter,
         directions=Directions(vectors=directions()),
         order=3,
+        grid=Grid(
+            shape=volume.delta_refractive_index.shape,
+            spacing=volume.spacing.to("meter"),
+        ),
     ).solve(volume=volume)
 
-    assert any("not decreasing" in message for message in result.warnings)
+    assert any(("not decreasing" in message for message in result.warnings))
 
 
 def test_integrated_results_converge_with_angular_resolution():
-    medium = RandomMedium(
-        correlation="gaussian",
+    medium = GaussianMedium(
         background_refractive_index=1.33,
         refractive_index_std=0.01,
-        correlation_length=100e-9 * ureg.meter,
-        smoothness=1.5,
+        correlation_length=1e-07 * ureg.meter,
     )
 
     coarse = ensemble_scattering(
         medium=medium,
         wavelength=6.33e-07 * ureg.meter,
-        shape=(3,) * 3,
-        realizations=2,
-        angles=[0] * ureg.radian,
-        polar_samples=16,
-        azimuth_samples=8,
-        spacing=50e-9 * ureg.meter,
+        grid=Grid(
+            shape=(3,) * 3,
+            spacing=5e-08 * ureg.meter,
+        ),
+        sampling=AngularSampling(
+            angles=[0] * ureg.radian,
+            polar_samples=16,
+            azimuth_samples=8,
+        ),
+        ensemble_sampling=EnsembleSampling(realizations=2),
     )
 
     fine = ensemble_scattering(
         medium=medium,
         wavelength=6.33e-07 * ureg.meter,
-        shape=(3,) * 3,
-        realizations=2,
-        angles=[0] * ureg.radian,
-        polar_samples=64,
-        azimuth_samples=16,
-        spacing=50e-9 * ureg.meter,
+        grid=Grid(
+            shape=(3,) * 3,
+            spacing=5e-08 * ureg.meter,
+        ),
+        sampling=AngularSampling(
+            angles=[0] * ureg.radian,
+            polar_samples=64,
+            azimuth_samples=16,
+        ),
+        ensemble_sampling=EnsembleSampling(realizations=2),
     )
 
     reference = ensemble_scattering(
         medium=medium,
         wavelength=6.33e-07 * ureg.meter,
-        shape=(3,) * 3,
-        realizations=2,
-        angles=[0] * ureg.radian,
-        polar_samples=128,
-        azimuth_samples=32,
-        spacing=50e-9 * ureg.meter,
+        grid=Grid(
+            shape=(3,) * 3,
+            spacing=5e-08 * ureg.meter,
+        ),
+        sampling=AngularSampling(
+            angles=[0] * ureg.radian,
+            polar_samples=128,
+            azimuth_samples=32,
+        ),
+        ensemble_sampling=EnsembleSampling(realizations=2),
     )
 
     coarse_error = np.linalg.norm(coarse["mu_s"] - reference["mu_s"])

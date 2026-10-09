@@ -1,91 +1,30 @@
 """Finite refractive-index fields on centred cubic voxel grids."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import numpy as np
 from ._validation import _integer
 from .grid import Grid
-from .media import RandomMedium
+from .medium import Medium
 from .units import _refractive_index_values, Quantity
 
 
 @dataclass(frozen=True, kw_only=True)
 class Volume:
-    """Represent a finite refractive-index fluctuation field on cubic voxels.
+    """Store a finite voxel field and its explicit spatial Grid.
 
-    Parameters
-    ----------
-    delta_refractive_index : array_like
-        Finite three-dimensional refractive index fluctuations relative to the background,
-        with 2 to 32 cells per axis. Quantities are rejected, including dimensionless ones.
-    grid : Grid, optional
-        Shared spatial configuration. Its shape must match delta_refractive_index.
-        Supply either grid or spacing.
-    spacing : Quantity, optional
-        Positive, finite cubic voxel width. Explicit length units are required.
-        Legacy alternative to supplying grid; shape is inferred from the array.
-    background_refractive_index : float
-        Positive, finite background refractive index. Plain numbers are required; quantities are rejected. A background must be supplied.
-    medium : RandomMedium, optional
-        Generation statistics recorded by ``random_volume``. None for a
-        manually supplied field. Must be supplied together with ``seed``.
-    seed : int, optional
-        Random seed recorded by ``random_volume``. None for a manual field.
-
-    Attributes
-    ----------
-    delta_refractive_index : numpy.ndarray
-        Copied, read-only, dimensionless fluctuation array of shape (nx, ny, nz).
-    grid : Grid
-        Spatial configuration shared with generation and scattering.
-    spacing : Quantity
-        Cubic voxel width with its supplied units, also available as grid.spacing.
-    background_refractive_index : float
-        Dimensionless background refractive index.
-    medium : RandomMedium or None
-        Recorded generation statistics, when available.
-    seed : int or None
-        Recorded generation seed, when available.
-
-    Raises
-    ------
-    ValueError
-        If the field or grid is invalid, units are incompatible, or linearized
-        relative permittivity is nonpositive in any voxel.
-    TypeError
-        If recorded generation statistics are not a RandomMedium.
-
-    See Also
-    --------
-    bornsim.media.random_volume : Generate a seeded sample from medium statistics.
-    bornsim.series.BornSeries.solve : Compute coherent scattering from the sample.
-
-    Notes
-    -----
-    Relative permittivity is ``background_refractive_index**2 + 2*background_refractive_index*delta_refractive_index``.
-    The quadratic refractive-index fluctuation term is omitted at every Born order.
-    Voxel centres are measured relative to the sample centre.
-
-    Examples
-    --------
-    >>> import numpy as np
-    >>> from bornsim import Volume
-    >>> from bornsim.units import ureg
-    ...
-    ...
-    >>> volume = Volume(
-    ...     delta_refractive_index=np.zeros((2, 2, 2)),
-    ...     spacing=50 * ureg.nanometer,
-    ...     background_refractive_index=1.33,
-    ... )
-    >>> volume.positions.shape
-    (2, 2, 2, 3)
-    """
+    The copied, read-only delta_refractive_index array has shape grid.shape.
+    Background refractive index is a plain number; grid spacing and positions
+    carry physical units. Relative permittivity is linearized as
+    background_refractive_index**2 + 2*background_refractive_index*delta_refractive_index.
+    The quadratic fluctuation term is omitted at every Born order.
+    Medium.to_volume records generation statistics and seed. Manually
+    constructed volumes have only their explicitly supplied provenance."""
 
     delta_refractive_index: np.ndarray
     background_refractive_index: float
-    spacing: Quantity = None
-    grid: Grid | None = None
-    medium: RandomMedium | None = None
+    grid: Grid
+    spacing: Quantity = field(init=False)
+    medium: Medium | None = None
     seed: int | None = None
 
     def __post_init__(self) -> None:
@@ -100,22 +39,10 @@ class Volume:
         if data.ndim != 3 or any(n < 2 or n > 32 for n in data.shape) or not np.all(np.isfinite(data)):
             raise ValueError("delta_refractive_index must be a finite 3D array with 2–32 cells per axis.")
 
-        if self.grid is None:
-            if self.spacing is None:
-                raise ValueError("Supply grid or spacing for a Volume.")
+        grid = Grid._resolve(grid=self.grid)
 
-            grid = Grid(
-                shape=data.shape,
-                spacing=self.spacing,
-            )
-        else:
-            grid = Grid._resolve(
-                grid=self.grid,
-                spacing=self.spacing,
-            )
-
-            if grid.shape != data.shape:
-                raise ValueError("grid shape must match delta_refractive_index.")
+        if grid.shape != data.shape:
+            raise ValueError("grid shape must match delta_refractive_index.")
 
         object.__setattr__(self, "grid", grid)
 
@@ -141,8 +68,8 @@ class Volume:
             raise ValueError("medium and seed must be supplied together.")
 
         if self.medium is not None:
-            if not isinstance(self.medium, RandomMedium):
-                raise TypeError("medium must be a RandomMedium.")
+            if not isinstance(self.medium, Medium):
+                raise TypeError("medium must be a Medium.")
 
             if self.medium.background_refractive_index != self.background_refractive_index:
                 raise ValueError("medium background_refractive_index must match the volume.")
@@ -221,9 +148,7 @@ class Volume:
 
         from ._volume_plotting import _VolumePlotter
 
-        return _VolumePlotter(
-            volume=self,
-        ).plot_slice(
+        return _VolumePlotter(volume=self).plot_slice(
             normal=normal,
             index=index,
             field=field,
@@ -305,9 +230,7 @@ class Volume:
 
         from ._volume_plotting import _VolumePlotter
 
-        return _VolumePlotter(
-            volume=self,
-        ).plot_3d(
+        return _VolumePlotter(volume=self).plot_3d(
             backend=backend,
             mode=mode,
             field=field,

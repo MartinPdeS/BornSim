@@ -47,22 +47,36 @@ left = sphere.translated(offset=(-100, -40, 0) * ureg.nanometer)
 
 right = sphere.translated(offset=(100, 40, 0) * ureg.nanometer)
 
+source_configuration_1 = Source(wavelength=633 * ureg.nanometer)
+
 solver = Solver(
-    source=Source(wavelength=633 * ureg.nanometer),
+    source=source_configuration_1,
     sampling=sampling,
     order=1,
 )
 
+volumes_by_arrangement = {}
+
 results = []
 
-for shapes in ((sphere,), (translated,), (left, right)):
-    medium = StructuredMedium(background_refractive_index=1.33)
+for shapes, medium_label in (
+    ((sphere,), "Centred sphere"),
+    ((translated,), "Translated sphere"),
+    ((left, right), "Nonoverlapping sphere pair"),
+):
+    medium = StructuredMedium()
+
+    medium.add_background(refractive_index=1.33)
 
     medium.add_structures(*shapes)
 
     volume = medium.to_volume(grid=grid)
 
-    results.append(solver.solve(target=volume))
+    volumes_by_arrangement[medium_label] = volume
+
+    result = solver.solve(target=volume)
+
+    results.append(result)
 
 centred_result, translated_result, pair_result = results
 
@@ -81,6 +95,10 @@ np.testing.assert_allclose(
     atol=centred_result.differential.magnitude.max() * 1e-12,
 )
 
+
+# %%
+# Compare spatial slices and directional scattering
+# -------------------------------------------------
 figure, axes = plt.subplots(1, 3, figsize=(15, 4.5), layout="constrained")
 
 image = axes[0].imshow(
@@ -128,6 +146,55 @@ axes[2].set(xlabel="Polar angle θ (degrees)", ylabel="p(θ, φ) (sr⁻¹)", tit
 axes[2].legend(frameon=False)
 
 axes[2].grid(alpha=0.25)
+
+plt.show()
+
+
+# %%
+# Centred sphere in 3D
+# --------------------
+# Show one finite input sample with its physical spatial axes.
+preview_volume = volumes_by_arrangement["Centred sphere"]
+
+medium_figure = preview_volume.plot_3d(
+    backend="matplotlib",
+    mode="voxels",
+    field="refractive_index",
+)
+
+medium_figure.suptitle("Centred sphere")
+
+plt.show()
+
+# %%
+# Translated sphere in 3D
+# -----------------------
+# Show one finite input sample with its physical spatial axes.
+preview_volume = volumes_by_arrangement["Translated sphere"]
+
+medium_figure = preview_volume.plot_3d(
+    backend="matplotlib",
+    mode="voxels",
+    field="refractive_index",
+)
+
+medium_figure.suptitle("Translated sphere")
+
+plt.show()
+
+# %%
+# Nonoverlapping sphere pair in 3D
+# --------------------------------
+# Show one finite input sample with its physical spatial axes.
+preview_volume = volumes_by_arrangement["Nonoverlapping sphere pair"]
+
+medium_figure = preview_volume.plot_3d(
+    backend="matplotlib",
+    mode="voxels",
+    field="refractive_index",
+)
+
+medium_figure.suptitle("Nonoverlapping sphere pair")
 
 plt.show()
 

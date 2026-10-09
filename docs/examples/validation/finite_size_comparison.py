@@ -1,31 +1,32 @@
 """
-Finite samples and analytical first-order scattering
-====================================================
+Finite-sample size convergence
+==============================
 
-Compare first-order random-volume ensembles with the infinite-medium
-analytical model at the same wavelength and covariance. Increase sample size
-at a fixed voxel spacing. These numerical coefficients are cross sections
-divided by sample volume; they are not automatically intrinsic transport
-coefficients. A finite window and finite synthesis box change the spectrum,
-and voxel resolution remains a separate source of error.
+Compare numerical first-order random-volume ensembles as sample size grows at
+fixed voxel spacing. The coefficients are cross sections divided by sample
+volume. Sample size, voxel resolution and realization count describe separate
+sources of uncertainty and must be checked independently.
 """
+
+from bornsim.medium.random_medium import GaussianMedium
 
 import sys
 
 import matplotlib.pyplot as plt
 
-from bornsim import EnsembleSampling, AngularSampling, Grid, AnalyticalMedium, Solver, Source
+from bornsim import EnsembleSampling, AngularSampling, Grid, Solver, Source
 from bornsim.units import ureg
 
-medium = AnalyticalMedium(
+medium = GaussianMedium(
     refractive_index_std=0.001,
     correlation_length=60 * ureg.nanometer,
     background_refractive_index=1.33,
-    correlation="gaussian",
 )
 
+source_configuration_1 = Source(wavelength=633 * ureg.nanometer)
+
 solver = Solver(
-    source=Source(wavelength=633 * ureg.nanometer),
+    source=source_configuration_1,
     order=1,
 )
 
@@ -37,20 +38,7 @@ sampling = AngularSampling(
     azimuth_samples=8,
 )
 
-analytical = solver.solve(
-    target=medium,
-    sampling=sampling,
-)
-
 figure, axis = plt.subplots(layout="constrained")
-
-axis.plot(
-    analytical.angles.to("degree").magnitude,
-    analytical.azimuth_average().differential.to("1 / meter / steradian").magnitude[0],
-    "k--",
-    linewidth=2,
-    label="Analytical infinite medium, first order",
-)
 
 for cells in (4, 8, 12):
     grid = Grid(
@@ -58,13 +46,15 @@ for cells in (4, 8, 12):
         spacing=30 * ureg.nanometer,
     )
 
+    ensemble_sampling_configuration_1 = EnsembleSampling(
+        realizations=8,
+        seed=42,
+    )
+
     result = solver.ensemble(
         medium=medium,
         grid=grid,
-        ensemble_sampling=EnsembleSampling(
-            realizations=8,
-            seed=42,
-        ),
+        ensemble_sampling=ensemble_sampling_configuration_1,
         sampling=sampling,
     )
 
@@ -82,7 +72,7 @@ for cells in (4, 8, 12):
 axis.set(
     xlabel="Scattering angle (degrees)",
     ylabel="Differential scattering (m⁻¹ sr⁻¹)",
-    title="First order: finite samples versus infinite medium",
+    title="First order: finite-sample size convergence",
 )
 
 axis.legend()

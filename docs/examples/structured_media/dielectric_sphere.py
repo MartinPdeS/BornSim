@@ -68,7 +68,7 @@ structure.add_structures(
 sphere = Sphere(
     radius=150 * ureg.nanometer,
     material=sphere_material,
-    centre=[-100, 00, -20] * ureg.nanometer,
+    centre=[-100, 0, -20] * ureg.nanometer,
 )
 
 structure.add_structures(
@@ -101,8 +101,10 @@ if "--no-browser" not in sys.argv:
 # divided by the entire voxel-box volume. Multiplying by that physical volume
 # recovers a differential cross section, which avoids treating the empty
 # background portion of the box as part of an intrinsic transport coefficient.
+source_configuration_1 = Source(wavelength=633 * ureg.nanometer)
+
 solver = Solver(
-    source=Source(wavelength=633 * ureg.nanometer),
+    source=source_configuration_1,
     sampling=sampling,
     order=3,
 )

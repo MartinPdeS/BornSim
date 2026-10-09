@@ -46,7 +46,7 @@ extend-exclude = ["build", "dist", "htmlcov", "docs/build", "docs/source/auto_ex
 select = ["E4", "E7", "E9", "F"]
 
 [tool.mypy]
-files = ["bornsim/directions.py", "bornsim/model.py", "bornsim/series.py", "bornsim/volume.py", "bornsim/green.py", "bornsim/ensemble.py", "bornsim/_validation.py", "bornsim/api.py", "bornsim/source.py", "bornsim/solver.py", "bornsim/results.py", "bornsim/units.py", "bornsim/media.py", "bornsim/geometry.py", "bornsim/grid.py", "bornsim/sampling.py", "bornsim/_archives.py", "bornsim/_result_plotting.py", "bornsim/_volume_plotting.py", "bornsim/angular_data.py", "bornsim/rotation.py", "bornsim/_result_validation.py", "bornsim/material.py", "bornsim/ensemble_sampling.py"]
+files = ["bornsim/directions.py", "bornsim/series.py", "bornsim/volume.py", "bornsim/green.py", "bornsim/ensemble.py", "bornsim/_validation.py", "bornsim/api.py", "bornsim/source.py", "bornsim/solver.py", "bornsim/results.py", "bornsim/units.py", "bornsim/medium/base.py", "bornsim/medium/random_medium.py", "bornsim/medium/random_spheres.py", "bornsim/geometry.py", "bornsim/grid.py", "bornsim/sampling.py", "bornsim/_archives.py", "bornsim/_result_plotting.py", "bornsim/_volume_plotting.py", "bornsim/angular_data.py", "bornsim/rotation.py", "bornsim/_result_validation.py", "bornsim/material.py", "bornsim/ensemble_sampling.py"]
 follow_imports = "silent"
 ignore_missing_imports = true
 check_untyped_defs = true

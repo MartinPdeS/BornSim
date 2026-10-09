@@ -1,26 +1,20 @@
+from bornsim.medium.random_medium import GaussianMedium, WhittleMaternMedium
+from bornsim import EnsembleSampling
+from bornsim import AngularSampling
+from bornsim import Grid
 import json
-
 import pytest
-
-from bornsim import AnalyticalMedium, Layer, RandomMedium, Solver, Source, Sphere, StructuredMedium
+from bornsim import Layer, Solver, Source, Sphere, StructuredMedium
 from bornsim.units import ureg
 
 
 def test_random_statistics_preserve_existing_metadata_keys():
     for medium in (
-        RandomMedium(
+        WhittleMaternMedium(
+            smoothness=1.5,
             correlation_length=80 * ureg.nanometer,
             background_refractive_index=1.33,
             refractive_index_std=0.01,
-            correlation="matern",
-            smoothness=1.5,
-        ),
-        AnalyticalMedium(
-            correlation_length=80 * ureg.nanometer,
-            background_refractive_index=1.33,
-            refractive_index_std=0.01,
-            correlation="gaussian",
-            smoothness=1.5,
         ),
     ):
         metadata = medium.metadata
@@ -33,7 +27,7 @@ def test_random_statistics_preserve_existing_metadata_keys():
             "smoothness",
         }
 
-        assert metadata["correlation_length_m"] == pytest.approx(80e-9)
+        assert metadata["correlation_length_m"] == pytest.approx(8e-08)
 
         assert json.loads(json.dumps(metadata)) == metadata
 
@@ -43,7 +37,8 @@ def test_random_statistics_preserve_existing_metadata_keys():
 
 
 def test_solver_uses_medium_metadata_polymorphically():
-    class TaggedRandom(RandomMedium):
+
+    class TaggedRandom(GaussianMedium):
         @property
         def metadata(self):
             return {**super().metadata, "label": "custom medium"}
@@ -51,32 +46,32 @@ def test_solver_uses_medium_metadata_polymorphically():
     medium = TaggedRandom(
         background_refractive_index=1.33,
         refractive_index_std=0.01,
-        correlation_length=100e-9 * ureg.meter,
-        correlation="matern",
-        smoothness=1.5,
+        correlation_length=1e-07 * ureg.meter,
     )
 
-    solver = Solver(
-        source=Source(
-            wavelength=633e-9 * ureg.meter,
-        )
-    )
+    solver = Solver(source=Source(wavelength=6.33e-07 * ureg.meter))
 
     volume = medium.to_volume(
-        shape=(2, 2, 2),
-        spacing=50e-9 * ureg.meter,
+        grid=Grid(
+            shape=(2, 2, 2),
+            spacing=5e-08 * ureg.meter,
+        )
     )
 
     single = solver.solve(target=volume)
 
     ensemble = solver.ensemble(
         medium=medium,
-        shape=(2, 2, 2),
-        realizations=2,
-        angles=[0, 1] * ureg.radian,
-        azimuth_samples=4,
-        polar_samples=16,
-        spacing=50e-9 * ureg.meter,
+        grid=Grid(
+            shape=(2, 2, 2),
+            spacing=5e-08 * ureg.meter,
+        ),
+        sampling=AngularSampling(
+            angles=[0, 1] * ureg.radian,
+            azimuth_samples=4,
+            polar_samples=16,
+        ),
+        ensemble_sampling=EnsembleSampling(realizations=2),
     )
 
     assert single.provenance["medium"] == medium.metadata
@@ -106,9 +101,9 @@ def test_structured_metadata_preserves_order_units_and_independence():
 
     layer, sphere = metadata["regions"]
 
-    assert layer == {"type": "Layer", "lower_m": -100e-9, "upper_m": 0, "refractive_index": 1.34, "axis": 2}
+    assert layer == {"type": "Layer", "lower_m": -1e-07, "upper_m": 0, "refractive_index": 1.34, "axis": 2}
 
-    assert sphere["radius_m"] == pytest.approx(50e-9)
+    assert sphere["radius_m"] == pytest.approx(5e-08)
 
     assert sphere["centre_m"] == [0, 0, 0]
 

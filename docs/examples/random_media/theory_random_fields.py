@@ -14,10 +14,12 @@ spectral truncation. Continuum covariance curves are reference functions,
 not exact descriptions of the sampled finite grid.
 """
 
+from bornsim.medium.random_medium import GaussianMedium, ExponentialMedium, WhittleMaternMedium
+
 import matplotlib.pyplot as plt
 import numpy as np
 
-from bornsim import EnsembleSampling, Grid, RandomMedium
+from bornsim import EnsembleSampling, Grid
 from bornsim.units import ureg
 
 voxel_spacing = 20 * ureg.nanometer
@@ -36,12 +38,37 @@ correlation_length = 60 * ureg.nanometer
 
 refractive_index_std = 0.01
 
-covariance_models = (
-    ("gaussian", "Gaussian", "#0072B2"),
-    ("exponential", "Exponential", "#D55E00"),
-    ("matern", "Matérn, ν = 3/2", "#009E73"),
+gaussian_medium = GaussianMedium(
+    background_refractive_index=1.33,
+    refractive_index_std=refractive_index_std,
+    correlation_length=correlation_length,
 )
 
+exponential_medium = ExponentialMedium(
+    background_refractive_index=1.33,
+    refractive_index_std=refractive_index_std,
+    correlation_length=correlation_length,
+)
+
+whittle_matern_medium = WhittleMaternMedium(
+    background_refractive_index=1.33,
+    refractive_index_std=refractive_index_std,
+    correlation_length=correlation_length,
+    smoothness=1.5,
+)
+
+covariance_models = (
+    (gaussian_medium, "Gaussian", "#0072B2"),
+    (exponential_medium, "Exponential", "#D55E00"),
+    (whittle_matern_medium, "Matérn, ν = 3/2", "#009E73"),
+)
+
+preview_volumes = {}
+
+
+# %%
+# Sample fields and estimate covariance
+# -------------------------------------
 slice_figure, slice_axes = plt.subplots(1, 3, figsize=(12, 4), layout="constrained")
 
 covariance_comparisons = []
@@ -51,7 +78,7 @@ voxel_offsets_x = np.arange(9)
 
 distance_between_points = voxel_offsets_x * voxel_spacing
 
-# RandomMedium synthesizes a periodic field on twice the sample size before cropping.
+# Random-field synthesis uses a periodic field on twice the sample size before cropping.
 synthesis_grid_shape = tuple(2 * voxel_count for voxel_count in grid.shape)
 
 voxel_spacing_m = voxel_spacing.to("meter").magnitude
@@ -64,14 +91,8 @@ squared_wavenumbers = (
     sum(component**2 for component in np.meshgrid(*axis_wavenumbers_per_meter, indexing="ij")) / ureg.meter**2
 )
 
-for slice_axis, (covariance_model, covariance_label, color) in zip(slice_axes, covariance_models):
-    random_medium = RandomMedium(
-        correlation=covariance_model,
-        smoothness=1.5,
-        correlation_length=correlation_length,
-        refractive_index_std=refractive_index_std,
-        background_refractive_index=1.33,
-    )
+for slice_axis, (random_medium, covariance_label, color) in zip(slice_axes, covariance_models):
+    covariance_model = random_medium.correlation
 
     covariance_estimates_by_realization = []
 
@@ -94,7 +115,9 @@ for slice_axis, (covariance_model, covariance_label, color) in zip(slice_axes, c
 
         covariance_estimates_by_realization.append(covariance_estimates_by_offset)
 
-        if realization_seed == ensemble_sampling.seed:
+        if realization_seed == ensemble_sampling.seeds[0]:
+            preview_volumes[covariance_model] = sampled_volume
+
             sample_width_nm = (grid.shape[0] * voxel_spacing).to("nanometer").magnitude
 
             slice_image = slice_axis.imshow(
@@ -140,6 +163,55 @@ for slice_axis, (covariance_model, covariance_label, color) in zip(slice_axes, c
 slice_figure.colorbar(slice_image, ax=slice_axes, label="Refractive-index fluctuation δn", shrink=0.8)
 
 slice_figure.suptitle("Seed 42 · same σn = 0.01 and ℓ = 60 nm · 20 nm voxels")
+
+plt.show()
+
+
+# %%
+# Gaussian medium in 3D
+# ---------------------
+# Show one finite input sample with its physical spatial axes.
+preview_volume = preview_volumes["gaussian"]
+
+medium_figure = preview_volume.plot_3d(
+    backend="matplotlib",
+    mode="slices",
+    field="refractive_index",
+)
+
+medium_figure.suptitle(f"Gaussian medium · seed {ensemble_sampling.seeds[0]}")
+
+plt.show()
+
+# %%
+# Exponential medium in 3D
+# ------------------------
+# Show one finite input sample with its physical spatial axes.
+preview_volume = preview_volumes["exponential"]
+
+medium_figure = preview_volume.plot_3d(
+    backend="matplotlib",
+    mode="slices",
+    field="refractive_index",
+)
+
+medium_figure.suptitle(f"Exponential medium · seed {ensemble_sampling.seeds[0]}")
+
+plt.show()
+
+# %%
+# Whittle–Matérn medium in 3D
+# ---------------------------
+# Show one finite input sample with its physical spatial axes.
+preview_volume = preview_volumes["matern"]
+
+medium_figure = preview_volume.plot_3d(
+    backend="matplotlib",
+    mode="slices",
+    field="refractive_index",
+)
+
+medium_figure.suptitle(f"Whittle–Matérn medium · seed {ensemble_sampling.seeds[0]}")
 
 plt.show()
 

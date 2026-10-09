@@ -35,9 +35,6 @@ class _ResultPlotter:
         from .volume import Volume
         from pint.errors import DimensionalityError, UndefinedUnitError
 
-        if self._result.kind == "analytical":
-            raise ValueError("Cross sections require a finite-sample result.")
-
         if volume is not None:
             if not isinstance(volume, Volume):
                 raise TypeError("volume must be a Volume.")
@@ -48,7 +45,7 @@ class _ResultPlotter:
                 # Saved results retain their original provenance keys.
                 recorded_background_refractive_index = grid.get(
                     "background_refractive_index",
-                    grid.get("background_index", volume.background_refractive_index),
+                    volume.background_refractive_index,
                 )
 
                 incompatible_grid = (
@@ -72,7 +69,9 @@ class _ResultPlotter:
                 raise ValueError("volume must match the recorded sample volume.")
         else:
             if self._result.sample_volume is None:
-                raise ValueError("sample_volume is unavailable; supply the sample Volume for a legacy result.")
+                raise ValueError(
+                    "sample_volume is unavailable; supply the sample Volume for a result without recorded volume."
+                )
 
             physical_volume = float(self._result.sample_volume.to("meter**3").magnitude)
 
@@ -143,7 +142,7 @@ class _ResultPlotter:
             else:
                 axis.errorbar(x, curve, yerr=errors, capsize=2, label=label, **style)
 
-        default_title = "Analytical scattering" if self._result.kind == "analytical" else "Finite-sample scattering"
+        default_title = "Finite-sample scattering"
 
         default_title += self._angular_label(azimuth=selected)
 
@@ -233,11 +232,7 @@ class _ResultPlotter:
         if insufficient_angular_coverage:
             raise ValueError("Polar and 3D views require at least three distinct angles spanning 0 to pi.")
 
-        title = (
-            "Analytical phase function"
-            if self._result.kind == "analytical"
-            else "Directional finite-sample phase function"
-        )
+        title = "Directional finite-sample phase function"
 
         meridian = self._select_azimuth(azimuth=azimuth)
 
@@ -254,16 +249,12 @@ class _ResultPlotter:
                 radius = np.concatenate([directional, directional[:, :1]], axis=-1)
 
                 surface_label = "full azimuthal distribution"
-            elif self._result.kind == "analytical" or self._result.azimuth_averaged:
+            elif self._result.azimuth_averaged:
                 phi = np.linspace(0, 2 * np.pi, 97)
 
                 radius = np.broadcast_to(phase[selected, :, None], (len(theta), len(phi)))
 
-                surface_label = (
-                    "axisymmetric analytical surface"
-                    if self._result.kind == "analytical"
-                    else "explicit azimuth-average surface"
-                )
+                surface_label = "explicit azimuth-average surface"
 
                 if self._result.azimuth_averaged:
                     title = "Azimuth-averaged finite-sample phase function"

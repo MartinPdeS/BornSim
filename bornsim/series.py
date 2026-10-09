@@ -22,13 +22,9 @@ class BornSeries:
 
     Parameters
     ----------
-    grid : Grid, optional
+    grid : Grid
         Shared spatial configuration, also used by the input Volume.
-        Cannot be combined with legacy shape or spacing keywords.
-    shape : tuple of int, optional
-        Three grid dimensions, each from 2 to 32.
-    spacing : Quantity, optional
-        Positive cubic voxel width; explicit length units are required.
+        Required for generation and scattering.
     background_refractive_index : float
         Positive uniform background refractive index, dimensionless.
     wavelength : Quantity
@@ -60,9 +56,9 @@ class BornSeries:
     linearization is unchanged at higher orders.
     """
 
-    shape: tuple | None = None
-    spacing: Quantity = None
-    grid: Grid | None = None
+    grid: Grid
+    shape: tuple = field(init=False)
+    spacing: Quantity = field(init=False)
     background_refractive_index: float
     wavelength: Quantity
     directions: Directions
@@ -72,17 +68,9 @@ class BornSeries:
     _incident_field: np.ndarray = field(init=False, repr=False)
 
     def __post_init__(self) -> None:
-        grid = Grid._resolve(
-            grid=self.grid,
-            shape=self.shape,
-            spacing=self.spacing,
-        )
+        grid = Grid._resolve(grid=self.grid)
 
         object.__setattr__(self, "grid", grid)
-
-        object.__setattr__(self, "shape", grid.shape)
-
-        object.__setattr__(self, "spacing", grid.spacing)
 
         volume = Volume(
             delta_refractive_index=np.zeros(grid.shape),
@@ -210,26 +198,28 @@ class BornSeries:
         Examples
         --------
         >>> from bornsim.units import ureg
-        >>> from bornsim import BornSeries, RandomMedium
+        >>> from bornsim import Directions, Grid, GaussianMedium
+        >>> from bornsim.series import BornSeries
         ...
         ...
-        >>> medium = RandomMedium(
-        ...     correlation="gaussian",
+        >>> medium = GaussianMedium(
         ...     background_refractive_index=1.33,
         ...     refractive_index_std=0.01,
         ...     correlation_length=100e-9 * ureg.meter,
         ... )
 
         ...
-        >>> volume = medium.to_volume(
+        >>> grid = Grid(
         ...     shape=(2, 2, 2),
+        ...     spacing=50 * ureg.nanometer,
+        ... )
+        >>> volume = medium.to_volume(
+        ...     grid=grid,
         ...     seed=42,
-        ...     spacing=50e-9 * ureg.meter,
         ... )
         >>> directions = Directions(vectors=[[0.0, 0.0, 1.0]])
         >>> engine = BornSeries(
-        ...     shape=volume.delta_refractive_index.shape,
-        ...     spacing=volume.spacing,
+        ...     grid=grid,
         ...     background_refractive_index=volume.background_refractive_index,
         ...     wavelength=633 * ureg.nanometer,
         ...     directions=directions,

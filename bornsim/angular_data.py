@@ -114,10 +114,7 @@ class AngularData:
         if shape[0] > 12:
             raise ValueError("differential must contain at most 12 Born orders.")
 
-        if self.kind == "analytical" and shape[0] != 1:
-            raise ValueError("analytical differential must contain exactly one order.")
-
-        if self.kind not in ("volume", "ensemble", "analytical") or not isinstance(self.azimuth_averaged, bool):
+        if self.kind not in ("volume", "ensemble") or not isinstance(self.azimuth_averaged, bool):
             raise ValueError("kind or azimuth_averaged is invalid.")
 
         if len(shape) == 3 and (self.angles is None or self.azimuths is None or self.azimuth_averaged):
@@ -167,7 +164,7 @@ class AngularData:
             raise ValueError("directions must contain unit vectors.")
 
         if self.kind != "volume" and self.angles is None:
-            raise ValueError("analytical and ensemble results require angles.")
+            raise ValueError("ensemble results require angles.")
 
         if self.directions is not None and self.angles is not None:
             expected_cosine = np.cos(self.angles).magnitude
@@ -191,7 +188,7 @@ class AngularData:
             if invalid_phi:
                 raise ValueError("azimuths must uniformly cover [0, 2*pi), starting at zero.")
 
-        if self.sample_volume is not None and (self.kind == "analytical" or self.sample_volume.magnitude <= 0):
+        if self.sample_volume is not None and self.sample_volume.magnitude <= 0:
             raise ValueError("sample_volume must describe a positive finite-sample volume.")
 
         unnormalized_cut = (
@@ -220,15 +217,6 @@ class AngularData:
         axes = (len(self.mu_s),) + (1,) * (self.differential.ndim - 1)
 
         return (self.differential / self.mu_s.reshape(axes)).to("1 / steradian")
-
-    @property
-    def directional_phase_function(self):
-        """Compatibility alias for full directional phase densities."""
-
-        if self.differential.ndim != 3:
-            raise ValueError("Full directional phase data are unavailable.")
-
-        return self.phase_function
 
     @property
     def differential_cross_section(self):

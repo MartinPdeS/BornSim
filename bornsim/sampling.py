@@ -3,7 +3,6 @@
 from dataclasses import dataclass
 from typing import cast
 import numpy as np
-import warnings
 from ._validation import _integer
 from .directions import Directions
 from .units import Quantity, validate_units, ureg
@@ -209,23 +208,11 @@ class AngularSampling:
         }
 
     @classmethod
-    def _resolve(cls, *, sampling=None, angles=None, polar_samples=None, azimuth_samples=None):
-        if sampling is not None:
-            if not isinstance(sampling, cls):
-                raise TypeError("sampling must be an AngularSampling.")
+    def _resolve(cls, *, sampling: "AngularSampling | None" = None) -> "AngularSampling":
+        if sampling is None:
+            return cls()
 
-            if any(value is not None for value in (angles, polar_samples, azimuth_samples)):
-                raise ValueError("Supply sampling or individual angular settings, not both.")
+        if not isinstance(sampling, cls):
+            raise TypeError("sampling must be an AngularSampling.")
 
-            return sampling
-
-        if any(value is not None for value in (angles, polar_samples, azimuth_samples)):
-            warnings.warn(
-                "Use AngularSampling instead of individual angular keywords.", DeprecationWarning, stacklevel=3
-            )
-
-        return cls(
-            angles=angles,
-            polar_samples=32 if polar_samples is None else polar_samples,
-            azimuth_samples=8 if azimuth_samples is None else azimuth_samples,
-        )
+        return sampling

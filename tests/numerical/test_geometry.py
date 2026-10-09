@@ -1,19 +1,8 @@
+from bornsim import AngularSampling
+from bornsim import Grid
 import numpy as np
 import pytest
-
-from bornsim import (
-    AngularSampling,
-    Grid,
-    Box,
-    Cylinder,
-    Ellipsoid,
-    Layer,
-    Solver,
-    Source,
-    Sphere,
-    StructuredMedium,
-    Volume,
-)
+from bornsim import Box, Cylinder, Ellipsoid, Layer, Solver, Source, Sphere, StructuredMedium, Volume
 from bornsim.units import ureg
 
 
@@ -39,8 +28,10 @@ def test_layers_interfaces_units_and_last_region_wins():
     )
 
     volume = medium.to_volume(
-        shape=(3, 3, 3),
-        spacing=50 * ureg.nanometer,
+        grid=Grid(
+            shape=(3, 3, 3),
+            spacing=50 * ureg.nanometer,
+        )
     )
 
     expected = np.empty((3, 3, 3))
@@ -54,7 +45,7 @@ def test_layers_interfaces_units_and_last_region_wins():
     np.testing.assert_allclose(volume.delta_refractive_index, expected, atol=1e-15)
 
     np.testing.assert_allclose(
-        volume.positions.to("meter").magnitude[1, 1, :, 2], [-50e-9, 0, 50e-9], rtol=1e-15, atol=0
+        volume.positions.to("meter").magnitude[1, 1, :, 2], [-5e-08, 0, 5e-08], rtol=1e-15, atol=0
     )
 
     assert volume.medium is None and volume.seed is None
@@ -139,27 +130,27 @@ def test_composed_scatterers_match_manual_volume_and_scattering():
     )
 
     volume = medium.to_volume(
-        shape=(4, 4, 4),
-        spacing=4e-08 * ureg.meter,
+        grid=Grid(
+            shape=(4, 4, 4),
+            spacing=4e-08 * ureg.meter,
+        )
     )
 
     manual = np.zeros((4, 4, 4))
 
     for i, j, k in np.ndindex(manual.shape):
-        x, y, z = (np.array([i, j, k]) - 1.5) * 40e-9
+        x, y, z = (np.array([i, j, k]) - 1.5) * 4e-08
 
-        if (x + 40e-9) ** 2 + y**2 + z**2 <= (60e-9) ** 2:
+        if (x + 4e-08) ** 2 + y**2 + z**2 <= 6e-08**2:
             manual[i, j, k] = 1.34 - 1.33
 
-        if x**2 + y**2 <= (40e-9) ** 2 and abs(z) <= 60e-9:
+        if x**2 + y**2 <= 4e-08**2 and abs(z) <= 6e-08:
             manual[i, j, k] = 1.35 - 1.33
 
     np.testing.assert_array_equal(volume.delta_refractive_index, manual)
 
     solver = Solver(
-        source=Source(
-            wavelength=633e-9 * ureg.meter,
-        ),
+        source=Source(wavelength=6.33e-07 * ureg.meter),
         order=3,
     )
 
@@ -171,8 +162,11 @@ def test_composed_scatterers_match_manual_volume_and_scattering():
     expected = solver.solve_cut(
         target=Volume(
             delta_refractive_index=manual,
-            spacing=4e-08 * ureg.meter,
             background_refractive_index=1.33,
+            grid=Grid(
+                shape=np.shape(manual),
+                spacing=4e-08 * ureg.meter,
+            ),
         ),
         angles=[0, 1, 2] * ureg.radian,
     )
@@ -182,12 +176,12 @@ def test_composed_scatterers_match_manual_volume_and_scattering():
 
 def test_empty_clipped_and_invalid_constitutive_law():
     assert (
-        not StructuredMedium(
-            background_refractive_index=1.33,
-        )
+        not StructuredMedium(background_refractive_index=1.33)
         .to_volume(
-            shape=(2, 2, 2),
-            spacing=50e-9 * ureg.meter,
+            grid=Grid(
+                shape=(2, 2, 2),
+                spacing=5e-08 * ureg.meter,
+            )
         )
         .delta_refractive_index.any()
     )
@@ -201,8 +195,10 @@ def test_empty_clipped_and_invalid_constitutive_law():
         ],
         background_refractive_index=1.33,
     ).to_volume(
-        shape=(2, 2, 2),
-        spacing=50e-9 * ureg.meter,
+        grid=Grid(
+            shape=(2, 2, 2),
+            spacing=5e-08 * ureg.meter,
+        )
     )
 
     np.testing.assert_allclose(clipped.delta_refractive_index, 0.01)
@@ -217,17 +213,19 @@ def test_empty_clipped_and_invalid_constitutive_law():
             ],
             background_refractive_index=1.33,
         ).to_volume(
-            shape=(2, 2, 2),
-            spacing=50e-9 * ureg.meter,
+            grid=Grid(
+                shape=(2, 2, 2),
+                spacing=5e-08 * ureg.meter,
+            )
         )
 
     for shape in ((1, 2, 2), (33, 2, 2), (2, 2)):
         with pytest.raises(ValueError):
-            StructuredMedium(
-                background_refractive_index=1.33,
-            ).to_volume(
-                shape=shape,
-                spacing=50e-9 * ureg.meter,
+            StructuredMedium(background_refractive_index=1.33).to_volume(
+                grid=Grid(
+                    shape=shape,
+                    spacing=5e-08 * ureg.meter,
+                )
             )
 
 
@@ -294,11 +292,9 @@ def test_invalid_geometry(factory):
         )
 
 
-@pytest.mark.parametrize("centre", [(0, 0, 0), (50e-9, 0, 0)])
+@pytest.mark.parametrize("centre", [(0, 0, 0), (5e-08, 0, 0)])
 def test_single_structured_sample_phase_matches_unpolarized_dipole(centre):
-    medium = StructuredMedium(
-        background_refractive_index=1.33,
-    )
+    medium = StructuredMedium(background_refractive_index=1.33)
 
     sphere = Sphere(
         radius=2e-08 * ureg.meter,
@@ -306,14 +302,10 @@ def test_single_structured_sample_phase_matches_unpolarized_dipole(centre):
         centre=centre * ureg.meter,
     )
 
-    medium.add_structures(
-        sphere,
-    )
+    medium.add_structures(sphere)
 
     solver = Solver(
-        source=Source(
-            wavelength=633e-9 * ureg.meter,
-        ),
+        source=Source(wavelength=6.33e-07 * ureg.meter),
         order=1,
     )
 
@@ -337,8 +329,6 @@ def test_single_structured_sample_phase_matches_unpolarized_dipole(centre):
         sampling=sampling,
     )
 
-    # One occupied voxel is a discrete dipole: the unpolarized phase function
-    # is 3*(1 + cos(theta)**2)/(16*pi), regardless of its translation.
     expected = 3 * (1 + np.cos(angles) ** 2) / (16 * np.pi)
 
     np.testing.assert_allclose(result.azimuth_average().phase_function.magnitude[0], expected, rtol=1e-12)
@@ -363,11 +353,9 @@ def test_two_sphere_directional_phase_preserves_interference_and_3d_surface(monk
     from mpl_toolkits.mplot3d import Axes3D
     from bornsim import Result
 
-    spacing = 50e-9
+    spacing = 5e-08
 
-    medium = StructuredMedium(
-        background_refractive_index=1.33,
-    )
+    medium = StructuredMedium(background_refractive_index=1.33)
 
     medium.add_background(refractive_index=1.0)
 
@@ -385,7 +373,7 @@ def test_two_sphere_directional_phase_preserves_interference_and_3d_surface(monk
 
     medium.add_structures(left, right)
 
-    wavelength = 633e-9
+    wavelength = 6.33e-07
 
     solver = Solver(
         source=Source(wavelength=wavelength * ureg.meter),
@@ -414,8 +402,6 @@ def test_two_sphere_directional_phase_preserves_interference_and_3d_surface(monk
 
     phi = result.azimuths.magnitude
 
-    # Independent two-dipole far-field reference: their relative phase is
-    # q_x * separation. Squaring the coherent sum gives 2 + 2*cos(q_x*d).
     k = 2 * np.pi / wavelength
 
     separation = 2 * spacing
@@ -424,7 +410,6 @@ def test_two_sphere_directional_phase_preserves_interference_and_3d_surface(monk
         2 + 2 * np.cos(k * separation * np.sin(theta[:, None]) * np.cos(phi))
     )
 
-    # Independently integrate the reference on a finer solid-angle grid.
     cosine, weights = np.polynomial.legendre.leggauss(128)
 
     reference_phi = np.arange(128) * 2 * np.pi / 128
@@ -437,7 +422,7 @@ def test_two_sphere_directional_phase_preserves_interference_and_3d_surface(monk
 
     expected = angular / normalization
 
-    phase = result.directional_phase_function.magnitude[0]
+    phase = result.phase_function.magnitude[0]
 
     np.testing.assert_allclose(phase, expected, rtol=1e-12)
 
@@ -449,9 +434,7 @@ def test_two_sphere_directional_phase_preserves_interference_and_3d_surface(monk
 
     np.testing.assert_array_equal(restored.azimuths.magnitude, phi)
 
-    np.testing.assert_array_equal(
-        restored.directional_phase_function.magnitude, result.directional_phase_function.magnitude
-    )
+    np.testing.assert_array_equal(restored.phase_function.magnitude, result.phase_function.magnitude)
 
     captured = {}
 

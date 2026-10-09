@@ -1,8 +1,8 @@
 """Class-based API for vector Born scattering from finite dielectric samples."""
 
 from ._version import __version__
-from .model import AnalyticalMedium
-from .media import Medium, RandomMedium
+from .medium import Medium, GaussianMedium, ExponentialMedium, WhittleMaternMedium
+from .medium.random_spheres import RandomSphereMedium
 from .volume import Volume
 from .geometry import Layer, Sphere, Ellipsoid, Box, Cylinder, StructuredMedium
 from .rotation import Rotation
@@ -22,8 +22,10 @@ __all__ = [
     "EnsembleSampling",
     "__version__",
     "Medium",
-    "RandomMedium",
-    "AnalyticalMedium",
+    "GaussianMedium",
+    "ExponentialMedium",
+    "WhittleMaternMedium",
+    "RandomSphereMedium",
     "StructuredMedium",
     "Volume",
     "Source",
@@ -39,31 +41,3 @@ __all__ = [
     "Cylinder",
     "Rotation",
 ]
-
-
-def __getattr__(name):
-    """Keep deprecated advanced imports available during API migration."""
-
-    from importlib import import_module
-    import warnings
-
-    locations = {
-        "BornSeries": "series",
-        "ensemble_scattering": "ensemble",
-        "random_volume": "media",
-        "angular_scattering": "model",
-        "optical_properties": "model",
-    }
-
-    if name not in locations:
-        raise AttributeError(f"module 'bornsim' has no attribute {name!r}")
-
-    module = locations[name]
-
-    warnings.warn(
-        f"Import {name} from bornsim.{module}; top-level convenience imports are deprecated.",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-
-    return getattr(import_module(f".{module}", __name__), name)

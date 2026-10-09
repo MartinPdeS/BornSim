@@ -52,7 +52,8 @@ The Python API accepts TypedUnit quantities; dimensional inputs require explicit
 .. code-block:: python
 
     import matplotlib.pyplot as plt
-    from bornsim import EnsembleSampling, Grid, RandomMedium, Source, Solver
+    from bornsim import EnsembleSampling, Grid, Source, Solver
+    from bornsim.medium.random_medium import GaussianMedium
     from bornsim.units import ureg
 
     grid = Grid(
@@ -60,39 +61,38 @@ The Python API accepts TypedUnit quantities; dimensional inputs require explicit
         spacing=50 * ureg.nanometer,
     )
 
-    medium = RandomMedium(
+    medium = GaussianMedium(
         background_refractive_index=1.33,
         refractive_index_std=0.01,
         correlation_length=100 * ureg.nanometer,
-        correlation="gaussian",
     )
 
+    source_configuration_1 = Source(wavelength=633 * ureg.nanometer)
+
     solver = Solver(
-        source=Source(wavelength=633 * ureg.nanometer),
+        source=source_configuration_1,
         order=3,
+    )
+
+    ensemble_sampling_configuration_1 = EnsembleSampling(
+        realizations=4,
+        seed=42,
     )
 
     result = solver.ensemble(
         medium=medium,
         grid=grid,
-        ensemble_sampling=EnsembleSampling(
-            realizations=4,
-            seed=42,
-        ),
+        ensemble_sampling=ensemble_sampling_configuration_1,
     )
 
-    print(
-        f"mu_s = {result.mu_s.to('1 / millimeter')}, "
-        f"g = {result.g}, "
-        f"mu_s_prime = {result.mu_s_prime.to('1 / millimeter')}"
-    )
+    print(f"mu_s = {result.mu_s.to('1 / millimeter')}, g = {result.g}, mu_s_prime = {result.mu_s_prime.to('1 / millimeter')}")
 
     result.plot()
 
     plt.show()
 
 ``Source`` describes the supported unpolarized plane wave propagating along +z.
-``RandomMedium`` defines numerical random-field statistics.
+``GaussianMedium`` defines numerical random-field statistics.
 ``Grid`` defines spatial shape and spacing once, and is shared by
 ``medium.to_volume(grid=grid)`` and ``solver.ensemble(grid=grid, ...)``.
 Every ``Volume`` retains its grid. ``AngularSampling`` groups output polar
@@ -170,8 +170,7 @@ field norms are dimensionless. Use ``.to("unit")`` to convert and
 ``.magnitude`` to retrieve an array. Plots convert to degrees and SI
 scattering units explicitly, including uncertainty bars.
 
-Analytical functions return unit-bearing scattering coefficients.
-``random_volume`` retains unit-bearing voxel spacing and coordinates.
+``medium.to_volume(grid=grid)`` generates unit-bearing voxel samples.
 The low-level Born and ensemble kernels document their numeric SI outputs.
 
 
@@ -180,9 +179,9 @@ Physical model
 
 Real-valued refractive index fluctuations are linearized as δε ≈ 2 n₀ δn. For an unpolarized incident wave, the differential scattering coefficient is k₀⁴ Φε(q) (1 + cos²θ)/(32π²), where q = 2 n₀ k₀ sin(θ/2), k₀ = 2π/λvac and Φε is the three-dimensional Fourier transform of the dielectric covariance without a Fourier normalization prefactor.
 
-The refractive index covariance is σn² exp(−r²/(2ℓ²)) for the Gaussian model and σn² exp(−r/ℓ) for the exponential model. These definitions matter when comparing correlation lengths between publications. Gauss–Legendre quadrature integrates over solid angle. Increase ``quadrature_order`` to check convergence for strongly forward-peaked scattering.
+The refractive index covariance is σn² exp(−r²/(2ℓ²)) for the Gaussian model and σn² exp(−r/ℓ) for the exponential model. These definitions matter when comparing correlation lengths between publications. Gauss–Legendre quadrature integrates over solid angle. Increase the angular sampling quadrature to check convergence for strongly forward-peaked scattering.
 
-The analytical solver is a first-order, single-scattering model. The numerical solver includes repeated interactions through the chosen Born order. No slab-transmission observable or particle-packing generator is provided;
+BornSim includes repeated interactions through the chosen Born order. Infinite-medium first-order formulas live only in the test references. No slab-transmission observable or particle-packing generator is provided;
 fixed particle configurations can be composed and propagated numerically. A dense medium can still have weak fluctuations; density alone does not establish Born validity. Contrast, correlation length, wavelength, and propagation distance matter. Decreasing Born terms do not certify convergence.
 
 Scientific references:
@@ -203,14 +202,19 @@ Tests cover the analytic short-correlation limit, contrast scaling, independent 
 Numerical media and geometry
 ----------------------------
 
-``RandomMedium`` generates numerical Gaussian random fields with Gaussian,
-exponential, or Whittle–Matérn spatial covariance. Matérn ``smoothness`` uses
-the convention ``x = sqrt(2 * nu) * r / correlation_length``; ``nu = 0.5``
-reproduces exponential covariance. ``Medium`` is an abstract base class;
-instantiate ``RandomMedium`` or ``StructuredMedium`` and call ``to_volume()``.
-The existing analytical statistics class is named ``AnalyticalMedium``.
-Old ``Medium(...)`` calls must be replaced; choose ``correlation="gaussian"``
-for the analytical Gaussian model. Choose the covariance family explicitly. Matérn models also require smoothness.
+``GaussianMedium``, ``ExponentialMedium``, and ``WhittleMaternMedium`` generate
+Gaussian random refractive index fields with distinct spatial covariance models.
+Import them from ``bornsim.medium.random_medium``. Choose the covariance by
+choosing the class; there is no covariance-string constructor argument.
+Whittle–Matérn requires explicit ``smoothness``, with the convention
+``x = sqrt(2 * nu) * r / correlation_length``. Smoothness 0.5 reproduces
+exponential covariance at the same length parameter.
+
+``RandomSphereMedium`` in ``bornsim.medium.random_spheres`` generates a seeded
+collection of identical nonoverlapping spheres fully contained in the grid box.
+Supply the sphere count, radius, and both refractive indices. Sequential rejection
+sampling raises if it cannot place every sphere within its attempt limit.
+All concrete media implement ``to_volume(grid=..., seed=...)``; ``Medium`` is abstract.
 
 ``StructuredMedium`` voxelizes ordered ``Layer``, ``Sphere``, ``Ellipsoid``,
 ``Box``, and ``Cylinder`` regions. Regions specify absolute indices; later
@@ -220,23 +224,24 @@ to the box, with a uniform background outside the sample.
 .. code-block:: python
 
     from bornsim.units import ureg
-
-    from bornsim import Grid, RandomMedium, Layer, Sphere, StructuredMedium
-    from bornsim.media import random_volume
+    from bornsim import Grid, Layer, Sphere, StructuredMedium
+    from bornsim.medium.random_medium import WhittleMaternMedium
     from bornsim import Solver, Source
 
-    random_sample = random_volume(
-        medium=RandomMedium(
-            correlation="matern",
-            smoothness=1.5,
-            background_refractive_index=1.33,
-            refractive_index_std=0.01,
-            correlation_length=100e-9 * ureg.meter,
-        ),
-        grid=Grid(
-            shape=(12, 12, 12),
-            spacing=3e-08 * ureg.meter,
-        ),
+    random_medium_configuration_1 = WhittleMaternMedium(
+        smoothness=1.5,
+        background_refractive_index=1.33,
+        refractive_index_std=0.01,
+        correlation_length=1e-07 * ureg.meter,
+    )
+
+    grid_configuration_1 = Grid(
+        shape=(12, 12, 12),
+        spacing=3e-08 * ureg.meter,
+    )
+
+    random_sample = random_medium_configuration_1.to_volume(
+        grid=grid_configuration_1,
         seed=42,
     )
 
@@ -256,22 +261,19 @@ to the box, with a uniform background outside the sample.
         centre=(0, 0, 4e-08) * ureg.meter,
     )
 
-    structure.add_structures(
-        layer,
-        sphere,
+    structure.add_structures(layer, sphere)
+
+    grid_configuration_2 = Grid(
+        shape=(12, 12, 12),
+        spacing=3e-08 * ureg.meter,
     )
 
-    structured_sample = structure.to_volume(
-        grid=Grid(
-            shape=(12, 12, 12),
-            spacing=3e-08 * ureg.meter,
-        ),
-    )
+    structured_sample = structure.to_volume(grid=grid_configuration_2)
+
+    source_configuration_1 = Source(wavelength=6.33e-07 * ureg.meter)
 
     solver = Solver(
-        source=Source(
-            wavelength=633e-9 * ureg.meter,
-        ),
+        source=source_configuration_1,
         order=3,
     )
 
@@ -298,29 +300,30 @@ slices, or sampled voxel geometry such as spheres.
 .. code-block:: python
 
     from bornsim.units import ureg
+    from bornsim import Grid
+    from bornsim.medium.random_medium import WhittleMaternMedium
 
-    from bornsim import Grid, RandomMedium
-
-    medium = RandomMedium(
+    medium = WhittleMaternMedium(
         background_refractive_index=1.33,
         refractive_index_std=0.01,
-        correlation_length=100e-9 * ureg.meter,
-        correlation="matern",
+        correlation_length=1e-07 * ureg.meter,
         smoothness=1.5,
     )
 
+    grid_configuration_1 = Grid(
+        shape=(16, 16, 16),
+        spacing=2.5e-08 * ureg.meter,
+    )
+
     volume = medium.to_volume(
-        grid=Grid(
-            shape=(16, 16, 16),
-            spacing=2.5e-08 * ureg.meter,
-        ),
+        grid=grid_configuration_1,
         seed=42,
     )
 
     figure = volume.plot_3d(
-        field="refractive_index",
-        opacity_scale="increasing",
-        length_unit="nanometer",
+        field='refractive_index',
+        opacity_scale='increasing',
+        length_unit='nanometer',
     )
 
     figure.show()
@@ -340,32 +343,29 @@ Generate a seeded random volume and evaluate cumulative Born orders, or average 
 .. code-block:: python
 
     from bornsim.units import ureg
-
     import numpy as np
-    from bornsim import Directions, EnsembleSampling, Grid, RandomMedium
+    from bornsim import Directions, EnsembleSampling, Grid
+    from bornsim.medium.random_medium import GaussianMedium
     from bornsim.series import BornSeries
-    from bornsim.media import random_volume
     from bornsim.ensemble import ensemble_scattering
 
-    medium = RandomMedium(
+    medium = GaussianMedium(
         refractive_index_std=0.01,
         correlation_length=1e-07 * ureg.meter,
-        correlation="gaussian",
         background_refractive_index=1.33,
     )
 
-    volume = random_volume(
-        medium=medium,
-        grid=Grid(
-            shape=(12, 12, 12),
-            spacing=5e-08 * ureg.meter,
-        ),
+    grid_configuration_1 = Grid(
+        shape=(12, 12, 12),
+        spacing=5e-08 * ureg.meter,
+    )
+
+    volume = medium.to_volume(
+        grid=grid_configuration_1,
         seed=42,
     )
 
     directions = Directions(vectors=[[0.0, 0.0, 1.0], [1.0, 0.0, 0.0]])
-
-    # directions.vectors is the immutable Cartesian array.
 
     engine = BornSeries(
         grid=volume.grid,
@@ -377,18 +377,22 @@ Generate a seeded random volume and evaluate cumulative Born orders, or average 
 
     result = engine.solve(volume=volume)
 
-    # result.amplitudes[j] is the (j+1)-th term, in metres.
-    # result.differential[j] includes amplitude interference through order j+1.
+    ensemble_sampling_configuration_1 = EnsembleSampling(
+        realizations=4,
+        seed=42,
+    )
+
+    grid_configuration_2 = Grid(
+        shape=(12, 12, 12),
+        spacing=5e-08 * ureg.meter,
+    )
+
     ensemble = ensemble_scattering(
         medium=medium,
         wavelength=6.33e-07 * ureg.meter,
         order=3,
-        ensemble_sampling=EnsembleSampling(
-            realizations=4,
-            seed=42,
-        ),
-        shape=(12, 12, 12),
-        spacing=50e-9 * ureg.meter,
+        ensemble_sampling=ensemble_sampling_configuration_1,
+        grid=grid_configuration_2,
     )
 
 The API supports orders 1–12. Work limits bound synchronous calculations. Random fields have a **Gaussian probability distribution**, with Gaussian, exponential or Whittle–Matérn spatial covariance. Those are distinct choices. A spectral generator samples a doubled periodic box and crops it; ensemble point variance is normalized, but individual samples retain their random means and variances. Finite resolution truncates the spectrum, particularly for exponential covariance, and finite synthesis boxes approximate the continuum statistics.
@@ -438,13 +442,13 @@ Development
 
 See ``CONTRIBUTING.md`` for development and release instructions. The package
 uses the MIT license in ``LICENSE``; software citation metadata is provided in
-``CITATION.cff``. The repository currently has no configured GitHub remote.
+``CITATION.cff``.
 
 API configuration and data ownership
 ------------------------------------
 
 Use Grid, AngularSampling and EnsembleSampling to define spatial, angular and
-realization settings. Legacy individual configuration keywords are deprecated.
+realization settings. Configuration objects are required in place of individual compatibility keywords.
 EnsembleSampling accepts consecutive seeds or an explicit list of distinct
 seeds. Material objects share a real absolute refractive index across shapes.
 Results and their arrays are read-only; StructuredMedium remains mutable.

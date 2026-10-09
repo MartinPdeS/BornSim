@@ -1,9 +1,11 @@
+from bornsim.medium.random_medium import WhittleMaternMedium
+from bornsim import EnsembleSampling
+from bornsim import AngularSampling
+from bornsim import Grid
 from dataclasses import FrozenInstanceError
-
 import numpy as np
 import pytest
-
-from bornsim import RandomMedium, Volume
+from bornsim import Volume
 from bornsim.series import BornSeries
 from bornsim.ensemble import ensemble_scattering
 from bornsim.green import GreenOperator
@@ -12,35 +14,40 @@ from bornsim import Directions
 
 
 def test_engine_reuses_operator_and_starts_each_volume_independently():
-    medium = RandomMedium(
+    medium = WhittleMaternMedium(
         background_refractive_index=1.33,
         refractive_index_std=0.01,
-        correlation_length=100e-9 * ureg.meter,
-        correlation="matern",
+        correlation_length=1e-07 * ureg.meter,
         smoothness=1.5,
     )
 
     first = medium.to_volume(
-        shape=(3, 3, 3),
-        spacing=3e-08 * ureg.meter,
         seed=12,
+        grid=Grid(
+            shape=(3, 3, 3),
+            spacing=3e-08 * ureg.meter,
+        ),
     )
 
     second = medium.to_volume(
-        shape=(3, 3, 3),
-        spacing=3e-08 * ureg.meter,
         seed=13,
+        grid=Grid(
+            shape=(3, 3, 3),
+            spacing=3e-08 * ureg.meter,
+        ),
     )
 
     directions = np.array([[0.0, 0.0, 1.0], [1.0, 0.0, 0.0]])
 
     engine = BornSeries(
-        shape=first.delta_refractive_index.shape,
-        spacing=first.spacing.to("meter"),
         background_refractive_index=first.background_refractive_index,
         wavelength=6.33e-07 * ureg.meter,
         directions=Directions(vectors=directions),
         order=3,
+        grid=Grid(
+            shape=first.delta_refractive_index.shape,
+            spacing=first.spacing.to("meter"),
+        ),
     )
 
     operator = engine.operator
@@ -49,7 +56,7 @@ def test_engine_reuses_operator_and_starts_each_volume_independently():
 
     original = initial.amplitudes.copy()
 
-    initial.amplitudes[:] = 0  # Returned arrays must not alter engine state.
+    initial.amplitudes[:] = 0
 
     other = engine.solve(volume=second)
 
@@ -58,12 +65,14 @@ def test_engine_reuses_operator_and_starts_each_volume_independently():
     np.testing.assert_array_equal(repeat.amplitudes, original)
 
     expected = BornSeries(
-        shape=second.delta_refractive_index.shape,
-        spacing=second.spacing.to("meter"),
         background_refractive_index=second.background_refractive_index,
         wavelength=6.33e-07 * ureg.meter,
         directions=Directions(vectors=directions),
         order=3,
+        grid=Grid(
+            shape=second.delta_refractive_index.shape,
+            spacing=second.spacing.to("meter"),
+        ),
     ).solve(volume=second)
 
     np.testing.assert_array_equal(other.amplitudes, expected.amplitudes)
@@ -81,7 +90,7 @@ def test_engine_reuses_operator_and_starts_each_volume_independently():
     assert not engine.directions.vectors.flags.writeable
 
     with pytest.raises(FrozenInstanceError):
-        engine.wavelength = 500e-9
+        engine.wavelength = 5e-07
 
 
 @pytest.mark.parametrize(
@@ -89,28 +98,39 @@ def test_engine_reuses_operator_and_starts_each_volume_independently():
     [
         Volume(
             delta_refractive_index=np.zeros((3, 2, 2)),
-            spacing=5e-08 * ureg.meter,
             background_refractive_index=1.33,
+            grid=Grid(
+                shape=np.shape(np.zeros((3, 2, 2))),
+                spacing=5e-08 * ureg.meter,
+            ),
         ),
         Volume(
             delta_refractive_index=np.zeros((2, 2, 2)),
-            spacing=4e-08 * ureg.meter,
             background_refractive_index=1.33,
+            grid=Grid(
+                shape=np.shape(np.zeros((2, 2, 2))),
+                spacing=4e-08 * ureg.meter,
+            ),
         ),
         Volume(
             delta_refractive_index=np.zeros((2, 2, 2)),
-            spacing=5e-08 * ureg.meter,
             background_refractive_index=1.5,
+            grid=Grid(
+                shape=np.shape(np.zeros((2, 2, 2))),
+                spacing=5e-08 * ureg.meter,
+            ),
         ),
     ],
 )
 def test_engine_rejects_incompatible_volume(volume):
     engine = BornSeries(
-        shape=(2, 2, 2),
-        spacing=5e-08 * ureg.meter,
         background_refractive_index=1.33,
         wavelength=6.33e-07 * ureg.meter,
         directions=Directions(vectors=[[0, 0, 1]]),
+        grid=Grid(
+            shape=(2, 2, 2),
+            spacing=5e-08 * ureg.meter,
+        ),
     )
 
     with pytest.raises(ValueError, match="must match"):
@@ -137,22 +157,27 @@ def test_ensemble_constructs_one_green_operator(monkeypatch):
     monkeypatch.setattr("bornsim.series.GreenOperator", CountingGreen)
 
     result = ensemble_scattering(
-        medium=RandomMedium(
+        medium=WhittleMaternMedium(
             background_refractive_index=1.33,
             refractive_index_std=0.01,
-            correlation_length=100e-9 * ureg.meter,
-            correlation="matern",
+            correlation_length=1e-07 * ureg.meter,
             smoothness=1.5,
         ),
         wavelength=6.33e-07 * ureg.meter,
-        shape=(3, 3, 3),
-        spacing=3e-08 * ureg.meter,
         order=3,
-        realizations=4,
-        seed=12,
-        angles=[0, 1] * ureg.radian,
-        azimuth_samples=4,
-        polar_samples=16,
+        grid=Grid(
+            shape=(3, 3, 3),
+            spacing=3e-08 * ureg.meter,
+        ),
+        sampling=AngularSampling(
+            angles=[0, 1] * ureg.radian,
+            azimuth_samples=4,
+            polar_samples=16,
+        ),
+        ensemble_sampling=EnsembleSampling(
+            realizations=4,
+            seed=12,
+        ),
     )
 
     assert len(operators) == 1

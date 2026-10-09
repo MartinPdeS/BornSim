@@ -26,7 +26,7 @@ def main():
 
             required = [
                 "bornsim/__init__.py",
-                "bornsim/model.py",
+                "bornsim/directions.py",
                 "bornsim/series.py",
                 "bornsim/volume.py",
                 "bornsim/green.py",
@@ -40,7 +40,9 @@ def main():
                 "bornsim/_result_plotting.py",
                 "bornsim/_volume_plotting.py",
                 "bornsim/units.py",
-                "bornsim/media.py",
+                "bornsim/medium/random_medium.py",
+                "bornsim/medium/base.py",
+                "bornsim/medium/random_spheres.py",
                 "bornsim/geometry.py",
                 "bornsim/angular_data.py",
                 "bornsim/rotation.py",
@@ -56,6 +58,9 @@ def main():
 
             if not any(name.endswith("/licenses/LICENSE") for name in names):
                 raise SystemExit(f"Missing MIT license in {wheel.name}")
+
+            if "bornsim/model.py" in names:
+                raise SystemExit(f"Test-only analytical sources leaked into {wheel.name}")
 
             if "bornsim/dashboard.py" in names or "bornsim/__main__.py" in names:
                 raise SystemExit(f"Dashboard sources leaked into {wheel.name}")

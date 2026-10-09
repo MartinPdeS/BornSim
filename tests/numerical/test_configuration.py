@@ -1,9 +1,12 @@
 """Shared configurations and independent fixed-volume scattering semantics."""
 
+from bornsim.medium.random_medium import WhittleMaternMedium
+
+from bornsim import EnsembleSampling
 from dataclasses import FrozenInstanceError
 import numpy as np
 import pytest
-from bornsim import AngularSampling, Grid, RandomMedium, Result, Solver, Source, StructuredMedium, Volume
+from bornsim import AngularSampling, Grid, Result, Solver, Source, StructuredMedium, Volume
 from bornsim.series import BornSeries
 from bornsim.units import ureg
 
@@ -14,11 +17,10 @@ def test_shared_grid_preserves_coordinates_seeded_field_and_identity():
         spacing=25 * ureg.nanometer,
     )
 
-    medium = RandomMedium(
+    medium = WhittleMaternMedium(
         background_refractive_index=1.33,
         refractive_index_std=0.01,
-        correlation_length=100e-9 * ureg.meter,
-        correlation="matern",
+        correlation_length=1e-07 * ureg.meter,
         smoothness=1.5,
     )
 
@@ -27,38 +29,40 @@ def test_shared_grid_preserves_coordinates_seeded_field_and_identity():
         seed=42,
     )
 
-    legacy = medium.to_volume(
-        shape=grid.shape,
-        spacing=grid.spacing.to("meter"),
+    equivalent_sample = medium.to_volume(
         seed=42,
+        grid=Grid(
+            shape=grid.shape,
+            spacing=grid.spacing.to("meter"),
+        ),
     )
 
     assert volume.grid is grid
 
-    assert volume.spacing.to("meter").magnitude == pytest.approx(25e-9)
+    assert volume.spacing.to("meter").magnitude == pytest.approx(2.5e-08)
 
-    np.testing.assert_array_equal(volume.delta_refractive_index, legacy.delta_refractive_index)
+    np.testing.assert_array_equal(volume.delta_refractive_index, equivalent_sample.delta_refractive_index)
 
-    np.testing.assert_allclose(grid.positions.to("meter").magnitude[0, 0, 0], [-12.5e-9, -25e-9, -37.5e-9])
+    np.testing.assert_allclose(grid.positions.to("meter").magnitude[0, 0, 0], [-1.25e-08, -2.5e-08, -3.75e-08])
 
     np.testing.assert_array_equal(volume.positions, grid.positions)
 
-    assert volume.volume.to("meter**3").magnitude == pytest.approx(24 * (25e-9) ** 3)
+    assert volume.volume.to("meter**3").magnitude == pytest.approx(24 * 2.5e-08**3)
 
-    structured = StructuredMedium(
-        background_refractive_index=1.33,
-    )
+    structured = StructuredMedium(background_refractive_index=1.33)
 
     assert structured.to_volume(grid=grid).grid is grid
 
-    composed = StructuredMedium(
-        background_refractive_index=1.33,
-    )
+    composed = StructuredMedium(background_refractive_index=1.33)
 
     composed.add_background(medium=medium)
 
     np.testing.assert_array_equal(
-        composed.to_volume(grid=grid, seed=42).delta_refractive_index, volume.delta_refractive_index
+        composed.to_volume(
+            grid=grid,
+            seed=42,
+        ).delta_refractive_index,
+        volume.delta_refractive_index,
     )
 
     with pytest.raises(FrozenInstanceError):
@@ -71,15 +75,17 @@ def test_full_solve_retains_coherent_directional_amplitudes_normalization_and_ar
         spacing=3e-08 * ureg.meter,
     )
 
-    medium = RandomMedium(
+    medium = WhittleMaternMedium(
         refractive_index_std=0.001,
         background_refractive_index=1.33,
-        correlation_length=100e-9 * ureg.meter,
-        correlation="matern",
+        correlation_length=1e-07 * ureg.meter,
         smoothness=1.5,
     )
 
-    volume = medium.to_volume(grid=grid, seed=42)
+    volume = medium.to_volume(
+        grid=grid,
+        seed=42,
+    )
 
     sampling = AngularSampling(
         start=180 * ureg.degree,
@@ -90,9 +96,7 @@ def test_full_solve_retains_coherent_directional_amplitudes_normalization_and_ar
     )
 
     solver = Solver(
-        source=Source(
-            wavelength=633e-9 * ureg.meter,
-        ),
+        source=Source(wavelength=6.33e-07 * ureg.meter),
         sampling=sampling,
         order=3,
     )
@@ -107,7 +111,7 @@ def test_full_solve_retains_coherent_directional_amplitudes_normalization_and_ar
 
     assert result.amplitudes is not None
 
-    amplitudes = result.directional_amplitudes.magnitude
+    amplitudes = result.amplitudes.magnitude
 
     assert amplitudes.shape == (3, 3, 4, 2, 3)
 
@@ -115,13 +119,11 @@ def test_full_solve_retains_coherent_directional_amplitudes_normalization_and_ar
         2 * volume.volume.to("meter**3").magnitude
     )
 
-    np.testing.assert_allclose(result.directional_differential.magnitude, intensity, rtol=1e-13)
+    np.testing.assert_allclose(result.differential.magnitude, intensity, rtol=1e-13)
 
     np.testing.assert_allclose(result.differential.magnitude, intensity, rtol=1e-13)
 
-    np.testing.assert_allclose(
-        result.directional_phase_function.magnitude, intensity / result.mu_s.magnitude[:, None, None]
-    )
+    np.testing.assert_allclose(result.phase_function.magnitude, intensity / result.mu_s.magnitude[:, None, None])
 
     engine = BornSeries(
         grid=grid,
@@ -138,20 +140,20 @@ def test_full_solve_retains_coherent_directional_amplitudes_normalization_and_ar
     ensemble = solver.ensemble(
         medium=medium,
         grid=grid,
-        realizations=1,
-        seed=42,
+        ensemble_sampling=EnsembleSampling(
+            realizations=1,
+            seed=42,
+        ),
     )
 
-    for name in ("differential", "directional_differential", "mu_s", "g", "mu_s_prime"):
+    for name in ("differential", "differential", "mu_s", "g", "mu_s_prime"):
         np.testing.assert_allclose(getattr(result, name).magnitude, getattr(ensemble, name).magnitude, rtol=1e-13)
 
     restored = Result.load(path=result.save(path=tmp_path / "full.npz"))
 
-    np.testing.assert_array_equal(restored.directional_amplitudes.magnitude, amplitudes)
+    np.testing.assert_array_equal(restored.amplitudes.magnitude, amplitudes)
 
-    np.testing.assert_array_equal(
-        restored.directional_phase_function.magnitude, result.directional_phase_function.magnitude
-    )
+    np.testing.assert_array_equal(restored.phase_function.magnitude, result.phase_function.magnitude)
 
     assert restored.provenance["sampling"] == sampling.metadata
 
@@ -166,20 +168,21 @@ def test_full_solve_retains_coherent_directional_amplitudes_normalization_and_ar
 def test_default_solve_is_full_and_explicit_cuts_remain_unnormalized():
     volume = Volume(
         delta_refractive_index=np.full((2, 2, 2), 0.001),
-        spacing=2e-08 * ureg.meter,
         background_refractive_index=1.33,
+        grid=Grid(
+            shape=np.shape(np.full((2, 2, 2), 0.001)),
+            spacing=2e-08 * ureg.meter,
+        ),
     )
 
     solver = Solver(
-        source=Source(
-            wavelength=633e-9 * ureg.meter,
-        ),
+        source=Source(wavelength=6.33e-07 * ureg.meter),
         order=1,
     )
 
     full = solver.solve(target=volume)
 
-    assert full.directional_phase_function.shape == (1, 121, 8)
+    assert full.phase_function.shape == (1, 121, 8)
 
     cut = solver.solve_cut(
         target=volume,
@@ -206,25 +209,21 @@ def test_default_solve_is_full_and_explicit_cuts_remain_unnormalized():
     assert np.isnan(empty.g.magnitude[0])
 
     with pytest.raises(ValueError, match="positive"):
-        _ = empty.directional_phase_function
+        _ = empty.phase_function
 
 
 def test_ensemble_is_for_random_media_and_composed_random_backgrounds():
     solver = Solver(
-        source=Source(
-            wavelength=633e-9 * ureg.meter,
-        ),
+        source=Source(wavelength=6.33e-07 * ureg.meter),
         order=1,
     )
 
     grid = Grid(
         shape=(2, 2, 2),
-        spacing=50e-9 * ureg.meter,
+        spacing=5e-08 * ureg.meter,
     )
 
-    medium = StructuredMedium(
-        background_refractive_index=1.33,
-    )
+    medium = StructuredMedium(background_refractive_index=1.33)
 
     with pytest.raises(ValueError, match="use Solver.solve"):
         solver.ensemble(
@@ -233,11 +232,10 @@ def test_ensemble_is_for_random_media_and_composed_random_backgrounds():
         )
 
     medium.add_background(
-        medium=RandomMedium(
+        medium=WhittleMaternMedium(
             background_refractive_index=1.33,
             refractive_index_std=0.01,
-            correlation_length=100e-9 * ureg.meter,
-            correlation="matern",
+            correlation_length=1e-07 * ureg.meter,
             smoothness=1.5,
         )
     )
@@ -245,7 +243,7 @@ def test_ensemble_is_for_random_media_and_composed_random_backgrounds():
     result = solver.ensemble(
         medium=medium,
         grid=grid,
-        realizations=2,
+        ensemble_sampling=EnsembleSampling(realizations=2),
     )
 
     assert result.kind == "ensemble"
@@ -269,7 +267,7 @@ def test_ensemble_is_for_random_media_and_composed_random_backgrounds():
 )
 def test_invalid_grid_settings(options):
     with pytest.raises(ValueError):
-        Grid(**{"shape": (12, 12, 12), "spacing": 50e-9 * ureg.meter, **options})
+        Grid(**{"shape": (12, 12, 12), "spacing": 5e-08 * ureg.meter, **options})
 
 
 @pytest.mark.parametrize(
@@ -324,19 +322,21 @@ def test_configuration_inputs_are_copied_and_conflicting_settings_are_rejected()
 
     grid = Grid(
         shape=(2, 2, 2),
-        spacing=50e-9 * ureg.meter,
+        spacing=5e-08 * ureg.meter,
     )
 
-    medium = RandomMedium(
+    medium = WhittleMaternMedium(
         background_refractive_index=1.33,
         refractive_index_std=0.01,
-        correlation_length=100e-9 * ureg.meter,
-        correlation="matern",
+        correlation_length=1e-07 * ureg.meter,
         smoothness=1.5,
     )
 
-    with pytest.raises(ValueError, match="not both"):
-        medium.to_volume(grid=grid, spacing=1e-09 * ureg.meter)
+    with pytest.raises(TypeError):
+        medium.to_volume(
+            grid=grid,
+            spacing=1e-09 * ureg.meter,
+        )
 
     with pytest.raises(ValueError, match="match delta_refractive_index"):
         Volume(
@@ -345,23 +345,15 @@ def test_configuration_inputs_are_copied_and_conflicting_settings_are_rejected()
             background_refractive_index=1.33,
         )
 
-    with pytest.raises(ValueError, match="solve_cut"):
-        Solver(
-            source=Source(
-                wavelength=633e-9 * ureg.meter,
-            )
-        ).solve(
+    with pytest.raises(TypeError, match="angles"):
+        Solver(source=Source(wavelength=6.33e-07 * ureg.meter)).solve(
             target=medium.to_volume(grid=grid),
             sampling=sampling,
             angles=[0] * ureg.radian,
         )
 
-    with pytest.raises(ValueError, match="not both"):
-        Solver(
-            source=Source(
-                wavelength=633e-9 * ureg.meter,
-            )
-        ).ensemble(
+    with pytest.raises(TypeError):
+        Solver(source=Source(wavelength=6.33e-07 * ureg.meter)).ensemble(
             medium=medium,
             grid=grid,
             sampling=sampling,
@@ -370,9 +362,7 @@ def test_configuration_inputs_are_copied_and_conflicting_settings_are_rejected()
 
     with pytest.raises(TypeError, match="sampling"):
         Solver(
-            source=Source(
-                wavelength=633e-9 * ureg.meter,
-            ),
+            source=Source(wavelength=6.33e-07 * ureg.meter),
             sampling=object(),
         )
 
@@ -383,7 +373,7 @@ def test_configuration_inputs_are_copied_and_conflicting_settings_are_rejected()
         sampling.check_work(
             grid=Grid(
                 shape=(32, 32, 32),
-                spacing=50e-9 * ureg.meter,
+                spacing=5e-08 * ureg.meter,
             ),
             order=12,
             realizations=32,
@@ -397,10 +387,7 @@ def test_configuration_inputs_are_copied_and_conflicting_settings_are_rejected()
         ({"start": np.pi * ureg.radian, "end": 0 * ureg.degree, "n_points": 3}, [180, 90, 0]),
         ({"start": 45 * ureg.degree, "n_points": 1}, [45]),
         ({"n_points": 3}, [0, 90, 180]),
-        (
-            {"start": 0.5 * ureg.radian, "end": 0.5 * ureg.radian, "n_points": 2},
-            np.rad2deg([0.5, 0.5]),
-        ),
+        ({"start": 0.5 * ureg.radian, "end": 0.5 * ureg.radian, "n_points": 2}, np.rad2deg([0.5, 0.5])),
     ],
 )
 def test_angular_sampling_ranges(options, expected_degrees):

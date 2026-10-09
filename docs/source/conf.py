@@ -112,20 +112,19 @@ def write_interactive_media(app, exception):
 
     output.mkdir(exist_ok=True)
 
-    from bornsim import Grid, RandomMedium
+    from bornsim import Grid
+    from bornsim.medium.random_medium import GaussianMedium, ExponentialMedium
 
     grid = Grid(
         shape=(16, 16, 16),
         spacing=2.5e-08 * ureg.meter,
     )
 
-    for correlation in ("gaussian", "exponential"):
-        medium = RandomMedium(
+    for correlation, medium_type in (("gaussian", GaussianMedium), ("exponential", ExponentialMedium)):
+        medium = medium_type(
             refractive_index_std=0.01,
             correlation_length=7.5e-08 * ureg.meter,
-            correlation=correlation,
             background_refractive_index=1.33,
-            smoothness=1.5,
         )
 
         volume = medium.to_volume(

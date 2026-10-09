@@ -1,8 +1,9 @@
 """Physical configuration is chosen by callers, rather than supplied implicitly."""
 
-import pytest
+from bornsim.medium.random_medium import GaussianMedium, WhittleMaternMedium
 
-from bornsim import AnalyticalMedium, Grid, RandomMedium, Rotation, Source, StructuredMedium, Volume
+import pytest
+from bornsim import Grid, Rotation, Source, StructuredMedium, Volume
 from bornsim.units import ureg
 
 
@@ -22,12 +23,11 @@ from bornsim.units import ureg
                 "background_refractive_index": 1.33,
                 "refractive_index_std": 0.01,
                 "correlation_length": 100 * ureg.nanometer,
-                "correlation": "gaussian",
             },
             parameter,
         )
-        for constructor in (RandomMedium, AnalyticalMedium)
-        for parameter in ("background_refractive_index", "refractive_index_std", "correlation_length", "correlation")
+        for constructor in (GaussianMedium,)
+        for parameter in ("background_refractive_index", "refractive_index_std", "correlation_length")
     ],
 )
 def test_omitted_physical_constructor_inputs_are_rejected(constructor, configuration, omitted_parameter):
@@ -54,14 +54,13 @@ def test_volume_requires_explicit_background_refractive_index():
 
 @pytest.mark.parametrize("settings", [{}, {"shape": (2, 2, 2)}, {"spacing": 50 * ureg.nanometer}])
 def test_volume_generation_never_invents_missing_grid_settings(settings):
-    medium = RandomMedium(
+    medium = GaussianMedium(
         background_refractive_index=1.33,
         refractive_index_std=0.01,
         correlation_length=100 * ureg.nanometer,
-        correlation="gaussian",
     )
 
-    with pytest.raises(ValueError, match="grid or both shape and spacing"):
+    with pytest.raises(TypeError):
         medium.to_volume(**settings)
 
 
@@ -94,15 +93,13 @@ def test_matern_smoothness_is_required_only_for_matern_covariance():
         "correlation_length": 100 * ureg.nanometer,
     }
 
-    with pytest.raises(ValueError, match="smoothness.*explicitly"):
-        RandomMedium(
+    with pytest.raises(TypeError, match="smoothness"):
+        WhittleMaternMedium(
             **configuration,
-            correlation="matern",
         )
 
-    medium = RandomMedium(
+    medium = GaussianMedium(
         **configuration,
-        correlation="gaussian",
     )
 
-    assert medium.smoothness is None
+    assert medium.metadata["smoothness"] is None

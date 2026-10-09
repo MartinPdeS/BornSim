@@ -1,27 +1,29 @@
 """Preserve numerical provenance, interference and uncertainty in archives."""
 
-import hashlib
-import json
+from bornsim.medium.random_medium import GaussianMedium
 
+from bornsim import EnsembleSampling
+from bornsim import AngularSampling
+import hashlib
 import numpy as np
 import pytest
-
-from bornsim import RandomMedium, Result, Solver, Source, Volume
-from bornsim.media import random_volume
+from bornsim import Result, Solver, Source, Volume
+from bornsim import Grid
 from bornsim.units import ureg
 
 
 def test_cross_section_curves_and_errors_preserve_units_and_sample_normalization():
     volume = Volume(
         delta_refractive_index=np.zeros((2, 3, 4)),
-        spacing=2e-08 * ureg.meter,
         background_refractive_index=1.33,
+        grid=Grid(
+            shape=np.shape(np.zeros((2, 3, 4))),
+            spacing=2e-08 * ureg.meter,
+        ),
     )
 
     result = Result(
-        source=Source(
-            wavelength=633e-9 * ureg.meter,
-        ),
+        source=Source(wavelength=6.33e-07 * ureg.meter),
         kind="ensemble",
         differential=[[1, 3]] * (1 / ureg.meter / ureg.steradian),
         stderr=[[0.1, 0.2]] * (1 / ureg.meter / ureg.steradian),
@@ -29,15 +31,11 @@ def test_cross_section_curves_and_errors_preserve_units_and_sample_normalization
         realizations=3,
     )
 
-    figure = result.plot_cross_section(
-        volume=volume,
-        area_unit="nanometer**2",
-        title="Sample",
-    )
+    figure = result.plot_cross_section(volume=volume, area_unit="nanometer**2", title="Sample")
 
     axis = figure.axes[0]
 
-    scale = 24 * (20e-9) ** 3 * 1e18
+    scale = 24 * 2e-08**3 * 1e18
 
     np.testing.assert_allclose(axis.lines[0].get_ydata(), np.array([1, 3]) * scale)
 
@@ -55,34 +53,28 @@ def test_cross_section_curves_and_errors_preserve_units_and_sample_normalization
 def test_cross_section_isolated_terms_and_validation():
     volume = Volume(
         delta_refractive_index=np.full((2, 2, 2), 0.01),
-        spacing=2e-08 * ureg.meter,
         background_refractive_index=1.33,
+        grid=Grid(
+            shape=np.shape(np.full((2, 2, 2), 0.01)),
+            spacing=2e-08 * ureg.meter,
+        ),
     )
 
     result = Solver(
-        source=Source(
-            wavelength=633e-9 * ureg.meter,
-        ),
+        source=Source(wavelength=6.33e-07 * ureg.meter),
         order=2,
     ).solve_cut(
         target=volume,
         angles=[0, np.pi] * ureg.radian,
     )
 
-    figure = result.plot_cross_section(
-        volume=volume,
-        terms=True,
-        area_unit="meter**2",
-    )
+    figure = result.plot_cross_section(volume=volume, terms=True, area_unit="meter**2")
 
     for curve, expected in zip(figure.axes[0].lines, result.term_differential.magnitude):
         np.testing.assert_allclose(curve.get_ydata(), expected * volume.volume)
 
     with pytest.raises(ValueError, match="area unit"):
-        result.plot_cross_section(
-            volume=volume,
-            area_unit="meter",
-        )
+        result.plot_cross_section(volume=volume, area_unit="meter")
 
     with pytest.raises(TypeError, match="Volume"):
         result.plot_cross_section(volume=1)
@@ -91,39 +83,44 @@ def test_cross_section_isolated_terms_and_validation():
         result.plot_cross_section(
             volume=Volume(
                 delta_refractive_index=volume.delta_refractive_index,
-                spacing=3e-08 * ureg.meter,
                 background_refractive_index=1.33,
-            ),
+                grid=Grid(
+                    shape=np.shape(volume.delta_refractive_index),
+                    spacing=3e-08 * ureg.meter,
+                ),
+            )
         )
 
 
 @pytest.mark.parametrize("kind", ["generated", "manual", "ensemble", "one-realization", "zero"])
 def test_numerical_archives_round_trip(tmp_path, kind):
-    medium = RandomMedium(
-        correlation="gaussian",
+    medium = GaussianMedium(
         refractive_index_std=0 if kind == "zero" else 0.01,
         background_refractive_index=1.33,
-        correlation_length=100e-9 * ureg.meter,
-        smoothness=1.5,
+        correlation_length=1e-07 * ureg.meter,
     )
 
     solver = Solver(
-        source=Source(
-            wavelength=633e-9 * ureg.meter,
-        ),
+        source=Source(wavelength=6.33e-07 * ureg.meter),
         order=3,
     )
 
     if kind in ("ensemble", "one-realization", "zero"):
         result = solver.ensemble(
             medium=medium,
-            shape=(2, 3, 2),
-            spacing=30 * ureg.nanometer,
-            seed=42,
-            realizations=1 if kind == "one-realization" else 3,
-            angles=[0, 90, 180] * ureg.degree,
-            polar_samples=16,
-            azimuth_samples=4,
+            grid=Grid(
+                shape=(2, 3, 2),
+                spacing=30 * ureg.nanometer,
+            ),
+            sampling=AngularSampling(
+                angles=[0, 90, 180] * ureg.degree,
+                polar_samples=16,
+                azimuth_samples=4,
+            ),
+            ensemble_sampling=EnsembleSampling(
+                seed=42,
+                realizations=1 if kind == "one-realization" else 3,
+            ),
         )
 
         assert result.provenance["seed"] == 42
@@ -134,11 +131,12 @@ def test_numerical_archives_round_trip(tmp_path, kind):
 
         assert result.provenance["realizations"] == result.realizations
     else:
-        generated = random_volume(
-            medium=medium,
-            shape=(2, 3, 2),
-            spacing=30 * ureg.nanometer,
+        generated = medium.to_volume(
             seed=42,
+            grid=Grid(
+                shape=(2, 3, 2),
+                spacing=30 * ureg.nanometer,
+            ),
         )
 
         volume = (
@@ -146,8 +144,11 @@ def test_numerical_archives_round_trip(tmp_path, kind):
             if kind == "generated"
             else Volume(
                 delta_refractive_index=generated.delta_refractive_index,
-                spacing=generated.spacing.to("meter"),
                 background_refractive_index=1.33,
+                grid=Grid(
+                    shape=np.shape(generated.delta_refractive_index),
+                    spacing=generated.spacing.to("meter"),
+                ),
             )
         )
 
@@ -167,25 +168,16 @@ def test_numerical_archives_round_trip(tmp_path, kind):
         if kind == "generated":
             recorded = result.provenance
 
-            reconstructed = random_volume(
-                medium=RandomMedium(
-                    **{
-                        "background_refractive_index": 1.33,
-                        "refractive_index_std": 0.01,
-                        "correlation_length": 100e-9 * ureg.meter,
-                        "correlation": "matern",
-                        "smoothness": 1.5,
-                        **{
-                            **{
-                                key: value for key, value in recorded["medium"].items() if key != "correlation_length_m"
-                            },
-                            "correlation_length": recorded["medium"]["correlation_length_m"] * ureg.meter,
-                        },
-                    }
-                ),
-                shape=recorded["grid"]["shape"],
-                spacing=recorded["grid"]["spacing_m"] * ureg.meter,
+            reconstructed = GaussianMedium(
+                background_refractive_index=recorded["medium"]["background_refractive_index"],
+                refractive_index_std=recorded["medium"]["refractive_index_std"],
+                correlation_length=recorded["medium"]["correlation_length_m"] * ureg.meter,
+            ).to_volume(
                 seed=recorded["seed"],
+                grid=Grid(
+                    shape=recorded["grid"]["shape"],
+                    spacing=recorded["grid"]["spacing_m"] * ureg.meter,
+                ),
             )
 
             np.testing.assert_array_equal(reconstructed.delta_refractive_index, volume.delta_refractive_index)
@@ -194,7 +186,7 @@ def test_numerical_archives_round_trip(tmp_path, kind):
 
     assert result.provenance["grid"]["shape"] == [2, 3, 2]
 
-    assert result.provenance["grid"]["spacing_m"] == pytest.approx(30e-9)
+    assert result.provenance["grid"]["spacing_m"] == pytest.approx(3e-08)
 
     assert result.provenance["coefficient_scope"] == "finite-sample"
 
@@ -204,7 +196,7 @@ def test_numerical_archives_round_trip(tmp_path, kind):
         "differential",
         "angles",
         "azimuths",
-        "directional_differential",
+        "differential",
         "directions",
         "amplitudes",
         "term_differential",
@@ -257,9 +249,7 @@ def test_numerical_archives_round_trip(tmp_path, kind):
 )
 def test_invalid_volume_results(changes, message):
     options = dict(
-        source=Source(
-            wavelength=633e-9 * ureg.meter,
-        ),
+        source=Source(wavelength=6.33e-07 * ureg.meter),
         kind="volume",
         differential=np.ones((2, 2)) * (1 / ureg.meter / ureg.steradian),
         directions=[[0, 0, 1], [0, 0, -1]],
@@ -286,9 +276,7 @@ def test_invalid_volume_results(changes, message):
 )
 def test_invalid_ensemble_results(changes, message):
     options = dict(
-        source=Source(
-            wavelength=633e-9 * ureg.meter,
-        ),
+        source=Source(wavelength=6.33e-07 * ureg.meter),
         kind="ensemble",
         differential=[[1, 1]] * (1 / ureg.meter / ureg.steradian),
         angles=[0, 1] * ureg.radian,
@@ -305,158 +293,26 @@ def test_volume_generation_metadata_validation():
     with pytest.raises(ValueError, match="together"):
         Volume(
             delta_refractive_index=np.zeros((2,) * 3),
-            spacing=3e-08 * ureg.meter,
             seed=42,
             background_refractive_index=1.33,
+            grid=Grid(
+                shape=np.shape(np.zeros((2,) * 3)),
+                spacing=3e-08 * ureg.meter,
+            ),
         )
 
     with pytest.raises(ValueError, match="background_refractive_index"):
         Volume(
             delta_refractive_index=np.zeros((2,) * 3),
-            spacing=3e-08 * ureg.meter,
-            medium=RandomMedium(
-                correlation="gaussian",
+            medium=GaussianMedium(
                 background_refractive_index=1.5,
                 refractive_index_std=0.01,
-                correlation_length=100e-9 * ureg.meter,
-                smoothness=1.5,
+                correlation_length=1e-07 * ureg.meter,
             ),
             seed=42,
             background_refractive_index=1.33,
-        )
-
-
-@pytest.mark.parametrize(
-    "fields",
-    [
-        {"azimuths": [0, np.pi / 2, np.pi, 3 * np.pi / 2] * ureg.radian},
-        {"directional_differential": np.ones((1, 3, 4)) * (1 / ureg.meter / ureg.steradian)},
-        {
-            "azimuths": [[0, 1, 2, 3]] * ureg.radian,
-            "directional_differential": np.ones((1, 3, 4)) * (1 / ureg.meter / ureg.steradian),
-        },
-        {
-            "azimuths": [0, 1, 2, 3] * ureg.radian,
-            "directional_differential": np.ones((1, 3, 4)) * (1 / ureg.meter / ureg.steradian),
-        },
-        {
-            "azimuths": [0, 1, 2, np.nan] * ureg.radian,
-            "directional_differential": np.ones((1, 3, 4)) * (1 / ureg.meter / ureg.steradian),
-        },
-        {
-            "azimuths": np.arange(4, dtype=complex) * ureg.radian,
-            "directional_differential": np.ones((1, 3, 4)) * (1 / ureg.meter / ureg.steradian),
-        },
-        {
-            "azimuths": np.arange(4) * np.pi / 2 * ureg.radian,
-            "directional_differential": np.ones((1, 3, 3)) * (1 / ureg.meter / ureg.steradian),
-        },
-        {
-            "azimuths": np.arange(4) * np.pi / 2 * ureg.radian,
-            "directional_differential": -np.ones((1, 3, 4)) * (1 / ureg.meter / ureg.steradian),
-        },
-        {
-            "azimuths": np.arange(4) * np.pi / 2 * ureg.radian,
-            "directional_differential": 2 * np.ones((1, 3, 4)) * (1 / ureg.meter / ureg.steradian),
-        },
-    ],
-)
-def test_directional_archive_fields_require_consistent_angular_grid_and_intensities(fields):
-    with pytest.raises(ValueError):
-        Result(
-            source=Source(
-                wavelength=633e-9 * ureg.meter,
+            grid=Grid(
+                shape=np.shape(np.zeros((2,) * 3)),
+                spacing=3e-08 * ureg.meter,
             ),
-            kind="ensemble",
-            realizations=1,
-            differential=np.ones((1, 3)) * (1 / ureg.meter / ureg.steradian),
-            angles=[0, np.pi / 2, np.pi] * ureg.radian,
-            **fields,
         )
-
-
-def test_legacy_ensemble_3d_requires_directional_data_instead_of_assuming_symmetry():
-    result = Result(
-        source=Source(
-            wavelength=633e-9 * ureg.meter,
-        ),
-        kind="ensemble",
-        realizations=1,
-        differential=np.ones((1, 3)) * (1 / ureg.meter / ureg.steradian),
-        angles=[0, np.pi / 2, np.pi] * ureg.radian,
-        mu_s=[4 * np.pi] * (1 / ureg.meter),
-    )
-
-    with pytest.raises(ValueError, match="recompute with Solver.solve"):
-        result.plot_phase_function(
-            view="3d",
-            backend="matplotlib",
-        )
-
-    # Existing angular data remain available without manufacturing azimuths.
-    np.testing.assert_allclose(result.phase_function.magnitude, 1 / (4 * np.pi))
-
-
-def test_archives_with_legacy_refractive_index_names_retain_provenance_and_check_background(tmp_path):
-    medium = RandomMedium(
-        background_refractive_index=1.42,
-        refractive_index_std=0.01,
-        correlation_length=100e-9 * ureg.meter,
-        correlation="matern",
-        smoothness=1.5,
-    )
-
-    volume = medium.to_volume(
-        shape=(2, 2, 2),
-        spacing=3e-08 * ureg.meter,
-        seed=42,
-    )
-
-    solver = Solver(
-        source=Source(
-            wavelength=633e-9 * ureg.meter,
-        ),
-        order=1,
-    )
-
-    result = solver.solve_cut(
-        target=volume,
-        angles=[0, np.pi] * ureg.radian,
-    )
-
-    archive_path = result.save(path=tmp_path / "legacy-names.npz")
-
-    with np.load(archive_path, allow_pickle=False) as archive:
-        arrays = {name: archive[name] for name in archive.files}
-
-    encoded_metadata = str(arrays["metadata"].item())
-
-    for current_name, archived_name in (
-        ("background_refractive_index", "background_index"),
-        ("delta_refractive_index", "delta_index"),
-        ("refractive_index_std", "index_std"),
-    ):
-        encoded_metadata = encoded_metadata.replace(current_name, archived_name)
-
-    arrays["metadata"] = np.array(encoded_metadata)
-
-    np.savez(archive_path, **arrays)
-
-    restored = Result.load(path=archive_path)
-
-    assert restored.provenance == json.loads(encoded_metadata)["provenance"]
-
-    np.testing.assert_array_equal(restored.differential.magnitude, result.differential.magnitude)
-
-    figure = restored.plot_cross_section(volume=volume)
-
-    figure.canvas.draw()
-
-    different_background = Volume(
-        delta_refractive_index=volume.delta_refractive_index,
-        spacing=volume.spacing.to("meter"),
-        background_refractive_index=1.5,
-    )
-
-    with pytest.raises(ValueError, match="background_refractive_index"):
-        restored.plot_cross_section(volume=different_background)

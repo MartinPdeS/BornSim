@@ -1,34 +1,32 @@
+from bornsim.medium.random_medium import GaussianMedium
+from bornsim import AngularSampling, EnsembleSampling
 import numpy as np
 import pytest
-
-from bornsim import RandomMedium, Solver, Source
+from bornsim import Solver, Source
 from bornsim.series import BornSeries
 from bornsim.ensemble import ensemble_scattering
-from bornsim.media import random_volume
+from bornsim import Grid
 from bornsim.units import ureg
 from bornsim import Directions
 
 
 def test_volume_preserves_amplitudes_and_interference():
-    volume = random_volume(
-        medium=RandomMedium(
-            correlation="gaussian",
-            background_refractive_index=1.33,
-            refractive_index_std=0.01,
-            correlation_length=100e-9 * ureg.meter,
-            smoothness=1.5,
-        ),
-        shape=(2, 2, 2),
-        spacing=3e-08 * ureg.meter,
+    volume = GaussianMedium(
+        background_refractive_index=1.33,
+        refractive_index_std=0.01,
+        correlation_length=1e-07 * ureg.meter,
+    ).to_volume(
         seed=42,
+        grid=Grid(
+            shape=(2, 2, 2),
+            spacing=3e-08 * ureg.meter,
+        ),
     )
 
     directions = np.array([[0, 0, 1], [1, 0, 0], [0, 0, -1]])
 
     solver = Solver(
-        source=Source(
-            wavelength=633e-9 * ureg.meter,
-        ),
+        source=Source(wavelength=6.33e-07 * ureg.meter),
         order=3,
     )
 
@@ -38,12 +36,14 @@ def test_volume_preserves_amplitudes_and_interference():
     )
 
     expected = BornSeries(
-        shape=volume.delta_refractive_index.shape,
-        spacing=volume.spacing.to("meter"),
         background_refractive_index=volume.background_refractive_index,
         wavelength=solver.source.wavelength.to("meter"),
         directions=Directions(vectors=directions),
         order=3,
+        grid=Grid(
+            shape=volume.delta_refractive_index.shape,
+            spacing=volume.spacing.to("meter"),
+        ),
     ).solve(volume=volume)
 
     for name in ("directions", "amplitudes", "differential", "term_differential", "field_norms"):
@@ -99,41 +99,43 @@ def test_volume_preserves_amplitudes_and_interference():
 
 @pytest.mark.parametrize("realizations", [1, 3])
 def test_ensemble_preserves_seed_uncertainty_and_coefficients(realizations):
-    medium = RandomMedium(
-        correlation="gaussian",
+    medium = GaussianMedium(
         background_refractive_index=1.33,
         refractive_index_std=0.01,
-        correlation_length=100e-9 * ureg.meter,
-        smoothness=1.5,
+        correlation_length=1e-07 * ureg.meter,
     )
 
     solver = Solver(
-        source=Source(
-            wavelength=633e-9 * ureg.meter,
-        ),
+        source=Source(wavelength=6.33e-07 * ureg.meter),
         order=2,
     )
 
     options = dict(
-        shape=(2, 2, 2),
-        spacing=3e-08 * ureg.meter,
-        realizations=realizations,
-        seed=42,
-        angles=[0, 0.5, np.pi] * ureg.radian,
-        azimuth_samples=4,
-        polar_samples=16,
+        grid=Grid(
+            shape=(2, 2, 2),
+            spacing=3e-08 * ureg.meter,
+        ),
+        ensemble_sampling=EnsembleSampling(
+            realizations=realizations,
+            seed=42,
+        ),
+        sampling=AngularSampling(
+            angles=[0, 0.5, np.pi] * ureg.radian,
+            azimuth_samples=4,
+            polar_samples=16,
+        ),
     )
 
     result = solver.ensemble(
         medium=medium,
-        **{"shape": (12, 12, 12), "spacing": 50e-9 * ureg.meter, **options},
+        **options,
     )
 
     expected = ensemble_scattering(
         medium=medium,
         wavelength=solver.source.wavelength.to("meter"),
         order=2,
-        **{"shape": (12, 12, 12), "spacing": 50e-9 * ureg.meter, **options},
+        **options,
     )
 
     for name, key in [

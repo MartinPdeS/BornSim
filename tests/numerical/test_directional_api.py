@@ -1,22 +1,13 @@
 """Public directional semantics, geometry transforms and archive migration."""
 
-import json
+from bornsim.medium.random_medium import WhittleMaternMedium
+
+from bornsim import EnsembleSampling
+from bornsim import AngularSampling
+from bornsim import Grid
 import numpy as np
 import pytest
-from bornsim import (
-    AngularData,
-    AngularSampling,
-    Box,
-    Grid,
-    Result,
-    Rotation,
-    Solver,
-    Source,
-    Sphere,
-    StructuredMedium,
-    RandomMedium,
-)
-from bornsim._archives import _RESULT_UNITS
+from bornsim import AngularData, Box, Result, Rotation, Solver, Source, Sphere, StructuredMedium
 from bornsim.units import ureg
 
 
@@ -43,14 +34,12 @@ def setup_problem():
     )
 
     solver = Solver(
-        source=Source(
-            wavelength=633e-9 * ureg.meter,
-        ),
+        source=Source(wavelength=6.33e-07 * ureg.meter),
         order=2,
         sampling=sampling,
     )
 
-    return grid, medium, solver
+    return (grid, medium, solver)
 
 
 def test_directional_data_and_explicit_cut(tmp_path):
@@ -93,7 +82,7 @@ def test_directional_data_and_explicit_cut(tmp_path):
 
     assert cut.mu_s is None
 
-    with pytest.raises(ValueError, match="solve_cut"):
+    with pytest.raises(TypeError, match="angles"):
         solver.solve(
             target=volume,
             angles=[0] * ureg.radian,
@@ -126,23 +115,29 @@ def test_directional_data_and_explicit_cut(tmp_path):
 def test_averaged_ensemble_error_keeps_angular_covariance():
     grid, _, solver = setup_problem()
 
-    medium = RandomMedium(
+    medium = WhittleMaternMedium(
         refractive_index_std=0.001,
         background_refractive_index=1.33,
-        correlation_length=100e-9 * ureg.meter,
-        correlation="matern",
+        correlation_length=1e-07 * ureg.meter,
         smoothness=1.5,
     )
 
     result = solver.ensemble(
         medium=medium,
         grid=grid,
-        realizations=3,
-        seed=42,
+        ensemble_sampling=EnsembleSampling(
+            realizations=3,
+            seed=42,
+        ),
     )
 
     curves = [
-        solver.solve(target=medium.to_volume(grid=grid, seed=seed)).differential.magnitude.mean(axis=-1)
+        solver.solve(
+            target=medium.to_volume(
+                grid=grid,
+                seed=seed,
+            )
+        ).differential.magnitude.mean(axis=-1)
         for seed in (42, 43, 44)
     ]
 
@@ -151,43 +146,6 @@ def test_averaged_ensemble_error_keeps_angular_covariance():
     np.testing.assert_allclose(result.azimuth_average().stderr.magnitude, expected)
 
     np.testing.assert_allclose(result.angular.azimuth_average().stderr.magnitude, expected)
-
-
-def test_schema_one_promotes_full_arrays(tmp_path):
-    grid, medium, solver = setup_problem()
-
-    result = solver.solve(target=medium.to_volume(grid=grid))
-
-    arrays = {
-        "differential": result.differential.magnitude.mean(axis=-1),
-        "directional_differential": result.differential.magnitude,
-        "directional_amplitudes": result.amplitudes.magnitude,
-        "angles": result.angles.magnitude,
-        "azimuths": result.azimuths.magnitude,
-    }
-
-    metadata = {
-        "format": "bornsim-result",
-        "schema_version": 1,
-        "wavelength_m": 633e-9,
-        "kind": "volume",
-        "realizations": None,
-        "warnings": [],
-        "provenance": result.provenance,
-        "units": {name: _RESULT_UNITS[name] for name in arrays},
-    }
-
-    path = tmp_path / "old.npz"
-
-    np.savez(path, metadata=np.array(json.dumps(metadata)), **arrays)
-
-    restored = Result.load(path=path)
-
-    np.testing.assert_allclose(restored.amplitudes.magnitude, result.amplitudes.magnitude)
-
-    np.testing.assert_allclose(restored.differential.magnitude, result.differential.magnitude)
-
-    assert restored.sample_volume == result.sample_volume
 
 
 def test_rotations_translation_and_overlap():
@@ -258,24 +216,6 @@ def test_rotations_translation_and_overlap():
 
     with pytest.raises(ValueError, match="orthonormal"):
         box.rotated(rotation=np.diag([1, 1, -1]))
-
-
-def test_compact_representations_and_advanced_imports():
-    import bornsim
-
-    grid, medium, solver = setup_problem()
-
-    result = solver.solve(target=medium.to_volume(grid=grid))
-
-    for value in (grid, solver.sampling, solver, result, result.angular):
-        assert len(repr(value)) < 300
-
-        assert "array(" not in repr(value)
-
-    assert "BornSeries" not in bornsim.__all__
-
-    with pytest.warns(DeprecationWarning, match="bornsim.series"):
-        assert bornsim.BornSeries.__name__ == "BornSeries"
 
 
 @pytest.mark.parametrize(

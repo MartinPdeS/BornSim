@@ -2,7 +2,7 @@
 
 - The root `bornsim/` package contains the public Python API and Matplotlib plotting.
 - Keep `Source`, `Solver`, and `Result` implementations in `source.py`, `solver.py`, and `results.py`; `api.py` is a convenience import module.
-- `model.py` handles analytical first-order scattering. Keep voxel fields in `volume.py`, random-field generation in `media.py`, propagation in `green.py`, the `BornSeries` engine in `series.py`, and ensemble statistics in `ensemble.py`.
+- Analytical first-order formulas live only in `tests/analytical/reference.py`; the public solver runs finite-volume Born calculations. Keep voxel fields in `volume.py`, random-field generation in `medium/random_medium.py` and random sphere collections in `medium/random_spheres.py`, propagation in `green.py`, the `BornSeries` engine in `series.py`, and ensemble statistics in `ensemble.py`.
 - Use `Directions` for numerical observation configurations; access its immutable Cartesian array through `.vectors`.
 - Use `BornSeries` instances for numerical Born calculations; do not add a free-function wrapper for that engine.
 - Validate supplied quantities directly with `bornsim.units.validate_units`; do not reassign fields merely to validate them. This validator permits a positional value.

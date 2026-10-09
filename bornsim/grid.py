@@ -2,7 +2,6 @@
 
 from dataclasses import dataclass
 import numpy as np
-import warnings
 from ._validation import _integer
 from .units import Quantity, validate_units
 
@@ -71,28 +70,8 @@ class Grid:
         return {"shape": list(self.shape), "spacing_m": float(self.spacing.to("meter").magnitude)}
 
     @classmethod
-    def _resolve(
-        cls,
-        *,
-        grid: "Grid | None" = None,
-        shape: tuple[int, int, int] | None = None,
-        spacing: Quantity | None = None,
-    ) -> "Grid":
-        if grid is not None:
-            if not isinstance(grid, cls):
-                raise TypeError("grid must be a Grid.")
+    def _resolve(cls, *, grid: "Grid") -> "Grid":
+        if not isinstance(grid, cls):
+            raise TypeError("grid must be a Grid.")
 
-            if shape is not None or spacing is not None:
-                raise ValueError("Supply grid or shape/spacing, not both.")
-
-            return grid
-
-        if shape is None or spacing is None:
-            raise ValueError("Supply grid or both shape and spacing; physical grid settings have no defaults.")
-
-        warnings.warn("Use Grid instead of shape/spacing keywords.", DeprecationWarning, stacklevel=3)
-
-        return cls(
-            shape=shape,
-            spacing=spacing,
-        )
+        return grid

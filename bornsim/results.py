@@ -45,18 +45,16 @@ class Result:
 
     Numerical coefficients are finite-sample cross sections divided by the
     entire voxel-box volume. ``differential_cross_section`` restores area per
-    steradian using stored sample_volume. Analytical coefficients describe an
-    infinite-medium model and have no finite-sample cross section.
+    steradian using stored sample_volume.
 
     Source and kind are required. Supply angular or individual differential
     data, never both. Results are immutable; provenance returns a fresh copy. Other fields describe sampling,
     isolated terms, integrated moments, uncertainty, diagnostics and provenance.
     NaN errors represent one realization; NaN anisotropy represents zero
     scattering. Arrays and JSON-compatible provenance are copied and validated.
-    The directional_differential and directional_amplitudes fields are legacy
-    aliases; use differential and amplitudes for both cuts and full solves.
+    Use differential and amplitudes for both cuts and full solves.
 
-    Save writes schema 2 archives; load also promotes schema 1 directional data.
+    Save and load use schema 2 archives; unsupported schemas are rejected.
     Numerical cumulative intensities retain coherent amplitude interference.
     Isolated intensities must not be summed to reconstruct cumulative results.
     """
@@ -84,12 +82,10 @@ class Result:
         angles=None,
         directions=None,
         azimuths=None,
-        directional_differential=None,
         mu_s=None,
         g=None,
         mu_s_prime=None,
         amplitudes=None,
-        directional_amplitudes=None,
         term_differential=None,
         stderr=None,
         field_norms=None,
@@ -100,8 +96,11 @@ class Result:
         if not isinstance(source, Source):
             raise TypeError("source must be a Source.")
 
-        if kind not in ("analytical", "volume", "ensemble"):
-            raise ValueError("kind must be analytical, volume, or ensemble.")
+        if kind not in ("volume", "ensemble"):
+            raise ValueError("kind must be volume or ensemble.")
+
+        if angular is None and differential is None:
+            raise ValueError("differential is required.")
 
         values = {name: value for name, value in locals().items() if name in _RESULT_UNITS}
 
@@ -162,16 +161,6 @@ class Result:
             raise ValueError("warnings must be a sequence of strings.")
 
         state = SimpleNamespace(**values, kind=kind, realizations=realizations, azimuth_averaged=azimuth_averaged)
-
-        from ._archives import _ResultArchive
-
-        _ResultArchive._promote_legacy_directional_data(result=state)
-
-        if state.sample_volume is None and kind != "analytical":
-            grid = provenance.get("grid")
-
-            if isinstance(grid, dict) and "shape" in grid and "spacing_m" in grid:
-                state.sample_volume = float(np.prod(grid["shape"]) * grid["spacing_m"] ** 3) * ureg.meter**3
 
         from ._result_validation import _ResultValidator
 
@@ -265,18 +254,6 @@ class Result:
         """Explicit cut coordinates; full-grid vectors are angular.directions."""
 
         return self.angular.directions if self.angular.azimuths is None and self.kind == "volume" else None
-
-    @property
-    def directional_differential(self):
-        """Legacy alias for full directional intensities."""
-
-        return self.differential if self.differential.ndim == 3 else None
-
-    @property
-    def directional_amplitudes(self):
-        """Legacy alias for full coherent amplitudes."""
-
-        return self.amplitudes if self.differential.ndim == 3 else None
 
     @property
     def provenance(self):
@@ -442,39 +419,11 @@ class Result:
         ``figure.savefig(path)`` to export a PNG, SVG, or PDF. Zero values cannot be displayed on a log axis.
         A one-realization ensemble has unknown sampling error, so no error bars
         are shown. This method plots differential scattering, not a normalized
-        phase function.
-
-        Examples
-        --------
-        >>> from bornsim import AnalyticalMedium, Solver, Source
-        ...
-        >>> from bornsim.units import ureg
-        ...
-        >>> solver = Solver(
-        ...     source=Source(
-        ...         wavelength=633e-9 * ureg.meter,
-        ...     )
-        ... )
-
-        ...
-        >>> result = solver.solve(
-        ...     target=AnalyticalMedium(
-        ...         background_refractive_index=1.33,
-        ...         refractive_index_std=0.01,
-        ...         correlation_length=100e-9 * ureg.meter,
-        ...         correlation="gaussian",
-        ...     )
-        ... )
-        >>> figure = result.plot(log_y=True)
-        >>> len(figure.axes[0].lines)
-        1
-        """
+        phase function."""
 
         from ._result_plotting import _ResultPlotter
 
-        return _ResultPlotter(
-            result=self,
-        ).plot(
+        return _ResultPlotter(result=self).plot(
             terms=terms,
             log_y=log_y,
             azimuth=azimuth,
@@ -489,7 +438,7 @@ class Result:
         Parameters
         ----------
         volume : Volume, optional
-            Optional legacy sample. Normally the recorded sample_volume
+            Optional sample. Normally the recorded sample_volume
             supplies the conversion without retaining the input voxel field.
         area_unit : str, optional
             Display area unit; default 'nanometer**2'.
@@ -515,7 +464,7 @@ class Result:
         TypeError
             If volume is not a Volume.
         ValueError
-            If the result is analytical, recorded grid dimensions differ,
+            If recorded grid dimensions differ,
             area_unit is invalid, or isolated curves are unavailable.
 
         Notes
@@ -538,17 +487,6 @@ class Result:
             azimuth=azimuth,
             title=title,
         )
-
-    @property
-    def directional_phase_function(self):
-        """Compatibility alias for the primary full phase_function."""
-
-        if self.differential.ndim != 3:
-            raise ValueError(
-                "Directional phase data are unavailable; recompute with Solver.solve using AngularSampling."
-            )
-
-        return self.phase_function
 
     def plot_phase_function(self, *, view="angular", order=None, log_y=False, azimuth=0, backend=None):
         """Plot normalized phase functions as angular curves, polar cuts, or a surface.
@@ -595,39 +533,11 @@ class Result:
         views select sampled meridians; averaging requires azimuth_average(). A flat phase function produces a spherical
         surface; forward scattering extends towards +z.
         Samples are sorted by angle for rendering. Error bars for normalized
-        ratios are omitted because the required covariance is not stored.
-
-        Examples
-        --------
-        >>> from bornsim import AnalyticalMedium, Solver, Source
-        ...
-        >>> from bornsim.units import ureg
-        ...
-        >>> solver = Solver(
-        ...     source=Source(
-        ...         wavelength=633e-9 * ureg.meter,
-        ...     )
-        ... )
-
-        ...
-        >>> result = solver.solve(
-        ...     target=AnalyticalMedium(
-        ...         background_refractive_index=1.33,
-        ...         refractive_index_std=0.01,
-        ...         correlation_length=100e-9 * ureg.meter,
-        ...         correlation="gaussian",
-        ...     )
-        ... )
-        >>> figure = result.plot_phase_function(view="3d")
-        >>> figure.data[0].type
-        'surface'
-        """
+        ratios are omitted because the required covariance is not stored."""
 
         from ._result_plotting import _ResultPlotter
 
-        return _ResultPlotter(
-            result=self,
-        ).plot_phase_function(
+        return _ResultPlotter(result=self).plot_phase_function(
             view=view,
             order=order,
             log_y=log_y,
