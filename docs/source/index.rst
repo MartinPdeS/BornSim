@@ -33,6 +33,12 @@ refractive-index media.
 
       Find sources, media, solver settings, and result methods.
 
+   .. grid-item-card:: Research
+      :link: research
+      :link-type: doc
+
+      Design reproducible studies and assess physical and numerical limits.
+
    .. grid-item-card:: Resources
       :link: resources
       :link-type: doc
@@ -47,4 +53,5 @@ refractive-index media.
    Guide <guide>
    Examples <examples>
    API <api>
+   Research <research>
    Resources <resources>
