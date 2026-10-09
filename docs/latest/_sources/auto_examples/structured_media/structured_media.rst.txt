@@ -236,7 +236,7 @@ The slice checks exact voxel values after exploring the full volumes above.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.229 seconds)
+   **Total running time of the script:** (0 minutes 0.504 seconds)
 
 
 .. _sphx_glr_download_auto_examples_structured_media_structured_media.py:

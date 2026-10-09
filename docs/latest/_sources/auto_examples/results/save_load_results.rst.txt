@@ -122,7 +122,7 @@ temporary directory is removed. Loading preserves the recorded versions.
 
  .. code-block:: none
 
-    BornSim version: 0.2.8
+    BornSim version: 0.3.0
     NumPy version: 2.4.6
     Seed: 42
     Grid: {'shape': [4, 4, 4], 'spacing_m': 4e-08, 'background_refractive_index': 1.33, 'delta_refractive_index_sha256': 'af423859f3fc7019d700fa3e969b1a81b72e4f170e654b08fae09eea22681b04'}
@@ -221,7 +221,7 @@ Regions with higher refractive index are more opaque; opacity is not absorption.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.186 seconds)
+   **Total running time of the script:** (0 minutes 0.400 seconds)
 
 
 .. _sphx_glr_download_auto_examples_results_save_load_results.py:

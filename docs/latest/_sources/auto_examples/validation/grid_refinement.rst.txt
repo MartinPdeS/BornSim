@@ -155,7 +155,7 @@ orthogonal slices show the uniform cube and its physical extent.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.148 seconds)
+   **Total running time of the script:** (0 minutes 0.287 seconds)
 
 
 .. _sphx_glr_download_auto_examples_validation_grid_refinement.py:
