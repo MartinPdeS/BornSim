@@ -1,0 +1,871 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="dark">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bornsim.angular_data &#8212; BornSim 0.2.6 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "dark";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
+
+    <script src="../../_static/documentation_options.js?v=fc7d8818"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/bornsim/angular_data';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.19.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/BornSim/documentation_page/version_switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.2.6';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.2.6" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="dark">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-dark" alt="BornSim"/>
+    <img src="../../_static/logo.png" class="logo__image only-light pst-js-only" alt="BornSim"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Start
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../guide.html">
+    Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../resources.html">
+    Resources
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MartinPdeS/BornSim" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Start
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../guide.html">
+    Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../resources.html">
+    Resources
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MartinPdeS/BornSim" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">bornsim.angular_data</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for bornsim.angular_data</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Consistent unitful directional scattering data for solves and cuts."""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">validate_units</span><span class="p">,</span> <span class="n">ureg</span>
+
+
+<div class="viewcode-block" id="AngularData">
+<a class="viewcode-back" href="../../api.html#bornsim.angular_data.AngularData">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AngularData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Group coordinates, amplitudes, intensities and normalization.</span>
+
+<span class="sd">    Full angular data have shape (order, polar angle, azimuth). Cuts and</span>
+<span class="sd">    explicitly averaged curves have shape (order, observation). Directions</span>
+<span class="sd">    have the same observation axes and a final Cartesian axis of size three.</span>
+<span class="sd">    Amplitudes add incident-polarization and vector axes of sizes two and</span>
+<span class="sd">    three. Ensemble amplitudes are absent: intensities, not amplitudes, are</span>
+<span class="sd">    averaged across realizations. Arrays are copied, unitful and read-only.</span>
+<span class="sd">    """</span>
+
+    <span class="n">differential</span><span class="p">:</span> <span class="n">Quantity</span>
+    <span class="n">directions</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">amplitudes</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">angles</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">azimuths</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">term_differential</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">stderr</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">azimuth_stderr</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">mu_s</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">sample_volume</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">kind</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"volume"</span>
+    <span class="n">azimuth_averaged</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">meridian_azimuth</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">units</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"differential"</span><span class="p">:</span> <span class="s2">"1 / meter / steradian"</span><span class="p">,</span>
+            <span class="s2">"directions"</span><span class="p">:</span> <span class="s2">"dimensionless"</span><span class="p">,</span>
+            <span class="s2">"amplitudes"</span><span class="p">:</span> <span class="s2">"meter"</span><span class="p">,</span>
+            <span class="s2">"angles"</span><span class="p">:</span> <span class="s2">"radian"</span><span class="p">,</span>
+            <span class="s2">"azimuths"</span><span class="p">:</span> <span class="s2">"radian"</span><span class="p">,</span>
+            <span class="s2">"term_differential"</span><span class="p">:</span> <span class="s2">"1 / meter / steradian"</span><span class="p">,</span>
+            <span class="s2">"stderr"</span><span class="p">:</span> <span class="s2">"1 / meter / steradian"</span><span class="p">,</span>
+            <span class="s2">"azimuth_stderr"</span><span class="p">:</span> <span class="s2">"1 / meter / steradian"</span><span class="p">,</span>
+            <span class="s2">"mu_s"</span><span class="p">:</span> <span class="s2">"1 / meter"</span><span class="p">,</span>
+            <span class="s2">"sample_volume"</span><span class="p">:</span> <span class="s2">"meter**3"</span><span class="p">,</span>
+            <span class="s2">"meridian_azimuth"</span><span class="p">:</span> <span class="s2">"radian"</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">units</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">"dimensionless"</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Quantity</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">dimensionless</span>
+
+                <span class="n">validate_units</span><span class="p">(</span>
+                    <span class="n">value</span><span class="p">,</span>
+                    <span class="n">unit</span><span class="o">=</span><span class="n">unit</span><span class="p">,</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must contain numeric values."</span><span class="p">)</span>
+
+                <span class="n">quantity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">*</span> <span class="n">value</span><span class="o">.</span><span class="n">units</span>
+
+                <span class="n">quantity</span><span class="o">.</span><span class="n">magnitude</span><span class="o">.</span><span class="n">setflags</span><span class="p">(</span><span class="n">write</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+                <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">quantity</span><span class="p">)</span>
+
+        <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">differential</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span> <span class="ow">in</span> <span class="n">shape</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"differential must have nonempty order and observation axes."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">directions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">directions</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="mi">3</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"directions must match the observation axes."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">amplitudes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">amplitudes</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"amplitudes must have shape matching the order and observation axes."</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_values</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">directions</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuth_averaged</span><span class="p">:</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"angles"</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"radian"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuths</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">theta</span><span class="p">,</span> <span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuths</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"radian"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s2">"ij"</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+            <span class="n">directions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">quantity</span> <span class="o">=</span> <span class="n">directions</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">dimensionless</span>
+
+            <span class="n">quantity</span><span class="o">.</span><span class="n">magnitude</span><span class="o">.</span><span class="n">setflags</span><span class="p">(</span><span class="n">write</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"directions"</span><span class="p">,</span> <span class="n">quantity</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">differential</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="n">shapes</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"angles"</span><span class="p">:</span> <span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],),</span>
+            <span class="s2">"azimuths"</span><span class="p">:</span> <span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span> <span class="k">else</span> <span class="p">(),</span>
+            <span class="s2">"term_differential"</span><span class="p">:</span> <span class="n">shape</span><span class="p">,</span>
+            <span class="s2">"stderr"</span><span class="p">:</span> <span class="n">shape</span><span class="p">,</span>
+            <span class="s2">"azimuth_stderr"</span><span class="p">:</span> <span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span>
+            <span class="s2">"mu_s"</span><span class="p">:</span> <span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],),</span>
+            <span class="s2">"sample_volume"</span><span class="p">:</span> <span class="p">(),</span>
+            <span class="s2">"meridian_azimuth"</span><span class="p">:</span> <span class="p">(),</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">12</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"differential must contain at most 12 Born orders."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s2">"analytical"</span> <span class="ow">and</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"analytical differential must contain exactly one order."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"volume"</span><span class="p">,</span> <span class="s2">"ensemble"</span><span class="p">,</span> <span class="s2">"analytical"</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">azimuth_averaged</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"kind or azimuth_averaged is invalid."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">angles</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuths</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuth_averaged</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Full angular data require angles and azimuths without averaging."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuths</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"azimuths require full angular data."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">angles</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">directions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"angles or directions must identify observations."</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"differential"</span><span class="p">,</span> <span class="s2">"directions"</span><span class="p">,</span> <span class="s2">"amplitudes"</span><span class="p">,</span> <span class="o">*</span><span class="n">shapes</span><span class="p">):</span>
+            <span class="n">quantity</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">quantity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">values</span> <span class="o">=</span> <span class="n">quantity</span><span class="o">.</span><span class="n">magnitude</span>
+
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">shapes</span> <span class="ow">and</span> <span class="n">values</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">shapes</span><span class="p">[</span><span class="n">name</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must have shape </span><span class="si">{</span><span class="n">shapes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+
+            <span class="n">real_required</span> <span class="o">=</span> <span class="n">name</span> <span class="o">!=</span> <span class="s2">"amplitudes"</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">real_required</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">iscomplexobj</span><span class="p">(</span><span class="n">values</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must contain numeric </span><span class="si">{</span><span class="s1">'real'</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">real_required</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">'complex or real'</span><span class="si">}</span><span class="s2"> values."</span>
+                <span class="p">)</span>
+
+            <span class="n">unknown_error</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"stderr"</span><span class="p">,</span> <span class="s2">"azimuth_stderr"</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s2">"ensemble"</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">unknown_error</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">values</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must contain finite values."</span><span class="p">)</span>
+
+            <span class="n">nonnegative</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"differential"</span><span class="p">,</span> <span class="s2">"term_differential"</span><span class="p">,</span> <span class="s2">"stderr"</span><span class="p">,</span> <span class="s2">"azimuth_stderr"</span><span class="p">,</span> <span class="s2">"mu_s"</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">nonnegative</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">values</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be nonnegative."</span><span class="p">)</span>
+
+        <span class="n">invalid_directions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">directions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directions</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-10</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">invalid_directions</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"directions must contain unit vectors."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kind</span> <span class="o">!=</span> <span class="s2">"volume"</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">angles</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"analytical and ensemble results require angles."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">directions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">angles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">expected_cosine</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">angles</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">expected_cosine</span> <span class="o">=</span> <span class="n">expected_cosine</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directions</span><span class="o">.</span><span class="n">magnitude</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">expected_cosine</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"angles must match the polar angles of directions."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">angles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">angles</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">angles</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">radian</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"angles must lie between zero and pi."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuths</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">phi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuths</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"radian"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+
+            <span class="n">invalid_phi</span> <span class="o">=</span> <span class="ow">not</span> <span class="mi">4</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">32</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span>
+                <span class="n">phi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">phi</span><span class="p">))</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">phi</span><span class="p">),</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">invalid_phi</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"azimuths must uniformly cover [0, 2*pi), starting at zero."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_volume</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s2">"analytical"</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_volume</span><span class="o">.</span><span class="n">magnitude</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"sample_volume must describe a positive finite-sample volume."</span><span class="p">)</span>
+
+        <span class="n">unnormalized_cut</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s2">"volume"</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuth_averaged</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">meridian_azimuth</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">unnormalized_cut</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu_s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"integrated coefficients are unavailable for a single-volume angular cut."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuth_averaged</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">amplitudes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Azimuth-averaged data have no single directions or coherent amplitudes."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kind</span> <span class="o">!=</span> <span class="s2">"volume"</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">amplitudes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"amplitudes are only available for a single volume."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kind</span> <span class="o">!=</span> <span class="s2">"ensemble"</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuth_stderr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"stderr and azimuth_stderr are only available for an ensemble."</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">phase_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Density per steradian, normalized by the full solid-angle integral."""</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu_s</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_s</span><span class="o">.</span><span class="n">magnitude</span><span class="p">))</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_s</span><span class="o">.</span><span class="n">magnitude</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Phase normalization requires positive, finite integrated mu_s."</span><span class="p">)</span>
+
+        <span class="n">axes</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_s</span><span class="p">),)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">differential</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">differential</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu_s</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">axes</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"1 / steradian"</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">directional_phase_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Compatibility alias for full directional phase densities."""</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">differential</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Full directional phase data are unavailable."</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase_function</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">differential_cross_section</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Finite-sample differential cross section in square metres per sr."""</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_volume</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"sample_volume is unavailable for this angular data."</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">differential</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_volume</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"meter**2 / steradian"</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AngularData.azimuth_average">
+<a class="viewcode-back" href="../../api.html#bornsim.angular_data.AngularData.azimuth_average">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">azimuth_average</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Average intensities explicitly; never average coherent amplitudes."""</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuths</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Azimuth averaging requires a full angular grid."</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">AngularData</span><span class="p">(</span>
+            <span class="n">differential</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">differential</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">angles</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">angles</span><span class="p">,</span>
+            <span class="n">term_differential</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">term_differential</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">term_differential</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">azimuth_stderr</span><span class="p">,</span>
+            <span class="n">mu_s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_s</span><span class="p">,</span>
+            <span class="n">sample_volume</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_volume</span><span class="p">,</span>
+            <span class="n">kind</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kind</span><span class="p">,</span>
+            <span class="n">azimuth_averaged</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AngularData.meridian">
+<a class="viewcode-back" href="../../api.html#bornsim.angular_data.AngularData.meridian">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">meridian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"exact"</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Select a sampled meridian using an angle, preserving normalization.</span>
+
+<span class="sd">        Azimuth requires explicit angular units and is periodic modulo 2*pi. exact requires</span>
+<span class="sd">        a sampled azimuth within 1e-10 radians; nearest explicitly selects the</span>
+<span class="sd">        closest sample. No interpolation or azimuth averaging is performed.</span>
+<span class="sd">        meridian_azimuth records the actual selected angle.</span>
+<span class="sd">        """</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuths</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Meridian selection requires a full angular grid."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"exact"</span><span class="p">,</span> <span class="s2">"nearest"</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"method must be exact or nearest."</span><span class="p">)</span>
+
+        <span class="n">validate_units</span><span class="p">(</span>
+            <span class="n">azimuth</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">"radian"</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"azimuth"</span><span class="p">,</span>
+            <span class="n">scalar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">requested</span> <span class="o">=</span> <span class="n">azimuth</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"radian"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">requested</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"azimuth must be finite."</span><span class="p">)</span>
+
+        <span class="n">phi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuths</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"radian"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+
+        <span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">phi</span> <span class="o">-</span> <span class="n">requested</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+        <span class="n">index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">distance</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"exact"</span> <span class="ow">and</span> <span class="n">distance</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">1e-10</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"azimuth is not sampled; use method='nearest' to select the closest meridian."</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">AngularData</span><span class="p">(</span>
+            <span class="n">differential</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">differential</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">index</span><span class="p">],</span>
+            <span class="n">angles</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">angles</span><span class="p">,</span>
+            <span class="n">directions</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"directions"</span><span class="p">)[:,</span> <span class="n">index</span><span class="p">],</span>
+            <span class="n">amplitudes</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">amplitudes</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">amplitudes</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">index</span><span class="p">],</span>
+            <span class="n">term_differential</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">term_differential</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">term_differential</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">index</span><span class="p">],</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">index</span><span class="p">],</span>
+            <span class="n">mu_s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_s</span><span class="p">,</span>
+            <span class="n">sample_volume</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_volume</span><span class="p">,</span>
+            <span class="n">kind</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kind</span><span class="p">,</span>
+            <span class="n">meridian_azimuth</span><span class="o">=</span><span class="n">phi</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">radian</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AngularData.plot">
+<a class="viewcode-back" href="../../api.html#bornsim.angular_data.AngularData.plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">terms</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">log_y</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">azimuth</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Plot one sampled meridian, or an explicitly averaged curve."""</span>
+
+        <span class="kn">from</span><span class="w"> </span><span class="nn">._result_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ResultPlotter</span>
+
+        <span class="k">return</span> <span class="n">_ResultPlotter</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">terms</span><span class="o">=</span><span class="n">terms</span><span class="p">,</span>
+            <span class="n">log_y</span><span class="o">=</span><span class="n">log_y</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
+            <span class="n">azimuth</span><span class="o">=</span><span class="n">azimuth</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AngularData.plot_phase_function">
+<a class="viewcode-back" href="../../api.html#bornsim.angular_data.AngularData.plot_phase_function">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_phase_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">view</span><span class="o">=</span><span class="s2">"angular"</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">log_y</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">azimuth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Plot normalized directional densities with the same Result interface."""</span>
+
+        <span class="kn">from</span><span class="w"> </span><span class="nn">._result_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ResultPlotter</span>
+
+        <span class="k">return</span> <span class="n">_ResultPlotter</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">plot_phase_function</span><span class="p">(</span>
+            <span class="n">view</span><span class="o">=</span><span class="n">view</span><span class="p">,</span>
+            <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">,</span>
+            <span class="n">log_y</span><span class="o">=</span><span class="n">log_y</span><span class="p">,</span>
+            <span class="n">azimuth</span><span class="o">=</span><span class="n">azimuth</span><span class="p">,</span>
+            <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"AngularData(shape=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">differential</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, intensity_unit=m^-1 sr^-1, "</span>
+            <span class="sa">f</span><span class="s2">"amplitudes=</span><span class="si">{</span><span class="s1">'available'</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">amplitudes</span><span class="w"> </span><span class="ow">is</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="kc">None</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">'absent'</span><span class="si">}</span><span class="s2">, "</span>
+            <span class="sa">f</span><span class="s2">"normalized=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_s</span><span class="w"> </span><span class="ow">is</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="kc">None</span><span class="si">}</span><span class="s2">, azimuth_averaged=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">azimuth_averaged</span><span class="si">}</span><span class="s2">)"</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Martin Poinsinet de Sivry-Houle.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.19.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
