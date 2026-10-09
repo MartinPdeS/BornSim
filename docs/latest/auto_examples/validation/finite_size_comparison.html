@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Finite samples and analytical first-order scattering &#8212; BornSim 0.2.7 documentation</title>
+    <title>Finite-sample size convergence &#8212; BornSim 0.2.8 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=58050c01"></script>
+    <script src="../../_static/documentation_options.js?v=b01fafc3"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -60,11 +60,11 @@
     <link rel="icon" href="../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Realization count and sampling uncertainty" href="ensemble_sampling.html" />
-    <link rel="prev" title="Grid refinement against an exact cube integral" href="grid_refinement.html" />
+    <link rel="next" title="Grid refinement against an exact cube integral" href="grid_refinement.html" />
+    <link rel="prev" title="Numerical validation" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.7" />
+  <meta name="docsearch:version" content="0.2.8" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -466,7 +466,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">Numerical validation</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Finite samples and analytical first-order scattering</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Finite-sample size convergence</span></li>
   </ul>
 </nav>
 </div>
@@ -488,30 +488,31 @@
 <p><a class="reference internal" href="#sphx-glr-download-auto-examples-validation-finite-size-comparison-py"><span class="std std-ref">Go to the end</span></a>
 to download the full example code.</p>
 </div>
-<section class="sphx-glr-example-title" id="finite-samples-and-analytical-first-order-scattering">
-<span id="sphx-glr-auto-examples-validation-finite-size-comparison-py"></span><h1>Finite samples and analytical first-order scattering<a class="headerlink" href="#finite-samples-and-analytical-first-order-scattering" title="Link to this heading">#</a></h1>
-<p>Compare first-order random-volume ensembles with the infinite-medium
-analytical model at the same wavelength and covariance. Increase sample size
-at a fixed voxel spacing. These numerical coefficients are cross sections
-divided by sample volume; they are not automatically intrinsic transport
-coefficients. A finite window and finite synthesis box change the spectrum,
-and voxel resolution remains a separate source of error.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span><span class="w">
+<section class="sphx-glr-example-title" id="finite-sample-size-convergence">
+<span id="sphx-glr-auto-examples-validation-finite-size-comparison-py"></span><h1>Finite-sample size convergence<a class="headerlink" href="#finite-sample-size-convergence" title="Link to this heading">#</a></h1>
+<p>Compare numerical first-order random-volume ensembles as sample size grows at
+fixed voxel spacing. The coefficients are cross sections divided by sample
+volume. Sample size, voxel resolution and realization count describe separate
+sources of uncertainty and must be checked independently.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="nn">.</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_medium.GaussianMedium" title="bornsim.GaussianMedium"><span class="nn">medium</span></a><span class="nn">.</span><span class="nn">random_medium</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.medium.random_medium.GaussianMedium" title="bornsim.GaussianMedium"><span class="n">GaussianMedium</span></a><span class="w">
+</span><span class="w">
+</span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span><span class="w">
 </span><span class="w">
 </span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="nn">.</span><span class="nn">pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span><span class="w">
 </span><span class="w">
-</span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.ensemble_sampling.EnsembleSampling" title="bornsim.EnsembleSampling"><span class="n">EnsembleSampling</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.sampling.AngularSampling" title="bornsim.AngularSampling"><span class="n">AngularSampling</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">Grid</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.model.AnalyticalMedium" title="bornsim.AnalyticalMedium"><span class="n">AnalyticalMedium</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.solver.Solver" title="bornsim.Solver"><span class="n">Solver</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">Source</span></a><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.ensemble_sampling.EnsembleSampling" title="bornsim.EnsembleSampling"><span class="n">EnsembleSampling</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.sampling.AngularSampling" title="bornsim.AngularSampling"><span class="n">AngularSampling</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">Grid</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.solver.Solver" title="bornsim.Solver"><span class="n">Solver</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">Source</span></a><span class="w">
 </span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="nn">.</span><span class="nn">units</span><span class="w"> </span><span class="kn">import</span> <span class="n">ureg</span><span class="w">
 </span><span class="w">
-</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.model.AnalyticalMedium" title="bornsim.AnalyticalMedium"><span class="n">medium</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.model.AnalyticalMedium" title="bornsim.AnalyticalMedium"><span class="n">AnalyticalMedium</span></a><span class="p">(</span><span class="w">
+</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_medium.GaussianMedium" title="bornsim.GaussianMedium"><span class="n">medium</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.medium.random_medium.GaussianMedium" title="bornsim.GaussianMedium"><span class="n">GaussianMedium</span></a><span class="p">(</span><span class="w">
 </span>    <span class="n">refractive_index_std</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span><span class="w">
 </span>    <span class="n">correlation_length</span><span class="o">=</span><span class="mi">60</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span><span class="w">
 </span>    <span class="n">background_refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span><span class="w">
-</span>    <span class="n">correlation</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">gaussian</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
 </span><span class="w">
+</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">source_configuration_1</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">Source</span></a><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mi">633</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.solver.Solver" title="bornsim.Solver"><span class="n">solver</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.solver.Solver" title="bornsim.Solver"><span class="n">Solver</span></a><span class="p">(</span><span class="w">
-</span>    <span class="n">source</span><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">Source</span></a><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mi">633</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <span class="n">source</span><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">source_configuration_1</span></a><span class="p">,</span><span class="w">
 </span>    <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
 </span><span class="w">
@@ -523,20 +524,7 @@ and voxel resolution remains a separate source of error.</p>
 </span>    <span class="n">azimuth_samples</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
 </span><span class="w">
-</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.results.Result" title="bornsim.Result"><span class="n">analytical</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.solver.Solver.solve" title="bornsim.Solver.solve"><span class="n">solver</span><span class="o">.</span><span class="n">solve</span></a><span class="p">(</span><span class="w">
-</span>    <span class="n">target</span><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.model.AnalyticalMedium" title="bornsim.AnalyticalMedium"><span class="n">medium</span></a><span class="p">,</span><span class="w">
-</span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.sampling.AngularSampling" title="bornsim.AngularSampling"><span class="n">sampling</span></a><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.sampling.AngularSampling" title="bornsim.AngularSampling"><span class="n">sampling</span></a><span class="p">,</span><span class="w">
-</span><span class="p">)</span><span class="w">
-</span><span class="w">
 </span><span class="n">figure</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">constrained</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
-</span><span class="w">
-</span><span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="w">
-</span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-property reference internal" href="../../api.html#bornsim.results.Result.angles" title="bornsim.Result.angles"><span class="n">analytical</span><span class="o">.</span><span class="n">angles</span><span class="o">.</span><span class="n">to</span></a><span class="p">(</span><span class="s2">&quot;</span><span class="s2">degree</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span><span class="w">
-</span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.results.Result.azimuth_average" title="bornsim.Result.azimuth_average"><span class="n">analytical</span><span class="o">.</span><span class="n">azimuth_average</span></a><span class="p">(</span><span class="p">)</span><span class="o">.</span><span class="n">differential</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">1 / meter / steradian</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">,</span><span class="w">
-</span>    <span class="s2">&quot;</span><span class="s2">k--</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>    <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="w">
-</span>    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Analytical infinite medium, first order</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span><span class="p">)</span><span class="w">
 </span><span class="w">
 </span><span class="k">for</span> <span class="n">cells</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span><span class="p">:</span><span class="w">
 </span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">Grid</span></a><span class="p">(</span><span class="w">
@@ -544,13 +532,15 @@ and voxel resolution remains a separate source of error.</p>
 </span>        <span class="n">spacing</span><span class="o">=</span><span class="mi">30</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span><span class="w">
 </span>    <span class="p">)</span><span class="w">
 </span><span class="w">
+</span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.ensemble_sampling.EnsembleSampling" title="bornsim.EnsembleSampling"><span class="n">ensemble_sampling_configuration_1</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.ensemble_sampling.EnsembleSampling" title="bornsim.EnsembleSampling"><span class="n">EnsembleSampling</span></a><span class="p">(</span><span class="w">
+</span>        <span class="n">realizations</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span><span class="w">
+</span>        <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span><span class="w">
+</span>    <span class="p">)</span><span class="w">
+</span><span class="w">
 </span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.results.Result" title="bornsim.Result"><span class="n">result</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.solver.Solver.ensemble" title="bornsim.Solver.ensemble"><span class="n">solver</span><span class="o">.</span><span class="n">ensemble</span></a><span class="p">(</span><span class="w">
-</span>        <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.model.AnalyticalMedium" title="bornsim.AnalyticalMedium"><span class="n">medium</span></a><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.model.AnalyticalMedium" title="bornsim.AnalyticalMedium"><span class="n">medium</span></a><span class="p">,</span><span class="w">
+</span>        <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_medium.GaussianMedium" title="bornsim.GaussianMedium"><span class="n">medium</span></a><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_medium.GaussianMedium" title="bornsim.GaussianMedium"><span class="n">medium</span></a><span class="p">,</span><span class="w">
 </span>        <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="p">,</span><span class="w">
-</span>        <span class="n">ensemble_sampling</span><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.ensemble_sampling.EnsembleSampling" title="bornsim.EnsembleSampling"><span class="n">EnsembleSampling</span></a><span class="p">(</span><span class="w">
-</span>            <span class="n">realizations</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span><span class="w">
-</span>            <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span><span class="w">
-</span>        <span class="p">)</span><span class="p">,</span><span class="w">
+</span>        <span class="n">ensemble_sampling</span><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.ensemble_sampling.EnsembleSampling" title="bornsim.EnsembleSampling"><span class="n">ensemble_sampling_configuration_1</span></a><span class="p">,</span><span class="w">
 </span>        <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.sampling.AngularSampling" title="bornsim.AngularSampling"><span class="n">sampling</span></a><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.sampling.AngularSampling" title="bornsim.AngularSampling"><span class="n">sampling</span></a><span class="p">,</span><span class="w">
 </span>    <span class="p">)</span><span class="w">
 </span><span class="w">
@@ -568,7 +558,7 @@ and voxel resolution remains a separate source of error.</p>
 </span><span class="n">axis</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="w">
 </span>    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Scattering angle (degrees)</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
 </span>    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Differential scattering (m⁻¹ sr⁻¹)</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">First order: finite samples versus infinite medium</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">First order: finite-sample size convergence</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
 </span><span class="w">
 </span><span class="n">axis</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="p">)</span><span class="w">
@@ -577,8 +567,8 @@ and voxel resolution remains a separate source of error.</p>
 </span><span class="w">
 </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<img src="../../_images/sphx_glr_finite_size_comparison_001.png" srcset="../../_images/sphx_glr_finite_size_comparison_001.png" alt="First order: finite samples versus infinite medium" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>120 nm cube: μs = 0.7954126902831687 / meter, g = 0.013367158313236571 dimensionless
-240 nm cube: μs = 3.36443097460754 / meter, g = 0.20743249757359933 dimensionless
+<img src="../../_images/sphx_glr_finite_size_comparison_001.png" srcset="../../_images/sphx_glr_finite_size_comparison_001.png" alt="First order: finite-sample size convergence" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>120 nm cube: μs = 0.7954126902831687 / meter, g = 0.01336715831323656 dimensionless
+240 nm cube: μs = 3.3644309746075405 / meter, g = 0.2074324975735993 dimensionless
 360 nm cube: μs = 5.027407224500179 / meter, g = 0.0780324357834068 dimensionless
 </pre></div>
 </div>
@@ -589,7 +579,7 @@ not an ensemble average or an infinite-medium material boundary.
 Drag to rotate and scroll to zoom in the embedded browser view.
 Regions with higher refractive index are more opaque; opacity is not absorption.
 Use the largest of the three finite cubes compared above.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">preview_volume</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.media.RandomMedium.to_volume" title="bornsim.RandomMedium.to_volume"><span class="n">medium</span><span class="o">.</span><span class="n">to_volume</span></a><span class="p">(</span><span class="w">
+<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">preview_volume</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim-medium-random_medium sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.medium.random_medium.RandomFieldMedium.to_volume" title="bornsim.medium.random_medium.RandomFieldMedium.to_volume"><span class="n">medium</span><span class="o">.</span><span class="n">to_volume</span></a><span class="p">(</span><span class="w">
 </span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="p">,</span><span class="w">
 </span>    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
@@ -603,7 +593,7 @@ Use the largest of the three finite cubes compared above.</p>
 </span><span class="k">if</span> <span class="s2">&quot;</span><span class="s2">--no-browser</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span><span class="w">
 </span>    <span class="n">medium_figure</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">renderer</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">browser</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<iframe src="../../_static/gallery/finite_size_comparison-1.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.885 seconds)</p>
+<iframe src="../../_static/gallery/finite_size_comparison-1.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.385 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-validation-finite-size-comparison-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/8f0fea717824a759723a044396e28f9f/finite_size_comparison.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">finite_size_comparison.ipynb</span></code></a></p>

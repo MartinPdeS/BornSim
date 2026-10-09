@@ -14,17 +14,17 @@ spherical Green self cell with its longitudinal contact term. A small
 correction or decreasing field norms does not certify Born convergence.
 """
 
+from bornsim.medium.random_medium import GaussianMedium
+
 import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from bornsim import Grid, RandomMedium, Solver, Source
-from bornsim.media import random_volume
+from bornsim import Grid, Solver, Source
 from bornsim.units import ureg
 
-medium = RandomMedium(
-    correlation="gaussian",
+medium = GaussianMedium(
     refractive_index_std=0.03,
     correlation_length=80 * ureg.nanometer,
     background_refractive_index=1.33,
@@ -35,16 +35,17 @@ grid = Grid(
     spacing=40 * ureg.nanometer,
 )
 
-volume = random_volume(
-    medium=medium,
+volume = medium.to_volume(
     grid=grid,
     seed=42,
 )
 
 angles = np.linspace(0, 180, 121) * ureg.degree
 
+source_configuration_1 = Source(wavelength=633 * ureg.nanometer)
+
 solver = Solver(
-    source=Source(wavelength=633 * ureg.nanometer),
+    source=source_configuration_1,
     order=3,
 )
 
@@ -72,7 +73,11 @@ for order, color in ((2, "#0072B2"), (3, "#D55E00")):
     )
 
     intensity_axis.plot(
-        angles.magnitude, incoherent[index], "--", color=color, label=f"Sum of intensities through {order}"
+        angles.magnitude,
+        incoherent[index],
+        "--",
+        color=color,
+        label=f"Sum of intensities through {order}",
     )
 
     relative_cross_terms = np.divide(

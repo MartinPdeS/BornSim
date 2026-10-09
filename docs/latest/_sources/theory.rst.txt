@@ -28,7 +28,7 @@ A Volume stores the real scalar field
    \delta n(\mathbf r) = n(\mathbf r)-n_0.
 
 Material objects specify an **absolute refractive index**, rather than a
-contrast. StructuredMedium voxelizes the materials; RandomMedium samples a
+contrast. StructuredMedium voxelizes the materials; GaussianMedium samples a
 statistical refractive index field. Both produce the same Volume representation.
 
 .. list-table:: Symbols and their API counterparts
@@ -385,7 +385,7 @@ Consequently ``solve_cut`` does not infer integrated coefficients from a cut.
 Random fields and Whittle–Matérn covariance
 -------------------------------------------
 
-RandomMedium describes a stationary isotropic **Gaussian probability field**
+GaussianMedium describes a stationary isotropic **Gaussian probability field**
 with ensemble mean zero and point variance :math:`\sigma_n^2`.
 The covariance describes spatial correlations:
 :math:`C_n(r)=\langle\delta n(\mathbf x)\delta n(\mathbf x+\mathbf r)\rangle`.
@@ -466,9 +466,8 @@ Fourier transform of the finite windowed field. For a sample window W,
 
 The finite window matters even after averaging many realizations. Changing the
 box size and changing the number of samples therefore address different errors.
-The existing AnalyticalMedium path describes infinite-medium first-order
-Gaussian or exponential models; it is distinct from these finite simulations.
-This section introduces no additional analytical solver.
+Infinite-medium first-order formulas are retained only as test references;
+the public solver computes finite-volume Born calculations.
 
 Ensembles and uncertainty
 -------------------------

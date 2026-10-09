@@ -31,7 +31,7 @@ The two spheres are nonoverlapping. Their material refractive index is 1.34 in a
 background; all calculations retain the linearized dielectric contrast.
 A 20 nm voxel grid is illustrative, not a claim of converged sphere geometry.
 
-.. GENERATED FROM PYTHON SOURCE LINES 15-134
+.. GENERATED FROM PYTHON SOURCE LINES 15-99
 
 .. code-block:: Python
 
@@ -70,22 +70,36 @@ A 20 nm voxel grid is illustrative, not a claim of converged sphere geometry.
 
     right = sphere.translated(offset=(100, 40, 0) * ureg.nanometer)
 
+    source_configuration_1 = Source(wavelength=633 * ureg.nanometer)
+
     solver = Solver(
-        source=Source(wavelength=633 * ureg.nanometer),
+        source=source_configuration_1,
         sampling=sampling,
         order=1,
     )
 
+    volumes_by_arrangement = {}
+
     results = []
 
-    for shapes in ((sphere,), (translated,), (left, right)):
-        medium = StructuredMedium(background_refractive_index=1.33)
+    for shapes, medium_label in (
+        ((sphere,), "Centred sphere"),
+        ((translated,), "Translated sphere"),
+        ((left, right), "Nonoverlapping sphere pair"),
+    ):
+        medium = StructuredMedium()
+
+        medium.add_background(refractive_index=1.33)
 
         medium.add_structures(*shapes)
 
         volume = medium.to_volume(grid=grid)
 
-        results.append(solver.solve(target=volume))
+        volumes_by_arrangement[medium_label] = volume
+
+        result = solver.solve(target=volume)
+
+        results.append(result)
 
     centred_result, translated_result, pair_result = results
 
@@ -103,6 +117,29 @@ A 20 nm voxel grid is illustrative, not a claim of converged sphere geometry.
         rtol=1e-10,
         atol=centred_result.differential.magnitude.max() * 1e-12,
     )
+
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    Maximum translation intensity difference / peak: 2.981e-15
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 100-102
+
+Compare spatial slices and directional scattering
+-------------------------------------------------
+
+.. GENERATED FROM PYTHON SOURCE LINES 102-153
+
+.. code-block:: Python
 
     figure, axes = plt.subplots(1, 3, figsize=(15, 4.5), layout="constrained")
 
@@ -157,29 +194,126 @@ A 20 nm voxel grid is illustrative, not a claim of converged sphere geometry.
 
 
 
+
 .. image-sg:: /auto_examples/structured_media/images/sphx_glr_theory_directional_interference_001.png
    :alt: Two spheres: spatial refractive index slice, Pair: full directional phase density, Selected meridians
    :srcset: /auto_examples/structured_media/images/sphx_glr_theory_directional_interference_001.png
    :class: sphx-glr-single-img
 
 
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    Maximum translation intensity difference / peak: 2.981e-15
 
 
 
+.. GENERATED FROM PYTHON SOURCE LINES 154-157
 
-.. GENERATED FROM PYTHON SOURCE LINES 135-139
+Centred sphere in 3D
+--------------------
+Show one finite input sample with its physical spatial axes.
+
+.. GENERATED FROM PYTHON SOURCE LINES 157-169
+
+.. code-block:: Python
+
+    preview_volume = volumes_by_arrangement["Centred sphere"]
+
+    medium_figure = preview_volume.plot_3d(
+        backend="matplotlib",
+        mode="voxels",
+        field="refractive_index",
+    )
+
+    medium_figure.suptitle("Centred sphere")
+
+    plt.show()
+
+
+
+
+.. image-sg:: /auto_examples/structured_media/images/sphx_glr_theory_directional_interference_002.png
+   :alt: Centred sphere, Refractive index n: voxels
+   :srcset: /auto_examples/structured_media/images/sphx_glr_theory_directional_interference_002.png
+   :class: sphx-glr-single-img
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 170-173
+
+Translated sphere in 3D
+-----------------------
+Show one finite input sample with its physical spatial axes.
+
+.. GENERATED FROM PYTHON SOURCE LINES 173-185
+
+.. code-block:: Python
+
+    preview_volume = volumes_by_arrangement["Translated sphere"]
+
+    medium_figure = preview_volume.plot_3d(
+        backend="matplotlib",
+        mode="voxels",
+        field="refractive_index",
+    )
+
+    medium_figure.suptitle("Translated sphere")
+
+    plt.show()
+
+
+
+
+.. image-sg:: /auto_examples/structured_media/images/sphx_glr_theory_directional_interference_003.png
+   :alt: Translated sphere, Refractive index n: voxels
+   :srcset: /auto_examples/structured_media/images/sphx_glr_theory_directional_interference_003.png
+   :class: sphx-glr-single-img
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 186-189
+
+Nonoverlapping sphere pair in 3D
+--------------------------------
+Show one finite input sample with its physical spatial axes.
+
+.. GENERATED FROM PYTHON SOURCE LINES 189-201
+
+.. code-block:: Python
+
+    preview_volume = volumes_by_arrangement["Nonoverlapping sphere pair"]
+
+    medium_figure = preview_volume.plot_3d(
+        backend="matplotlib",
+        mode="voxels",
+        field="refractive_index",
+    )
+
+    medium_figure.suptitle("Nonoverlapping sphere pair")
+
+    plt.show()
+
+
+
+
+.. image-sg:: /auto_examples/structured_media/images/sphx_glr_theory_directional_interference_004.png
+   :alt: Nonoverlapping sphere pair, Refractive index n: voxels
+   :srcset: /auto_examples/structured_media/images/sphx_glr_theory_directional_interference_004.png
+   :class: sphx-glr-single-img
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 202-206
 
 Three-dimensional directional phase density
 -------------------------------------------
 Inspect the pair's direction-space surface separately from the spatial
 slice and meridian comparisons above, without azimuth averaging.
 
-.. GENERATED FROM PYTHON SOURCE LINES 139-147
+.. GENERATED FROM PYTHON SOURCE LINES 206-214
 
 .. code-block:: Python
 
@@ -205,7 +339,7 @@ slice and meridian comparisons above, without azimuth averaging.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 4.939 seconds)
+   **Total running time of the script:** (0 minutes 3.081 seconds)
 
 
 .. _sphx_glr_download_auto_examples_structured_media_theory_directional_interference.py:

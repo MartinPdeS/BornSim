@@ -16,12 +16,14 @@ does not recenter or rescale each realization to impose its mean or variance.
 Finite voxel resolution and the cropped synthesis box also affect statistics.
 """
 
+from bornsim.medium.random_medium import GaussianMedium, ExponentialMedium
+
 import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from bornsim import Grid, RandomMedium
+from bornsim import Grid
 from bornsim.units import ureg
 
 grid_shape = (16, 16, 16)
@@ -49,12 +51,15 @@ gaussian_probability_density = np.exp(-(refractive_index_fluctuations**2) / (2 *
 volumes_by_covariance = {}
 
 for covariance_model in ("gaussian", "exponential"):
-    random_medium = RandomMedium(
+    medium_type = {
+        "gaussian": GaussianMedium,
+        "exponential": ExponentialMedium,
+    }[covariance_model]
+
+    random_medium = medium_type(
         refractive_index_std=refractive_index_std,
         correlation_length=75 * ureg.nanometer,
-        correlation=covariance_model,
         background_refractive_index=1.33,
-        smoothness=1.5,
     )
 
     sampled_volume = random_medium.to_volume(

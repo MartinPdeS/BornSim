@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Examples &#8212; BornSim 0.2.7 documentation</title>
+    <title>Examples &#8212; BornSim 0.2.8 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="_static/documentation_options.js?v=58050c01"></script>
+    <script src="_static/documentation_options.js?v=b01fafc3"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/sg-tags.js?v=d80f6fa4"></script>
@@ -65,7 +65,7 @@
     <link rel="prev" title="BornSim" href="overview.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.7" />
+  <meta name="docsearch:version" content="0.2.8" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -479,6 +479,12 @@
 <h1>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h1>
 <p>Browse runnable examples by topic: random media, structured media, Born orders
 and interference, plotting and saving results, and numerical validation.
+Each gallery example includes a three-dimensional view of its input medium.
+Ensemble examples show a labelled seeded realization on the calculation grid;
+that view is one finite sample, rather than the ensemble average. Comparisons
+of covariance models, correlation lengths, or sphere arrangements show each
+medium separately. Each figure has its own code cell and output, including
+individual three-dimensional views in comparisons.
 The <a class="reference internal" href="medium_visualization.html"><span class="doc">Medium visualization</span></a> guide explains how to inspect input voxel
 fields and choose spatial views.</p>
 <div class="toctree-wrapper compound">
@@ -543,14 +549,14 @@ Medium visualization</div>
 </div>
 <section id="random-media">
 <h2>Random media<a class="headerlink" href="#random-media" title="Link to this heading">#</a></h2>
-<p>Start with <a class="reference internal" href="auto_examples/random_media/analytical_scattering.html"><span class="doc">Analytical scattering with physical units</span></a> for unitful optical
-properties and <a class="reference internal" href="auto_examples/random_media/wavelength_dependence.html"><span class="doc">Wavelength dependence of scattering and anisotropy</span></a> for a wavelength
-sweep of total scattering, reduced scattering, and anisotropy. The sweep
-holds the material parameters constant and compares the short-correlation
-limit with a longer covariance length.</p>
+<p><a class="reference internal" href="auto_examples/random_media/random_spheres.html"><span class="doc">Random nonoverlapping spheres</span></a> generates seeded, fully contained
+nonoverlapping spheres with an explicit count, radius, and refractive indices.</p>
+<p>Start with <a class="reference internal" href="auto_examples/random_media/random_medium.html"><span class="doc">Visualize seeded three-dimensional random media</span></a> for seeded samples,
+and <a class="reference internal" href="auto_examples/random_media/wavelength_dependence.html"><span class="doc">Wavelength dependence of scattering and anisotropy</span></a> for numerical
+finite-sample ensemble coefficients across wavelengths.</p>
 <p><a class="reference internal" href="auto_examples/random_media/covariance_models.html"><span class="doc">Gaussian and exponential spatial covariance</span></a> compares Gaussian and exponential
 spatial covariance at the same length parameter, showing both covariance
-profiles and their analytical phase functions. These length parameters have
+profiles and their numerical ensemble phase functions. These length parameters have
 different definitions; equal values do not describe identical statistics.</p>
 <p><a class="reference internal" href="auto_examples/random_media/random_medium.html"><span class="doc">Visualize seeded three-dimensional random media</span></a> leads with interactive Gaussian
 and exponential volumes whose higher refractive index regions are more opaque. Central
@@ -561,7 +567,7 @@ exactly the ensemble mean or variance.</p>
 </section>
 <section id="structured-media">
 <h2>Structured media<a class="headerlink" href="#structured-media" title="Link to this heading">#</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">Medium</span></code> is the abstract interface. <code class="docutils literal notranslate"><span class="pre">RandomMedium</span></code> describes statistically
+<p><code class="docutils literal notranslate"><span class="pre">Medium</span></code> is the abstract interface. <code class="docutils literal notranslate"><span class="pre">GaussianMedium</span></code> describes statistically
 homogeneous fluctuations; <code class="docutils literal notranslate"><span class="pre">StructuredMedium</span></code> composes geometric materials. <code class="docutils literal notranslate"><span class="pre">Volume</span></code> accepts an explicit
 three-dimensional field and can therefore represent spatially structured
 media. Its background refractive index is uniform, while its fluctuation array may vary
@@ -621,17 +627,17 @@ needed for phase normalization. Their differential scattering and field-term
 norms can still be plotted directly.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
-<span class="n">result</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>  <span class="c1"># Differential scattering</span>
+<span class="n">result</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 
-<span class="n">result</span><span class="o">.</span><span class="n">plot_phase_function</span><span class="p">()</span>  <span class="c1"># Density per steradian</span>
+<span class="n">result</span><span class="o">.</span><span class="n">plot_phase_function</span><span class="p">()</span>
 
-<span class="n">result</span><span class="o">.</span><span class="n">plot_phase_function</span><span class="p">(</span><span class="n">view</span><span class="o">=</span><span class="s2">"polar"</span><span class="p">)</span>
+<span class="n">result</span><span class="o">.</span><span class="n">plot_phase_function</span><span class="p">(</span><span class="n">view</span><span class="o">=</span><span class="s1">'polar'</span><span class="p">)</span>
 
-<span class="n">phase_figure</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">plot_phase_function</span><span class="p">(</span><span class="n">view</span><span class="o">=</span><span class="s2">"3d"</span><span class="p">)</span>
+<span class="n">phase_figure</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">plot_phase_function</span><span class="p">(</span><span class="n">view</span><span class="o">=</span><span class="s1">'3d'</span><span class="p">)</span>
 
 <span class="n">phase_figure</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-<span class="n">numerical</span><span class="o">.</span><span class="n">plot_field_norms</span><span class="p">()</span>  <span class="c1"># Per-realization diagnostics</span>
+<span class="n">numerical</span><span class="o">.</span><span class="n">plot_field_norms</span><span class="p">()</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
@@ -672,7 +678,7 @@ separate from solid-angle quadrature.</p></li>
 <li><p><a class="reference internal" href="auto_examples/validation/ensemble_sampling.html"><span class="doc">Realization count and sampling uncertainty</span></a> increases independent realization
 count at fixed geometry. Standard errors describe sampling uncertainty;
 they do not include discretization or finite-size error.</p></li>
-<li><p><a class="reference internal" href="auto_examples/validation/finite_size_comparison.html"><span class="doc">Finite samples and analytical first-order scattering</span></a> compares first-order finite
+<li><p><a class="reference internal" href="auto_examples/validation/finite_size_comparison.html"><span class="doc">Finite-sample size convergence</span></a> compares first-order finite
 ensembles of increasing size with the analytical infinite-medium model.
 Finite windows, spectral synthesis, and limited resolution can produce
 differences that remain outside the sampling error bars.</p></li>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bornsim.series &#8212; BornSim 0.2.7 documentation</title>
+    <title>bornsim.series &#8212; BornSim 0.2.8 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=58050c01"></script>
+    <script src="../../_static/documentation_options.js?v=b01fafc3"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -61,7 +61,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.7" />
+  <meta name="docsearch:version" content="0.2.8" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -474,13 +474,9 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    grid : Grid, optional</span>
+<span class="sd">    grid : Grid</span>
 <span class="sd">        Shared spatial configuration, also used by the input Volume.</span>
-<span class="sd">        Cannot be combined with legacy shape or spacing keywords.</span>
-<span class="sd">    shape : tuple of int, optional</span>
-<span class="sd">        Three grid dimensions, each from 2 to 32.</span>
-<span class="sd">    spacing : Quantity, optional</span>
-<span class="sd">        Positive cubic voxel width; explicit length units are required.</span>
+<span class="sd">        Required for generation and scattering.</span>
 <span class="sd">    background_refractive_index : float</span>
 <span class="sd">        Positive uniform background refractive index, dimensionless.</span>
 <span class="sd">    wavelength : Quantity</span>
@@ -512,9 +508,9 @@
 <span class="sd">    linearization is unchanged at higher orders.</span>
 <span class="sd">    """</span>
 
-    <span class="n">shape</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">spacing</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">grid</span><span class="p">:</span> <span class="n">Grid</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">grid</span><span class="p">:</span> <span class="n">Grid</span>
+    <span class="n">shape</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">spacing</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">background_refractive_index</span><span class="p">:</span> <span class="nb">float</span>
     <span class="n">wavelength</span><span class="p">:</span> <span class="n">Quantity</span>
     <span class="n">directions</span><span class="p">:</span> <span class="n">Directions</span>
@@ -524,17 +520,9 @@
     <span class="n">_incident_field</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">grid</span> <span class="o">=</span> <span class="n">Grid</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span>
-            <span class="n">grid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
-            <span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
-            <span class="n">spacing</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">spacing</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">Grid</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">)</span>
 
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"grid"</span><span class="p">,</span> <span class="n">grid</span><span class="p">)</span>
-
-        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"shape"</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-
-        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"spacing"</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">spacing</span><span class="p">)</span>
 
         <span class="n">volume</span> <span class="o">=</span> <span class="n">Volume</span><span class="p">(</span>
             <span class="n">delta_refractive_index</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span>
@@ -664,26 +652,28 @@
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; from bornsim.units import ureg</span>
-<span class="sd">        &gt;&gt;&gt; from bornsim import BornSeries, RandomMedium</span>
+<span class="sd">        &gt;&gt;&gt; from bornsim import Directions, Grid, GaussianMedium</span>
+<span class="sd">        &gt;&gt;&gt; from bornsim.series import BornSeries</span>
 <span class="sd">        ...</span>
 <span class="sd">        ...</span>
-<span class="sd">        &gt;&gt;&gt; medium = RandomMedium(</span>
-<span class="sd">        ...     correlation="gaussian",</span>
+<span class="sd">        &gt;&gt;&gt; medium = GaussianMedium(</span>
 <span class="sd">        ...     background_refractive_index=1.33,</span>
 <span class="sd">        ...     refractive_index_std=0.01,</span>
 <span class="sd">        ...     correlation_length=100e-9 * ureg.meter,</span>
 <span class="sd">        ... )</span>
 
 <span class="sd">        ...</span>
-<span class="sd">        &gt;&gt;&gt; volume = medium.to_volume(</span>
+<span class="sd">        &gt;&gt;&gt; grid = Grid(</span>
 <span class="sd">        ...     shape=(2, 2, 2),</span>
+<span class="sd">        ...     spacing=50 * ureg.nanometer,</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; volume = medium.to_volume(</span>
+<span class="sd">        ...     grid=grid,</span>
 <span class="sd">        ...     seed=42,</span>
-<span class="sd">        ...     spacing=50e-9 * ureg.meter,</span>
 <span class="sd">        ... )</span>
 <span class="sd">        &gt;&gt;&gt; directions = Directions(vectors=[[0.0, 0.0, 1.0]])</span>
 <span class="sd">        &gt;&gt;&gt; engine = BornSeries(</span>
-<span class="sd">        ...     shape=volume.delta_refractive_index.shape,</span>
-<span class="sd">        ...     spacing=volume.spacing,</span>
+<span class="sd">        ...     grid=grid,</span>
 <span class="sd">        ...     background_refractive_index=volume.background_refractive_index,</span>
 <span class="sd">        ...     wavelength=633 * ureg.nanometer,</span>
 <span class="sd">        ...     directions=directions,</span>

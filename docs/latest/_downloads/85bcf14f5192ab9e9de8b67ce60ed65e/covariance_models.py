@@ -12,21 +12,28 @@ refractive-index fluctuations vary together as that distance increases.
 
 Both random-volume generators use Gaussian probability distributions; the
 covariance choice describes spatial correlations. The phase functions below
-come from the analytical infinite-medium first-order model and are normalized
+come from numerical first-order finite-sample ensembles and are normalized
 per steradian, not per degree.
 """
+
+from bornsim.medium.random_medium import GaussianMedium, ExponentialMedium
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from bornsim import AngularSampling, AnalyticalMedium, Solver, Source
+from bornsim import AngularSampling, EnsembleSampling, Grid, Solver, Source
 from bornsim.units import ureg
 
 correlation_length = 120 * ureg.nanometer
 
 distance_between_points = np.linspace(0, 500, 301) * ureg.nanometer
 
-solver = Solver(source=Source(wavelength=633 * ureg.nanometer))
+source_configuration_1 = Source(wavelength=633 * ureg.nanometer)
+
+solver = Solver(
+    source=source_configuration_1,
+    order=1,
+)
 
 sampling = AngularSampling(
     start=0 * ureg.degree,
@@ -34,16 +41,43 @@ sampling = AngularSampling(
     n_points=181,
 )
 
+grid = Grid(
+    shape=(6, 6, 6),
+    spacing=40 * ureg.nanometer,
+)
+
+ensemble_sampling = EnsembleSampling(
+    realizations=8,
+    seed=42,
+)
+
+preview_volumes = {}
+
+
+# %%
+# Compare numerical scattering
+# ----------------------------
 figure, (covariance_axis, phase_axis) = plt.subplots(1, 2, figsize=(11, 4), layout="constrained")
 
 for correlation, color in (("gaussian", "C0"), ("exponential", "C1")):
-    medium = AnalyticalMedium(
+    medium_type = {
+        "gaussian": GaussianMedium,
+        "exponential": ExponentialMedium,
+    }[correlation]
+
+    medium = medium_type(
         refractive_index_std=0.01,
         correlation_length=correlation_length,
-        correlation=correlation,
         background_refractive_index=1.33,
-        smoothness=1.5,
     )
+
+    # Show the first ensemble realization on the same grid used for scattering.
+    preview_volume = medium.to_volume(
+        grid=grid,
+        seed=ensemble_sampling.seeds[0],
+    )
+
+    preview_volumes[correlation] = preview_volume
 
     distance_over_correlation_length = (distance_between_points / correlation_length).to("dimensionless").magnitude
 
@@ -53,8 +87,10 @@ for correlation, color in (("gaussian", "C0"), ("exponential", "C1")):
         else np.exp(-distance_over_correlation_length)
     )
 
-    result = solver.solve(
-        target=medium,
+    result = solver.ensemble(
+        medium=medium,
+        grid=grid,
+        ensemble_sampling=ensemble_sampling,
         sampling=sampling,
     )
 
@@ -86,5 +122,37 @@ for axis in (covariance_axis, phase_axis):
     axis.legend(frameon=False)
 
 figure.suptitle("Same ℓ = 120 nm and σn = 0.01; different covariance models")
+
+plt.show()
+
+# %%
+# Gaussian medium in 3D
+# ---------------------
+# Show one finite input sample with its physical spatial axes.
+preview_volume = preview_volumes["gaussian"]
+
+medium_figure = preview_volume.plot_3d(
+    backend="matplotlib",
+    mode="slices",
+    field="refractive_index",
+)
+
+medium_figure.suptitle(f"Gaussian medium · seed {ensemble_sampling.seeds[0]}")
+
+plt.show()
+
+# %%
+# Exponential medium in 3D
+# ------------------------
+# Show one finite input sample with its physical spatial axes.
+preview_volume = preview_volumes["exponential"]
+
+medium_figure = preview_volume.plot_3d(
+    backend="matplotlib",
+    mode="slices",
+    field="refractive_index",
+)
+
+medium_figure.suptitle(f"Exponential medium · seed {ensemble_sampling.seeds[0]}")
 
 plt.show()

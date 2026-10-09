@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>A dielectric sphere in a homogeneous background &#8212; BornSim 0.2.7 documentation</title>
+    <title>A dielectric sphere in a homogeneous background &#8212; BornSim 0.2.8 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=58050c01"></script>
+    <script src="../../_static/documentation_options.js?v=b01fafc3"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -64,7 +64,7 @@
     <link rel="prev" title="Structured media" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.7" />
+  <meta name="docsearch:version" content="0.2.8" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -552,7 +552,7 @@ on every axis to avoid clipping. Grid-aligned offsets translate the same mask.</
 </span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.geometry.Sphere" title="bornsim.Sphere"><span class="n">sphere</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.geometry.Sphere" title="bornsim.Sphere"><span class="n">Sphere</span></a><span class="p">(</span><span class="w">
 </span>    <span class="n">radius</span><span class="o">=</span><span class="mi">150</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span><span class="w">
 </span>    <span class="n">material</span><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.material.Material" title="bornsim.Material"><span class="n">sphere_material</span></a><span class="p">,</span><span class="w">
-</span>    <span class="n">centre</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mi">00</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">]</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span><span class="w">
+</span>    <span class="n">centre</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">]</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
 </span><span class="w">
 </span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.geometry.StructuredMedium.add_structures" title="bornsim.StructuredMedium.add_structures"><span class="n">structure</span><span class="o">.</span><span class="n">add_structures</span></a><span class="p">(</span><span class="w">
@@ -585,8 +585,10 @@ Level surfaces interpolate the sampled staircase interface.</p>
 divided by the entire voxel-box volume. Multiplying by that physical volume
 recovers a differential cross section, which avoids treating the empty
 background portion of the box as part of an intrinsic transport coefficient.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.solver.Solver" title="bornsim.Solver"><span class="n">solver</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.solver.Solver" title="bornsim.Solver"><span class="n">Solver</span></a><span class="p">(</span><span class="w">
-</span>    <span class="n">source</span><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">Source</span></a><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mi">633</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">)</span><span class="p">,</span><span class="w">
+<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">source_configuration_1</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">Source</span></a><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mi">633</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.solver.Solver" title="bornsim.Solver"><span class="n">solver</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.solver.Solver" title="bornsim.Solver"><span class="n">Solver</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">source</span><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">source_configuration_1</span></a><span class="p">,</span><span class="w">
 </span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.sampling.AngularSampling" title="bornsim.AngularSampling"><span class="n">sampling</span></a><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.sampling.AngularSampling" title="bornsim.AngularSampling"><span class="n">sampling</span></a><span class="p">,</span><span class="w">
 </span>    <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
@@ -622,7 +624,7 @@ The curve keeps the full solve’s solid-angle normalization.</p>
 </span><span class="w">
 </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<img src="../../_images/sphx_glr_dielectric_sphere_001.png" srcset="../../_images/sphx_glr_dielectric_sphere_001.png" alt="Directional finite-sample phase function · meridian phi = 90 degrees" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 5.831 seconds)</p>
+<img src="../../_images/sphx_glr_dielectric_sphere_001.png" srcset="../../_images/sphx_glr_dielectric_sphere_001.png" alt="Directional finite-sample phase function · meridian phi = 90 degrees" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 2.769 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-structured-media-dielectric-sphere-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/db36cb6e5825640fc1c782910929c665/dielectric_sphere.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">dielectric_sphere.ipynb</span></code></a></p>

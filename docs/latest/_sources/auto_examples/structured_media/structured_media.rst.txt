@@ -32,18 +32,19 @@ smoothness convention is ``x=sqrt(2*nu)*r/ell``; probability statistics remain
 Gaussian. A composed manual volume does not retain inferred generation
 metadata: keep the ingredients and seed for reproducibility.
 
-.. GENERATED FROM PYTHON SOURCE LINES 16-83
+.. GENERATED FROM PYTHON SOURCE LINES 16-82
 
 .. code-block:: Python
 
+
+    from bornsim.medium.random_medium import WhittleMaternMedium
 
     import sys
 
     import matplotlib.pyplot as plt
     import numpy as np
 
-    from bornsim import Grid, Layer, RandomMedium, Solver, Source, Sphere, StructuredMedium, Volume
-    from bornsim.media import random_volume
+    from bornsim import Grid, Layer, Solver, Source, Sphere, StructuredMedium, Volume
     from bornsim.units import ureg
 
     grid = Grid(
@@ -83,16 +84,14 @@ metadata: keep the ingredients and seed for reproducibility.
         grid=grid,
     )
 
-    statistics = RandomMedium(
+    statistics = WhittleMaternMedium(
         refractive_index_std=0.002,
         correlation_length=5e-08 * ureg.meter,
         smoothness=1.5,
         background_refractive_index=1.33,
-        correlation="matern",
     )
 
-    fluctuations = random_volume(
-        medium=statistics,
+    fluctuations = statistics.to_volume(
         grid=grid,
         seed=42,
     )
@@ -110,14 +109,14 @@ metadata: keep the ingredients and seed for reproducibility.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 84-88
+.. GENERATED FROM PYTHON SOURCE LINES 83-87
 
 Inspect the structured medium in 3D
 -----------------------------------
 Inspect the deterministic layers and sphere before adding fluctuations.
 Drag to rotate and scroll to zoom in the embedded browser volume.
 
-.. GENERATED FROM PYTHON SOURCE LINES 88-97
+.. GENERATED FROM PYTHON SOURCE LINES 87-96
 
 .. code-block:: Python
 
@@ -141,7 +140,7 @@ Drag to rotate and scroll to zoom in the embedded browser volume.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 98-103
+.. GENERATED FROM PYTHON SOURCE LINES 97-102
 
 Inspect the combined medium in 3D
 ---------------------------------
@@ -149,7 +148,7 @@ This interactive volume shows the sampled refractive index used by the solver,
 including the same seeded Matérn fluctuations as the scattering curves.
 Regions with higher refractive index are more opaque; opacity is a display setting.
 
-.. GENERATED FROM PYTHON SOURCE LINES 103-112
+.. GENERATED FROM PYTHON SOURCE LINES 102-111
 
 .. code-block:: Python
 
@@ -173,13 +172,13 @@ Regions with higher refractive index are more opaque; opacity is a display setti
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 113-116
+.. GENERATED FROM PYTHON SOURCE LINES 112-115
 
 Scattering curves and a diagnostic cross-section
 --------------------------------------------------
 The slice checks exact voxel values after exploring the full volumes above.
 
-.. GENERATED FROM PYTHON SOURCE LINES 116-153
+.. GENERATED FROM PYTHON SOURCE LINES 115-154
 
 .. code-block:: Python
 
@@ -196,8 +195,10 @@ The slice checks exact voxel values after exploring the full volumes above.
 
     figure.colorbar(image, ax=axes[0], label="Refractive index")
 
+    source_configuration_1 = Source(wavelength=633 * ureg.nanometer)
+
     solver = Solver(
-        source=Source(wavelength=633 * ureg.nanometer),
+        source=source_configuration_1,
         order=3,
     )
 
@@ -235,7 +236,7 @@ The slice checks exact voxel values after exploring the full volumes above.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.468 seconds)
+   **Total running time of the script:** (0 minutes 0.229 seconds)
 
 
 .. _sphx_glr_download_auto_examples_structured_media_structured_media.py:

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Analytical scattering with physical units &#8212; BornSim 0.2.7 documentation</title>
+    <title>Random nonoverlapping spheres &#8212; BornSim 0.2.8 documentation</title>
   
   
   
@@ -43,12 +43,12 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=58050c01"></script>
+    <script src="../../_static/documentation_options.js?v=b01fafc3"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/random_media/analytical_scattering';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/random_media/random_spheres';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.19.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/BornSim/documentation_page/version_switcher.json';
@@ -64,7 +64,7 @@
     <link rel="prev" title="Random media" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.7" />
+  <meta name="docsearch:version" content="0.2.8" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -466,7 +466,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">Random media</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Analytical scattering with physical units</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Random nonoverlapping spheres</span></li>
   </ul>
 </nav>
 </div>
@@ -485,50 +485,67 @@
                   
   <div class="sphx-glr-download-link-note admonition note">
 <p class="admonition-title">Note</p>
-<p><a class="reference internal" href="#sphx-glr-download-auto-examples-random-media-analytical-scattering-py"><span class="std std-ref">Go to the end</span></a>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-random-media-random-spheres-py"><span class="std std-ref">Go to the end</span></a>
 to download the full example code.</p>
 </div>
-<section class="sphx-glr-example-title" id="analytical-scattering-with-physical-units">
-<span id="sphx-glr-auto-examples-random-media-analytical-scattering-py"></span><h1>Analytical scattering with physical units<a class="headerlink" href="#analytical-scattering-with-physical-units" title="Link to this heading">#</a></h1>
-<p>Compute first-order infinite-medium optical properties using TypedUnit quantities.</p>
-<img src="../../_images/sphx_glr_analytical_scattering_001.png" srcset="../../_images/sphx_glr_analytical_scattering_001.png" alt="Analytical scattering · meridian phi = 0 degrees" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>mu_s = 1.7217e-06 / nm, g = 0.55485 dimensionless, mu_s_prime = 7.6644e-07 / nm
+<section class="sphx-glr-example-title" id="random-nonoverlapping-spheres">
+<span id="sphx-glr-auto-examples-random-media-random-spheres-py"></span><h1>Random nonoverlapping spheres<a class="headerlink" href="#random-nonoverlapping-spheres" title="Link to this heading">#</a></h1>
+<p>Generate a reproducible collection of identical spheres in a uniform background.
+Sphere centres are proposed uniformly within the part of the box that keeps each
+sphere fully inside. Overlapping proposals are rejected; the generator raises an
+error if it cannot place every requested sphere within its attempt limit.
+This is sequential placement, rather than an equilibrium hard-sphere model.</p>
+<p>The plotted medium samples material at voxel centres. Choose a spacing fine enough
+to resolve each sphere, and use small refractive index contrast for Born scattering.</p>
+<img src="../../_images/sphx_glr_random_spheres_001.png" srcset="../../_images/sphx_glr_random_spheres_001.png" alt="Refractive index n: voxels" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Generated 12 nonoverlapping spheres with radius 40 nm.
 </pre></div>
 </div>
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="nn">.</span><span class="nn">pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span><span class="w">
-</span><span class="w">
-</span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.model.AnalyticalMedium" title="bornsim.AnalyticalMedium"><span class="n">AnalyticalMedium</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.solver.Solver" title="bornsim.Solver"><span class="n">Solver</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">Source</span></a><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">Grid</span></a><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="nn">.</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_spheres.RandomSphereMedium" title="bornsim.RandomSphereMedium"><span class="nn">medium</span></a><span class="nn">.</span><span class="nn">random_spheres</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.medium.random_spheres.RandomSphereMedium" title="bornsim.RandomSphereMedium"><span class="n">RandomSphereMedium</span></a><span class="w">
 </span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="nn">.</span><span class="nn">units</span><span class="w"> </span><span class="kn">import</span> <span class="n">ureg</span><span class="w">
 </span><span class="w">
-</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.model.AnalyticalMedium" title="bornsim.AnalyticalMedium"><span class="n">medium</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.model.AnalyticalMedium" title="bornsim.AnalyticalMedium"><span class="n">AnalyticalMedium</span></a><span class="p">(</span><span class="w">
-</span>    <span class="n">background_refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span><span class="w">
-</span>    <span class="n">refractive_index_std</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span><span class="w">
-</span>    <span class="n">correlation_length</span><span class="o">=</span><span class="mi">100</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span><span class="w">
-</span>    <span class="n">correlation</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">gaussian</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">Grid</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <span class="n">spacing</span><span class="o">=</span><span class="mi">25</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
 </span><span class="w">
-</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.solver.Solver" title="bornsim.Solver"><span class="n">solver</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.solver.Solver" title="bornsim.Solver"><span class="n">Solver</span></a><span class="p">(</span><span class="n">source</span><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">Source</span></a><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mi">633</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_spheres.RandomSphereMedium" title="bornsim.RandomSphereMedium"><span class="n">medium</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.medium.random_spheres.RandomSphereMedium" title="bornsim.RandomSphereMedium"><span class="n">RandomSphereMedium</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">background_refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span><span class="w">
+</span>    <span class="n">sphere_refractive_index</span><span class="o">=</span><span class="mf">1.35</span><span class="p">,</span><span class="w">
+</span>    <span class="n">radius</span><span class="o">=</span><span class="mi">40</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span><span class="w">
+</span>    <span class="n">sphere_count</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
 </span><span class="w">
-</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.results.Result" title="bornsim.Result"><span class="n">result</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.solver.Solver.solve" title="bornsim.Solver.solve"><span class="n">solver</span><span class="o">.</span><span class="n">solve</span></a><span class="p">(</span><span class="n">target</span><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.model.AnalyticalMedium" title="bornsim.AnalyticalMedium"><span class="n">medium</span></a><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">volume</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.medium.random_spheres.RandomSphereMedium.to_volume" title="bornsim.RandomSphereMedium.to_volume"><span class="n">medium</span><span class="o">.</span><span class="n">to_volume</span></a><span class="p">(</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="p">,</span><span class="w">
+</span>    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
 </span><span class="w">
-</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">mu_s = </span><span class="si">{</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-property reference internal" href="../../api.html#bornsim.results.Result.mu_s" title="bornsim.Result.mu_s"><span class="n">result</span><span class="o">.</span><span class="n">mu_s</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">~.5g</span><span class="si">}</span><span class="s2">, g = </span><span class="si">{</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.results.Result" title="bornsim.Result"><span class="n">result</span></a><span class="o">.</span><span class="n">g</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.5g</span><span class="si">}</span><span class="s2">, mu_s_prime = </span><span class="si">{</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.results.Result" title="bornsim.Result"><span class="n">result</span></a><span class="o">.</span><span class="n">mu_s_prime</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">~.5g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="n">figure</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.volume.Volume.plot_3d" title="bornsim.Volume.plot_3d"><span class="n">volume</span><span class="o">.</span><span class="n">plot_3d</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">matplotlib</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">voxels</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">field</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">refractive_index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
 </span><span class="w">
-</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.results.Result.plot" title="bornsim.Result.plot"><span class="n">result</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Generated </span><span class="si">{</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_spheres.RandomSphereMedium" title="bornsim.RandomSphereMedium"><span class="n">medium</span></a><span class="o">.</span><span class="n">sphere_count</span><span class="si">}</span><span class="s2"> nonoverlapping spheres with radius </span><span class="si">{</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_spheres.RandomSphereMedium" title="bornsim.RandomSphereMedium"><span class="n">medium</span></a><span class="o">.</span><span class="n">radius</span><span class="si">:</span><span class="s2">~P</span><span class="si">}</span><span class="s2">.</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span><span class="w">
 </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.231 seconds)</p>
-<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-random-media-analytical-scattering-py">
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.272 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-random-media-random-spheres-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
-<p><a class="reference download internal" download="" href="../../_downloads/f18dece86fe7a0dfb4357b37a8285865/analytical_scattering.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">analytical_scattering.ipynb</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../_downloads/5c244e2ac8d986d5c0ba594dd1774acb/random_spheres.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">random_spheres.ipynb</span></code></a></p>
 </div>
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><a class="reference download internal" download="" href="../../_downloads/1738bf9cc71894a848a8151a7c3d5f17/analytical_scattering.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">analytical_scattering.py</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../_downloads/c91c12ab7da79ff2b0f1bf916302c07c/random_spheres.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">random_spheres.py</span></code></a></p>
 </div>
 <div class="sphx-glr-download sphx-glr-download-zip docutils container">
-<p><a class="reference download internal" download="" href="../../_downloads/bf1f3d5354f2b6d2eaab5edf668762c0/analytical_scattering.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">analytical_scattering.zip</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../_downloads/28c860ccdd3c8bf94933a9506771f24b/random_spheres.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">random_spheres.zip</span></code></a></p>
 </div>
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
@@ -552,7 +569,7 @@ to download the full example code.</p>
   <div class="sidebar-secondary-item">
 
   <div class="tocsection sourcelink">
-    <a href="../../_sources/auto_examples/random_media/analytical_scattering.rst.txt">
+    <a href="../../_sources/auto_examples/random_media/random_spheres.rst.txt">
       <i class="fa-solid fa-file-lines"></i> Show Source
     </a>
   </div>

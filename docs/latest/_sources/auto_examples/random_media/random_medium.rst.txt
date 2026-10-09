@@ -34,17 +34,19 @@ histogram need not match the ensemble Gaussian density closely. BornSim
 does not recenter or rescale each realization to impose its mean or variance.
 Finite voxel resolution and the cropped synthesis box also affect statistics.
 
-.. GENERATED FROM PYTHON SOURCE LINES 18-71
+.. GENERATED FROM PYTHON SOURCE LINES 18-76
 
 .. code-block:: Python
 
+
+    from bornsim.medium.random_medium import GaussianMedium, ExponentialMedium
 
     import sys
 
     import matplotlib.pyplot as plt
     import numpy as np
 
-    from bornsim import Grid, RandomMedium
+    from bornsim import Grid
     from bornsim.units import ureg
 
     grid_shape = (16, 16, 16)
@@ -72,12 +74,15 @@ Finite voxel resolution and the cropped synthesis box also affect statistics.
     volumes_by_covariance = {}
 
     for covariance_model in ("gaussian", "exponential"):
-        random_medium = RandomMedium(
+        medium_type = {
+            "gaussian": GaussianMedium,
+            "exponential": ExponentialMedium,
+        }[covariance_model]
+
+        random_medium = medium_type(
             refractive_index_std=refractive_index_std,
             correlation_length=75 * ureg.nanometer,
-            correlation=covariance_model,
             background_refractive_index=1.33,
-            smoothness=1.5,
         )
 
         sampled_volume = random_medium.to_volume(
@@ -105,7 +110,7 @@ Finite voxel resolution and the cropped synthesis box also affect statistics.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 72-77
+.. GENERATED FROM PYTHON SOURCE LINES 77-82
 
 Gaussian volume with increasing opacity
 ---------------------------------------
@@ -113,7 +118,7 @@ View the full Gaussian sample first. The opacity ramp uses this sample's
 refractive index range; equal opacity across different samples need not mean equal refractive index.
 Pass ``--no-browser`` to run without opening tabs, as the docs builder does.
 
-.. GENERATED FROM PYTHON SOURCE LINES 77-89
+.. GENERATED FROM PYTHON SOURCE LINES 82-94
 
 .. code-block:: Python
 
@@ -140,14 +145,14 @@ Pass ``--no-browser`` to run without opening tabs, as the docs builder does.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 90-94
+.. GENERATED FROM PYTHON SOURCE LINES 95-99
 
 Exponential volume with increasing opacity
 ------------------------------------------
 Compare the exponential sample in its own interactive view with the same
 rendering settings. Correlation length conventions differ between models.
 
-.. GENERATED FROM PYTHON SOURCE LINES 94-106
+.. GENERATED FROM PYTHON SOURCE LINES 99-111
 
 .. code-block:: Python
 
@@ -174,14 +179,14 @@ rendering settings. Correlation length conventions differ between models.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 107-111
+.. GENERATED FROM PYTHON SOURCE LINES 112-116
 
 Secondary checks: central slices and one-point distributions
 ------------------------------------------------------------
 Slices show one sampled plane, while histograms describe the finite field's
 one-point distribution. Neither replaces the complete spatial volume above.
 
-.. GENERATED FROM PYTHON SOURCE LINES 111-155
+.. GENERATED FROM PYTHON SOURCE LINES 116-160
 
 .. code-block:: Python
 
@@ -244,7 +249,7 @@ one-point distribution. Neither replaces the complete spatial volume above.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.703 seconds)
+   **Total running time of the script:** (0 minutes 0.331 seconds)
 
 
 .. _sphx_glr_download_auto_examples_random_media_random_medium.py:

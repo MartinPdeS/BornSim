@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Save results and inspect calculation provenance &#8212; BornSim 0.2.7 documentation</title>
+    <title>Save results and inspect calculation provenance &#8212; BornSim 0.2.8 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=58050c01"></script>
+    <script src="../../_static/documentation_options.js?v=b01fafc3"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -64,7 +64,7 @@
     <link rel="prev" title="Result plots and interactive 3D views" href="result_plots.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.7" />
+  <meta name="docsearch:version" content="0.2.8" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -499,7 +499,9 @@ data files behind. For a persistent archive, pass your desired filename to
 original input voxel field. Retain manually supplied fields separately;
 generated-volume provenance records the medium and seed, with a field hash
 to identify the exact input. Exact regeneration depends on software versions.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span><span class="w">
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="nn">.</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_medium.GaussianMedium" title="bornsim.GaussianMedium"><span class="nn">medium</span></a><span class="nn">.</span><span class="nn">random_medium</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.medium.random_medium.GaussianMedium" title="bornsim.GaussianMedium"><span class="n">GaussianMedium</span></a><span class="w">
+</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span><span class="w">
 </span><span class="kn">from</span><span class="w"> </span><span class="nn">tempfile</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemporaryDirectory</span><span class="w">
 </span><span class="w">
 </span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span><span class="w">
@@ -507,8 +509,7 @@ to identify the exact input. Exact regeneration depends on software versions.</p
 </span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="nn">.</span><span class="nn">pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span><span class="w">
 </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span><span class="w">
 </span><span class="w">
-</span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">Grid</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.media.RandomMedium" title="bornsim.RandomMedium"><span class="n">RandomMedium</span></a><span class="p">,</span> <span class="n">Result</span><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.solver.Solver" title="bornsim.Solver"><span class="n">Solver</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">Source</span></a><span class="w">
-</span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="nn">.</span><span class="nn">media</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-function reference internal" href="../../api.html#bornsim.media.random_volume" title="bornsim.random_volume"><span class="n">random_volume</span></a><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">Grid</span></a><span class="p">,</span> <span class="n">Result</span><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.solver.Solver" title="bornsim.Solver"><span class="n">Solver</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">Source</span></a><span class="w">
 </span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="nn">.</span><span class="nn">units</span><span class="w"> </span><span class="kn">import</span> <span class="n">ureg</span><span class="w">
 </span><span class="w">
 </span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">Grid</span></a><span class="p">(</span><span class="w">
@@ -516,21 +517,21 @@ to identify the exact input. Exact regeneration depends on software versions.</p
 </span>    <span class="n">spacing</span><span class="o">=</span><span class="mi">40</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
 </span><span class="w">
-</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.media.RandomMedium" title="bornsim.RandomMedium"><span class="n">medium</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.media.RandomMedium" title="bornsim.RandomMedium"><span class="n">RandomMedium</span></a><span class="p">(</span><span class="w">
-</span>    <span class="n">correlation</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">gaussian</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_medium.GaussianMedium" title="bornsim.GaussianMedium"><span class="n">medium</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.medium.random_medium.GaussianMedium" title="bornsim.GaussianMedium"><span class="n">GaussianMedium</span></a><span class="p">(</span><span class="w">
 </span>    <span class="n">correlation_length</span><span class="o">=</span><span class="mi">80</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span><span class="w">
 </span>    <span class="n">background_refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span><span class="w">
 </span>    <span class="n">refractive_index_std</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
 </span><span class="w">
-</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">volume</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-function reference internal" href="../../api.html#bornsim.media.random_volume" title="bornsim.random_volume"><span class="n">random_volume</span></a><span class="p">(</span><span class="w">
-</span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.media.RandomMedium" title="bornsim.RandomMedium"><span class="n">medium</span></a><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.media.RandomMedium" title="bornsim.RandomMedium"><span class="n">medium</span></a><span class="p">,</span><span class="w">
+</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">volume</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim-medium-random_medium sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.medium.random_medium.RandomFieldMedium.to_volume" title="bornsim.medium.random_medium.RandomFieldMedium.to_volume"><span class="n">medium</span><span class="o">.</span><span class="n">to_volume</span></a><span class="p">(</span><span class="w">
 </span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="p">,</span><span class="w">
 </span>    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
 </span><span class="w">
+</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">source_configuration_1</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">Source</span></a><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mi">633</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.solver.Solver" title="bornsim.Solver"><span class="n">solver</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.solver.Solver" title="bornsim.Solver"><span class="n">Solver</span></a><span class="p">(</span><span class="w">
-</span>    <span class="n">source</span><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">Source</span></a><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mi">633</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <span class="n">source</span><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">source_configuration_1</span></a><span class="p">,</span><span class="w">
 </span>    <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
 </span><span class="w">
@@ -561,7 +562,7 @@ temporary directory is removed. Loading preserves the recorded versions.</p>
 </span><span class="w">
 </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Complex amplitudes retained: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">iscomplexobj</span><span class="p">(</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-property reference internal" href="../../api.html#bornsim.results.Result.amplitudes" title="bornsim.Result.amplitudes"><span class="n">restored</span><span class="o">.</span><span class="n">amplitudes</span><span class="o">.</span><span class="n">magnitude</span></a><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>BornSim version: 0.2.7
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>BornSim version: 0.2.8
 NumPy version: 2.4.6
 Seed: 42
 Grid: {'shape': [4, 4, 4], 'spacing_m': 4e-08, 'background_refractive_index': 1.33, 'delta_refractive_index_sha256': 'af423859f3fc7019d700fa3e969b1a81b72e4f170e654b08fae09eea22681b04'}
@@ -572,21 +573,23 @@ Complex amplitudes retained: True
 </pre></div>
 </div>
 </section>
-<section id="plot-restored-scattering-and-field-diagnostics">
-<h2>Plot restored scattering and field diagnostics<a class="headerlink" href="#plot-restored-scattering-and-field-diagnostics" title="Link to this heading">#</a></h2>
+<section id="plot-restored-scattering">
+<h2>Plot restored scattering<a class="headerlink" href="#plot-restored-scattering" title="Link to this heading">#</a></h2>
 <p>Full angular sampling supplies normalized phase functions and finite-sample
 coefficients. They are not infinite-medium material transport coefficients.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.results.Result.plot" title="bornsim.Result.plot"><span class="n">restored</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><span class="p">)</span><span class="w">
 </span><span class="w">
-</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.results.Result.plot_field_norms" title="bornsim.Result.plot_field_norms"><span class="n">restored</span><span class="o">.</span><span class="n">plot_field_norms</span></a><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<img src="../../_images/sphx_glr_save_load_results_001.png" srcset="../../_images/sphx_glr_save_load_results_001.png" alt="Finite-sample scattering · meridian phi = 0 degrees" class = "sphx-glr-single-img"/></section>
+<section id="plot-restored-field-diagnostics">
+<h2>Plot restored field diagnostics<a class="headerlink" href="#plot-restored-field-diagnostics" title="Link to this heading">#</a></h2>
+<p>Decreasing field terms do not certify Born convergence.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.results.Result.plot_field_norms" title="bornsim.Result.plot_field_norms"><span class="n">restored</span><span class="o">.</span><span class="n">plot_field_norms</span></a><span class="p">(</span><span class="p">)</span><span class="w">
 </span><span class="w">
 </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<ul class="sphx-glr-horizontal">
-<li><img src="../../_images/sphx_glr_save_load_results_001.png" srcset="../../_images/sphx_glr_save_load_results_001.png" alt="Finite-sample scattering · meridian phi = 0 degrees" class = "sphx-glr-multi-img"/></li>
-<li><img src="../../_images/sphx_glr_save_load_results_002.png" srcset="../../_images/sphx_glr_save_load_results_002.png" alt="Born field terms Decreasing terms do not certify convergence" class = "sphx-glr-multi-img"/></li>
-</ul>
-</section>
+<img src="../../_images/sphx_glr_save_load_results_002.png" srcset="../../_images/sphx_glr_save_load_results_002.png" alt="Born field terms Decreasing terms do not certify convergence" class = "sphx-glr-single-img"/></section>
 <section id="inspect-the-medium-in-3d">
 <h2>Inspect the medium in 3D<a class="headerlink" href="#inspect-the-medium-in-3d" title="Link to this heading">#</a></h2>
 <p>Inspect the actual finite input sample with physical spatial axes.
@@ -601,7 +604,7 @@ Regions with higher refractive index are more opaque; opacity is not absorption.
 </span><span class="k">if</span> <span class="s2">&quot;</span><span class="s2">--no-browser</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span><span class="w">
 </span>    <span class="n">medium_figure</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">renderer</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">browser</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<iframe src="../../_static/gallery/save_load_results-1.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.403 seconds)</p>
+<iframe src="../../_static/gallery/save_load_results-1.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.186 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-results-save-load-results-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/cd5669e623f7de1201c41b07ba479253/save_load_results.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">save_load_results.ipynb</span></code></a></p>
@@ -641,7 +644,8 @@ Regions with higher refractive index are more opaque; opacity is not absorption.
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inspect-settings-and-retained-amplitudes">Inspect settings and retained amplitudes</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-restored-scattering-and-field-diagnostics">Plot restored scattering and field diagnostics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-restored-scattering">Plot restored scattering</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-restored-field-diagnostics">Plot restored field diagnostics</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inspect-the-medium-in-3d">Inspect the medium in 3D</a></li>
 </ul>
   </nav></div>

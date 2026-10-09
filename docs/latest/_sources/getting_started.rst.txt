@@ -19,7 +19,8 @@ units. The wavelength is the vacuum wavelength.
 
 .. code-block:: python
 
-   from bornsim import EnsembleSampling, Grid, RandomMedium, Solver, Source
+   from bornsim import EnsembleSampling, Grid, Solver, Source
+   from bornsim.medium.random_medium import GaussianMedium
    from bornsim.units import ureg
 
    source = Source(wavelength=633 * ureg.nanometer)
@@ -29,11 +30,10 @@ units. The wavelength is the vacuum wavelength.
        spacing=50 * ureg.nanometer,
    )
 
-   medium = RandomMedium(
+   medium = GaussianMedium(
        background_refractive_index=1.33,
        refractive_index_std=0.01,
        correlation_length=100 * ureg.nanometer,
-       correlation="gaussian",
    )
 
    ensemble_sampling = EnsembleSampling(
@@ -52,11 +52,7 @@ units. The wavelength is the vacuum wavelength.
        ensemble_sampling=ensemble_sampling,
    )
 
-   print(
-       f"mu_s = {result.mu_s.to('1 / millimeter')}, "
-       f"g = {result.g}, "
-       f"mu_s_prime = {result.mu_s_prime.to('1 / millimeter')}"
-   )
+   print(f"mu_s = {result.mu_s.to('1 / millimeter')}, g = {result.g}, mu_s_prime = {result.mu_s_prime.to('1 / millimeter')}")
 
 The returned coefficients describe finite samples. The ensemble standard
 errors describe sampling uncertainty, not discretization or finite-size
@@ -76,13 +72,13 @@ refractive-index regions can be made more opaque:
    )
 
    medium_figure = volume.plot_3d(
-       field="refractive_index",
-       opacity_scale="increasing",
+       field='refractive_index',
+       opacity_scale='increasing',
    )
 
    medium_figure.show()
 
-   phase_figure = result.plot_phase_function(view="3d")
+   phase_figure = result.plot_phase_function(view='3d')
 
    phase_figure.show()
 

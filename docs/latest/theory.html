@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Theory and numerical methods &#8212; BornSim 0.2.7 documentation</title>
+    <title>Theory and numerical methods &#8212; BornSim 0.2.8 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="_static/documentation_options.js?v=58050c01"></script>
+    <script src="_static/documentation_options.js?v=b01fafc3"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/sg-tags.js?v=d80f6fa4"></script>
@@ -65,7 +65,7 @@
     <link rel="prev" title="Guide" href="guide.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.7" />
+  <meta name="docsearch:version" content="0.2.8" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -515,7 +515,7 @@ A Volume stores the real scalar field</p>
 <div class="math notranslate nohighlight">
 \[\delta n(\mathbf r) = n(\mathbf r)-n_0.\]</div>
 <p>Material objects specify an <strong>absolute refractive index</strong>, rather than a
-contrast. StructuredMedium voxelizes the materials; RandomMedium samples a
+contrast. StructuredMedium voxelizes the materials; GaussianMedium samples a
 statistical refractive index field. Both produce the same Volume representation.</p>
 <div class="pst-scrollable-table-container"><table class="table" id="id1">
 <caption><span class="caption-text">Symbols and their API counterparts</span><a class="headerlink" href="#id1" title="Link to this table">#</a></caption>
@@ -705,7 +705,7 @@ The implementation uses a small-<span class="math notranslate nohighlight">\(ka\
 the result back to the physical box. This applies the finite discrete
 convolution without wrap-around electromagnetic interactions. Its padding
 has a different purpose from the periodic box used to synthesize random fields.
-The implemented kernel is visible in <a class="reference internal" href="api.html#module-bornsim.green" title="bornsim.green"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bornsim.green</span></code></a>; independent
+The implemented kernel is visible in <code class="xref py py-mod docutils literal notranslate"><span class="pre">bornsim.green</span></code>; independent
 matrix comparisons are described in <a class="reference internal" href="development.html"><span class="doc">Development and releases</span></a>.</p>
 </section>
 </section>
@@ -823,7 +823,7 @@ Consequently <code class="docutils literal notranslate"><span class="pre">solve_
 </section>
 <section id="random-fields-and-whittlematern-covariance">
 <h2><a class="toc-backref" href="#id17" role="doc-backlink">Random fields and Whittle–Matérn covariance</a><a class="headerlink" href="#random-fields-and-whittlematern-covariance" title="Link to this heading">#</a></h2>
-<p>RandomMedium describes a stationary isotropic <strong>Gaussian probability field</strong>
+<p>GaussianMedium describes a stationary isotropic <strong>Gaussian probability field</strong>
 with ensemble mean zero and point variance <span class="math notranslate nohighlight">\(\sigma_n^2\)</span>.
 The covariance describes spatial correlations:
 <span class="math notranslate nohighlight">\(C_n(r)=\langle\delta n(\mathbf x)\delta n(\mathbf x+\mathbf r)\rangle\)</span>.
@@ -891,9 +891,8 @@ e^{-i\mathbf q\cdot\mathbf r}d^3r\right|^2\right\rangle
    e^{-i\mathbf q\cdot(\mathbf r-\mathbf r')}d^3r\,d^3r'.\]</div>
 <p>The finite window matters even after averaging many realizations. Changing the
 box size and changing the number of samples therefore address different errors.
-The existing AnalyticalMedium path describes infinite-medium first-order
-Gaussian or exponential models; it is distinct from these finite simulations.
-This section introduces no additional analytical solver.</p>
+Infinite-medium first-order formulas are retained only as test references;
+the public solver computes finite-volume Born calculations.</p>
 </section>
 <section id="ensembles-and-uncertainty">
 <h2><a class="toc-backref" href="#id18" role="doc-backlink">Ensembles and uncertainty</a><a class="headerlink" href="#ensembles-and-uncertainty" title="Link to this heading">#</a></h2>
@@ -978,7 +977,7 @@ it does not validate higher-order Green self interactions.
 bias. For reproducible calculations, retain Grid, AngularSampling, Material,
 medium settings, EnsembleSampling and software versions. Results are immutable;
 archives retain their physical sample volume, arrays and provenance, but do not
-store the original voxel field. See <a class="reference internal" href="api.html"><span class="doc">Python API</span></a> for interfaces and <a class="reference internal" href="examples.html"><span class="doc">Examples</span></a>
+store the original voxel field. See <a class="reference internal" href="api.html"><span class="doc">Public Python API</span></a> for interfaces and <a class="reference internal" href="examples.html"><span class="doc">Examples</span></a>
 for runnable refinement and uncertainty studies.</p>
 </section>
 <section id="further-reading">

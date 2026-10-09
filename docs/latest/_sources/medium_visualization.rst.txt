@@ -44,18 +44,17 @@ Exponential covariance
 .. code-block:: python
 
    from bornsim.units import ureg
-
-   from bornsim import Grid, RandomMedium
+   from bornsim import Grid
+   from bornsim.medium.random_medium import GaussianMedium
 
    grid = Grid(
        shape=(16, 16, 16),
        spacing=2.5e-08 * ureg.meter,
    )
 
-   medium = RandomMedium(
+   medium = GaussianMedium(
        refractive_index_std=0.01,
        correlation_length=7.5e-08 * ureg.meter,
-       correlation="gaussian",
        background_refractive_index=1.33,
    )
 
@@ -65,17 +64,14 @@ Exponential covariance
    )
 
    figure = volume.plot_3d(
-       mode="volume",
-       field="refractive_index",
+       mode='volume',
+       field='refractive_index',
        surface_count=16,
        opacity=0.2,
-       opacity_scale="increasing",
+       opacity_scale='increasing',
    )
 
-   figure.write_html(
-       file="medium.html",
-       include_plotlyjs=True,
-   )
+   figure.write_html(file='medium.html', include_plotlyjs=True)
 
 Plotly also supports ``mode="isosurface"`` and ``mode="slices"``; its default
 mode is ``volume``. Uniform fields fall back to slices. The HTML export includes
@@ -105,7 +101,6 @@ on an even grid its centre is at positive half-spacing, not at zero.
 .. code-block:: python
 
    from bornsim.units import ureg
-
    from bornsim import Grid, Sphere, StructuredMedium
 
    structure = StructuredMedium()
@@ -117,24 +112,22 @@ on an even grid its centre is at positive half-spacing, not at zero.
        refractive_index=1.34,
    )
 
-   structure.add_structures(
-       sphere,
+   structure.add_structures(sphere)
+
+   grid_configuration_1 = Grid(
+       shape=(24, 24, 24),
+       spacing=2e-08 * ureg.meter,
    )
 
-   volume = structure.to_volume(
-       grid=Grid(
-           shape=(24, 24, 24),
-           spacing=2e-08 * ureg.meter,
-       ),
-   )
+   volume = structure.to_volume(grid=grid_configuration_1)
 
    figure = volume.plot_slice(
-       normal="z",
-       field="refractive_index",
-       length_unit="nanometer",
+       normal='z',
+       field='refractive_index',
+       length_unit='nanometer',
    )
 
-   figure.savefig("sphere-slice.png")
+   figure.savefig('sphere-slice.png')
 
 Use ``normal="x"`` or ``normal="y"`` for other orientations and ``index``
 to select a voxel plane. Field choices match ``plot_3d()``. Color limits use
@@ -151,21 +144,20 @@ Matplotlib figures and accept a custom ``title`` and ``log_y=True``.
 .. code-block:: python
 
    from bornsim.units import ureg
-
    from bornsim import Solver, Source
 
+   source_configuration_1 = Source(wavelength=6.33e-07 * ureg.meter)
+
    solver = Solver(
-       source=Source(wavelength=6.33e-07 * ureg.meter),
+       source=source_configuration_1,
        order=3,
    )
 
    result = solver.solve(target=volume)
 
-   figure = result.plot_cross_section(
-       area_unit="nanometer**2",
-   )
+   figure = result.plot_cross_section(area_unit='nanometer**2')
 
-   figure.savefig("sphere-scattering.png")
+   figure.savefig('sphere-scattering.png')
 
 The original Volume is not required for this plot. Normalization uses the entire
 voxel box: :math:`d\sigma/d\Omega=V\,\mathrm{differential}`. Cumulative curves
@@ -207,31 +199,32 @@ specific planes with ``slice_indices``; otherwise the middle voxels are used.
 .. code-block:: python
 
    from bornsim.units import ureg
-
    import matplotlib.pyplot as plt
-   from bornsim import Grid, RandomMedium
+   from bornsim import Grid
+   from bornsim.medium.random_medium import WhittleMaternMedium
 
-   medium = RandomMedium(
-       correlation="matern",
+   medium = WhittleMaternMedium(
        smoothness=1.5,
        correlation_length=6e-08 * ureg.meter,
        background_refractive_index=1.33,
        refractive_index_std=0.01,
    )
 
+   grid_configuration_1 = Grid(
+       shape=(16, 16, 16),
+       spacing=2.5e-08 * ureg.meter,
+   )
+
    volume = medium.to_volume(
-       grid=Grid(
-           shape=(16, 16, 16),
-           spacing=2.5e-08 * ureg.meter,
-       ),
+       grid=grid_configuration_1,
        seed=42,
    )
 
    figure = volume.plot_3d(
-       backend="matplotlib",
-       field="delta_refractive_index",
+       backend='matplotlib',
+       field='delta_refractive_index',
        slice_indices=(4, 8, 12),
-       length_unit="nanometer",
+       length_unit='nanometer',
    )
 
    plt.show()
@@ -247,7 +240,6 @@ slices. For an entirely zero field, voxels display the full uniform box.
 .. code-block:: python
 
    from bornsim.units import ureg
-
    import matplotlib.pyplot as plt
    from bornsim import Grid, Sphere, StructuredMedium
 
@@ -260,24 +252,22 @@ slices. For an entirely zero field, voxels display the full uniform box.
        refractive_index=1.34,
    )
 
-   sample.add_structures(
-       sphere,
+   sample.add_structures(sphere)
+
+   grid_configuration_1 = Grid(
+       shape=(24, 24, 24),
+       spacing=2e-08 * ureg.meter,
    )
 
-   volume = sample.to_volume(
-       grid=Grid(
-           shape=(24, 24, 24),
-           spacing=2e-08 * ureg.meter,
-       ),
-   )
+   volume = sample.to_volume(grid=grid_configuration_1)
 
    figure = volume.plot_3d(
-       backend="matplotlib",
-       mode="voxels",
-       field="refractive_index",
+       backend='matplotlib',
+       mode='voxels',
+       field='refractive_index',
    )
 
-   figure.savefig("sphere-3d.png")
+   figure.savefig('sphere-3d.png')
 
    plt.show()
 
@@ -292,14 +282,13 @@ is the random statistics' uniform background refractive index.
 .. code-block:: python
 
    from bornsim.units import ureg
+   from bornsim import Grid, Sphere, StructuredMedium
+   from bornsim.medium.random_medium import WhittleMaternMedium
 
-   from bornsim import Grid, RandomMedium, Sphere, StructuredMedium
-
-   statistics = RandomMedium(
+   statistics = WhittleMaternMedium(
        refractive_index_std=0.002,
        correlation_length=5e-08 * ureg.meter,
        background_refractive_index=1.33,
-       correlation="matern",
        smoothness=1.5,
    )
 
@@ -312,21 +301,21 @@ is the random statistics' uniform background refractive index.
        refractive_index=1.345,
    )
 
-   sample.add_structures(
-       sphere,
+   sample.add_structures(sphere)
+
+   grid_configuration_1 = Grid(
+       shape=(16, 16, 16),
+       spacing=2.5e-08 * ureg.meter,
    )
 
    volume = sample.to_volume(
-       grid=Grid(
-           shape=(16, 16, 16),
-           spacing=2.5e-08 * ureg.meter,
-       ),
+       grid=grid_configuration_1,
        seed=42,
    )
 
    figure = volume.plot_3d(
-       field="refractive_index",
-       opacity_scale="increasing",
+       field='refractive_index',
+       opacity_scale='increasing',
    )
 
    figure.show()

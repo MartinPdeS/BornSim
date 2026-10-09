@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bornsim.solver &#8212; BornSim 0.2.7 documentation</title>
+    <title>bornsim.solver &#8212; BornSim 0.2.8 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=58050c01"></script>
+    <script src="../../_static/documentation_options.js?v=b01fafc3"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -61,7 +61,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.7" />
+  <meta name="docsearch:version" content="0.2.8" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -448,14 +448,13 @@
                 <article class="bd-article">
                   
   <h1>Source code for bornsim.solver</h1><div class="highlight"><pre>
-<span></span><span class="sd">"""Solver configuration and analytical, volume, and ensemble calculations."""</span>
+<span></span><span class="sd">"""Solver configuration for finite-volume and ensemble Born calculations."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">._version</span><span class="w"> </span><span class="kn">import</span> <span class="n">__version__</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Medium</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnalyticalMedium</span><span class="p">,</span> <span class="n">angular_scattering</span><span class="p">,</span> <span class="n">optical_properties</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.medium</span><span class="w"> </span><span class="kn">import</span> <span class="n">Medium</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Result</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">._validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">_integer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.volume</span><span class="w"> </span><span class="kn">import</span> <span class="n">Volume</span>
@@ -484,75 +483,17 @@
 <a class="viewcode-back" href="../../api.html#bornsim.solver.Solver">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Solver</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Configure analytical and finite-volume Born scattering calculations.</span>
+<span class="w">    </span><span class="sd">"""Configure numerical Born scattering from explicit finite samples.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    source : Source</span>
-<span class="sd">        Incident vacuum wavelength and unpolarized illumination.</span>
-<span class="sd">    sampling : AngularSampling, optional</span>
-<span class="sd">        Shared output angles and solid-angle quadrature. Defaults to</span>
-<span class="sd">        AngularSampling(). Used for full-volume solves and ensembles.</span>
-<span class="sd">    order : int, optional</span>
-<span class="sd">        Highest cumulative numerical Born order, from 1 to 12. Default is 3.</span>
-<span class="sd">        Analytical calculations always use first order.</span>
-<span class="sd">    quadrature_order : int, optional</span>
-<span class="sd">        Gauss-Legendre order for analytical integrated coefficients. Must be</span>
-<span class="sd">        at least 16; default is 256. Numerical integration uses sampling's</span>
-<span class="sd">        polar_samples and azimuth_samples instead.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    source : Source</span>
-<span class="sd">        Incident source shared by all calculations.</span>
-<span class="sd">    order : int</span>
-<span class="sd">        Highest numerical Born order.</span>
-<span class="sd">    quadrature_order : int</span>
-<span class="sd">        Analytical integration order.</span>
-
-<span class="sd">    Raises</span>
-<span class="sd">    ------</span>
-<span class="sd">    TypeError</span>
-<span class="sd">        If ``source`` is not a Source.</span>
-<span class="sd">    ValueError</span>
-<span class="sd">        If either order parameter is outside its supported integer range.</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    Numerical calculations retain the linearized dielectric contrast</span>
-<span class="sd">    ``2 * n0 * delta_n``. Green-tensor self interactions use an equal-volume</span>
-<span class="sd">    sphere including the longitudinal contact term. Increasing Born order</span>
-<span class="sd">    does not restore the omitted quadratic constitutive term. Decreasing</span>
-<span class="sd">    successive terms do not establish universal Born convergence.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; from bornsim import AnalyticalMedium, Solver, Source</span>
-<span class="sd">    ...</span>
-<span class="sd">    &gt;&gt;&gt; from bornsim.units import ureg</span>
-<span class="sd">    ...</span>
-<span class="sd">    &gt;&gt;&gt; solver = Solver(</span>
-<span class="sd">    ...     source=Source(</span>
-<span class="sd">    ...         wavelength=633e-9 * ureg.meter,</span>
-<span class="sd">    ...     ),</span>
-<span class="sd">    ...     order=3,</span>
-<span class="sd">    ... )</span>
-<span class="sd">    &gt;&gt;&gt; result = solver.solve(</span>
-<span class="sd">    ...     target=AnalyticalMedium(</span>
-<span class="sd">    ...         background_refractive_index=1.33,</span>
-<span class="sd">    ...         refractive_index_std=0.01,</span>
-<span class="sd">    ...         correlation_length=100e-9 * ureg.meter,</span>
-<span class="sd">    ...         correlation="gaussian",</span>
-<span class="sd">    ...     )</span>
-<span class="sd">    ... )</span>
-<span class="sd">    &gt;&gt;&gt; result.differential.shape</span>
-<span class="sd">    (1, 121, 8)</span>
+<span class="sd">    Source chooses the wavelength. AngularSampling supplies output directions</span>
+<span class="sd">    and integration quadrature; order sets the highest cumulative Born order.</span>
+<span class="sd">    All orders retain the linearized dielectric contrast and the equal-volume</span>
+<span class="sd">    Green self cell. Decreasing successive terms do not certify convergence.</span>
 <span class="sd">    """</span>
 
     <span class="n">source</span><span class="p">:</span> <span class="n">Source</span>
     <span class="n">sampling</span><span class="p">:</span> <span class="n">AngularSampling</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">AngularSampling</span><span class="p">)</span>
     <span class="n">order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
-    <span class="n">quadrature_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampling</span><span class="p">,</span> <span class="n">AngularSampling</span><span class="p">):</span>
@@ -568,15 +509,6 @@
             <span class="n">high</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">invalid_quadrature_order</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">quadrature_order</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
-            <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">quadrature_order</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
-            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">quadrature_order</span> <span class="o">&lt;</span> <span class="mi">16</span>
-        <span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">invalid_quadrature_order</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"quadrature_order must be an integer of at least 16."</span><span class="p">)</span>
-
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">wavelength</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="s2">"wavelength"</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"nanometer"</span><span class="p">)</span>
 
@@ -587,105 +519,21 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">solve</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">target</span><span class="p">:</span> <span class="n">Volume</span> <span class="o">|</span> <span class="n">AnalyticalMedium</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">:</span> <span class="n">Volume</span><span class="p">,</span>
         <span class="n">sampling</span><span class="p">:</span> <span class="n">AngularSampling</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">angles</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">directions</span><span class="p">:</span> <span class="n">Directions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Compute a full angular scattering distribution with normalization.</span>
+<span class="w">        </span><span class="sd">"""Compute full directional scattering and finite-sample integrated coefficients.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        target : Volume or AnalyticalMedium</span>
-<span class="sd">            Fixed numerical sample or analytical first-order statistics.</span>
-<span class="sd">        sampling : AngularSampling, optional</span>
-<span class="sd">            Override the solver's shared angular settings for this call.</span>
-<span class="sd">        angles : array_like or Quantity, optional</span>
-<span class="sd">            Deprecated analytical output-angle keyword. Use AngularSampling.</span>
-<span class="sd">            Numerical angular cuts use solve_cut instead.</span>
-<span class="sd">        directions : Directions, optional</span>
-<span class="sd">            Rejected here; arbitrary numerical observations use solve_cut.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        result : Result</span>
-<span class="sd">            Directional intensities and normalized phase densities, with</span>
-<span class="sd">            integrated coefficients. Numerical amplitudes are retained.</span>
-<span class="sd">            Coefficients for finite samples are cross sections divided by</span>
-<span class="sd">            voxel-box volume, not intrinsic infinite-medium properties.</span>
+<span class="sd">        Use solve_cut for individual observation directions. The target is an</span>
+<span class="sd">        explicit voxelized Volume; random statistics use ensemble instead.</span>
 <span class="sd">        """</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="p">(</span><span class="n">AnalyticalMedium</span><span class="p">,</span> <span class="n">Volume</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"target must be an AnalyticalMedium or Volume."</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">directions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">Volume</span><span class="p">)</span> <span class="ow">and</span> <span class="n">angles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Use solve_cut for explicit angles or directions; solve always computes full scattering."</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">sampling</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">angles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Supply sampling or analytical angles, not both."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">Volume</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"target must be a Volume."</span><span class="p">)</span>
 
         <span class="n">sampling</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling</span> <span class="k">if</span> <span class="n">sampling</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">AngularSampling</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span><span class="n">sampling</span><span class="o">=</span><span class="n">sampling</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">Volume</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solve_volume</span><span class="p">(</span><span class="n">volume</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">sampling</span><span class="o">=</span><span class="n">sampling</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">angles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">validate_units</span><span class="p">(</span>
-                <span class="n">angles</span><span class="p">,</span>
-                <span class="n">unit</span><span class="o">=</span><span class="s2">"radian"</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">"angles"</span><span class="p">,</span>
-            <span class="p">)</span>
-
-        <span class="n">theta</span> <span class="o">=</span> <span class="n">sampling</span><span class="o">.</span><span class="n">angles</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">if</span> <span class="n">angles</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">angles</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-        <span class="n">invalid_angles</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">theta</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span>
-            <span class="ow">or</span> <span class="n">theta</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span>
-            <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
-            <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">((</span><span class="n">theta</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">theta</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">radian</span><span class="p">))</span>
-        <span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">invalid_angles</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"angles must be a nonempty 1D array of finite angles between 0 and pi."</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">angles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
-
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">"Use AngularSampling for analytical output angles."</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-
-        <span class="n">wavelength</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">wavelength</span>
-
-        <span class="n">differential</span> <span class="o">=</span> <span class="n">angular_scattering</span><span class="p">(</span>
-            <span class="n">medium</span><span class="o">=</span><span class="n">target</span><span class="p">,</span>
-            <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span>
-            <span class="n">theta</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="n">coefficients</span> <span class="o">=</span> <span class="n">optical_properties</span><span class="p">(</span>
-            <span class="n">medium</span><span class="o">=</span><span class="n">target</span><span class="p">,</span>
-            <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span>
-            <span class="n">quadrature_order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">quadrature_order</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="n">directional</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">differential</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">],</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">sampling</span><span class="o">.</span><span class="n">azimuth_samples</span><span class="p">))</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-        <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
-            <span class="n">source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span>
-            <span class="n">kind</span><span class="o">=</span><span class="s2">"analytical"</span><span class="p">,</span>
-            <span class="n">angles</span><span class="o">=</span><span class="n">theta</span> <span class="k">if</span> <span class="n">theta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">azimuths</span><span class="o">=</span><span class="n">sampling</span><span class="o">.</span><span class="n">azimuths</span><span class="p">,</span>
-            <span class="n">differential</span><span class="o">=</span><span class="n">directional</span><span class="p">,</span>
-            <span class="n">mu_s</span><span class="o">=</span><span class="n">coefficients</span><span class="p">[</span><span class="s2">"mu_s"</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
-            <span class="n">g</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">coefficients</span><span class="p">[</span><span class="s2">"g"</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">coefficients</span><span class="p">[</span><span class="s2">"g"</span><span class="p">]]),</span>
-            <span class="n">mu_s_prime</span><span class="o">=</span><span class="n">coefficients</span><span class="p">[</span><span class="s2">"mu_s_prime"</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
-            <span class="n">provenance</span><span class="o">=</span><span class="n">_provenance</span><span class="p">(</span>
-                <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                <span class="n">medium</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
-                <span class="n">quadrature_order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">quadrature_order</span><span class="p">,</span>
-                <span class="n">sampling</span><span class="o">=</span><span class="p">{</span><span class="o">**</span><span class="n">sampling</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="s2">"angles_rad"</span><span class="p">:</span> <span class="n">theta</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"radian"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="o">.</span><span class="n">tolist</span><span class="p">()},</span>
-                <span class="n">coefficient_scope</span><span class="o">=</span><span class="s2">"infinite-medium"</span><span class="p">,</span>
-            <span class="p">),</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solve_volume</span><span class="p">(</span><span class="n">volume</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">sampling</span><span class="o">=</span><span class="n">sampling</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Solver.solve_cut">
@@ -781,7 +629,10 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_solve_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">volume</span><span class="p">,</span> <span class="n">sampling</span><span class="p">):</span>
-        <span class="n">sampling</span><span class="o">.</span><span class="n">check_work</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">volume</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">)</span>
+        <span class="n">sampling</span><span class="o">.</span><span class="n">check_work</span><span class="p">(</span>
+            <span class="n">grid</span><span class="o">=</span><span class="n">volume</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
+            <span class="n">order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="n">engine</span> <span class="o">=</span> <span class="n">BornSeries</span><span class="p">(</span>
             <span class="n">grid</span><span class="o">=</span><span class="n">volume</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
@@ -837,148 +688,32 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">medium</span><span class="p">:</span> <span class="n">Medium</span><span class="p">,</span>
-        <span class="n">grid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">sampling</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">spacing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">ensemble_sampling</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">realizations</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">angles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">azimuth_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">polar_samples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Average sampled-volume intensities and integrate over solid angle.</span>
+        <span class="n">grid</span><span class="p">:</span> <span class="n">Grid</span><span class="p">,</span>
+        <span class="n">sampling</span><span class="p">:</span> <span class="n">AngularSampling</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ensemble_sampling</span><span class="p">:</span> <span class="n">EnsembleSampling</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Average numerical scattering over independently generated finite samples.</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        medium : Medium</span>
-<span class="sd">            Random medium or structured medium with a random background.</span>
-<span class="sd">            Deterministic structures use solve on their generated Volume.</span>
-<span class="sd">        grid : Grid, optional</span>
-<span class="sd">            Explicit spatial configuration for every realization. Cannot be</span>
-<span class="sd">            combined with shape or spacing.</span>
-<span class="sd">        sampling : AngularSampling, optional</span>
-<span class="sd">            Override shared angular settings. Defaults to the solver's sampling</span>
-<span class="sd">            when individual angular keywords are omitted. Cannot be combined</span>
-<span class="sd">            with angles, polar_samples, or azimuth_samples.</span>
-<span class="sd">        shape : tuple of int, optional</span>
-<span class="sd">            Three grid dimensions, each from 2 to 32. Required with spacing when grid is omitted.</span>
-<span class="sd">        spacing : Quantity, optional</span>
-<span class="sd">            Positive, finite cubic voxel spacing. Explicit length units are required;</span>
-<span class="sd">            must be supplied with shape when grid is omitted.</span>
-<span class="sd">        ensemble_sampling : EnsembleSampling, optional</span>
-<span class="sd">            Realization counts and ordered independent seeds. Defaults to</span>
-<span class="sd">            four consecutive seeds starting at zero.</span>
-<span class="sd">        realizations : int, optional</span>
-<span class="sd">            Deprecated; use EnsembleSampling.</span>
-<span class="sd">            Independent sample count, from 1 to 32. Default is 4.</span>
-<span class="sd">        seed : int, optional</span>
-<span class="sd">            Deprecated; use EnsembleSampling.</span>
-<span class="sd">            First sample seed, from 0 to 2**32 - 1. Default is 0. Samples use</span>
-<span class="sd">            consecutive seeds; the entire seed range must remain valid.</span>
-<span class="sd">        angles : array_like or Quantity, optional</span>
-<span class="sd">            One-dimensional plot angles in [0, pi], with 1 to 181 observations.</span>
-<span class="sd">            Angular values require explicit units. Default is 121 evenly spaced angles.</span>
-<span class="sd">        azimuth_samples : int, optional</span>
-<span class="sd">            Uniform azimuth samples for both curves and quadrature, from 4 to 32.</span>
-<span class="sd">            Default is 8.</span>
-<span class="sd">        polar_samples : int, optional</span>
-<span class="sd">            Gauss-Legendre nodes for integration, from 16 to 128. Default is 32.</span>
-<span class="sd">            These nodes are independent of the plot angles.</span>
+<span class="sd">        Grid selects the voxel domain. AngularSampling selects output directions</span>
+<span class="sd">        and integration quadrature; the solver's sampling is used when omitted.</span>
+<span class="sd">        EnsembleSampling selects ordered independent seeds and defaults to four</span>
+<span class="sd">        consecutive seeds starting at zero. Deterministic structures use solve.</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        result : Result</span>
-<span class="sd">            Directional cumulative and isolated-term intensities through</span>
-<span class="sd">            ``self.order``, standard errors, finite-sample effective coefficients,</span>
-<span class="sd">            per-realization field norms, and numerical diagnostics, all with units.</span>
-<span class="sd">            Directional intensities retain azimuth for 3D phase plotting.</span>
-<span class="sd">            Complex amplitudes are not retained in the ensemble result.</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        ------</span>
-<span class="sd">        TypeError</span>
-<span class="sd">            If ``medium`` is not a Medium.</span>
-<span class="sd">        ValueError</span>
-<span class="sd">            If a grid, sampling, seed, unit, or order constraint is violated,</span>
-<span class="sd">            the ensemble exceeds the synchronous work limit, or a generated</span>
-<span class="sd">            volume has nonpositive linearized permittivity.</span>
-
-<span class="sd">        See Also</span>
-<span class="sd">        --------</span>
-<span class="sd">        bornsim.ensemble.ensemble_scattering : Numeric SI ensemble function.</span>
-
-<span class="sd">        Notes</span>
-<span class="sd">        -----</span>
-<span class="sd">        Intensities are averaged after coherent summation within each realization;</span>
-<span class="sd">        random amplitudes are never averaged together. Standard errors describe</span>
-<span class="sd">        realization sampling, not spatial or angular discretization error. One</span>
-<span class="sd">        realization gives NaN errors. Numerical integrated coefficients are</span>
-<span class="sd">        finite-sample cross sections divided by volume. Check voxel refinement,</span>
-<span class="sd">        angular quadrature, sample size, and realization count independently.</span>
-<span class="sd">        Deterministic structures have no realization sampling and must use</span>
-<span class="sd">        solve. A single random realization reports unknown sampling errors</span>
-<span class="sd">        (NaN), rather than inferred uncertainty. Individual shape/spacing, angular and realization keywords remain</span>
-<span class="sd">        available with deprecation warnings.</span>
-
-<span class="sd">        Examples</span>
-<span class="sd">        --------</span>
-<span class="sd">        &gt;&gt;&gt; from bornsim import RandomMedium, Solver, Source</span>
-<span class="sd">        &gt;&gt;&gt; from bornsim.units import ureg</span>
-<span class="sd">        ...</span>
-<span class="sd">        ...</span>
-<span class="sd">        &gt;&gt;&gt; ensemble_solver = Solver(</span>
-<span class="sd">        ...     source=Source(</span>
-<span class="sd">        ...         wavelength=633e-9 * ureg.meter,</span>
-<span class="sd">        ...     ),</span>
-<span class="sd">        ...     order=2,</span>
-<span class="sd">        ... )</span>
-
-<span class="sd">        ...</span>
-<span class="sd">        &gt;&gt;&gt; result = ensemble_solver.ensemble(</span>
-<span class="sd">        ...     medium=RandomMedium(</span>
-<span class="sd">        ...         correlation="gaussian",</span>
-<span class="sd">        ...         background_refractive_index=1.33,</span>
-<span class="sd">        ...         refractive_index_std=0.01,</span>
-<span class="sd">        ...         correlation_length=100e-9 * ureg.meter,</span>
-<span class="sd">        ...     ),</span>
-<span class="sd">        ...     shape=(2, 2, 2),</span>
-<span class="sd">        ...     realizations=2,</span>
-<span class="sd">        ...     seed=42,</span>
-<span class="sd">        ...     angles=[0, 1] * ureg.radian,</span>
-<span class="sd">        ...     azimuth_samples=4,</span>
-<span class="sd">        ...     polar_samples=16,</span>
-<span class="sd">        ...     spacing=50e-9 * ureg.meter,</span>
-<span class="sd">        ... )</span>
-<span class="sd">        &gt;&gt;&gt; result.stderr.shape</span>
-<span class="sd">        (2, 2, 4)</span>
-<span class="sd">        """</span>
+<span class="sd">        Intensities are averaged after coherent summation within each realization.</span>
+<span class="sd">        Standard errors quantify realization uncertainty, not discretization or</span>
+<span class="sd">        finite-size error. One realization has unknown (NaN) uncertainty. Integrated</span>
+<span class="sd">        coefficients are finite-sample cross sections divided by voxel-box volume."""</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">medium</span><span class="p">,</span> <span class="n">Medium</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"medium must be a Medium."</span><span class="p">)</span>
 
-        <span class="n">grid</span> <span class="o">=</span> <span class="n">Grid</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span>
-            <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
-            <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span>
-            <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">Grid</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">sampling</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">azimuth_samples</span><span class="p">,</span> <span class="n">polar_samples</span><span class="p">)):</span>
-            <span class="n">sampling</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling</span>
+        <span class="n">sampling</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling</span> <span class="k">if</span> <span class="n">sampling</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">sampling</span>
 
-        <span class="n">sampling</span> <span class="o">=</span> <span class="n">AngularSampling</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span>
-            <span class="n">sampling</span><span class="o">=</span><span class="n">sampling</span><span class="p">,</span>
-            <span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">,</span>
-            <span class="n">polar_samples</span><span class="o">=</span><span class="n">polar_samples</span><span class="p">,</span>
-            <span class="n">azimuth_samples</span><span class="o">=</span><span class="n">azimuth_samples</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="n">sampling</span> <span class="o">=</span> <span class="n">AngularSampling</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span><span class="n">sampling</span><span class="o">=</span><span class="n">sampling</span><span class="p">)</span>
 
-        <span class="n">ensemble_sampling</span> <span class="o">=</span> <span class="n">EnsembleSampling</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span>
-            <span class="n">ensemble_sampling</span><span class="o">=</span><span class="n">ensemble_sampling</span><span class="p">,</span>
-            <span class="n">realizations</span><span class="o">=</span><span class="n">realizations</span><span class="p">,</span>
-            <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="n">ensemble_sampling</span> <span class="o">=</span> <span class="n">EnsembleSampling</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span><span class="n">ensemble_sampling</span><span class="o">=</span><span class="n">ensemble_sampling</span><span class="p">)</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="n">ensemble_scattering</span><span class="p">(</span>
             <span class="n">medium</span><span class="o">=</span><span class="n">medium</span><span class="p">,</span>

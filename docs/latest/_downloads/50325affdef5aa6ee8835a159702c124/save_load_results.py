@@ -14,6 +14,8 @@ generated-volume provenance records the medium and seed, with a field hash
 to identify the exact input. Exact regeneration depends on software versions.
 """
 
+from bornsim.medium.random_medium import GaussianMedium
+
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -22,8 +24,7 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 
-from bornsim import Grid, RandomMedium, Result, Solver, Source
-from bornsim.media import random_volume
+from bornsim import Grid, Result, Solver, Source
 from bornsim.units import ureg
 
 grid = Grid(
@@ -31,21 +32,21 @@ grid = Grid(
     spacing=40 * ureg.nanometer,
 )
 
-medium = RandomMedium(
-    correlation="gaussian",
+medium = GaussianMedium(
     correlation_length=80 * ureg.nanometer,
     background_refractive_index=1.33,
     refractive_index_std=0.01,
 )
 
-volume = random_volume(
-    medium=medium,
+volume = medium.to_volume(
     grid=grid,
     seed=42,
 )
 
+source_configuration_1 = Source(wavelength=633 * ureg.nanometer)
+
 solver = Solver(
-    source=Source(wavelength=633 * ureg.nanometer),
+    source=source_configuration_1,
     order=3,
 )
 
@@ -78,12 +79,18 @@ print(f"Wavelength: {restored.source.wavelength.to('nanometer')}")
 print(f"Complex amplitudes retained: {np.iscomplexobj(restored.amplitudes.magnitude)}")
 
 # %%
-# Plot restored scattering and field diagnostics
-# ----------------------------------------------
+# Plot restored scattering
+# ------------------------
 # Full angular sampling supplies normalized phase functions and finite-sample
 # coefficients. They are not infinite-medium material transport coefficients.
 restored.plot()
 
+plt.show()
+
+# %%
+# Plot restored field diagnostics
+# -------------------------------
+# Decreasing field terms do not certify Born convergence.
 restored.plot_field_norms()
 
 plt.show()

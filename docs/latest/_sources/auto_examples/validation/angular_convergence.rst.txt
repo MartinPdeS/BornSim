@@ -27,28 +27,31 @@ independent of the integration nodes: adding points to an angular plot does
 not refine the integral. The finest calculation is a numerical reference,
 not an exact solution, and both quadrature axes need checking independently.
 
-.. GENERATED FROM PYTHON SOURCE LINES 11-53
+.. GENERATED FROM PYTHON SOURCE LINES 11-56
 
 .. code-block:: Python
 
+
+    from bornsim.medium.random_medium import GaussianMedium
 
     import sys
 
     import matplotlib.pyplot as plt
     import numpy as np
 
-    from bornsim import EnsembleSampling, AngularSampling, Grid, RandomMedium, Solver, Source
+    from bornsim import EnsembleSampling, AngularSampling, Grid, Solver, Source
     from bornsim.units import ureg
 
-    medium = RandomMedium(
-        correlation="gaussian",
+    medium = GaussianMedium(
         refractive_index_std=0.001,
         correlation_length=600 * ureg.nanometer,
         background_refractive_index=1.33,
     )
 
+    source_configuration_1 = Source(wavelength=400 * ureg.nanometer)
+
     solver = Solver(
-        source=Source(wavelength=400 * ureg.nanometer),
+        source=source_configuration_1,
         order=1,
     )
 
@@ -80,14 +83,14 @@ not an exact solution, and both quadrature axes need checking independently.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 54-58
+.. GENERATED FROM PYTHON SOURCE LINES 57-61
 
 Refine one angular axis at a time
 ---------------------------------
 Identical consecutive seeds give the same volumes in every calculation.
 Voxel and finite-sample errors remain fixed throughout this comparison.
 
-.. GENERATED FROM PYTHON SOURCE LINES 58-121
+.. GENERATED FROM PYTHON SOURCE LINES 61-124
 
 .. code-block:: Python
 
@@ -166,7 +169,7 @@ Voxel and finite-sample errors remain fixed throughout this comparison.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 122-128
+.. GENERATED FROM PYTHON SOURCE LINES 125-131
 
 Inspect one ensemble realization in 3D
 --------------------------------------
@@ -175,7 +178,7 @@ not an ensemble average or an infinite-medium material boundary.
 Drag to rotate and scroll to zoom in the embedded browser view.
 Regions with higher refractive index are more opaque; opacity is not absorption.
 
-.. GENERATED FROM PYTHON SOURCE LINES 128-141
+.. GENERATED FROM PYTHON SOURCE LINES 131-144
 
 .. code-block:: Python
 
@@ -206,7 +209,7 @@ Regions with higher refractive index are more opaque; opacity is not absorption.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.981 seconds)
+   **Total running time of the script:** (0 minutes 0.377 seconds)
 
 
 .. _sphx_glr_download_auto_examples_validation_angular_convergence.py:

@@ -32,17 +32,18 @@ Use result.azimuth_average() to request an averaged curve explicitly.
 The 3D surface retains each azimuth direction, showing directional structure
 in the ensemble intensity average.
 
-.. GENERATED FROM PYTHON SOURCE LINES 16-51
+.. GENERATED FROM PYTHON SOURCE LINES 16-55
 
 .. code-block:: Python
 
+
+    from bornsim.medium.random_medium import GaussianMedium
 
     import sys
 
     import matplotlib.pyplot as plt
 
-    from bornsim import EnsembleSampling, Grid, RandomMedium, Solver, Source
-    from bornsim.media import random_volume
+    from bornsim import EnsembleSampling, Grid, Solver, Source
     from bornsim.units import ureg
 
     grid = Grid(
@@ -50,25 +51,28 @@ in the ensemble intensity average.
         spacing=50 * ureg.nanometer,
     )
 
-    medium = RandomMedium(
-        correlation="gaussian",
+    medium = GaussianMedium(
         correlation_length=100 * ureg.nanometer,
         background_refractive_index=1.33,
         refractive_index_std=0.01,
     )
 
+    source_configuration_1 = Source(wavelength=633 * ureg.nanometer)
+
     solver = Solver(
-        source=Source(wavelength=633 * ureg.nanometer),
+        source=source_configuration_1,
         order=3,
+    )
+
+    ensemble_sampling_configuration_1 = EnsembleSampling(
+        realizations=4,
+        seed=42,
     )
 
     result = solver.ensemble(
         medium=medium,
         grid=grid,
-        ensemble_sampling=EnsembleSampling(
-            realizations=4,
-            seed=42,
-        ),
+        ensemble_sampling=ensemble_sampling_configuration_1,
     )
 
 
@@ -78,14 +82,14 @@ in the ensemble intensity average.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 52-56
+.. GENERATED FROM PYTHON SOURCE LINES 56-60
 
 Differential scattering
 -----------------------
 Differential scattering retains its physical units of inverse metres per
 steradian. Ensemble results also show standard errors on this plot.
 
-.. GENERATED FROM PYTHON SOURCE LINES 56-60
+.. GENERATED FROM PYTHON SOURCE LINES 60-64
 
 .. code-block:: Python
 
@@ -105,14 +109,14 @@ steradian. Ensemble results also show standard errors on this plot.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 61-65
+.. GENERATED FROM PYTHON SOURCE LINES 65-69
 
 Normalized phase function
 -------------------------
 Dividing by the integrated coefficient gives a density per steradian.
 The normalization is over solid angle, including the ``sin(theta)`` measure.
 
-.. GENERATED FROM PYTHON SOURCE LINES 65-69
+.. GENERATED FROM PYTHON SOURCE LINES 69-73
 
 .. code-block:: Python
 
@@ -132,13 +136,13 @@ The normalization is over solid angle, including the ``sin(theta)`` measure.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 70-73
+.. GENERATED FROM PYTHON SOURCE LINES 74-77
 
 Polar meridian cut
 ------------------
 The incident beam points towards 0 degrees, at the top of the plot.
 
-.. GENERATED FROM PYTHON SOURCE LINES 73-77
+.. GENERATED FROM PYTHON SOURCE LINES 77-81
 
 .. code-block:: Python
 
@@ -158,14 +162,14 @@ The incident beam points towards 0 degrees, at the top of the plot.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 78-82
+.. GENERATED FROM PYTHON SOURCE LINES 82-86
 
 Three-dimensional directional surface
 -------------------------------------
 Plot the sampled polar and azimuth directions without azimuth averaging.
 Here four realizations contribute to the ensemble intensity average.
 
-.. GENERATED FROM PYTHON SOURCE LINES 82-87
+.. GENERATED FROM PYTHON SOURCE LINES 86-91
 
 .. code-block:: Python
 
@@ -185,7 +189,7 @@ Here four realizations contribute to the ensemble intensity average.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 88-93
+.. GENERATED FROM PYTHON SOURCE LINES 92-97
 
 Numerical field terms
 ---------------------
@@ -193,12 +197,11 @@ A fixed random volume need not be axisymmetric. Its field norms can be
 inspected without inferring a normalized phase function from one cut.
 Decreasing terms do not certify Born convergence.
 
-.. GENERATED FROM PYTHON SOURCE LINES 93-105
+.. GENERATED FROM PYTHON SOURCE LINES 97-108
 
 .. code-block:: Python
 
-    volume = random_volume(
-        medium=medium,
+    volume = medium.to_volume(
         grid=grid,
         seed=42,
     )
@@ -221,7 +224,7 @@ Decreasing terms do not certify Born convergence.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 106-111
+.. GENERATED FROM PYTHON SOURCE LINES 109-114
 
 Inspect the medium in 3D
 ------------------------
@@ -229,7 +232,7 @@ Inspect the actual finite input sample with physical spatial axes.
 Drag to rotate and scroll to zoom in the embedded browser view.
 Regions with higher refractive index are more opaque; opacity is not absorption.
 
-.. GENERATED FROM PYTHON SOURCE LINES 111-119
+.. GENERATED FROM PYTHON SOURCE LINES 114-122
 
 .. code-block:: Python
 
@@ -255,7 +258,7 @@ Regions with higher refractive index are more opaque; opacity is not absorption.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.956 seconds)
+   **Total running time of the script:** (0 minutes 0.440 seconds)
 
 
 .. _sphx_glr_download_auto_examples_results_result_plots.py:

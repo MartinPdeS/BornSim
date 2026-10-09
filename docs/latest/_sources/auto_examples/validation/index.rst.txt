@@ -22,6 +22,23 @@ finite-size effects independently.
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Compare numerical first-order random-volume ensembles as sample size grows at fixed voxel spacing. The coefficients are cross sections divided by sample volume. Sample size, voxel resolution and realization count describe separate sources of uncertainty and must be checked independently.">
+
+.. only:: html
+
+  .. image:: /auto_examples/validation/images/thumb/sphx_glr_finite_size_comparison_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/validation/finite_size_comparison`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Finite-sample size convergence</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="Refine a fixed physical cube rather than drawing a new random field on each grid. Its first-order amplitude has an independent closed-form reference, so this example isolates voxel midpoint-quadrature error. It does not test higher-order Green-tensor discretization or random-field synthesis.">
 
 .. only:: html
@@ -34,23 +51,6 @@ finite-size effects independently.
 .. raw:: html
 
       <div class="sphx-glr-thumbnail-title">Grid refinement against an exact cube integral</div>
-    </div>
-
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Compare first-order random-volume ensembles with the infinite-medium analytical model at the same wavelength and covariance. Increase sample size at a fixed voxel spacing. These numerical coefficients are cross sections divided by sample volume; they are not automatically intrinsic transport coefficients. A finite window and finite synthesis box change the spectrum, and voxel resolution remains a separate source of error.">
-
-.. only:: html
-
-  .. image:: /auto_examples/validation/images/thumb/sphx_glr_finite_size_comparison_thumb.png
-    :alt:
-
-  :doc:`/auto_examples/validation/finite_size_comparison`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Finite samples and analytical first-order scattering</div>
     </div>
 
 
@@ -98,8 +98,8 @@ finite-size effects independently.
 .. toctree::
    :hidden:
 
-   /auto_examples/validation/grid_refinement
    /auto_examples/validation/finite_size_comparison
+   /auto_examples/validation/grid_refinement
    /auto_examples/validation/ensemble_sampling
    /auto_examples/validation/angular_convergence
 

@@ -32,10 +32,12 @@ original input voxel field. Retain manually supplied fields separately;
 generated-volume provenance records the medium and seed, with a field hash
 to identify the exact input. Exact regeneration depends on software versions.
 
-.. GENERATED FROM PYTHON SOURCE LINES 16-59
+.. GENERATED FROM PYTHON SOURCE LINES 16-60
 
 .. code-block:: Python
 
+
+    from bornsim.medium.random_medium import GaussianMedium
 
     from pathlib import Path
     from tempfile import TemporaryDirectory
@@ -45,8 +47,7 @@ to identify the exact input. Exact regeneration depends on software versions.
     import matplotlib.pyplot as plt
     import numpy as np
 
-    from bornsim import Grid, RandomMedium, Result, Solver, Source
-    from bornsim.media import random_volume
+    from bornsim import Grid, Result, Solver, Source
     from bornsim.units import ureg
 
     grid = Grid(
@@ -54,21 +55,21 @@ to identify the exact input. Exact regeneration depends on software versions.
         spacing=40 * ureg.nanometer,
     )
 
-    medium = RandomMedium(
-        correlation="gaussian",
+    medium = GaussianMedium(
         correlation_length=80 * ureg.nanometer,
         background_refractive_index=1.33,
         refractive_index_std=0.01,
     )
 
-    volume = random_volume(
-        medium=medium,
+    volume = medium.to_volume(
         grid=grid,
         seed=42,
     )
 
+    source_configuration_1 = Source(wavelength=633 * ureg.nanometer)
+
     solver = Solver(
-        source=Source(wavelength=633 * ureg.nanometer),
+        source=source_configuration_1,
         order=3,
     )
 
@@ -86,14 +87,14 @@ to identify the exact input. Exact regeneration depends on software versions.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 60-64
+.. GENERATED FROM PYTHON SOURCE LINES 61-65
 
 Inspect settings and retained amplitudes
 ----------------------------------------
 The arrays have been copied from the archive; they remain usable after the
 temporary directory is removed. Loading preserves the recorded versions.
 
-.. GENERATED FROM PYTHON SOURCE LINES 64-80
+.. GENERATED FROM PYTHON SOURCE LINES 65-81
 
 .. code-block:: Python
 
@@ -121,7 +122,7 @@ temporary directory is removed. Loading preserves the recorded versions.
 
  .. code-block:: none
 
-    BornSim version: 0.2.7
+    BornSim version: 0.2.8
     NumPy version: 2.4.6
     Seed: 42
     Grid: {'shape': [4, 4, 4], 'spacing_m': 4e-08, 'background_refractive_index': 1.33, 'delta_refractive_index_sha256': 'af423859f3fc7019d700fa3e969b1a81b72e4f170e654b08fae09eea22681b04'}
@@ -133,18 +134,42 @@ temporary directory is removed. Loading preserves the recorded versions.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 81-85
+.. GENERATED FROM PYTHON SOURCE LINES 82-86
 
-Plot restored scattering and field diagnostics
-----------------------------------------------
+Plot restored scattering
+------------------------
 Full angular sampling supplies normalized phase functions and finite-sample
 coefficients. They are not infinite-medium material transport coefficients.
 
-.. GENERATED FROM PYTHON SOURCE LINES 85-91
+.. GENERATED FROM PYTHON SOURCE LINES 86-90
 
 .. code-block:: Python
 
     restored.plot()
+
+    plt.show()
+
+
+
+
+.. image-sg:: /auto_examples/results/images/sphx_glr_save_load_results_001.png
+   :alt: Finite-sample scattering · meridian phi = 0 degrees
+   :srcset: /auto_examples/results/images/sphx_glr_save_load_results_001.png
+   :class: sphx-glr-single-img
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 91-94
+
+Plot restored field diagnostics
+-------------------------------
+Decreasing field terms do not certify Born convergence.
+
+.. GENERATED FROM PYTHON SOURCE LINES 94-98
+
+.. code-block:: Python
 
     restored.plot_field_norms()
 
@@ -153,28 +178,16 @@ coefficients. They are not infinite-medium material transport coefficients.
 
 
 
-.. rst-class:: sphx-glr-horizontal
-
-
-    *
-
-      .. image-sg:: /auto_examples/results/images/sphx_glr_save_load_results_001.png
-         :alt: Finite-sample scattering · meridian phi = 0 degrees
-         :srcset: /auto_examples/results/images/sphx_glr_save_load_results_001.png
-         :class: sphx-glr-multi-img
-
-    *
-
-      .. image-sg:: /auto_examples/results/images/sphx_glr_save_load_results_002.png
-         :alt: Born field terms Decreasing terms do not certify convergence
-         :srcset: /auto_examples/results/images/sphx_glr_save_load_results_002.png
-         :class: sphx-glr-multi-img
+.. image-sg:: /auto_examples/results/images/sphx_glr_save_load_results_002.png
+   :alt: Born field terms Decreasing terms do not certify convergence
+   :srcset: /auto_examples/results/images/sphx_glr_save_load_results_002.png
+   :class: sphx-glr-single-img
 
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 92-97
+.. GENERATED FROM PYTHON SOURCE LINES 99-104
 
 Inspect the medium in 3D
 ------------------------
@@ -182,7 +195,7 @@ Inspect the actual finite input sample with physical spatial axes.
 Drag to rotate and scroll to zoom in the embedded browser view.
 Regions with higher refractive index are more opaque; opacity is not absorption.
 
-.. GENERATED FROM PYTHON SOURCE LINES 97-105
+.. GENERATED FROM PYTHON SOURCE LINES 104-112
 
 .. code-block:: Python
 
@@ -208,7 +221,7 @@ Regions with higher refractive index are more opaque; opacity is not absorption.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.403 seconds)
+   **Total running time of the script:** (0 minutes 0.186 seconds)
 
 
 .. _sphx_glr_download_auto_examples_results_save_load_results.py:

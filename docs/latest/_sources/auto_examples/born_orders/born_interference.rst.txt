@@ -32,22 +32,22 @@ the linearized dielectric contrast ``2 * n0 * delta_n`` and the equal-volume
 spherical Green self cell with its longitudinal contact term. A small
 correction or decreasing field norms does not certify Born convergence.
 
-.. GENERATED FROM PYTHON SOURCE LINES 16-107
+.. GENERATED FROM PYTHON SOURCE LINES 16-112
 
 .. code-block:: Python
 
+
+    from bornsim.medium.random_medium import GaussianMedium
 
     import sys
 
     import matplotlib.pyplot as plt
     import numpy as np
 
-    from bornsim import Grid, RandomMedium, Solver, Source
-    from bornsim.media import random_volume
+    from bornsim import Grid, Solver, Source
     from bornsim.units import ureg
 
-    medium = RandomMedium(
-        correlation="gaussian",
+    medium = GaussianMedium(
         refractive_index_std=0.03,
         correlation_length=80 * ureg.nanometer,
         background_refractive_index=1.33,
@@ -58,16 +58,17 @@ correction or decreasing field norms does not certify Born convergence.
         spacing=40 * ureg.nanometer,
     )
 
-    volume = random_volume(
-        medium=medium,
+    volume = medium.to_volume(
         grid=grid,
         seed=42,
     )
 
     angles = np.linspace(0, 180, 121) * ureg.degree
 
+    source_configuration_1 = Source(wavelength=633 * ureg.nanometer)
+
     solver = Solver(
-        source=Source(wavelength=633 * ureg.nanometer),
+        source=source_configuration_1,
         order=3,
     )
 
@@ -95,7 +96,11 @@ correction or decreasing field norms does not certify Born convergence.
         )
 
         intensity_axis.plot(
-            angles.magnitude, incoherent[index], "--", color=color, label=f"Sum of intensities through {order}"
+            angles.magnitude,
+            incoherent[index],
+            "--",
+            color=color,
+            label=f"Sum of intensities through {order}",
         )
 
         relative_cross_terms = np.divide(
@@ -139,7 +144,7 @@ correction or decreasing field norms does not certify Born convergence.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 108-113
+.. GENERATED FROM PYTHON SOURCE LINES 113-118
 
 Inspect the medium in 3D
 ------------------------
@@ -147,7 +152,7 @@ Inspect the actual finite input sample with physical spatial axes.
 Drag to rotate and scroll to zoom in the embedded browser view.
 Regions with higher refractive index are more opaque; opacity is not absorption.
 
-.. GENERATED FROM PYTHON SOURCE LINES 113-121
+.. GENERATED FROM PYTHON SOURCE LINES 118-126
 
 .. code-block:: Python
 
@@ -173,7 +178,7 @@ Regions with higher refractive index are more opaque; opacity is not absorption.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.295 seconds)
+   **Total running time of the script:** (0 minutes 0.135 seconds)
 
 
 .. _sphx_glr_download_auto_examples_born_orders_born_interference.py:

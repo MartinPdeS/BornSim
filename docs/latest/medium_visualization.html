@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Medium visualization &#8212; BornSim 0.2.7 documentation</title>
+    <title>Medium visualization &#8212; BornSim 0.2.8 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="_static/documentation_options.js?v=58050c01"></script>
+    <script src="_static/documentation_options.js?v=b01fafc3"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/sg-tags.js?v=d80f6fa4"></script>
@@ -65,7 +65,7 @@
     <link rel="prev" title="Examples" href="examples.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.7" />
+  <meta name="docsearch:version" content="0.2.8" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -507,18 +507,17 @@ interactive gallery examples.</p>
 <section id="exponential-covariance">
 <h4>Exponential covariance<a class="headerlink" href="#exponential-covariance" title="Link to this heading">#</a></h4>
 <iframe src="_static/random-medium-exponential.html" title="Exponential random medium with increasing refractive index opacity" width="100%" height="560" loading="lazy" style="border:0;"></iframe><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">ureg</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">RandomMedium</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bornsim.medium.random_medium</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianMedium</span>
 
 <span class="n">grid</span> <span class="o">=</span> <span class="n">Grid</span><span class="p">(</span>
     <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>
     <span class="n">spacing</span><span class="o">=</span><span class="mf">2.5e-08</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">medium</span> <span class="o">=</span> <span class="n">RandomMedium</span><span class="p">(</span>
+<span class="n">medium</span> <span class="o">=</span> <span class="n">GaussianMedium</span><span class="p">(</span>
     <span class="n">refractive_index_std</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
     <span class="n">correlation_length</span><span class="o">=</span><span class="mf">7.5e-08</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
-    <span class="n">correlation</span><span class="o">=</span><span class="s2">"gaussian"</span><span class="p">,</span>
     <span class="n">background_refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -528,17 +527,14 @@ interactive gallery examples.</p>
 <span class="p">)</span>
 
 <span class="n">figure</span> <span class="o">=</span> <span class="n">volume</span><span class="o">.</span><span class="n">plot_3d</span><span class="p">(</span>
-    <span class="n">mode</span><span class="o">=</span><span class="s2">"volume"</span><span class="p">,</span>
-    <span class="n">field</span><span class="o">=</span><span class="s2">"refractive_index"</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s1">'volume'</span><span class="p">,</span>
+    <span class="n">field</span><span class="o">=</span><span class="s1">'refractive_index'</span><span class="p">,</span>
     <span class="n">surface_count</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
     <span class="n">opacity</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
-    <span class="n">opacity_scale</span><span class="o">=</span><span class="s2">"increasing"</span><span class="p">,</span>
+    <span class="n">opacity_scale</span><span class="o">=</span><span class="s1">'increasing'</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">figure</span><span class="o">.</span><span class="n">write_html</span><span class="p">(</span>
-    <span class="n">file</span><span class="o">=</span><span class="s2">"medium.html"</span><span class="p">,</span>
-    <span class="n">include_plotlyjs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="n">figure</span><span class="o">.</span><span class="n">write_html</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="s1">'medium.html'</span><span class="p">,</span> <span class="n">include_plotlyjs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Plotly also supports <code class="docutils literal notranslate"><span class="pre">mode=&quot;isosurface&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">mode=&quot;slices&quot;</span></code>; its default
@@ -565,7 +561,6 @@ an equal spatial aspect ratio, and a colorbar. It handles axis orientation and
 voxel-edge extents automatically. The default plane is the middle z voxel;
 on an even grid its centre is at positive half-spacing, not at zero.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">ureg</span>
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">Sphere</span><span class="p">,</span> <span class="n">StructuredMedium</span>
 
 <span class="n">structure</span> <span class="o">=</span> <span class="n">StructuredMedium</span><span class="p">()</span>
@@ -577,24 +572,22 @@ on an even grid its centre is at positive half-spacing, not at zero.</p>
     <span class="n">refractive_index</span><span class="o">=</span><span class="mf">1.34</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">structure</span><span class="o">.</span><span class="n">add_structures</span><span class="p">(</span>
-    <span class="n">sphere</span><span class="p">,</span>
+<span class="n">structure</span><span class="o">.</span><span class="n">add_structures</span><span class="p">(</span><span class="n">sphere</span><span class="p">)</span>
+
+<span class="n">grid_configuration_1</span> <span class="o">=</span> <span class="n">Grid</span><span class="p">(</span>
+    <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">),</span>
+    <span class="n">spacing</span><span class="o">=</span><span class="mf">2e-08</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">volume</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">to_volume</span><span class="p">(</span>
-    <span class="n">grid</span><span class="o">=</span><span class="n">Grid</span><span class="p">(</span>
-        <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">),</span>
-        <span class="n">spacing</span><span class="o">=</span><span class="mf">2e-08</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
-    <span class="p">),</span>
-<span class="p">)</span>
+<span class="n">volume</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">to_volume</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid_configuration_1</span><span class="p">)</span>
 
 <span class="n">figure</span> <span class="o">=</span> <span class="n">volume</span><span class="o">.</span><span class="n">plot_slice</span><span class="p">(</span>
-    <span class="n">normal</span><span class="o">=</span><span class="s2">"z"</span><span class="p">,</span>
-    <span class="n">field</span><span class="o">=</span><span class="s2">"refractive_index"</span><span class="p">,</span>
-    <span class="n">length_unit</span><span class="o">=</span><span class="s2">"nanometer"</span><span class="p">,</span>
+    <span class="n">normal</span><span class="o">=</span><span class="s1">'z'</span><span class="p">,</span>
+    <span class="n">field</span><span class="o">=</span><span class="s1">'refractive_index'</span><span class="p">,</span>
+    <span class="n">length_unit</span><span class="o">=</span><span class="s1">'nanometer'</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">figure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">"sphere-slice.png"</span><span class="p">)</span>
+<span class="n">figure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">'sphere-slice.png'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Use <code class="docutils literal notranslate"><span class="pre">normal=&quot;x&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">normal=&quot;y&quot;</span></code> for other orientations and <code class="docutils literal notranslate"><span class="pre">index</span></code>
@@ -608,21 +601,20 @@ sample, <code class="docutils literal notranslate"><span class="pre">Result.plot
 errors by the stored physical sample volume and converts the display area units. Both return
 Matplotlib figures and accept a custom <code class="docutils literal notranslate"><span class="pre">title</span></code> and <code class="docutils literal notranslate"><span class="pre">log_y=True</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">ureg</span>
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Solver</span><span class="p">,</span> <span class="n">Source</span>
 
+<span class="n">source_configuration_1</span> <span class="o">=</span> <span class="n">Source</span><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mf">6.33e-07</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">)</span>
+
 <span class="n">solver</span> <span class="o">=</span> <span class="n">Solver</span><span class="p">(</span>
-    <span class="n">source</span><span class="o">=</span><span class="n">Source</span><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mf">6.33e-07</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">),</span>
+    <span class="n">source</span><span class="o">=</span><span class="n">source_configuration_1</span><span class="p">,</span>
     <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">result</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">volume</span><span class="p">)</span>
 
-<span class="n">figure</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">plot_cross_section</span><span class="p">(</span>
-    <span class="n">area_unit</span><span class="o">=</span><span class="s2">"nanometer**2"</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="n">figure</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">plot_cross_section</span><span class="p">(</span><span class="n">area_unit</span><span class="o">=</span><span class="s1">'nanometer**2'</span><span class="p">)</span>
 
-<span class="n">figure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">"sphere-scattering.png"</span><span class="p">)</span>
+<span class="n">figure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">'sphere-scattering.png'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The original Volume is not required for this plot. Normalization uses the entire
@@ -658,31 +650,32 @@ plane along each axis. Plotly also supports explicit <code class="docutils liter
 cells are retained, with voxel-edge extents and a shared color scale. Select
 specific planes with <code class="docutils literal notranslate"><span class="pre">slice_indices</span></code>; otherwise the middle voxels are used.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">ureg</span>
-
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">RandomMedium</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bornsim.medium.random_medium</span><span class="w"> </span><span class="kn">import</span> <span class="n">WhittleMaternMedium</span>
 
-<span class="n">medium</span> <span class="o">=</span> <span class="n">RandomMedium</span><span class="p">(</span>
-    <span class="n">correlation</span><span class="o">=</span><span class="s2">"matern"</span><span class="p">,</span>
+<span class="n">medium</span> <span class="o">=</span> <span class="n">WhittleMaternMedium</span><span class="p">(</span>
     <span class="n">smoothness</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
     <span class="n">correlation_length</span><span class="o">=</span><span class="mf">6e-08</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
     <span class="n">background_refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span>
     <span class="n">refractive_index_std</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
 <span class="p">)</span>
 
+<span class="n">grid_configuration_1</span> <span class="o">=</span> <span class="n">Grid</span><span class="p">(</span>
+    <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>
+    <span class="n">spacing</span><span class="o">=</span><span class="mf">2.5e-08</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
+<span class="p">)</span>
+
 <span class="n">volume</span> <span class="o">=</span> <span class="n">medium</span><span class="o">.</span><span class="n">to_volume</span><span class="p">(</span>
-    <span class="n">grid</span><span class="o">=</span><span class="n">Grid</span><span class="p">(</span>
-        <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>
-        <span class="n">spacing</span><span class="o">=</span><span class="mf">2.5e-08</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
-    <span class="p">),</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">grid_configuration_1</span><span class="p">,</span>
     <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">figure</span> <span class="o">=</span> <span class="n">volume</span><span class="o">.</span><span class="n">plot_3d</span><span class="p">(</span>
-    <span class="n">backend</span><span class="o">=</span><span class="s2">"matplotlib"</span><span class="p">,</span>
-    <span class="n">field</span><span class="o">=</span><span class="s2">"delta_refractive_index"</span><span class="p">,</span>
+    <span class="n">backend</span><span class="o">=</span><span class="s1">'matplotlib'</span><span class="p">,</span>
+    <span class="n">field</span><span class="o">=</span><span class="s1">'delta_refractive_index'</span><span class="p">,</span>
     <span class="n">slice_indices</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span>
-    <span class="n">length_unit</span><span class="o">=</span><span class="s2">"nanometer"</span><span class="p">,</span>
+    <span class="n">length_unit</span><span class="o">=</span><span class="s1">'nanometer'</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -696,7 +689,6 @@ staircase boundary is therefore visible rather than smoothed by interpolation.
 Only exposed faces are drawn: interior inclusions are easier to inspect using
 slices. For an entirely zero field, voxels display the full uniform box.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">ureg</span>
-
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">Sphere</span><span class="p">,</span> <span class="n">StructuredMedium</span>
 
@@ -709,24 +701,22 @@ slices. For an entirely zero field, voxels display the full uniform box.</p>
     <span class="n">refractive_index</span><span class="o">=</span><span class="mf">1.34</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">sample</span><span class="o">.</span><span class="n">add_structures</span><span class="p">(</span>
-    <span class="n">sphere</span><span class="p">,</span>
+<span class="n">sample</span><span class="o">.</span><span class="n">add_structures</span><span class="p">(</span><span class="n">sphere</span><span class="p">)</span>
+
+<span class="n">grid_configuration_1</span> <span class="o">=</span> <span class="n">Grid</span><span class="p">(</span>
+    <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">),</span>
+    <span class="n">spacing</span><span class="o">=</span><span class="mf">2e-08</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">volume</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">to_volume</span><span class="p">(</span>
-    <span class="n">grid</span><span class="o">=</span><span class="n">Grid</span><span class="p">(</span>
-        <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">),</span>
-        <span class="n">spacing</span><span class="o">=</span><span class="mf">2e-08</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
-    <span class="p">),</span>
-<span class="p">)</span>
+<span class="n">volume</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">to_volume</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid_configuration_1</span><span class="p">)</span>
 
 <span class="n">figure</span> <span class="o">=</span> <span class="n">volume</span><span class="o">.</span><span class="n">plot_3d</span><span class="p">(</span>
-    <span class="n">backend</span><span class="o">=</span><span class="s2">"matplotlib"</span><span class="p">,</span>
-    <span class="n">mode</span><span class="o">=</span><span class="s2">"voxels"</span><span class="p">,</span>
-    <span class="n">field</span><span class="o">=</span><span class="s2">"refractive_index"</span><span class="p">,</span>
+    <span class="n">backend</span><span class="o">=</span><span class="s1">'matplotlib'</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s1">'voxels'</span><span class="p">,</span>
+    <span class="n">field</span><span class="o">=</span><span class="s1">'refractive_index'</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">figure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">"sphere-3d.png"</span><span class="p">)</span>
+<span class="n">figure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">'sphere-3d.png'</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
@@ -739,14 +729,13 @@ background fills uncovered voxels; structures overwrite that background,
 including its fluctuations, inside their masks. The exterior reference refractive index
 is the random statistics’ uniform background refractive index.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">ureg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">Sphere</span><span class="p">,</span> <span class="n">StructuredMedium</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bornsim.medium.random_medium</span><span class="w"> </span><span class="kn">import</span> <span class="n">WhittleMaternMedium</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">RandomMedium</span><span class="p">,</span> <span class="n">Sphere</span><span class="p">,</span> <span class="n">StructuredMedium</span>
-
-<span class="n">statistics</span> <span class="o">=</span> <span class="n">RandomMedium</span><span class="p">(</span>
+<span class="n">statistics</span> <span class="o">=</span> <span class="n">WhittleMaternMedium</span><span class="p">(</span>
     <span class="n">refractive_index_std</span><span class="o">=</span><span class="mf">0.002</span><span class="p">,</span>
     <span class="n">correlation_length</span><span class="o">=</span><span class="mf">5e-08</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
     <span class="n">background_refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span>
-    <span class="n">correlation</span><span class="o">=</span><span class="s2">"matern"</span><span class="p">,</span>
     <span class="n">smoothness</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -759,21 +748,21 @@ is the random statistics’ uniform background refractive index.</p>
     <span class="n">refractive_index</span><span class="o">=</span><span class="mf">1.345</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">sample</span><span class="o">.</span><span class="n">add_structures</span><span class="p">(</span>
-    <span class="n">sphere</span><span class="p">,</span>
+<span class="n">sample</span><span class="o">.</span><span class="n">add_structures</span><span class="p">(</span><span class="n">sphere</span><span class="p">)</span>
+
+<span class="n">grid_configuration_1</span> <span class="o">=</span> <span class="n">Grid</span><span class="p">(</span>
+    <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>
+    <span class="n">spacing</span><span class="o">=</span><span class="mf">2.5e-08</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">volume</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">to_volume</span><span class="p">(</span>
-    <span class="n">grid</span><span class="o">=</span><span class="n">Grid</span><span class="p">(</span>
-        <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>
-        <span class="n">spacing</span><span class="o">=</span><span class="mf">2.5e-08</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
-    <span class="p">),</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">grid_configuration_1</span><span class="p">,</span>
     <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">figure</span> <span class="o">=</span> <span class="n">volume</span><span class="o">.</span><span class="n">plot_3d</span><span class="p">(</span>
-    <span class="n">field</span><span class="o">=</span><span class="s2">"refractive_index"</span><span class="p">,</span>
-    <span class="n">opacity_scale</span><span class="o">=</span><span class="s2">"increasing"</span><span class="p">,</span>
+    <span class="n">field</span><span class="o">=</span><span class="s1">'refractive_index'</span><span class="p">,</span>
+    <span class="n">opacity_scale</span><span class="o">=</span><span class="s1">'increasing'</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">figure</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>

@@ -14,12 +14,13 @@ The 3D surface retains each azimuth direction, showing directional structure
 in the ensemble intensity average.
 """
 
+from bornsim.medium.random_medium import GaussianMedium
+
 import sys
 
 import matplotlib.pyplot as plt
 
-from bornsim import EnsembleSampling, Grid, RandomMedium, Solver, Source
-from bornsim.media import random_volume
+from bornsim import EnsembleSampling, Grid, Solver, Source
 from bornsim.units import ureg
 
 grid = Grid(
@@ -27,25 +28,28 @@ grid = Grid(
     spacing=50 * ureg.nanometer,
 )
 
-medium = RandomMedium(
-    correlation="gaussian",
+medium = GaussianMedium(
     correlation_length=100 * ureg.nanometer,
     background_refractive_index=1.33,
     refractive_index_std=0.01,
 )
 
+source_configuration_1 = Source(wavelength=633 * ureg.nanometer)
+
 solver = Solver(
-    source=Source(wavelength=633 * ureg.nanometer),
+    source=source_configuration_1,
     order=3,
+)
+
+ensemble_sampling_configuration_1 = EnsembleSampling(
+    realizations=4,
+    seed=42,
 )
 
 result = solver.ensemble(
     medium=medium,
     grid=grid,
-    ensemble_sampling=EnsembleSampling(
-        realizations=4,
-        seed=42,
-    ),
+    ensemble_sampling=ensemble_sampling_configuration_1,
 )
 
 # %%
@@ -90,8 +94,7 @@ if "--no-browser" not in sys.argv:
 # A fixed random volume need not be axisymmetric. Its field norms can be
 # inspected without inferring a normalized phase function from one cut.
 # Decreasing terms do not certify Born convergence.
-volume = random_volume(
-    medium=medium,
+volume = medium.to_volume(
     grid=grid,
     seed=42,
 )

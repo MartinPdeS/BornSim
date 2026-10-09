@@ -14,13 +14,14 @@ Gaussian. A composed manual volume does not retain inferred generation
 metadata: keep the ingredients and seed for reproducibility.
 """
 
+from bornsim.medium.random_medium import WhittleMaternMedium
+
 import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from bornsim import Grid, Layer, RandomMedium, Solver, Source, Sphere, StructuredMedium, Volume
-from bornsim.media import random_volume
+from bornsim import Grid, Layer, Solver, Source, Sphere, StructuredMedium, Volume
 from bornsim.units import ureg
 
 grid = Grid(
@@ -60,16 +61,14 @@ structured = structure.to_volume(
     grid=grid,
 )
 
-statistics = RandomMedium(
+statistics = WhittleMaternMedium(
     refractive_index_std=0.002,
     correlation_length=5e-08 * ureg.meter,
     smoothness=1.5,
     background_refractive_index=1.33,
-    correlation="matern",
 )
 
-fluctuations = random_volume(
-    medium=statistics,
+fluctuations = statistics.to_volume(
     grid=grid,
     seed=42,
 )
@@ -126,8 +125,10 @@ axes[0].set(xlabel="x (nm)", ylabel="z (nm)", title="Layers, sphere and Matérn 
 
 figure.colorbar(image, ax=axes[0], label="Refractive index")
 
+source_configuration_1 = Source(wavelength=633 * ureg.nanometer)
+
 solver = Solver(
-    source=Source(wavelength=633 * ureg.nanometer),
+    source=source_configuration_1,
     order=3,
 )
 

@@ -104,7 +104,7 @@ on every axis to avoid clipping. Grid-aligned offsets translate the same mask.
     sphere = Sphere(
         radius=150 * ureg.nanometer,
         material=sphere_material,
-        centre=[-100, 00, -20] * ureg.nanometer,
+        centre=[-100, 0, -20] * ureg.nanometer,
     )
 
     structure.add_structures(
@@ -163,12 +163,14 @@ divided by the entire voxel-box volume. Multiplying by that physical volume
 recovers a differential cross section, which avoids treating the empty
 background portion of the box as part of an intrinsic transport coefficient.
 
-.. GENERATED FROM PYTHON SOURCE LINES 104-114
+.. GENERATED FROM PYTHON SOURCE LINES 104-116
 
 .. code-block:: Python
 
+    source_configuration_1 = Source(wavelength=633 * ureg.nanometer)
+
     solver = Solver(
-        source=Source(wavelength=633 * ureg.nanometer),
+        source=source_configuration_1,
         sampling=sampling,
         order=3,
     )
@@ -184,7 +186,7 @@ background portion of the box as part of an intrinsic transport coefficient.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 115-123
+.. GENERATED FROM PYTHON SOURCE LINES 117-125
 
 Three-dimensional phase function
 ---------------------------------
@@ -195,7 +197,7 @@ structures. Its radius is a probability density per steradian, not a spatial
 coordinate. No realization or azimuth averaging is applied to the 3D view.
 Check polar and azimuth quadrature refinement for quantitative calculations.
 
-.. GENERATED FROM PYTHON SOURCE LINES 123-130
+.. GENERATED FROM PYTHON SOURCE LINES 125-132
 
 .. code-block:: Python
 
@@ -217,14 +219,14 @@ Check polar and azimuth quadrature refinement for quantitative calculations.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 131-135
+.. GENERATED FROM PYTHON SOURCE LINES 133-137
 
 Select a physical meridian
 ---------------------------
 Select the sampled phi = 90 degree plane without averaging or interpolation.
 The curve keeps the full solve's solid-angle normalization.
 
-.. GENERATED FROM PYTHON SOURCE LINES 135-140
+.. GENERATED FROM PYTHON SOURCE LINES 137-142
 
 .. code-block:: Python
 
@@ -248,7 +250,7 @@ The curve keeps the full solve's solid-angle normalization.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 5.831 seconds)
+   **Total running time of the script:** (0 minutes 2.769 seconds)
 
 
 .. _sphx_glr_download_auto_examples_structured_media_dielectric_sphere.py:

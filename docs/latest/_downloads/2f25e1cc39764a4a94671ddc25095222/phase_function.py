@@ -2,19 +2,21 @@
 Normalized phase function
 =========================
 
-Compare analytical phase functions for three Gaussian covariance lengths
+Compare finite-sample ensemble phase functions for three Gaussian covariance lengths
 at a vacuum wavelength of 633 nm. The phase function is a probability density
 per steradian, normalized over solid angle. The corresponding polar-angle
 density includes the factor ``2*pi*sin(theta)`` and integrates over radians.
 
-The medium is three-dimensional. Rotational symmetry around the incident
-beam lets its analytical phase function be described by one polar angle.
+The medium is three-dimensional. The displayed curves explicitly average the sampled azimuthal directions;
+individual finite samples need not have rotational symmetry.
 """
+
+from bornsim.medium.random_medium import GaussianMedium
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from bornsim import AngularSampling, AnalyticalMedium, Solver, Source
+from bornsim import AngularSampling, EnsembleSampling, Grid, Solver, Source
 from bornsim.units import ureg
 
 # %%
@@ -22,7 +24,12 @@ from bornsim.units import ureg
 # ---------------------------
 # Longer covariance lengths can produce more forward-peaked scattering.
 # The same result provides the phase function and its mean cosine, ``g``.
-solver = Solver(source=Source(wavelength=633 * ureg.nanometer))
+source_configuration_1 = Source(wavelength=633 * ureg.nanometer)
+
+solver = Solver(
+    source=source_configuration_1,
+    order=1,
+)
 
 sampling = AngularSampling(
     start=0 * ureg.degree,
@@ -30,18 +37,43 @@ sampling = AngularSampling(
     n_points=181,
 )
 
+grid = Grid(
+    shape=(6, 6, 6),
+    spacing=40 * ureg.nanometer,
+)
+
+ensemble_sampling = EnsembleSampling(
+    realizations=8,
+    seed=42,
+)
+
+preview_volumes = {}
+
+
+# %%
+# Compare numerical scattering
+# ----------------------------
 figure, (phase_axis, density_axis) = plt.subplots(1, 2, figsize=(11, 4.5), layout="constrained")
 
 for length_nm, color in zip((30, 100, 300), ("#0072B2", "#D55E00", "#009E73")):
-    medium = AnalyticalMedium(
+    medium = GaussianMedium(
         correlation_length=length_nm * ureg.nanometer,
         background_refractive_index=1.33,
         refractive_index_std=0.01,
-        correlation="gaussian",
     )
 
-    result = solver.solve(
-        target=medium,
+    # Show the first ensemble realization on the same grid used for scattering.
+    preview_volume = medium.to_volume(
+        grid=grid,
+        seed=ensemble_sampling.seeds[0],
+    )
+
+    preview_volumes[length_nm] = preview_volume
+
+    result = solver.ensemble(
+        medium=medium,
+        grid=grid,
+        ensemble_sampling=ensemble_sampling,
         sampling=sampling,
     )
 
@@ -76,6 +108,54 @@ for axis in (phase_axis, density_axis):
 
     axis.legend(frameon=False, fontsize=9)
 
-figure.suptitle("Analytical first-order scattering · Gaussian covariance · λvac = 633 nm")
+figure.suptitle("Numerical first-order scattering · Gaussian covariance · λvac = 633 nm")
+
+plt.show()
+
+# %%
+# 30 nm correlation length in 3D
+# ------------------------------
+# Show one finite input sample with its physical spatial axes.
+preview_volume = preview_volumes[30]
+
+medium_figure = preview_volume.plot_3d(
+    backend="matplotlib",
+    mode="slices",
+    field="refractive_index",
+)
+
+medium_figure.suptitle(f"Gaussian medium · correlation length 30 nm · seed {ensemble_sampling.seeds[0]}")
+
+plt.show()
+
+# %%
+# 100 nm correlation length in 3D
+# -------------------------------
+# Show one finite input sample with its physical spatial axes.
+preview_volume = preview_volumes[100]
+
+medium_figure = preview_volume.plot_3d(
+    backend="matplotlib",
+    mode="slices",
+    field="refractive_index",
+)
+
+medium_figure.suptitle(f"Gaussian medium · correlation length 100 nm · seed {ensemble_sampling.seeds[0]}")
+
+plt.show()
+
+# %%
+# 300 nm correlation length in 3D
+# -------------------------------
+# Show one finite input sample with its physical spatial axes.
+preview_volume = preview_volumes[300]
+
+medium_figure = preview_volume.plot_3d(
+    backend="matplotlib",
+    mode="slices",
+    field="refractive_index",
+)
+
+medium_figure.suptitle(f"Gaussian medium · correlation length 300 nm · seed {ensemble_sampling.seeds[0]}")
 
 plt.show()

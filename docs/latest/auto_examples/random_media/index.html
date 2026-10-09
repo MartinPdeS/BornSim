@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Random media &#8212; BornSim 0.2.7 documentation</title>
+    <title>Random media &#8212; BornSim 0.2.8 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=58050c01"></script>
+    <script src="../../_static/documentation_options.js?v=b01fafc3"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -60,11 +60,11 @@
     <link rel="icon" href="../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Analytical scattering with physical units" href="analytical_scattering.html" />
+    <link rel="next" title="Random nonoverlapping spheres" href="random_spheres.html" />
     <link rel="prev" title="Example gallery" href="../index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.7" />
+  <meta name="docsearch:version" content="0.2.8" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -482,12 +482,11 @@
                   
   <section id="random-media">
 <span id="sphx-glr-auto-examples-random-media"></span><h1>Random media<a class="headerlink" href="#random-media" title="Link to this heading">#</a></h1>
-<p>Generate seeded refractive-index fluctuations and compare covariance models,
-analytical first-order scattering, phase functions, and wavelength dependence.</p>
-<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Compute first-order infinite-medium optical properties using TypedUnit quantities."><img alt="" src="../../_images/sphx_glr_analytical_scattering_thumb.png" />
-<p><a class="reference internal" href="analytical_scattering.html"><span class="doc">Analytical scattering with physical units</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Analytical scattering with physical units</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="Compare analytical phase functions for three Gaussian covariance lengths at a vacuum wavelength of 633 nm. The phase function is a probability density per steradian, normalized over solid angle. The corresponding polar-angle density includes the factor 2pisin(theta) and integrates over radians."><img alt="" src="../../_images/sphx_glr_phase_function_thumb.png" />
+<p>Seeded random fields, numerical ensembles, phase functions, and wavelength dependence.</p>
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Generate a reproducible collection of identical spheres in a uniform background. Sphere centres are proposed uniformly within the part of the box that keeps each sphere fully inside. Overlapping proposals are rejected; the generator raises an error if it cannot place every requested sphere within its attempt limit. This is sequential placement, rather than an equilibrium hard-sphere model."><img alt="" src="../../_images/sphx_glr_random_spheres_thumb.png" />
+<p><a class="reference internal" href="random_spheres.html"><span class="doc">Random nonoverlapping spheres</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Random nonoverlapping spheres</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Compare finite-sample ensemble phase functions for three Gaussian covariance lengths at a vacuum wavelength of 633 nm. The phase function is a probability density per steradian, normalized over solid angle. The corresponding polar-angle density includes the factor 2pisin(theta) and integrates over radians."><img alt="" src="../../_images/sphx_glr_phase_function_thumb.png" />
 <p><a class="reference internal" href="phase_function.html"><span class="doc">Normalized phase function</span></a></p>
   <div class="sphx-glr-thumbnail-title">Normalized phase function</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="Sweep vacuum wavelength at fixed background refractive index, refractive-index fluctuation strength, and Gaussian covariance length. Total scattering and reduced scattering are different observables: forward scattering increases anisotropy and reduces the contribution to mu_s_prime = mu_s * (1 - g)."><img alt="" src="../../_images/sphx_glr_wavelength_dependence_thumb.png" />

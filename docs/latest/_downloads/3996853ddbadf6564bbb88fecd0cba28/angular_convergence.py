@@ -9,23 +9,26 @@ not refine the integral. The finest calculation is a numerical reference,
 not an exact solution, and both quadrature axes need checking independently.
 """
 
+from bornsim.medium.random_medium import GaussianMedium
+
 import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from bornsim import EnsembleSampling, AngularSampling, Grid, RandomMedium, Solver, Source
+from bornsim import EnsembleSampling, AngularSampling, Grid, Solver, Source
 from bornsim.units import ureg
 
-medium = RandomMedium(
-    correlation="gaussian",
+medium = GaussianMedium(
     refractive_index_std=0.001,
     correlation_length=600 * ureg.nanometer,
     background_refractive_index=1.33,
 )
 
+source_configuration_1 = Source(wavelength=400 * ureg.nanometer)
+
 solver = Solver(
-    source=Source(wavelength=400 * ureg.nanometer),
+    source=source_configuration_1,
     order=1,
 )
 

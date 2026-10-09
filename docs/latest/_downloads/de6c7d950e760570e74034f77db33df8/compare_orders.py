@@ -9,11 +9,13 @@ medium. Error bars describe realization sampling, not discretization error.
 Field-term diagnostics alone do not certify convergence.
 """
 
+from bornsim.medium.random_medium import GaussianMedium
+
 import sys
 
 import matplotlib.pyplot as plt
 
-from bornsim import EnsembleSampling, Grid, RandomMedium, Solver, Source
+from bornsim import EnsembleSampling, Grid, Solver, Source
 from bornsim.units import ureg
 
 grid = Grid(
@@ -21,25 +23,28 @@ grid = Grid(
     spacing=50 * ureg.nanometer,
 )
 
-medium = RandomMedium(
-    correlation="gaussian",
+medium = GaussianMedium(
     background_refractive_index=1.33,
     refractive_index_std=0.01,
     correlation_length=100 * ureg.nanometer,
 )
 
+source_configuration_1 = Source(wavelength=633 * ureg.nanometer)
+
 ensemble_solver = Solver(
-    source=Source(wavelength=633 * ureg.nanometer),
+    source=source_configuration_1,
     order=3,
+)
+
+ensemble_sampling_configuration_1 = EnsembleSampling(
+    realizations=4,
+    seed=42,
 )
 
 result = ensemble_solver.ensemble(
     medium=medium,
     grid=grid,
-    ensemble_sampling=EnsembleSampling(
-        realizations=4,
-        seed=42,
-    ),
+    ensemble_sampling=ensemble_sampling_configuration_1,
 )
 
 for index, coefficient in enumerate(result.mu_s.to("1 / meter").magnitude, start=1):

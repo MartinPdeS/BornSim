@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Theory figure: covariance and simulated random fields &#8212; BornSim 0.2.7 documentation</title>
+    <title>Theory figure: covariance and simulated random fields &#8212; BornSim 0.2.8 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=58050c01"></script>
+    <script src="../../_static/documentation_options.js?v=b01fafc3"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -64,7 +64,7 @@
     <link rel="prev" title="Visualize seeded three-dimensional random media" href="random_medium.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.7" />
+  <meta name="docsearch:version" content="0.2.8" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -499,10 +499,12 @@ is removed.</p>
 <p>Discrete spectral predictions include the finite periodic synthesis box and
 spectral truncation. Continuum covariance curves are reference functions,
 not exact descriptions of the sampled finite grid.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="nn">.</span><span class="nn">pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span><span class="w">
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="nn">.</span><span class="nn">medium</span><span class="nn">.</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_medium.WhittleMaternMedium" title="bornsim.WhittleMaternMedium"><span class="nn">random_medium</span></a><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.medium.random_medium.GaussianMedium" title="bornsim.GaussianMedium"><span class="n">GaussianMedium</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.medium.random_medium.ExponentialMedium" title="bornsim.ExponentialMedium"><span class="n">ExponentialMedium</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.medium.random_medium.WhittleMaternMedium" title="bornsim.WhittleMaternMedium"><span class="n">WhittleMaternMedium</span></a><span class="w">
+</span><span class="w">
+</span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="nn">.</span><span class="nn">pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span><span class="w">
 </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span><span class="w">
 </span><span class="w">
-</span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.ensemble_sampling.EnsembleSampling" title="bornsim.EnsembleSampling"><span class="n">EnsembleSampling</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">Grid</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.media.RandomMedium" title="bornsim.RandomMedium"><span class="n">RandomMedium</span></a><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.ensemble_sampling.EnsembleSampling" title="bornsim.EnsembleSampling"><span class="n">EnsembleSampling</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">Grid</span></a><span class="w">
 </span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="nn">.</span><span class="nn">units</span><span class="w"> </span><span class="kn">import</span> <span class="n">ureg</span><span class="w">
 </span><span class="w">
 </span><span class="n">voxel_spacing</span> <span class="o">=</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="w">
@@ -521,13 +523,36 @@ not exact descriptions of the sampled finite grid.</p>
 </span><span class="w">
 </span><span class="n">refractive_index_std</span> <span class="o">=</span> <span class="mf">0.01</span><span class="w">
 </span><span class="w">
-</span><span class="n">covariance_models</span> <span class="o">=</span> <span class="p">(</span><span class="w">
-</span>    <span class="p">(</span><span class="s2">&quot;</span><span class="s2">gaussian</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">Gaussian</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">#0072B2</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">,</span><span class="w">
-</span>    <span class="p">(</span><span class="s2">&quot;</span><span class="s2">exponential</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">Exponential</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">#D55E00</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">,</span><span class="w">
-</span>    <span class="p">(</span><span class="s2">&quot;</span><span class="s2">matern</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">Matérn, ν = 3/2</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">#009E73</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_medium.GaussianMedium" title="bornsim.GaussianMedium"><span class="n">gaussian_medium</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.medium.random_medium.GaussianMedium" title="bornsim.GaussianMedium"><span class="n">GaussianMedium</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">background_refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span><span class="w">
+</span>    <span class="n">refractive_index_std</span><span class="o">=</span><span class="n">refractive_index_std</span><span class="p">,</span><span class="w">
+</span>    <span class="n">correlation_length</span><span class="o">=</span><span class="n">correlation_length</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
 </span><span class="w">
-</span><span class="n">slice_figure</span><span class="p">,</span> <span class="n">slice_axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">constrained</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_medium.ExponentialMedium" title="bornsim.ExponentialMedium"><span class="n">exponential_medium</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.medium.random_medium.ExponentialMedium" title="bornsim.ExponentialMedium"><span class="n">ExponentialMedium</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">background_refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span><span class="w">
+</span>    <span class="n">refractive_index_std</span><span class="o">=</span><span class="n">refractive_index_std</span><span class="p">,</span><span class="w">
+</span>    <span class="n">correlation_length</span><span class="o">=</span><span class="n">correlation_length</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_medium.WhittleMaternMedium" title="bornsim.WhittleMaternMedium"><span class="n">whittle_matern_medium</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.medium.random_medium.WhittleMaternMedium" title="bornsim.WhittleMaternMedium"><span class="n">WhittleMaternMedium</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">background_refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span><span class="w">
+</span>    <span class="n">refractive_index_std</span><span class="o">=</span><span class="n">refractive_index_std</span><span class="p">,</span><span class="w">
+</span>    <span class="n">correlation_length</span><span class="o">=</span><span class="n">correlation_length</span><span class="p">,</span><span class="w">
+</span>    <span class="n">smoothness</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">covariance_models</span> <span class="o">=</span> <span class="p">(</span><span class="w">
+</span>    <span class="p">(</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_medium.GaussianMedium" title="bornsim.GaussianMedium"><span class="n">gaussian_medium</span></a><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">Gaussian</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">#0072B2</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <span class="p">(</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_medium.ExponentialMedium" title="bornsim.ExponentialMedium"><span class="n">exponential_medium</span></a><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">Exponential</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">#D55E00</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <span class="p">(</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_medium.WhittleMaternMedium" title="bornsim.WhittleMaternMedium"><span class="n">whittle_matern_medium</span></a><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">Matérn, ν = 3/2</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">#009E73</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">preview_volumes</span> <span class="o">=</span> <span class="p">{</span><span class="p">}</span><span class="w">
+</span></pre></div></div>
+<section id="sample-fields-and-estimate-covariance">
+<h2>Sample fields and estimate covariance<a class="headerlink" href="#sample-fields-and-estimate-covariance" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">slice_figure</span><span class="p">,</span> <span class="n">slice_axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">constrained</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span><span class="w">
 </span><span class="n">covariance_comparisons</span> <span class="o">=</span> <span class="p">[</span><span class="p">]</span><span class="w">
 </span><span class="w">
@@ -536,7 +561,7 @@ not exact descriptions of the sampled finite grid.</p>
 </span><span class="w">
 </span><span class="n">distance_between_points</span> <span class="o">=</span> <span class="n">voxel_offsets_x</span> <span class="o">*</span> <span class="n">voxel_spacing</span><span class="w">
 </span><span class="w">
-</span><span class="c1"># RandomMedium synthesizes a periodic field on twice the sample size before cropping.</span><span class="w">
+</span><span class="c1"># Random-field synthesis uses a periodic field on twice the sample size before cropping.</span><span class="w">
 </span><span class="n">synthesis_grid_shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">voxel_count</span> <span class="k">for</span> <span class="n">voxel_count</span> <span class="ow">in</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="w">
 </span><span class="w">
 </span><span class="n">voxel_spacing_m</span> <span class="o">=</span> <span class="n">voxel_spacing</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">meter</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="w">
@@ -549,19 +574,13 @@ not exact descriptions of the sampled finite grid.</p>
 </span>    <span class="nb">sum</span><span class="p">(</span><span class="n">component</span><span class="o">*</span><span class="o">*</span><span class="mi">2</span> <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="o">*</span><span class="n">axis_wavenumbers_per_meter</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">ij</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">)</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="o">*</span><span class="o">*</span><span class="mi">2</span><span class="w">
 </span><span class="p">)</span><span class="w">
 </span><span class="w">
-</span><span class="k">for</span> <span class="n">slice_axis</span><span class="p">,</span> <span class="p">(</span><span class="n">covariance_model</span><span class="p">,</span> <span class="n">covariance_label</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">slice_axes</span><span class="p">,</span> <span class="n">covariance_models</span><span class="p">)</span><span class="p">:</span><span class="w">
-</span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.media.RandomMedium" title="bornsim.RandomMedium"><span class="n">random_medium</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.media.RandomMedium" title="bornsim.RandomMedium"><span class="n">RandomMedium</span></a><span class="p">(</span><span class="w">
-</span>        <span class="n">correlation</span><span class="o">=</span><span class="n">covariance_model</span><span class="p">,</span><span class="w">
-</span>        <span class="n">smoothness</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span><span class="w">
-</span>        <span class="n">correlation_length</span><span class="o">=</span><span class="n">correlation_length</span><span class="p">,</span><span class="w">
-</span>        <span class="n">refractive_index_std</span><span class="o">=</span><span class="n">refractive_index_std</span><span class="p">,</span><span class="w">
-</span>        <span class="n">background_refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span><span class="w">
-</span>    <span class="p">)</span><span class="w">
+</span><span class="k">for</span> <span class="n">slice_axis</span><span class="p">,</span> <span class="p">(</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_medium.WhittleMaternMedium" title="bornsim.WhittleMaternMedium"><span class="n">random_medium</span></a><span class="p">,</span> <span class="n">covariance_label</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">slice_axes</span><span class="p">,</span> <span class="n">covariance_models</span><span class="p">)</span><span class="p">:</span><span class="w">
+</span>    <span class="n">covariance_model</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_medium.WhittleMaternMedium" title="bornsim.WhittleMaternMedium"><span class="n">random_medium</span></a><span class="o">.</span><span class="n">correlation</span><span class="w">
 </span><span class="w">
 </span>    <span class="n">covariance_estimates_by_realization</span> <span class="o">=</span> <span class="p">[</span><span class="p">]</span><span class="w">
 </span><span class="w">
 </span>    <span class="k">for</span> <span class="n">realization_seed</span> <span class="ow">in</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.ensemble_sampling.EnsembleSampling" title="bornsim.EnsembleSampling"><span class="n">ensemble_sampling</span></a><span class="o">.</span><span class="n">seeds</span><span class="p">:</span><span class="w">
-</span>        <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">sampled_volume</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.media.RandomMedium.to_volume" title="bornsim.RandomMedium.to_volume"><span class="n">random_medium</span><span class="o">.</span><span class="n">to_volume</span></a><span class="p">(</span><span class="w">
+</span>        <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">sampled_volume</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim-medium-random_medium sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.medium.random_medium.RandomFieldMedium.to_volume" title="bornsim.medium.random_medium.RandomFieldMedium.to_volume"><span class="n">random_medium</span><span class="o">.</span><span class="n">to_volume</span></a><span class="p">(</span><span class="w">
 </span>            <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="p">,</span><span class="w">
 </span>            <span class="n">seed</span><span class="o">=</span><span class="n">realization_seed</span><span class="p">,</span><span class="w">
 </span>        <span class="p">)</span><span class="w">
@@ -579,7 +598,9 @@ not exact descriptions of the sampled finite grid.</p>
 </span><span class="w">
 </span>        <span class="n">covariance_estimates_by_realization</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">covariance_estimates_by_offset</span><span class="p">)</span><span class="w">
 </span><span class="w">
-</span>        <span class="k">if</span> <span class="n">realization_seed</span> <span class="o">==</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.ensemble_sampling.EnsembleSampling" title="bornsim.EnsembleSampling"><span class="n">ensemble_sampling</span></a><span class="o">.</span><span class="n">seed</span><span class="p">:</span><span class="w">
+</span>        <span class="k">if</span> <span class="n">realization_seed</span> <span class="o">==</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.ensemble_sampling.EnsembleSampling" title="bornsim.EnsembleSampling"><span class="n">ensemble_sampling</span></a><span class="o">.</span><span class="n">seeds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">:</span><span class="w">
+</span>            <span class="n">preview_volumes</span><span class="p">[</span><span class="n">covariance_model</span><span class="p">]</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">sampled_volume</span></a><span class="w">
+</span><span class="w">
 </span>            <span class="n">sample_width_nm</span> <span class="o">=</span> <span class="p">(</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">voxel_spacing</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">nanometer</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="w">
 </span><span class="w">
 </span>            <span class="n">slice_image</span> <span class="o">=</span> <span class="n">slice_axis</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="w">
@@ -593,7 +614,7 @@ not exact descriptions of the sampled finite grid.</p>
 </span><span class="w">
 </span>    <span class="n">slice_axis</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">covariance_label</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">x (nm)</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">y (nm)</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span><span class="w">
-</span>    <span class="n">spectral_weights</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.media.RandomMedium.spectral_weight" title="bornsim.RandomMedium.spectral_weight"><span class="n">random_medium</span><span class="o">.</span><span class="n">spectral_weight</span></a><span class="p">(</span><span class="n">q_squared</span><span class="o">=</span><span class="n">squared_wavenumbers</span><span class="p">)</span><span class="w">
+</span>    <span class="n">spectral_weights</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim-medium-random_medium sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.medium.random_medium.RandomFieldMedium.spectral_weight" title="bornsim.medium.random_medium.RandomFieldMedium.spectral_weight"><span class="n">random_medium</span><span class="o">.</span><span class="n">spectral_weight</span></a><span class="p">(</span><span class="n">q_squared</span><span class="o">=</span><span class="n">squared_wavenumbers</span><span class="p">)</span><span class="w">
 </span><span class="w">
 </span>    <span class="n">normalized_discrete_covariance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifftn</span><span class="p">(</span><span class="n">spectral_weights</span> <span class="o">/</span> <span class="n">spectral_weights</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="o">.</span><span class="n">real</span><span class="p">[</span><span class="w">
 </span>        <span class="n">voxel_offsets_x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="w">
@@ -628,7 +649,56 @@ not exact descriptions of the sampled finite grid.</p>
 </span><span class="w">
 </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<img src="../../_images/sphx_glr_theory_random_fields_001.png" srcset="../../_images/sphx_glr_theory_random_fields_001.png" alt="Seed 42 · same σn = 0.01 and ℓ = 60 nm · 20 nm voxels, Gaussian, Exponential, Matérn, ν = 3/2" class = "sphx-glr-single-img"/><section id="compare-sampled-and-predicted-covariances">
+<img src="../../_images/sphx_glr_theory_random_fields_001.png" srcset="../../_images/sphx_glr_theory_random_fields_001.png" alt="Seed 42 · same σn = 0.01 and ℓ = 60 nm · 20 nm voxels, Gaussian, Exponential, Matérn, ν = 3/2" class = "sphx-glr-single-img"/></section>
+<section id="gaussian-medium-in-3d">
+<h2>Gaussian medium in 3D<a class="headerlink" href="#gaussian-medium-in-3d" title="Link to this heading">#</a></h2>
+<p>Show one finite input sample with its physical spatial axes.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">preview_volume</span></a> <span class="o">=</span> <span class="n">preview_volumes</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">gaussian</span><span class="s2">&quot;</span><span class="p">]</span><span class="w">
+</span><span class="w">
+</span><span class="n">medium_figure</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.volume.Volume.plot_3d" title="bornsim.Volume.plot_3d"><span class="n">preview_volume</span><span class="o">.</span><span class="n">plot_3d</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">matplotlib</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">slices</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">field</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">refractive_index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">medium_figure</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Gaussian medium · seed </span><span class="si">{</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.ensemble_sampling.EnsembleSampling" title="bornsim.EnsembleSampling"><span class="n">ensemble_sampling</span></a><span class="o">.</span><span class="n">seeds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<img src="../../_images/sphx_glr_theory_random_fields_002.png" srcset="../../_images/sphx_glr_theory_random_fields_002.png" alt="Gaussian medium · seed 42, Refractive index n: slices" class = "sphx-glr-single-img"/></section>
+<section id="exponential-medium-in-3d">
+<h2>Exponential medium in 3D<a class="headerlink" href="#exponential-medium-in-3d" title="Link to this heading">#</a></h2>
+<p>Show one finite input sample with its physical spatial axes.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">preview_volume</span></a> <span class="o">=</span> <span class="n">preview_volumes</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">exponential</span><span class="s2">&quot;</span><span class="p">]</span><span class="w">
+</span><span class="w">
+</span><span class="n">medium_figure</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.volume.Volume.plot_3d" title="bornsim.Volume.plot_3d"><span class="n">preview_volume</span><span class="o">.</span><span class="n">plot_3d</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">matplotlib</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">slices</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">field</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">refractive_index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">medium_figure</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Exponential medium · seed </span><span class="si">{</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.ensemble_sampling.EnsembleSampling" title="bornsim.EnsembleSampling"><span class="n">ensemble_sampling</span></a><span class="o">.</span><span class="n">seeds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<img src="../../_images/sphx_glr_theory_random_fields_003.png" srcset="../../_images/sphx_glr_theory_random_fields_003.png" alt="Exponential medium · seed 42, Refractive index n: slices" class = "sphx-glr-single-img"/></section>
+<section id="whittlematern-medium-in-3d">
+<h2>Whittle–Matérn medium in 3D<a class="headerlink" href="#whittlematern-medium-in-3d" title="Link to this heading">#</a></h2>
+<p>Show one finite input sample with its physical spatial axes.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">preview_volume</span></a> <span class="o">=</span> <span class="n">preview_volumes</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">matern</span><span class="s2">&quot;</span><span class="p">]</span><span class="w">
+</span><span class="w">
+</span><span class="n">medium_figure</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.volume.Volume.plot_3d" title="bornsim.Volume.plot_3d"><span class="n">preview_volume</span><span class="o">.</span><span class="n">plot_3d</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">matplotlib</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">slices</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">field</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">refractive_index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">medium_figure</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Whittle–Matérn medium · seed </span><span class="si">{</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.ensemble_sampling.EnsembleSampling" title="bornsim.EnsembleSampling"><span class="n">ensemble_sampling</span></a><span class="o">.</span><span class="n">seeds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<img src="../../_images/sphx_glr_theory_random_fields_004.png" srcset="../../_images/sphx_glr_theory_random_fields_004.png" alt="Whittle–Matérn medium · seed 42, Refractive index n: slices" class = "sphx-glr-single-img"/></section>
+<section id="compare-sampled-and-predicted-covariances">
 <h2>Compare sampled and predicted covariances<a class="headerlink" href="#compare-sampled-and-predicted-covariances" title="Link to this heading">#</a></h2>
 <p>Reuse the ensemble estimates above. Error bars describe realization
 sampling; dashed curves use the discrete synthesis and dotted curves the
@@ -678,7 +748,7 @@ continuum covariance, which need not match on a finite grid.</p>
 </span><span class="w">
 </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<img src="../../_images/sphx_glr_theory_random_fields_002.png" srcset="../../_images/sphx_glr_theory_random_fields_002.png" alt="32 realizations: dashed = discrete synthesis; dotted = continuum" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.300 seconds)</p>
+<img src="../../_images/sphx_glr_theory_random_fields_005.png" srcset="../../_images/sphx_glr_theory_random_fields_005.png" alt="32 realizations: dashed = discrete synthesis; dotted = continuum" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.978 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-random-media-theory-random-fields-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/57f26ab03be96d78bad4bb80c938d81b/theory_random_fields.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">theory_random_fields.ipynb</span></code></a></p>
@@ -717,6 +787,10 @@ continuum covariance, which need not match on a finite grid.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sample-fields-and-estimate-covariance">Sample fields and estimate covariance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gaussian-medium-in-3d">Gaussian medium in 3D</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exponential-medium-in-3d">Exponential medium in 3D</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#whittlematern-medium-in-3d">Whittle–Matérn medium in 3D</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compare-sampled-and-predicted-covariances">Compare sampled and predicted covariances</a></li>
 </ul>
   </nav></div>

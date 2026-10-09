@@ -27,16 +27,18 @@ Integrated coefficients describe finite samples rather than an infinite
 medium. Error bars describe realization sampling, not discretization error.
 Field-term diagnostics alone do not certify convergence.
 
-.. GENERATED FROM PYTHON SOURCE LINES 11-52
+.. GENERATED FROM PYTHON SOURCE LINES 11-57
 
 .. code-block:: Python
 
+
+    from bornsim.medium.random_medium import GaussianMedium
 
     import sys
 
     import matplotlib.pyplot as plt
 
-    from bornsim import EnsembleSampling, Grid, RandomMedium, Solver, Source
+    from bornsim import EnsembleSampling, Grid, Solver, Source
     from bornsim.units import ureg
 
     grid = Grid(
@@ -44,25 +46,28 @@ Field-term diagnostics alone do not certify convergence.
         spacing=50 * ureg.nanometer,
     )
 
-    medium = RandomMedium(
-        correlation="gaussian",
+    medium = GaussianMedium(
         background_refractive_index=1.33,
         refractive_index_std=0.01,
         correlation_length=100 * ureg.nanometer,
     )
 
+    source_configuration_1 = Source(wavelength=633 * ureg.nanometer)
+
     ensemble_solver = Solver(
-        source=Source(wavelength=633 * ureg.nanometer),
+        source=source_configuration_1,
         order=3,
+    )
+
+    ensemble_sampling_configuration_1 = EnsembleSampling(
+        realizations=4,
+        seed=42,
     )
 
     result = ensemble_solver.ensemble(
         medium=medium,
         grid=grid,
-        ensemble_sampling=EnsembleSampling(
-            realizations=4,
-            seed=42,
-        ),
+        ensemble_sampling=ensemble_sampling_configuration_1,
     )
 
     for index, coefficient in enumerate(result.mu_s.to("1 / meter").magnitude, start=1):
@@ -92,14 +97,14 @@ Field-term diagnostics alone do not certify convergence.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 53-57
+.. GENERATED FROM PYTHON SOURCE LINES 58-62
 
 Field-term diagnostics
 ----------------------
 Compare field terms separately from the scattering curves. Decreasing
 terms alone do not certify convergence of the Born series.
 
-.. GENERATED FROM PYTHON SOURCE LINES 57-61
+.. GENERATED FROM PYTHON SOURCE LINES 62-66
 
 .. code-block:: Python
 
@@ -119,7 +124,7 @@ terms alone do not certify convergence of the Born series.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 62-68
+.. GENERATED FROM PYTHON SOURCE LINES 67-73
 
 Inspect one ensemble realization in 3D
 --------------------------------------
@@ -128,7 +133,7 @@ not an ensemble average or an infinite-medium material boundary.
 Drag to rotate and scroll to zoom in the embedded browser view.
 Regions with higher refractive index are more opaque; opacity is not absorption.
 
-.. GENERATED FROM PYTHON SOURCE LINES 68-81
+.. GENERATED FROM PYTHON SOURCE LINES 73-86
 
 .. code-block:: Python
 
@@ -159,7 +164,7 @@ Regions with higher refractive index are more opaque; opacity is not absorption.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.802 seconds)
+   **Total running time of the script:** (0 minutes 0.404 seconds)
 
 
 .. _sphx_glr_download_auto_examples_born_orders_compare_orders.py:
