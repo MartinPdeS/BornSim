@@ -1,0 +1,826 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" data-theme="dark">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bornsim.solver &#8212; BornSim 0.2.8 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "dark";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
+
+    <script src="../../_static/documentation_options.js?v=b01fafc3"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/bornsim/solver';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.19.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/BornSim/documentation_page/version_switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.2.8';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            true;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.2.8" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="dark">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-dark" alt="BornSim"/>
+    <img src="../../_static/logo.png" class="logo__image only-light pst-js-only" alt="BornSim"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Start
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../guide.html">
+    Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../resources.html">
+    Resources
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MartinPdeS/BornSim" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Start
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../guide.html">
+    Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../resources.html">
+    Resources
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MartinPdeS/BornSim" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">bornsim.solver</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for bornsim.solver</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Solver configuration for finite-volume and ensemble Born calculations."""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._version</span><span class="w"> </span><span class="kn">import</span> <span class="n">__version__</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.medium</span><span class="w"> </span><span class="kn">import</span> <span class="n">Medium</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Result</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">_integer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.volume</span><span class="w"> </span><span class="kn">import</span> <span class="n">Volume</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.series</span><span class="w"> </span><span class="kn">import</span> <span class="n">BornSeries</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.ensemble</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensemble_scattering</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.grid</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.directions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Directions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.sampling</span><span class="w"> </span><span class="kn">import</span> <span class="n">AngularSampling</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.ensemble_sampling</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnsembleSampling</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.source</span><span class="w"> </span><span class="kn">import</span> <span class="n">Source</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">validate_units</span><span class="p">,</span> <span class="n">ureg</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_provenance</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="o">**</span><span class="n">settings</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"bornsim_version"</span><span class="p">:</span> <span class="n">__version__</span><span class="p">,</span>
+        <span class="s2">"numpy_version"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">__version__</span><span class="p">,</span>
+        <span class="s2">"order"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">order</span><span class="p">),</span>
+        <span class="s2">"dielectric_contrast"</span><span class="p">:</span> <span class="s2">"2 * background_refractive_index * delta_refractive_index"</span><span class="p">,</span>
+        <span class="s2">"green_self_cell"</span><span class="p">:</span> <span class="s2">"equal-volume sphere with longitudinal contact term"</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">settings</span><span class="p">,</span>
+    <span class="p">}</span>
+
+
+<div class="viewcode-block" id="Solver">
+<a class="viewcode-back" href="../../api.html#bornsim.solver.Solver">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Solver</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Configure numerical Born scattering from explicit finite samples.</span>
+
+<span class="sd">    Source chooses the wavelength. AngularSampling supplies output directions</span>
+<span class="sd">    and integration quadrature; order sets the highest cumulative Born order.</span>
+<span class="sd">    All orders retain the linearized dielectric contrast and the equal-volume</span>
+<span class="sd">    Green self cell. Decreasing successive terms do not certify convergence.</span>
+<span class="sd">    """</span>
+
+    <span class="n">source</span><span class="p">:</span> <span class="n">Source</span>
+    <span class="n">sampling</span><span class="p">:</span> <span class="n">AngularSampling</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">AngularSampling</span><span class="p">)</span>
+    <span class="n">order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampling</span><span class="p">,</span> <span class="n">AngularSampling</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"sampling must be an AngularSampling."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">Source</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"source must be a Source."</span><span class="p">)</span>
+
+        <span class="n">_integer</span><span class="p">(</span>
+            <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"order"</span><span class="p">,</span>
+            <span class="n">low</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">high</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">wavelength</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="s2">"wavelength"</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"nanometer"</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"Solver(wavelength=</span><span class="si">{</span><span class="n">wavelength</span><span class="o">.</span><span class="n">magnitude</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2"> nm, order=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="si">}</span><span class="s2">, sampling=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sampling</span><span class="si">!r}</span><span class="s2">)"</span>
+
+<div class="viewcode-block" id="Solver.solve">
+<a class="viewcode-back" href="../../api.html#bornsim.solver.Solver.solve">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">:</span> <span class="n">Volume</span><span class="p">,</span>
+        <span class="n">sampling</span><span class="p">:</span> <span class="n">AngularSampling</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Compute full directional scattering and finite-sample integrated coefficients.</span>
+
+<span class="sd">        Use solve_cut for individual observation directions. The target is an</span>
+<span class="sd">        explicit voxelized Volume; random statistics use ensemble instead.</span>
+<span class="sd">        """</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">Volume</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"target must be a Volume."</span><span class="p">)</span>
+
+        <span class="n">sampling</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling</span> <span class="k">if</span> <span class="n">sampling</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">AngularSampling</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span><span class="n">sampling</span><span class="o">=</span><span class="n">sampling</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solve_volume</span><span class="p">(</span><span class="n">volume</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">sampling</span><span class="o">=</span><span class="n">sampling</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Solver.solve_cut">
+<a class="viewcode-back" href="../../api.html#bornsim.solver.Solver.solve_cut">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve_cut</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">:</span> <span class="n">Volume</span><span class="p">,</span>
+        <span class="n">angles</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">directions</span><span class="p">:</span> <span class="n">Directions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Compute an unnormalized angular cut through a fixed Volume.</span>
+
+<span class="sd">        Supply polar angles on the x-z meridian or a Directions configuration,</span>
+<span class="sd">        but not both. Explicit angular units are required. Default angles span 0 to pi</span>
+<span class="sd">        with 121 samples. Cut amplitudes and intensities retain every requested</span>
+<span class="sd">        direction. A cut alone cannot determine a solid-angle integral;</span>
+<span class="sd">        integrated coefficients and normalized phase functions are unavailable.</span>
+<span class="sd">        """</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">Volume</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"target must be a Volume."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">angles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">directions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Supply angles or directions, not both."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">angles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">validate_units</span><span class="p">(</span>
+                <span class="n">angles</span><span class="p">,</span>
+                <span class="n">unit</span><span class="o">=</span><span class="s2">"radian"</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">"angles"</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">theta</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">directions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">121</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">radian</span> <span class="k">if</span> <span class="n">angles</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">angles</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+            <span class="n">invalid_angles</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">theta</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span>
+                <span class="ow">or</span> <span class="n">theta</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span>
+                <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+                <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">((</span><span class="n">theta</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">theta</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">radian</span><span class="p">))</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">invalid_angles</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"angles must be a nonempty 1D array of finite angles between 0 and pi."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">directions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">theta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+            <span class="n">directions</span> <span class="o">=</span> <span class="n">Directions</span><span class="o">.</span><span class="n">from_angles</span><span class="p">(</span>
+                <span class="n">polar_angles</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span>
+                <span class="n">azimuth_angles</span><span class="o">=</span><span class="mi">0</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">radian</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">engine</span> <span class="o">=</span> <span class="n">BornSeries</span><span class="p">(</span>
+            <span class="n">grid</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
+            <span class="n">background_refractive_index</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">background_refractive_index</span><span class="p">,</span>
+            <span class="n">wavelength</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span>
+            <span class="n">directions</span><span class="o">=</span><span class="n">directions</span><span class="p">,</span>
+            <span class="n">order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">volume</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
+            <span class="n">source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span>
+            <span class="n">kind</span><span class="o">=</span><span class="s2">"volume"</span><span class="p">,</span>
+            <span class="n">sample_volume</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">volume</span><span class="p">,</span>
+            <span class="n">angles</span><span class="o">=</span><span class="n">theta</span> <span class="k">if</span> <span class="n">theta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">directions</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">directions</span><span class="p">,</span>
+            <span class="n">differential</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">differential</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">steradian</span><span class="p">),</span>
+            <span class="n">amplitudes</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">amplitudes</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
+            <span class="n">term_differential</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">term_differential</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">steradian</span><span class="p">),</span>
+            <span class="n">field_norms</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">field_norms</span><span class="p">,</span>
+            <span class="n">warnings</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">warnings</span><span class="p">,</span>
+            <span class="n">provenance</span><span class="o">=</span><span class="n">_provenance</span><span class="p">(</span>
+                <span class="n">order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span>
+                <span class="n">grid</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">"shape"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">delta_refractive_index</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span>
+                    <span class="s2">"spacing_m"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">spacing</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"meter"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">),</span>
+                    <span class="s2">"background_refractive_index"</span><span class="p">:</span> <span class="n">target</span><span class="o">.</span><span class="n">background_refractive_index</span><span class="p">,</span>
+                    <span class="s2">"delta_refractive_index_sha256"</span><span class="p">:</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">delta_refractive_index</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"&lt;f8"</span><span class="p">)</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="s2">"C"</span><span class="p">)</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">(),</span>
+                <span class="p">},</span>
+                <span class="n">medium</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">target</span><span class="o">.</span><span class="n">medium</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">target</span><span class="o">.</span><span class="n">medium</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                <span class="n">seed</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span>
+                <span class="n">coefficient_scope</span><span class="o">=</span><span class="s2">"finite-sample"</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_solve_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">volume</span><span class="p">,</span> <span class="n">sampling</span><span class="p">):</span>
+        <span class="n">sampling</span><span class="o">.</span><span class="n">check_work</span><span class="p">(</span>
+            <span class="n">grid</span><span class="o">=</span><span class="n">volume</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
+            <span class="n">order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">engine</span> <span class="o">=</span> <span class="n">BornSeries</span><span class="p">(</span>
+            <span class="n">grid</span><span class="o">=</span><span class="n">volume</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
+            <span class="n">background_refractive_index</span><span class="o">=</span><span class="n">volume</span><span class="o">.</span><span class="n">background_refractive_index</span><span class="p">,</span>
+            <span class="n">wavelength</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span>
+            <span class="n">directions</span><span class="o">=</span><span class="n">sampling</span><span class="o">.</span><span class="n">directions</span><span class="p">,</span>
+            <span class="n">order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">born</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">volume</span><span class="o">=</span><span class="n">volume</span><span class="p">)</span>
+
+        <span class="n">sampled</span> <span class="o">=</span> <span class="n">sampling</span><span class="o">.</span><span class="n">summarize</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="n">born</span><span class="p">)</span>
+
+        <span class="n">integrated</span> <span class="o">=</span> <span class="n">sampled</span><span class="p">[</span><span class="s2">"integrals"</span><span class="p">]</span>
+
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">integrated</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">integrated</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">mu</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="n">mu</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
+            <span class="n">source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span>
+            <span class="n">kind</span><span class="o">=</span><span class="s2">"volume"</span><span class="p">,</span>
+            <span class="n">sample_volume</span><span class="o">=</span><span class="n">volume</span><span class="o">.</span><span class="n">volume</span><span class="p">,</span>
+            <span class="n">angles</span><span class="o">=</span><span class="n">sampling</span><span class="o">.</span><span class="n">angles</span><span class="p">,</span>
+            <span class="n">azimuths</span><span class="o">=</span><span class="n">sampling</span><span class="o">.</span><span class="n">azimuths</span><span class="p">,</span>
+            <span class="n">differential</span><span class="o">=</span><span class="n">sampled</span><span class="p">[</span><span class="s2">"directional_differential"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">steradian</span><span class="p">),</span>
+            <span class="n">amplitudes</span><span class="o">=</span><span class="n">sampled</span><span class="p">[</span><span class="s2">"directional_amplitudes"</span><span class="p">]</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
+            <span class="n">term_differential</span><span class="o">=</span><span class="n">sampled</span><span class="p">[</span><span class="s2">"directional_terms"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">steradian</span><span class="p">),</span>
+            <span class="n">mu_s</span><span class="o">=</span><span class="n">mu</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">),</span>
+            <span class="n">g</span><span class="o">=</span><span class="n">g</span><span class="p">,</span>
+            <span class="n">mu_s_prime</span><span class="o">=</span><span class="n">integrated</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">),</span>
+            <span class="n">field_norms</span><span class="o">=</span><span class="n">born</span><span class="o">.</span><span class="n">field_norms</span><span class="p">,</span>
+            <span class="n">warnings</span><span class="o">=</span><span class="n">born</span><span class="o">.</span><span class="n">warnings</span><span class="p">,</span>
+            <span class="n">provenance</span><span class="o">=</span><span class="n">_provenance</span><span class="p">(</span>
+                <span class="n">order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span>
+                <span class="n">grid</span><span class="o">=</span><span class="p">{</span>
+                    <span class="o">**</span><span class="n">volume</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                    <span class="s2">"background_refractive_index"</span><span class="p">:</span> <span class="n">volume</span><span class="o">.</span><span class="n">background_refractive_index</span><span class="p">,</span>
+                    <span class="s2">"delta_refractive_index_sha256"</span><span class="p">:</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">volume</span><span class="o">.</span><span class="n">delta_refractive_index</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"&lt;f8"</span><span class="p">)</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="s2">"C"</span><span class="p">)</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">(),</span>
+                <span class="p">},</span>
+                <span class="n">sampling</span><span class="o">=</span><span class="n">sampling</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                <span class="n">medium</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">volume</span><span class="o">.</span><span class="n">medium</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">volume</span><span class="o">.</span><span class="n">medium</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                <span class="n">seed</span><span class="o">=</span><span class="n">volume</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span>
+                <span class="n">coefficient_scope</span><span class="o">=</span><span class="s2">"finite-sample"</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Solver.ensemble">
+<a class="viewcode-back" href="../../api.html#bornsim.solver.Solver.ensemble">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ensemble</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">medium</span><span class="p">:</span> <span class="n">Medium</span><span class="p">,</span>
+        <span class="n">grid</span><span class="p">:</span> <span class="n">Grid</span><span class="p">,</span>
+        <span class="n">sampling</span><span class="p">:</span> <span class="n">AngularSampling</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ensemble_sampling</span><span class="p">:</span> <span class="n">EnsembleSampling</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Average numerical scattering over independently generated finite samples.</span>
+
+<span class="sd">        Grid selects the voxel domain. AngularSampling selects output directions</span>
+<span class="sd">        and integration quadrature; the solver's sampling is used when omitted.</span>
+<span class="sd">        EnsembleSampling selects ordered independent seeds and defaults to four</span>
+<span class="sd">        consecutive seeds starting at zero. Deterministic structures use solve.</span>
+
+<span class="sd">        Intensities are averaged after coherent summation within each realization.</span>
+<span class="sd">        Standard errors quantify realization uncertainty, not discretization or</span>
+<span class="sd">        finite-size error. One realization has unknown (NaN) uncertainty. Integrated</span>
+<span class="sd">        coefficients are finite-sample cross sections divided by voxel-box volume."""</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">medium</span><span class="p">,</span> <span class="n">Medium</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"medium must be a Medium."</span><span class="p">)</span>
+
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">Grid</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">)</span>
+
+        <span class="n">sampling</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling</span> <span class="k">if</span> <span class="n">sampling</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">sampling</span>
+
+        <span class="n">sampling</span> <span class="o">=</span> <span class="n">AngularSampling</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span><span class="n">sampling</span><span class="o">=</span><span class="n">sampling</span><span class="p">)</span>
+
+        <span class="n">ensemble_sampling</span> <span class="o">=</span> <span class="n">EnsembleSampling</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span><span class="n">ensemble_sampling</span><span class="o">=</span><span class="n">ensemble_sampling</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">ensemble_scattering</span><span class="p">(</span>
+            <span class="n">medium</span><span class="o">=</span><span class="n">medium</span><span class="p">,</span>
+            <span class="n">wavelength</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span>
+            <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+            <span class="n">sampling</span><span class="o">=</span><span class="n">sampling</span><span class="p">,</span>
+            <span class="n">order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span>
+            <span class="n">ensemble_sampling</span><span class="o">=</span><span class="n">ensemble_sampling</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
+            <span class="n">source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span>
+            <span class="n">kind</span><span class="o">=</span><span class="s2">"ensemble"</span><span class="p">,</span>
+            <span class="n">sample_volume</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">volume</span><span class="p">,</span>
+            <span class="n">angles</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"angles"</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+            <span class="n">differential</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"directional_differential"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">steradian</span><span class="p">),</span>
+            <span class="n">azimuths</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"azimuths"</span><span class="p">],</span>
+            <span class="n">term_differential</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"directional_terms"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">steradian</span><span class="p">),</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"directional_stderr"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">steradian</span><span class="p">),</span>
+            <span class="n">azimuth_stderr</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"stderr"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">steradian</span><span class="p">),</span>
+            <span class="n">mu_s</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"mu_s"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">),</span>
+            <span class="n">g</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"g"</span><span class="p">],</span>
+            <span class="n">mu_s_prime</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"mu_s_prime"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">),</span>
+            <span class="n">field_norms</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"field_norms"</span><span class="p">],</span>
+            <span class="n">warnings</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"warnings"</span><span class="p">],</span>
+            <span class="n">realizations</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"realizations"</span><span class="p">],</span>
+            <span class="n">provenance</span><span class="o">=</span><span class="n">_provenance</span><span class="p">(</span>
+                <span class="n">order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span>
+                <span class="n">medium</span><span class="o">=</span><span class="n">medium</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                <span class="n">sampling</span><span class="o">=</span><span class="n">sampling</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                <span class="n">seed</span><span class="o">=</span><span class="n">ensemble_sampling</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span>
+                <span class="n">seeds</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">ensemble_sampling</span><span class="o">.</span><span class="n">seeds</span><span class="p">),</span>
+                <span class="n">ensemble_sampling</span><span class="o">=</span><span class="n">ensemble_sampling</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                <span class="n">realizations</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"realizations"</span><span class="p">],</span>
+                <span class="n">polar_samples</span><span class="o">=</span><span class="n">sampling</span><span class="o">.</span><span class="n">polar_samples</span><span class="p">,</span>
+                <span class="n">azimuth_samples</span><span class="o">=</span><span class="n">sampling</span><span class="o">.</span><span class="n">azimuth_samples</span><span class="p">,</span>
+                <span class="n">coefficient_scope</span><span class="o">=</span><span class="s2">"finite-sample"</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, Martin Poinsinet de Sivry-Houle.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.19.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

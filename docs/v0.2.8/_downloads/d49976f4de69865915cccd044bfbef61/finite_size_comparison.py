@@ -1,0 +1,104 @@
+"""
+Finite-sample size convergence
+==============================
+
+Compare numerical first-order random-volume ensembles as sample size grows at
+fixed voxel spacing. The coefficients are cross sections divided by sample
+volume. Sample size, voxel resolution and realization count describe separate
+sources of uncertainty and must be checked independently.
+"""
+
+from bornsim.medium.random_medium import GaussianMedium
+
+import sys
+
+import matplotlib.pyplot as plt
+
+from bornsim import EnsembleSampling, AngularSampling, Grid, Solver, Source
+from bornsim.units import ureg
+
+medium = GaussianMedium(
+    refractive_index_std=0.001,
+    correlation_length=60 * ureg.nanometer,
+    background_refractive_index=1.33,
+)
+
+source_configuration_1 = Source(wavelength=633 * ureg.nanometer)
+
+solver = Solver(
+    source=source_configuration_1,
+    order=1,
+)
+
+sampling = AngularSampling(
+    start=0 * ureg.degree,
+    end=180 * ureg.degree,
+    n_points=19,
+    polar_samples=32,
+    azimuth_samples=8,
+)
+
+figure, axis = plt.subplots(layout="constrained")
+
+for cells in (4, 8, 12):
+    grid = Grid(
+        shape=(cells,) * 3,
+        spacing=30 * ureg.nanometer,
+    )
+
+    ensemble_sampling_configuration_1 = EnsembleSampling(
+        realizations=8,
+        seed=42,
+    )
+
+    result = solver.ensemble(
+        medium=medium,
+        grid=grid,
+        ensemble_sampling=ensemble_sampling_configuration_1,
+        sampling=sampling,
+    )
+
+    averaged = result.azimuth_average()
+
+    axis.errorbar(
+        result.angles.to("degree").magnitude,
+        averaged.differential.to("1 / meter / steradian").magnitude[0],
+        yerr=averaged.stderr.to("1 / meter / steradian").magnitude[0],
+        label=f"Finite cube: {cells * 30} nm side, 8 realizations",
+    )
+
+    print(f"{cells * 30} nm cube: μs = {result.mu_s[0]}, g = {result.g[0]}")
+
+axis.set(
+    xlabel="Scattering angle (degrees)",
+    ylabel="Differential scattering (m⁻¹ sr⁻¹)",
+    title="First order: finite-sample size convergence",
+)
+
+axis.legend()
+
+axis.grid(alpha=0.25)
+
+plt.show()
+
+# %%
+# Inspect one ensemble realization in 3D
+# --------------------------------------
+# This is the first realization (seed 42) on the calculation grid,
+# not an ensemble average or an infinite-medium material boundary.
+# Drag to rotate and scroll to zoom in the embedded browser view.
+# Regions with higher refractive index are more opaque; opacity is not absorption.
+# Use the largest of the three finite cubes compared above.
+preview_volume = medium.to_volume(
+    grid=grid,
+    seed=42,
+)
+
+medium_figure = preview_volume.plot_3d(
+    mode="volume",
+    field="refractive_index",
+    opacity_scale="increasing",
+)
+
+if "--no-browser" not in sys.argv:
+    medium_figure.show(renderer="browser")
