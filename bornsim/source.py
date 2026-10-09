@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 import numpy as np
-from .units import Quantity, _quantity, _si
+from .units import Quantity, validate_units
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -11,14 +11,14 @@ class Source:
 
     Parameters
     ----------
-    wavelength : float or Quantity, optional
-        Positive, finite vacuum wavelength. Bare numbers mean metres;
-        length quantities are converted to metres. Default is 633 nm.
+    wavelength : Quantity
+        Positive, finite vacuum wavelength. Explicit length units are required;
+        the supplied units are preserved. A wavelength must be supplied.
 
     Attributes
     ----------
     wavelength : Quantity
-        Scalar vacuum wavelength stored in metres using TypedUnit's registry.
+        Scalar vacuum wavelength with its supplied length units.
 
     Raises
     ------
@@ -36,28 +36,22 @@ class Source:
     --------
     >>> from bornsim import Source
     >>> from bornsim.units import ureg
+    ...
+    ...
     >>> source = Source(wavelength=633 * ureg.nanometer)
     >>> source.wavelength.check("[length]")
     True
     """
 
-    wavelength: Quantity | float = 633e-9
+    wavelength: Quantity
 
-    def __post_init__(self):
-        wavelength = _si(
-            value=self.wavelength,
+    def __post_init__(self) -> None:
+        validate_units(
+            self.wavelength,
             unit="meter",
             name="wavelength",
             scalar=True,
         )
-        if not np.isfinite(wavelength) or wavelength <= 0:
+
+        if not np.isfinite(self.wavelength) or self.wavelength <= 0:
             raise ValueError("wavelength must be finite and positive.")
-        object.__setattr__(
-            self,
-            "wavelength",
-            _quantity(
-                value=wavelength,
-                unit="meter",
-                name="wavelength",
-            ),
-        )

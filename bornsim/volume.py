@@ -5,7 +5,7 @@ import numpy as np
 from ._validation import _integer
 from .grid import Grid
 from .media import RandomMedium
-from .units import Quantity, _si
+from .units import _refractive_index_values, Quantity
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -14,18 +14,17 @@ class Volume:
 
     Parameters
     ----------
-    delta_index : array_like or Quantity
-        Finite three-dimensional index fluctuations relative to the background,
-        with 2 to 32 cells per axis. Dimensionless quantities are accepted.
+    delta_refractive_index : array_like
+        Finite three-dimensional refractive index fluctuations relative to the background,
+        with 2 to 32 cells per axis. Quantities are rejected, including dimensionless ones.
     grid : Grid, optional
-        Shared spatial configuration. Its shape must match delta_index.
+        Shared spatial configuration. Its shape must match delta_refractive_index.
         Supply either grid or spacing.
-    spacing : float or Quantity, optional
-        Positive, finite cubic voxel width. Bare values mean metres.
+    spacing : Quantity, optional
+        Positive, finite cubic voxel width. Explicit length units are required.
         Legacy alternative to supplying grid; shape is inferred from the array.
-    background_index : float or Quantity, optional
-        Positive, finite background index. Dimensionless or refractive-index
-        quantities are accepted; default is 1.33.
+    background_refractive_index : float
+        Positive, finite background refractive index. Plain numbers are required; quantities are rejected. A background must be supplied.
     medium : RandomMedium, optional
         Generation statistics recorded by ``random_volume``. None for a
         manually supplied field. Must be supplied together with ``seed``.
@@ -34,14 +33,14 @@ class Volume:
 
     Attributes
     ----------
-    delta_index : numpy.ndarray
+    delta_refractive_index : numpy.ndarray
         Copied, read-only, dimensionless fluctuation array of shape (nx, ny, nz).
     grid : Grid
         Spatial configuration shared with generation and scattering.
-    spacing : float
-        Cubic voxel width in metres, also available as grid.spacing.
-    background_index : float
-        Dimensionless background index.
+    spacing : Quantity
+        Cubic voxel width with its supplied units, also available as grid.spacing.
+    background_refractive_index : float
+        Dimensionless background refractive index.
     medium : RandomMedium or None
         Recorded generation statistics, when available.
     seed : int or None
@@ -62,8 +61,8 @@ class Volume:
 
     Notes
     -----
-    Relative permittivity is ``background_index**2 + 2*background_index*delta_index``.
-    The quadratic index-fluctuation term is omitted at every Born order.
+    Relative permittivity is ``background_refractive_index**2 + 2*background_refractive_index*delta_refractive_index``.
+    The quadratic refractive-index fluctuation term is omitted at every Born order.
     Voxel centres are measured relative to the sample centre.
 
     Examples
@@ -71,35 +70,40 @@ class Volume:
     >>> import numpy as np
     >>> from bornsim import Volume
     >>> from bornsim.units import ureg
+    ...
+    ...
     >>> volume = Volume(
-    ...     delta_index=np.zeros((2, 2, 2)),
+    ...     delta_refractive_index=np.zeros((2, 2, 2)),
     ...     spacing=50 * ureg.nanometer,
+    ...     background_refractive_index=1.33,
     ... )
     >>> volume.positions.shape
     (2, 2, 2, 3)
     """
 
-    delta_index: Quantity | np.ndarray
-    spacing: Quantity | float = None
+    delta_refractive_index: np.ndarray
+    background_refractive_index: float
+    spacing: Quantity = None
     grid: Grid | None = None
-    background_index: Quantity | float = 1.33
     medium: RandomMedium | None = None
     seed: int | None = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         data = np.array(
-            _si(
-                value=self.delta_index,
-                unit="dimensionless",
-                name="delta_index",
+            _refractive_index_values(
+                value=self.delta_refractive_index,
+                name="delta_refractive_index",
             ),
             copy=True,
         )
+
         if data.ndim != 3 or any(n < 2 or n > 32 for n in data.shape) or not np.all(np.isfinite(data)):
-            raise ValueError("delta_index must be a finite 3D array with 2–32 cells per axis.")
+            raise ValueError("delta_refractive_index must be a finite 3D array with 2–32 cells per axis.")
+
         if self.grid is None:
             if self.spacing is None:
                 raise ValueError("Supply grid or spacing for a Volume.")
+
             grid = Grid(
                 shape=data.shape,
                 spacing=self.spacing,
@@ -109,31 +113,40 @@ class Volume:
                 grid=self.grid,
                 spacing=self.spacing,
             )
+
             if grid.shape != data.shape:
-                raise ValueError("grid shape must match delta_index.")
+                raise ValueError("grid shape must match delta_refractive_index.")
+
         object.__setattr__(self, "grid", grid)
+
         object.__setattr__(self, "spacing", grid.spacing)
+
         object.__setattr__(
             self,
-            "background_index",
-            _si(
-                value=self.background_index,
-                unit="dimensionless",
-                name="background_index",
+            "background_refractive_index",
+            _refractive_index_values(
+                value=self.background_refractive_index,
+                name="background_refractive_index",
                 scalar=True,
             ),
         )
-        if not np.isfinite(self.background_index) or self.background_index <= 0:
-            raise ValueError("background_index must be finite and positive.")
-        if np.any(self.background_index**2 + 2 * self.background_index * data <= 0):
+
+        if not np.isfinite(self.background_refractive_index) or self.background_refractive_index <= 0:
+            raise ValueError("background_refractive_index must be finite and positive.")
+
+        if np.any(self.background_refractive_index**2 + 2 * self.background_refractive_index * data <= 0):
             raise ValueError("Linearized relative permittivity must stay positive.")
+
         if (self.medium is None) != (self.seed is None):
             raise ValueError("medium and seed must be supplied together.")
+
         if self.medium is not None:
             if not isinstance(self.medium, RandomMedium):
                 raise TypeError("medium must be a RandomMedium.")
-            if self.medium.background_index != self.background_index:
-                raise ValueError("medium background_index must match the volume.")
+
+            if self.medium.background_refractive_index != self.background_refractive_index:
+                raise ValueError("medium background_refractive_index must match the volume.")
+
             object.__setattr__(
                 self,
                 "seed",
@@ -144,33 +157,37 @@ class Volume:
                     high=2**32 - 1,
                 ),
             )
+
         data.setflags(write=False)
-        object.__setattr__(self, "delta_index", data)
+
+        object.__setattr__(self, "delta_refractive_index", data)
 
     @property
-    def positions(self):
+    def positions(self) -> Quantity:
         """Return voxel-centre coordinates relative to the sample centre.
 
         Returns
         -------
-        positions : numpy.ndarray
-            Numeric coordinates in metres, shape (nx, ny, nz, 3), with the final
+        positions : Quantity
+            Unit-bearing coordinates, shape (nx, ny, nz, 3), with the final
             axis ordered as x, y, z.
         """
+
         return getattr(self, "grid").positions
 
     @property
-    def volume(self):
+    def volume(self) -> Quantity:
         """Return the total physical volume of all voxels.
 
         Returns
         -------
-        volume : float
-            Sample volume in cubic metres, equal to ``delta_index.size*spacing**3``.
+        volume : Quantity
+            Unit-bearing sample volume, equal to ``delta_refractive_index.size*spacing**3``.
         """
+
         return getattr(self, "grid").volume
 
-    def plot_slice(self, *, normal="z", index=None, field="index", length_unit="nanometer", title=None):
+    def plot_slice(self, *, normal="z", index=None, field="refractive_index", length_unit="nanometer", title=None):
         """Build a Matplotlib figure of one voxel plane.
 
         Parameters
@@ -180,9 +197,9 @@ class Volume:
         index : int, optional
             Voxel index along the normal. Defaults to n//2, the positive
             central plane for an even grid. The title gives its actual position.
-        field : {'index', 'delta_index', 'permittivity'}, optional
-            Display n0 + delta_index, fluctuations, or linearized relative
-            permittivity n0**2 + 2*n0*delta_index. Default 'index'.
+        field : {'refractive_index', 'delta_refractive_index', 'permittivity'}, optional
+            Display n0 + delta_refractive_index, fluctuations, or linearized relative
+            permittivity n0**2 + 2*n0*delta_refractive_index. Default 'refractive_index'.
         length_unit : str, optional
             Spatial display unit; default 'nanometer'. Stored SI data is unchanged.
         title : str, optional
@@ -201,6 +218,7 @@ class Volume:
         ValueError
             If the plane, index, field, or length unit is invalid.
         """
+
         from ._volume_plotting import _VolumePlotter
 
         return _VolumePlotter(
@@ -218,7 +236,7 @@ class Volume:
         *,
         backend="plotly",
         mode=None,
-        field="delta_index",
+        field="delta_refractive_index",
         length_unit="nanometer",
         surface_count=8,
         opacity=None,
@@ -234,13 +252,13 @@ class Volume:
             explicitly for a Matplotlib figure.
         mode : str, optional
             Matplotlib supports 'slices' (default) and 'voxels'. Voxels display
-            cells with nonzero index contrast, or the full box for a zero field.
+            cells with nonzero refractive index contrast, or the full box for a zero field.
             Plotly supports 'volume' (default), 'isosurface', and 'slices'.
             Uniform Plotly fields fall back to slices.
-        field : {'delta_index', 'index', 'permittivity'}, optional
-            Scalar field to display, default index fluctuation. 'index' displays
-            n0 + delta_index; 'permittivity' displays the solver's linearized
-            relative permittivity n0**2 + 2*n0*delta_index, not (n0+delta_index)**2.
+        field : {'delta_refractive_index', 'refractive_index', 'permittivity'}, optional
+            Scalar field to display, default refractive index fluctuation. 'refractive_index' displays
+            n0 + delta_refractive_index; 'permittivity' displays the solver's linearized
+            relative permittivity n0**2 + 2*n0*delta_refractive_index, not (n0+delta_refractive_index)**2.
         length_unit : str, optional
             Spatial display unit, default 'nanometer'. Stored SI data is unchanged.
         surface_count : int, optional
@@ -253,7 +271,7 @@ class Volume:
             Default 'uniform' gives all contours the same opacity. 'increasing'
             is available only for Plotly volume mode and scales opacity from
             zero at the lowest displayed contour to ``opacity`` at the highest.
-            Use field='index' to emphasize high refractive index, rather than
+            Use field='refractive_index' to emphasize high refractive index, rather than
             the magnitude of positive and negative fluctuations.
         slice_indices : tuple of int, optional
             One voxel index for each x, y, z plane, used only for slices.
@@ -284,6 +302,7 @@ class Volume:
         limit; browser performance also depends on surface count and graphics
         support. This plots the input material, not an electromagnetic field.
         """
+
         from ._volume_plotting import _VolumePlotter
 
         return _VolumePlotter(

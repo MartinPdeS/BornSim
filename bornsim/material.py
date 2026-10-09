@@ -2,38 +2,45 @@
 
 from dataclasses import dataclass
 import numpy as np
-from .units import Quantity, _si
+from .units import _refractive_index_values
 
 
 @dataclass(frozen=True, kw_only=True)
 class Material:
     """A nondispersive real refractive index shared by any number of shapes.
 
-    index is an absolute positive dimensionless refractive index, not a
-    contrast. Absorption and wavelength dispersion are not implemented.
+    ``refractive_index`` is an absolute positive dimensionless refractive index, not a
+    contrast. Supply a plain number; quantities are rejected. Absorption and wavelength dispersion are not implemented.
     """
 
-    index: Quantity | float
+    refractive_index: float
 
-    def __post_init__(self):
-        index = _si(value=self.index, unit="dimensionless", name="index", scalar=True)
-        if not np.isfinite(index) or index <= 0:
-            raise ValueError("index must be finite and positive.")
-        object.__setattr__(self, "index", index)
+    def __post_init__(self) -> None:
+        refractive_index = _refractive_index_values(value=self.refractive_index, name="refractive_index", scalar=True)
+
+        if not np.isfinite(refractive_index) or refractive_index <= 0:
+            raise ValueError("refractive_index must be finite and positive.")
+
+        object.__setattr__(self, "refractive_index", refractive_index)
 
     @property
     def metadata(self):
         """Fresh JSON-compatible material description."""
-        return {"index": self.index}
+
+        return {"refractive_index": self.refractive_index}
 
     @classmethod
-    def _resolve(cls, *, material=None, index=None):
+    def _resolve(cls, *, material=None, refractive_index=None):
         if material is not None:
             if not isinstance(material, cls):
                 raise TypeError("material must be a Material.")
-            if index is not None:
-                raise ValueError("Supply material or index, not both.")
+
+            if refractive_index is not None:
+                raise ValueError("Supply material or refractive_index, not both.")
+
             return material
-        if index is None:
-            raise ValueError("Supply material or index.")
-        return cls(index=index)
+
+        if refractive_index is None:
+            raise ValueError("Supply material or refractive_index.")
+
+        return cls(refractive_index=refractive_index)

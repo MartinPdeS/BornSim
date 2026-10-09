@@ -6,9 +6,18 @@ Phi(q) = integral C(r) exp(-i q.r) d^3 r (no Fourier prefactor).
 """
 
 from dataclasses import dataclass
+from typing import TypedDict
 import numpy as np
-from .units import Quantity, _si
+from .units import Quantity, validate_units, ureg
 from .media import RandomMedium
+
+
+class OpticalProperties(TypedDict):
+    """Analytical transport coefficients and dimensionless anisotropy."""
+
+    mu_s: Quantity
+    g: float | None
+    mu_s_prime: Quantity
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -17,24 +26,23 @@ class AnalyticalMedium(RandomMedium):
 
     Parameters
     ----------
-    background_index : float or Quantity, optional
-        Positive, finite background refractive index. Dimensionless quantities
-        and refractive-index units are accepted. Default is 1.33.
-    index_std : float or Quantity, optional
-        Nonnegative, finite standard deviation of index fluctuations, not their
-        variance. Dimensionless; default is 0.01.
-    correlation_length : float or Quantity, optional
-        Positive, finite covariance length. Bare numbers mean metres;
-        compatible length quantities are converted to metres. Default is 100 nm.
-    correlation : {'gaussian', 'exponential'}, optional
-        Spatial covariance model. Default is 'gaussian'.
+    background_refractive_index : float
+        Positive, finite background refractive index. Plain numbers are required; quantities are rejected.
+    refractive_index_std : float
+        Nonnegative, finite standard deviation of refractive index fluctuations, not their
+        variance. Dimensionless;
+    correlation_length : Quantity
+        Positive, finite covariance length. Explicit length units are required;
+        the supplied units are preserved.
+    correlation : {'gaussian', 'exponential'}
+        Spatial covariance model.
 
     Attributes
     ----------
-    background_index, index_std : float
+    background_refractive_index, refractive_index_std : float
         Dimensionless statistics stored as numeric SI values.
-    correlation_length : float
-        Covariance length stored in metres.
+    correlation_length : Quantity
+        Covariance length with its supplied units.
     correlation : str
         Selected spatial covariance model.
 
@@ -49,8 +57,8 @@ class AnalyticalMedium(RandomMedium):
     This concrete subclass replaces the former directly instantiated Medium.
     It retains the existing first-order Gaussian and exponential formulas,
     and inherits numerical voxel generation from RandomMedium.
-    The index covariance is ``index_std**2 * exp(-r**2 / (2 * ell**2))``
-    for Gaussian correlation and ``index_std**2 * exp(-r / ell)`` for
+    The refractive index covariance is ``refractive_index_std**2 * exp(-r**2 / (2 * ell**2))``
+    for Gaussian correlation and ``refractive_index_std**2 * exp(-r / ell)`` for
     exponential correlation, where ``ell = correlation_length``. Equal length
     parameters therefore do not imply identical correlation profiles.
     Dielectric contrast is linearized as ``delta_epsilon = 2 * n0 * delta_n``.
@@ -61,40 +69,48 @@ class AnalyticalMedium(RandomMedium):
     --------
     >>> from bornsim import AnalyticalMedium
     >>> from bornsim.units import ureg
-    >>> medium = AnalyticalMedium(correlation_length=100 * ureg.nanometer)
+    ...
+    ...
+    >>> medium = AnalyticalMedium(
+    ...     correlation_length=100 * ureg.nanometer,
+    ...     background_refractive_index=1.33,
+    ...     refractive_index_std=0.01,
+    ...     correlation="gaussian",
+    ... )
     >>> medium.correlation
     'gaussian'
     """
 
-    background_index: Quantity | float = 1.33
-    index_std: Quantity | float = 0.01
-    correlation_length: Quantity | float = 100e-9
-    correlation: str = "gaussian"
+    background_refractive_index: float
+    refractive_index_std: float
+    correlation_length: Quantity
+    correlation: str
 
     def __post_init__(self):
         super().__post_init__()
+
         if self.correlation not in ("gaussian", "exponential"):
             raise ValueError("AnalyticalMedium correlation must be gaussian or exponential.")
 
 
-def angular_scattering(*, medium: AnalyticalMedium, wavelength: Quantity | float, theta):
+def angular_scattering(*, medium: AnalyticalMedium, wavelength: Quantity, theta: Quantity) -> Quantity:
     """Evaluate the unpolarized first-order differential scattering coefficient.
 
     Parameters
     ----------
     medium : AnalyticalMedium
-        Background index and isotropic fluctuation statistics.
-    wavelength : float or Quantity
-        Positive, finite vacuum wavelength. Bare numbers mean metres.
+        Background refractive index and isotropic fluctuation statistics.
+    wavelength : Quantity
+        Positive, finite vacuum wavelength. Explicit length units are required.
     theta : array_like or Quantity
-        Finite polar scattering angles in [0, pi]. Bare numbers mean radians;
+        Finite polar scattering angles in [0, pi]. Explicit angular units are required;
         angular quantities may use degrees or radians. Scalars are accepted.
 
     Returns
     -------
-    differential : numpy.ndarray or numpy scalar
+    differential : Quantity
         Differential scattering coefficient in m^-1 sr^-1, with the same shape
-        as ``theta``. Returns numeric SI values, even for quantity inputs.
+        as ``theta``. The result retains physical units.
 
     Raises
     ------
@@ -123,51 +139,71 @@ def angular_scattering(*, medium: AnalyticalMedium, wavelength: Quantity | float
     --------
     >>> from bornsim import AnalyticalMedium, angular_scattering
     >>> from bornsim.units import ureg
+    ...
+    ...
     >>> curve = angular_scattering(
-    ...     medium=AnalyticalMedium(),
+    ...     medium=AnalyticalMedium(
+    ...         background_refractive_index=1.33,
+    ...         refractive_index_std=0.01,
+    ...         correlation_length=100e-9 * ureg.meter,
+    ...         correlation="gaussian",
+    ...     ),
     ...     wavelength=633 * ureg.nanometer,
     ...     theta=[0, 90, 180] * ureg.degree,
     ... )
     >>> curve.shape
     (3,)
     """
+
     if not isinstance(medium, AnalyticalMedium):
         raise TypeError("Analytical scattering requires an AnalyticalMedium.")
-    wavelength = _si(
-        value=wavelength,
+
+    validate_units(
+        wavelength,
         unit="meter",
         name="wavelength",
         scalar=True,
     )
+
     if not np.isfinite(wavelength) or wavelength <= 0:
         raise ValueError("wavelength must be finite and positive.")
-    theta = _si(
-        value=theta,
+
+    validate_units(
+        theta,
         unit="radian",
         name="theta",
     )
-    if np.any(~np.isfinite(theta)) or np.any((theta < 0) | (theta > np.pi)):
+
+    if np.any(~np.isfinite(theta)) or np.any((theta < 0) | (theta > np.pi * ureg.radian)):
         raise ValueError("theta must be finite and between 0 and pi.")
+
     k0 = 2 * np.pi / wavelength
-    q = 2 * k0 * medium.background_index * np.sin(theta / 2)
+
+    q = 2 * k0 * medium.background_refractive_index * np.sin(theta / 2)
+
     ell = medium.correlation_length
-    variance = (2 * medium.background_index * medium.index_std) ** 2
+
+    variance = (2 * medium.background_refractive_index * medium.refractive_index_std) ** 2
+
     if medium.correlation == "gaussian":
         spectrum = variance * (2 * np.pi) ** 1.5 * ell**3 * np.exp(-0.5 * (q * ell) ** 2)
     else:
         spectrum = variance * 8 * np.pi * ell**3 / (1 + (q * ell) ** 2) ** 2
-    return k0**4 / (16 * np.pi**2) * spectrum * (1 + np.cos(theta) ** 2) / 2
+
+    return k0**4 / (16 * np.pi**2) * spectrum * (1 + np.cos(theta) ** 2) / 2 / ureg.steradian
 
 
-def optical_properties(*, medium: AnalyticalMedium, wavelength: Quantity | float, quadrature_order: int = 256):
+def optical_properties(
+    *, medium: AnalyticalMedium, wavelength: Quantity, quadrature_order: int = 256
+) -> OpticalProperties:
     """Integrate analytical scattering and its moments over solid angle.
 
     Parameters
     ----------
     medium : AnalyticalMedium
-        Background index and isotropic fluctuation statistics.
-    wavelength : float or Quantity
-        Positive, finite vacuum wavelength; bare numbers mean metres.
+        Background refractive index and isotropic fluctuation statistics.
+    wavelength : Quantity
+        Positive, finite vacuum wavelength; explicit length units are required.
     quadrature_order : int, optional
         Number of Gauss-Legendre nodes in the cosine of the scattering angle.
         Must be at least 16; default is 256.
@@ -175,7 +211,7 @@ def optical_properties(*, medium: AnalyticalMedium, wavelength: Quantity | float
     Returns
     -------
     properties : dict
-        Numeric SI values under the following keys:
+        Unit-bearing coefficients under the following keys:
 
         * ``mu_s`` : total scattering coefficient in m^-1.
         * ``g`` : dimensionless mean cosine of the scattering angle, or
@@ -204,21 +240,37 @@ def optical_properties(*, medium: AnalyticalMedium, wavelength: Quantity | float
     Examples
     --------
     >>> from bornsim import AnalyticalMedium, optical_properties
-    >>> optical_properties(
-    ...     medium=AnalyticalMedium(index_std=0),
-    ...     wavelength=633e-9,
+    ...
+    >>> from bornsim.units import ureg
+    ...
+    >>> properties = optical_properties(
+    ...     medium=AnalyticalMedium(
+    ...         refractive_index_std=0,
+    ...         background_refractive_index=1.33,
+    ...         correlation_length=100e-9 * ureg.meter,
+    ...         correlation="gaussian",
+    ...     ),
+    ...     wavelength=633 * ureg.nanometer,
     ... )
-    {'mu_s': 0.0, 'g': None, 'mu_s_prime': 0.0}
+    >>> float(properties["mu_s"].to("1 / meter").magnitude)
+    0.0
     """
+
     if not isinstance(quadrature_order, int) or quadrature_order < 16:
         raise ValueError("quadrature_order must be an integer of at least 16.")
+
     cosine, weights = np.polynomial.legendre.leggauss(quadrature_order)
+
     differential = angular_scattering(
         medium=medium,
         wavelength=wavelength,
-        theta=np.arccos(cosine),
+        theta=np.arccos(cosine) * ureg.radian,
     )
-    mu_s = float(2 * np.pi * np.sum(weights * differential))
-    mu_s_prime = float(2 * np.pi * np.sum(weights * (1 - cosine) * differential))
-    g = float(2 * np.pi * np.sum(weights * cosine * differential) / mu_s) if mu_s else None
+
+    mu_s = 2 * np.pi * ureg.steradian * np.sum(weights * differential)
+
+    mu_s_prime = 2 * np.pi * ureg.steradian * np.sum(weights * (1 - cosine) * differential)
+
+    g = float(2 * np.pi * ureg.steradian * np.sum(weights * cosine * differential) / mu_s) if mu_s else None
+
     return {"mu_s": mu_s, "g": g, "mu_s_prime": mu_s_prime}

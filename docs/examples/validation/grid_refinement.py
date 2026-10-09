@@ -15,48 +15,73 @@ import numpy as np
 
 from bornsim import Grid, Solver, Source, Volume
 from bornsim.units import ureg
+from bornsim import Directions
 
 source = Source(wavelength=633 * ureg.nanometer)
+
 solver = Solver(
     source=source,
     order=1,
 )
+
 side = 180 * ureg.nanometer
+
 background = 1.33
-delta_index = 0.01
+
+delta_refractive_index = 0.01
+
 direction = np.array([[1.0, 0.0, 0.0]])
+
 k0 = 2 * np.pi / source.wavelength.to("meter").magnitude
+
 length = side.to("meter").magnitude
+
 q = background * k0 * (np.array([0.0, 0.0, 1.0]) - direction[0])
+
 integral = length**3 * np.prod(np.sinc(q * length / (2 * np.pi)))
+
 # Linearized dielectric contrast; y polarization is transverse to +x.
-reference = k0**2 * (2 * background * delta_index) * integral / (4 * np.pi)
+reference = k0**2 * (2 * background * delta_refractive_index) * integral / (4 * np.pi)
 
 cells = np.array([2, 4, 8, 16])
+
 relative_errors = []
+
+observation_directions = Directions(vectors=direction)
+
 for count in cells:
     grid = Grid(
         shape=(count,) * 3,
         spacing=side / count,
     )
+
     volume = Volume(
-        delta_index=np.full((count,) * 3, delta_index),
+        delta_refractive_index=np.full((count,) * 3, delta_refractive_index),
         grid=grid,
-        background_index=background,
+        background_refractive_index=background,
     )
+
     result = solver.solve_cut(
         target=volume,
-        directions=direction,
+        directions=observation_directions,
     )
+
     amplitude = result.amplitudes.to("meter").magnitude[0, 0, 1, 1]
+
     relative_errors.append(abs(amplitude - reference) / abs(reference))
 
 figure, axis = plt.subplots(layout="constrained")
+
 axis.loglog(cells, relative_errors, "o-", label="First-order amplitude error")
+
 axis.loglog(cells, relative_errors[0] * (cells[0] / cells) ** 2, "--", label="Second-order reference slope")
+
 axis.set(xlabel="Cells per axis (fixed 180 nm cube)", ylabel="Relative amplitude error", title="Voxel refinement")
+
 axis.grid(alpha=0.25, which="both")
+
 axis.legend()
+
 plt.show()
 
 # %%
@@ -64,13 +89,14 @@ plt.show()
 # ------------------------
 # Inspect the actual finite input sample with physical spatial axes.
 # Drag to rotate and scroll to zoom in the embedded browser view.
-# Higher-index regions are more opaque; opacity is not absorption.
-# This is the finest grid. The index is constant throughout the sample;
+# Regions with higher refractive index are more opaque; opacity is not absorption.
+# This is the finest grid. The refractive index is constant throughout the sample;
 # orthogonal slices show the uniform cube and its physical extent.
 medium_figure = volume.plot_3d(
     mode="volume",
-    field="index",
+    field="refractive_index",
     opacity_scale="increasing",
 )
+
 if "--no-browser" not in sys.argv:
     medium_figure.show(renderer="browser")

@@ -10,6 +10,7 @@ from bornsim import RandomMedium, Result, Solver, Source, Volume
 from bornsim.green import GreenOperator
 from bornsim.series import BornSeries
 from bornsim.media import random_volume
+from bornsim.units import ureg
 
 
 @pytest.mark.parametrize(
@@ -67,30 +68,53 @@ def test_public_methods_require_keywords(method):
 @pytest.mark.parametrize("method", [bornsim.Medium.add_structures, bornsim.StructuredMedium.add_structures])
 def test_structure_composition_is_the_explicit_positional_exception(method):
     parameters = list(inspect.signature(method).parameters.values())
+
     assert [parameter.name for parameter in parameters] == ["self", "structures"]
+
     assert parameters[1].kind == inspect.Parameter.VAR_POSITIONAL
 
 
 def test_positional_calls_are_rejected_and_named_calls_work():
     field = np.zeros((2, 2, 2))
+
     with pytest.raises(TypeError):
         Source(633e-9)
+
     with pytest.raises(TypeError):
         Volume(
             field,
-            spacing=50e-9,
+            spacing=5e-08 * ureg.meter,
         )
+
     with pytest.raises(TypeError):
-        random_volume(RandomMedium())
+        random_volume(
+            RandomMedium(
+                background_refractive_index=1.33,
+                refractive_index_std=0.01,
+                correlation_length=100e-9 * ureg.meter,
+                correlation="matern",
+                smoothness=1.5,
+            )
+        )
+
     volume = Volume(
-        delta_index=field,
-        spacing=50e-9,
+        delta_refractive_index=field,
+        spacing=5e-08 * ureg.meter,
+        background_refractive_index=1.33,
     )
-    solver = Solver(source=Source())
+
+    solver = Solver(
+        source=Source(
+            wavelength=633e-9 * ureg.meter,
+        )
+    )
+
     with pytest.raises(TypeError):
         solver.solve(volume)
+
     result = solver.solve_cut(
         target=volume,
-        angles=[0, 1],
+        angles=[0, 1] * ureg.radian,
     )
+
     assert not result.differential.magnitude.any()

@@ -9,6 +9,7 @@ from .rotation import Rotation
 from .source import Source
 from .solver import Solver
 from .grid import Grid
+from .directions import Directions
 from .sampling import AngularSampling
 from .results import Result
 from .angular_data import AngularData
@@ -16,6 +17,7 @@ from .material import Material
 from .ensemble_sampling import EnsembleSampling
 
 __all__ = [
+    "Directions",
     "Material",
     "EnsembleSampling",
     "__version__",
@@ -41,6 +43,7 @@ __all__ = [
 
 def __getattr__(name):
     """Keep deprecated advanced imports available during API migration."""
+
     from importlib import import_module
     import warnings
 
@@ -51,12 +54,16 @@ def __getattr__(name):
         "angular_scattering": "model",
         "optical_properties": "model",
     }
+
     if name not in locations:
         raise AttributeError(f"module 'bornsim' has no attribute {name!r}")
+
     module = locations[name]
+
     warnings.warn(
         f"Import {name} from bornsim.{module}; top-level convenience imports are deprecated.",
         DeprecationWarning,
         stacklevel=2,
     )
+
     return getattr(import_module(f".{module}", __name__), name)

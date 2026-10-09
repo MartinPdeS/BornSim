@@ -7,16 +7,23 @@ from zipfile import ZipFile
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+
     parser.add_argument("paths", type=Path, nargs="+", help="Wheel files or directories containing wheels.")
+
     args = parser.parse_args()
+
     wheels = []
+
     for path in args.paths:
         wheels.extend(path.glob("*.whl") if path.is_dir() else [path])
+
     if not wheels:
         raise SystemExit("No wheel found.")
+
     for wheel in wheels:
         with ZipFile(wheel) as archive:
             names = archive.namelist()
+
             required = [
                 "bornsim/__init__.py",
                 "bornsim/model.py",
@@ -43,16 +50,22 @@ def main():
                 "bornsim/sampling.py",
                 "bornsim/_result_validation.py",
             ]
+
             if not all(name in names for name in required):
                 raise SystemExit(f"Missing package sources in {wheel.name}")
+
             if not any(name.endswith("/licenses/LICENSE") for name in names):
                 raise SystemExit(f"Missing MIT license in {wheel.name}")
+
             if "bornsim/dashboard.py" in names or "bornsim/__main__.py" in names:
                 raise SystemExit(f"Dashboard sources leaked into {wheel.name}")
+
             if any(name.endswith("/entry_points.txt") for name in names):
                 raise SystemExit(f"Unexpected console launcher in {wheel.name}")
+
             if any(name.startswith(("tests/", "docs/", "tools/")) for name in names):
                 raise SystemExit(f"Development files leaked into {wheel.name}")
+
         print(f"Verified {wheel.name}")
 
 

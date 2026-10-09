@@ -3,7 +3,7 @@ Python API
 
 Constructor, function, and method arguments require keywords, except
 ``add_structures(*structures)``, which takes positional shape objects.
-For example, use ``Volume(delta_index=field, spacing=50e-9)`` and
+For example, use ``Volume(delta_refractive_index=field, spacing=50 * ureg.nanometer)`` and
 ``solver.solve(target=volume)``. Calls with multiple arguments are formatted
 with one argument per line and a trailing comma.
 
@@ -19,6 +19,14 @@ Sources, solvers and results
 .. automodule:: bornsim.results
    :members: Result
 
+Refractive-index names are explicit throughout the API:
+``Material(refractive_index=...)``, ``refractive_index_std``,
+``background_refractive_index`` and ``Volume(delta_refractive_index=...)``.
+Plot field selectors are ``"refractive_index"`` and ``"delta_refractive_index"``.
+These replace the shorter names used in earlier releases. Array positions,
+such as the ``index`` argument to ``plot_slice``, retain their usual meaning.
+Saved results remain readable and retain their original provenance keys.
+
 Spatial and angular configurations
 ----------------------------------
 
@@ -28,6 +36,23 @@ Spatial and angular configurations
 .. automodule:: bornsim.sampling
    :members: AngularSampling
 
+For evenly spaced output angles, use inclusive endpoints and a point count:
+
+.. code-block:: python
+
+   from bornsim.units import ureg
+
+   sampling = AngularSampling(
+       start=0 * ureg.degree,
+       end=180 * ureg.degree,
+       n_points=181,
+   )
+
+Defaults are 0 to pi radians with 121 points. Explicit endpoints require angular units.
+For irregular or explicitly ordered angles, use ``angles=...`` instead;
+explicit angles cannot be combined with range settings. Output resolution
+remains independent of the solid-angle integration quadratures.
+
 Define Grid once, pass it to medium.to_volume or solver.ensemble, and retain
 it on Volume.grid. Define AngularSampling once on Solver; solve and ensemble
 share it. Per-call sampling overrides are supported. Legacy shape, spacing,
@@ -35,37 +60,97 @@ angles, polar_samples and azimuth_samples keywords are deprecated. They remain
 available with DeprecationWarning; configuration objects cannot be combined
 with their individual settings.
 
+Observation directions
+----------------------
+
+.. automodule:: bornsim.directions
+   :members: Directions
+
+``Directions`` owns validation and immutable storage for Cartesian observation
+vectors. Supply it to ``Solver.solve_cut`` or ``BornSeries``. Angular sampling
+also returns a ``Directions`` object through ``sampling.directions``.
+
+.. code-block:: python
+
+   from bornsim import Directions
+   from bornsim.units import ureg
+
+   directions = Directions(vectors=[[0, 0, 1], [1, 0, 0]])
+
+   vectors = directions.vectors
+
+   angular_directions = Directions.from_angles(
+       polar_angles=[0, 90] * ureg.degree,
+       azimuth_angles=[0, 0] * ureg.degree,
+   )
+
+Each Cartesian vector must have unit length; the class does not silently
+normalize inputs. ``from_angles`` accepts paired or broadcastable coordinates
+and requires explicit angle units. ``vectors`` returns a read-only NumPy array.
+
+
 Units
 -----
 
 .. automodule:: bornsim.units
+
+Every dimensional input requires an explicit quantity, including angles,
+shape coordinates, wavelengths, voxel spacing, covariance lengths, squared
+wavenumbers and physical arrays passed to Result or AngularData. For example,
+use ``correlation_length=60 * ureg.nanometer``; ``correlation_length=60e-9``
+raises ValueError. Refractive indices, their standard deviations and fluctuation
+arrays must be plain numbers; quantities are rejected even with dimensionless
+or refractive-index units. Smoothness, unit directions and counts may be plain
+numbers.
+Physical settings have no arbitrary defaults: supply wavelengths, refractive
+indices, fluctuation statistics, covariance choice, grid shape and spacing
+explicitly. Matérn covariance also requires smoothness. An empty
+``StructuredMedium()`` requires ``add_background(...)`` before voxelization. Physical settings and
+coordinates retain quantities with their supplied units. Validation checks
+compatible dimensions and scalar shape without converting units. Numerical
+kernels, plots and archives explicitly select units when they need magnitudes.
+
+``sampling.angles`` is a read-only quantity array. Use
+``sampling.angles.to("degree").magnitude`` to obtain a NumPy array in degrees.
 
 .. code-block:: python
 
    from bornsim import AngularSampling, Grid, RandomMedium, Solver, Source
    from bornsim.units import ureg
 
-   grid = Grid(shape=(4, 4, 4))
+   grid = Grid(
+       shape=(4, 4, 4),
+       spacing=50e-9 * ureg.meter,
+   )
+
    sampling = AngularSampling(angles=[0, 45, 90, 180] * ureg.degree)
+
    solver = Solver(
        source=Source(wavelength=633 * ureg.nanometer),
        sampling=sampling,
    )
+
    result = solver.ensemble(
        medium=RandomMedium(
            correlation="gaussian",
            correlation_length=100 * ureg.nanometer,
+           background_refractive_index=1.33,
+           refractive_index_std=0.01,
        ),
        grid=grid,
        realizations=3,
        seed=42,
    )
-   print(result.mu_s.to("1 / millimeter"))
-   print(result.differential.to("1 / meter / steradian").magnitude)
+
+   print(f"mu_s = {result.mu_s.to('1 / millimeter')}")
+
+   print(f"Differential scattering = {result.differential.to('1 / meter / steradian')}")
 
 ``Result`` arrays carry units, including ensemble standard errors and complex
-Born amplitudes. Bare inputs use SI units. ``RandomMedium``, ``StructuredMedium`` and ``Volume`` store
-numeric SI values; the function API retains numeric SI return values.
+Born amplitudes. Dimensional inputs require explicit units. Grid spacing,
+geometry lengths and covariance lengths retain quantities. Analytical function
+outputs also carry units; low-level Born and ensemble kernels document their
+numeric SI arrays. Archives continue to store explicit SI metadata.
 
 Validation and reproducibility
 ------------------------------
@@ -99,8 +184,12 @@ identified by a SHA-256 of the C-ordered little-endian float64 fluctuations.
    from bornsim import Result
 
    result.save(path="scattering.npz")
+
    restored = Result.load(path="scattering.npz")
-   print(restored.provenance)
+
+   for name, value in restored.provenance.items():
+       print(f"{name}: {value}")
+
    restored.plot()
 
 The versioned NPZ archive stores SI quantities, complex amplitudes,
@@ -140,7 +229,7 @@ conventions. Material regions use absolute refractive indices and SI lengths.
 ``to_volume()``. Existing analytical first-order calculations require
 ``AnalyticalMedium``. Direct ``Medium(...)`` construction is no longer supported.
 Use ``StructuredMedium()`` followed by ``add_background`` and ``add_structures``
-to compose materials in place. Supply either a uniform ``index`` or random
+to compose materials in place. Supply either a uniform ``refractive_index`` or random
 statistics as ``medium`` to ``add_background``. Statistical RandomMedium and
 AnalyticalMedium instances describe homogeneous distributions; composition
 belongs to StructuredMedium.
@@ -175,17 +264,26 @@ these quantities with unit-vector coordinates in a read-only ``AngularData``.
 
 .. code-block:: python
 
+   from bornsim.units import ureg
+
    result = solver.solve(target=volume)
+
    phase_figure = result.plot_phase_function(view="3d")
+
    phase_figure.show()
+
    averaged = result.azimuth_average()
+
    averaged.plot()
+
    cut = solver.solve_cut(
        target=volume,
        angles=[0, 90, 180] * ureg.degree,
    )
+
    result.plot_cross_section(area_unit="nanometer**2")
-   print(result.differential_cross_section)
+
+   print(f"Differential cross section = {result.differential_cross_section}")
 
 Averaging acts on intensities, never coherent amplitudes. Ensemble averaged
 errors come from the per-realization averaged intensities, including angular
@@ -206,23 +304,30 @@ new immutable shapes. Rotations act about the shape centre by default;
 
 .. code-block:: python
 
+   from bornsim.units import ureg
+
    from bornsim import Box, Rotation, StructuredMedium
 
    box = Box(
        size=(100, 200, 300) * ureg.nanometer,
-       index=1.34,
+       refractive_index=1.34,
    )
+
    rotation = Rotation(
        axis=(0, 0, 1),
        angle=30 * ureg.degree,
    )
+
    tilted = box.rotated(rotation=rotation)
+
    shifted = tilted.translated(offset=(50, 0, 0) * ureg.nanometer)
+
    medium = StructuredMedium(
-       background_index=1.33,
+       background_refractive_index=1.33,
        overlap="error",
        warn_on_clipping=True,
    )
+
    medium.add_structures(shifted)
 
 Overlap policies act on voxel masks: ``replace`` lets later regions win,
@@ -263,20 +368,27 @@ Reusable materials
 
 .. code-block:: python
 
+   from bornsim.units import ureg
+
    from bornsim import Material, Sphere, StructuredMedium
 
-   glass = Material(index=1.34)
+   glass = Material(refractive_index=1.34)
+
    sphere = Sphere(
        radius=150 * ureg.nanometer,
        material=glass,
    )
+
    shifted = sphere.translated(offset=(50, 0, 0) * ureg.nanometer)
+
    medium = StructuredMedium()
-   medium.add_background(material=Material(index=1.33))
+
+   medium.add_background(material=Material(refractive_index=1.33))
+
    medium.add_structures(sphere, shifted)
 
 Materials are immutable and shared across shapes, including transformed copies.
-Supply either ``material`` or the compatible ``index`` shortcut to a shape.
+Supply either ``material`` or the compatible ``refractive_index`` shortcut to a shape.
 Current materials use real, nondispersive absolute indices; material separation
 does not introduce absorption or dispersion.
 
@@ -291,6 +403,7 @@ Ensemble configurations
    from bornsim import EnsembleSampling
 
    ensemble_sampling = EnsembleSampling(seeds=[42, 11, 104])
+
    result = solver.ensemble(
        medium=random_medium,
        grid=grid,
@@ -308,17 +421,22 @@ Physical meridian selection
 
 .. code-block:: python
 
+   from bornsim.units import ureg
+
    meridian = result.meridian(azimuth=90 * ureg.degree)
+
    meridian.plot_phase_function()
+
    nearest = result.meridian(
        azimuth=87 * ureg.degree,
        method="nearest",
    )
-   print(nearest.meridian_azimuth.to("degree"))
+
+   print(f"Meridian azimuth = {nearest.meridian_azimuth.to('degree')}")
 
 Selection returns AngularData with amplitudes, intensities and standard errors
 for that sampled direction plane. Full-solve normalization is retained.
 The default exact method rejects unsampled angles; nearest explicitly selects
 the closest sample and records its actual angle. Angles wrap modulo 2*pi;
-bare values mean radians. No interpolation or averaging is performed. Selected
+angular values require explicit units. No interpolation or averaging is performed. Selected
 meridians support angular curves; use full data for polar-plane or 3D plots.

@@ -11,4 +11,5 @@ def close_figures():
     import matplotlib.pyplot as plt
 
     yield
+
     plt.close("all")

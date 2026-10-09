@@ -47,7 +47,7 @@ BornSim constructor, function, and method arguments are keyword-only, except
 ``add_structures(*structures)``, which takes positional shape objects.
 Calls with multiple arguments use one argument per line and a trailing comma.
 
-The Python API accepts TypedUnit quantities; bare numbers use SI units. The wavelength is the **vacuum** wavelength. Outputs are angular differential scattering, μs, anisotropy g, and μs′, with scattering coefficients in inverse metres.
+The Python API accepts TypedUnit quantities; dimensional inputs require explicit units. The wavelength is the **vacuum** wavelength. Outputs are angular differential scattering, μs, anisotropy g, and μs′, with scattering coefficients in inverse metres.
 
 .. code-block:: python
 
@@ -59,16 +59,19 @@ The Python API accepts TypedUnit quantities; bare numbers use SI units. The wave
         shape=(8, 8, 8),
         spacing=50 * ureg.nanometer,
     )
+
     medium = RandomMedium(
-        background_index=1.33,
-        index_std=0.01,
+        background_refractive_index=1.33,
+        refractive_index_std=0.01,
         correlation_length=100 * ureg.nanometer,
         correlation="gaussian",
     )
+
     solver = Solver(
         source=Source(wavelength=633 * ureg.nanometer),
         order=3,
     )
+
     result = solver.ensemble(
         medium=medium,
         grid=grid,
@@ -77,8 +80,15 @@ The Python API accepts TypedUnit quantities; bare numbers use SI units. The wave
             seed=42,
         ),
     )
-    print(result.mu_s.to("1 / millimeter"), result.g, result.mu_s_prime)
+
+    print(
+        f"mu_s = {result.mu_s.to('1 / millimeter')}, "
+        f"g = {result.g}, "
+        f"mu_s_prime = {result.mu_s_prime.to('1 / millimeter')}"
+    )
+
     result.plot()
+
     plt.show()
 
 ``Source`` describes the supported unpolarized plane wave propagating along +z.
@@ -139,29 +149,38 @@ Units
 ``bornsim.units`` exposes TypedUnit's shared ``ureg``, ``Quantity``, ``Length``,
 ``Angle``, ``Dimensionless``, and ``RefractiveIndex``, using the same registry
 as PyMieSim. Physical inputs accept compatible units and reject incompatible
-dimensions. Bare lengths mean metres and bare angles mean radians.
-``RandomMedium``, ``StructuredMedium`` and ``Volume`` normalize their inputs to numeric SI values for
-the existing numerical kernels.
+dimensions. Lengths and angles require explicit units. Refractive indices,
+their standard deviations and fluctuation arrays require plain numbers without
+units, including when passed to Material or shape constructors.
+Physical configuration has no arbitrary defaults. Supply wavelengths,
+refractive indices, fluctuation statistics, covariance choice, grid shape and
+voxel spacing explicitly. ``StructuredMedium()`` starts as an empty builder;
+call ``add_background(...)`` before generating a volume. Numerical controls
+retain defaults, and zero centres and identity shape rotations define the
+neutral coordinate conventions.
+
+Physical settings and coordinates retain quantities in the supplied units.
+Validation checks units and scalar shape without converting them. FFT and
+Fourier kernels extract explicit SI magnitudes where numeric arrays are needed.
 
 ``Source.wavelength`` and every numerical array in ``Result`` are quantities.
-Angles are stored in radians, amplitudes in metres, differential scattering
-and its standard error in inverse metres per steradian, and integrated
-coefficients in inverse metres. Anisotropy, direction vectors, and relative
+Angles, amplitudes, scattering coefficients and uncertainties retain physical
+units. Saved archives use radians, metres and inverse metres explicitly. Anisotropy, direction vectors, and relative
 field norms are dimensionless. Use ``.to("unit")`` to convert and
 ``.magnitude`` to retrieve an array. Plots convert to degrees and SI
 scattering units explicitly, including uncertainty bars.
 
-The function API also accepts quantities, while returning numeric SI arrays
-and dictionaries as before. This includes ``random_volume`` voxel spacing
-and ``ensemble_scattering`` wavelengths, voxel spacing, and angles.
+Analytical functions return unit-bearing scattering coefficients.
+``random_volume`` retains unit-bearing voxel spacing and coordinates.
+The low-level Born and ensemble kernels document their numeric SI outputs.
 
 
 Physical model
 --------------
 
-Real-valued index fluctuations are linearized as δε ≈ 2 n₀ δn. For an unpolarized incident wave, the differential scattering coefficient is k₀⁴ Φε(q) (1 + cos²θ)/(32π²), where q = 2 n₀ k₀ sin(θ/2), k₀ = 2π/λvac and Φε is the three-dimensional Fourier transform of the dielectric covariance without a Fourier normalization prefactor.
+Real-valued refractive index fluctuations are linearized as δε ≈ 2 n₀ δn. For an unpolarized incident wave, the differential scattering coefficient is k₀⁴ Φε(q) (1 + cos²θ)/(32π²), where q = 2 n₀ k₀ sin(θ/2), k₀ = 2π/λvac and Φε is the three-dimensional Fourier transform of the dielectric covariance without a Fourier normalization prefactor.
 
-The index covariance is σn² exp(−r²/(2ℓ²)) for the Gaussian model and σn² exp(−r/ℓ) for the exponential model. These definitions matter when comparing correlation lengths between publications. Gauss–Legendre quadrature integrates over solid angle. Increase ``quadrature_order`` to check convergence for strongly forward-peaked scattering.
+The refractive index covariance is σn² exp(−r²/(2ℓ²)) for the Gaussian model and σn² exp(−r/ℓ) for the exponential model. These definitions matter when comparing correlation lengths between publications. Gauss–Legendre quadrature integrates over solid angle. Increase ``quadrature_order`` to check convergence for strongly forward-peaked scattering.
 
 The analytical solver is a first-order, single-scattering model. The numerical solver includes repeated interactions through the chosen Born order. No slab-transmission observable or particle-packing generator is provided;
 fixed particle configurations can be composed and propagated numerically. A dense medium can still have weak fluctuations; density alone does not establish Born validity. Contrast, correlation length, wavelength, and propagation distance matter. Decreasing Born terms do not certify convergence.
@@ -191,7 +210,7 @@ reproduces exponential covariance. ``Medium`` is an abstract base class;
 instantiate ``RandomMedium`` or ``StructuredMedium`` and call ``to_volume()``.
 The existing analytical statistics class is named ``AnalyticalMedium``.
 Old ``Medium(...)`` calls must be replaced; choose ``correlation="gaussian"``
-to preserve the former default. ``RandomMedium`` defaults to Matérn covariance.
+for the analytical Gaussian model. Choose the covariance family explicitly. Matérn models also require smoothness.
 
 ``StructuredMedium`` voxelizes ordered ``Layer``, ``Sphere``, ``Ellipsoid``,
 ``Box``, and ``Cylinder`` regions. Regions specify absolute indices; later
@@ -199,6 +218,8 @@ regions replace earlier ones in overlaps. Layers are finite slabs clipped
 to the box, with a uniform background outside the sample.
 
 .. code-block:: python
+
+    from bornsim.units import ureg
 
     from bornsim import Grid, RandomMedium, Layer, Sphere, StructuredMedium
     from bornsim.media import random_volume
@@ -208,25 +229,31 @@ to the box, with a uniform background outside the sample.
         medium=RandomMedium(
             correlation="matern",
             smoothness=1.5,
+            background_refractive_index=1.33,
+            refractive_index_std=0.01,
+            correlation_length=100e-9 * ureg.meter,
         ),
         grid=Grid(
             shape=(12, 12, 12),
-            spacing=30e-9,
+            spacing=3e-08 * ureg.meter,
         ),
         seed=42,
     )
+
     structure = StructuredMedium()
-    structure.add_background(index=1.33)
+
+    structure.add_background(refractive_index=1.33)
+
     layer = Layer(
-        lower=-180e-9,
-        upper=0,
-        index=1.34,
+        lower=-1.8e-07 * ureg.meter,
+        upper=0 * ureg.meter,
+        refractive_index=1.34,
     )
 
     sphere = Sphere(
-        radius=70e-9,
-        index=1.345,
-        centre=(0, 0, 40e-9),
+        radius=7e-08 * ureg.meter,
+        refractive_index=1.345,
+        centre=(0, 0, 4e-08) * ureg.meter,
     )
 
     structure.add_structures(
@@ -237,11 +264,14 @@ to the box, with a uniform background outside the sample.
     structured_sample = structure.to_volume(
         grid=Grid(
             shape=(12, 12, 12),
-            spacing=30e-9,
+            spacing=3e-08 * ureg.meter,
         ),
     )
+
     solver = Solver(
-        source=Source(),
+        source=Source(
+            wavelength=633e-9 * ureg.meter,
+        ),
         order=3,
     )
 
@@ -267,21 +297,32 @@ slices, or sampled voxel geometry such as spheres.
 
 .. code-block:: python
 
+    from bornsim.units import ureg
+
     from bornsim import Grid, RandomMedium
 
-    medium = RandomMedium()
+    medium = RandomMedium(
+        background_refractive_index=1.33,
+        refractive_index_std=0.01,
+        correlation_length=100e-9 * ureg.meter,
+        correlation="matern",
+        smoothness=1.5,
+    )
+
     volume = medium.to_volume(
         grid=Grid(
             shape=(16, 16, 16),
-            spacing=25e-9,
+            spacing=2.5e-08 * ureg.meter,
         ),
         seed=42,
     )
+
     figure = volume.plot_3d(
-        field="index",
+        field="refractive_index",
         opacity_scale="increasing",
         length_unit="nanometer",
     )
+
     figure.show()
 
 Matplotlib figures rotate with an interactive backend and can be exported
@@ -298,44 +339,56 @@ Generate a seeded random volume and evaluate cumulative Born orders, or average 
 
 .. code-block:: python
 
+    from bornsim.units import ureg
+
     import numpy as np
-    from bornsim import EnsembleSampling, Grid, RandomMedium
+    from bornsim import Directions, EnsembleSampling, Grid, RandomMedium
     from bornsim.series import BornSeries
     from bornsim.media import random_volume
     from bornsim.ensemble import ensemble_scattering
 
     medium = RandomMedium(
-        index_std=0.01,
-        correlation_length=100e-9,
+        refractive_index_std=0.01,
+        correlation_length=1e-07 * ureg.meter,
         correlation="gaussian",
+        background_refractive_index=1.33,
     )
+
     volume = random_volume(
         medium=medium,
         grid=Grid(
             shape=(12, 12, 12),
-            spacing=50e-9,
+            spacing=5e-08 * ureg.meter,
         ),
         seed=42,
     )
+
+    directions = Directions(vectors=[[0.0, 0.0, 1.0], [1.0, 0.0, 0.0]])
+
+    # directions.vectors is the immutable Cartesian array.
+
     engine = BornSeries(
         grid=volume.grid,
-        background_index=volume.background_index,
-        wavelength=633e-9,
-        directions=np.array([[0.0, 0.0, 1.0], [1.0, 0.0, 0.0]]),
+        background_refractive_index=volume.background_refractive_index,
+        wavelength=6.33e-07 * ureg.meter,
+        directions=directions,
         order=3,
     )
 
     result = engine.solve(volume=volume)
+
     # result.amplitudes[j] is the (j+1)-th term, in metres.
     # result.differential[j] includes amplitude interference through order j+1.
     ensemble = ensemble_scattering(
         medium=medium,
-        wavelength=633e-9,
+        wavelength=6.33e-07 * ureg.meter,
         order=3,
         ensemble_sampling=EnsembleSampling(
             realizations=4,
             seed=42,
         ),
+        shape=(12, 12, 12),
+        spacing=50e-9 * ureg.meter,
     )
 
 The API supports orders 1–12. Work limits bound synchronous calculations. Random fields have a **Gaussian probability distribution**, with Gaussian, exponential or Whittle–Matérn spatial covariance. Those are distinct choices. A spectral generator samples a doubled periodic box and crops it; ensemble point variance is normalized, but individual samples retain their random means and variances. Finite resolution truncates the spectrum, particularly for exponential covariance, and finite synthesis boxes approximate the continuum statistics.

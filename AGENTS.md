@@ -3,7 +3,13 @@
 - The root `bornsim/` package contains the public Python API and Matplotlib plotting.
 - Keep `Source`, `Solver`, and `Result` implementations in `source.py`, `solver.py`, and `results.py`; `api.py` is a convenience import module.
 - `model.py` handles analytical first-order scattering. Keep voxel fields in `volume.py`, random-field generation in `media.py`, propagation in `green.py`, the `BornSeries` engine in `series.py`, and ensemble statistics in `ensemble.py`.
+- Use `Directions` for numerical observation configurations; access its immutable Cartesian array through `.vectors`.
 - Use `BornSeries` instances for numerical Born calculations; do not add a free-function wrapper for that engine.
+- Validate supplied quantities directly with `bornsim.units.validate_units`; do not reassign fields merely to validate them. This validator permits a positional value.
+- Construct quantities by multiplying values by units, such as `0 * ureg.meter`; use `.to(...)` to convert existing quantities.
+- Require explicit unit-bearing quantities for all dimensional API inputs, including angles and squared wavenumbers. Refractive indices, their standard deviations and fluctuation arrays must be plain numbers without units. Other dimensionless values and counts may be bare numbers; preserve physical quantities and their supplied units through calculations. Extract explicit magnitudes only at numerical kernels, plotting, or serialization boundaries.
+- Require explicit physical configuration: wavelengths, refractive indices, fluctuation statistics, covariance choices, grid shapes and voxel spacing have no arbitrary defaults. StructuredMedium may start unconfigured, but requires an explicit background before voxelization. Keep numerical controls and neutral coordinate conventions distinct.
+- Use specific physical names in examples, such as `correlation_length`, `refractive_index_std`, `voxel_offsets_x`, `distance_between_points`, and `synthesis_grid_shape`.
 - Preserve SI units in the API, amplitude interference, random seeds, and ensemble uncertainty. Distinguish finite-sample coefficients from infinite-medium transport coefficients.
 - Keep the linearized dielectric contrast and Green-tensor self-cell convention explicit. Do not claim universal Born convergence from decreasing terms.
 - BornSim constructors, functions, and methods require keyword-only arguments, apart from implicit `self` and `cls`. `add_structures(*structures)` is the explicit exception and takes positional shape objects.
@@ -12,6 +18,9 @@
 - Build structured examples with `StructuredMedium()` and in-place `add_background`/`add_structures` calls. Define shapes in named variables before adding them, and batch multiple shapes in argument order. Keep `Medium` abstract and distinguish background replacement from additive fluctuations.
 - Keep `if`, `elif`, and `else` statement headers on one line; use named conditions when needed.
 - Use Matplotlib for default medium plotting and documentation examples. Plotly is an optional explicitly selected backend; core plotting and docs builds must work without it.
+- Use explicit `refractive_index` names for the optical quantity, including `background_refractive_index`, `refractive_index_std`, and `delta_refractive_index`. Reserve `index` for array positions.
+- Print calculated values with labeled f-strings rather than dictionaries or multiple positional print arguments. Preserve units already attached to results.
+- Put a blank line between separate statements and calculation steps, including assignments and calls within loops. Keep imports and related dataclass fields grouped, and comments attached to the statement they explain.
 - Use four spaces and follow Ruff formatting. Do not use `from __future__ import annotations`.
 - Tests are grouped into `analytical`, `numerical`, and `packaging`; keep independent numerical references and validation coverage.
 - Reuse `.venv` and run `make check PYTHON=.venv/bin/python`; UI changes also need a real-browser check.

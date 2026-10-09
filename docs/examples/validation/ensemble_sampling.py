@@ -20,24 +20,35 @@ grid = Grid(
     shape=(6, 6, 6),
     spacing=40 * ureg.nanometer,
 )
+
 medium = RandomMedium(
     correlation="gaussian",
     correlation_length=80 * ureg.nanometer,
+    background_refractive_index=1.33,
+    refractive_index_std=0.01,
 )
+
 solver = Solver(
     source=Source(wavelength=633 * ureg.nanometer),
     order=1,
 )
-angles = np.linspace(0, 180, 19) * ureg.degree
+
 sampling = AngularSampling(
-    angles=angles,
+    start=0 * ureg.degree,
+    end=180 * ureg.degree,
+    n_points=19,
     polar_samples=16,
     azimuth_samples=4,
 )
+
 counts = [1, 2, 4, 8, 16, 32]
+
 means = []
+
 errors = []
+
 figure, axis = plt.subplots(layout="constrained")
+
 for count in counts:
     result = solver.ensemble(
         medium=medium,
@@ -48,18 +59,29 @@ for count in counts:
         ),
         sampling=sampling,
     )
+
     averaged = result.azimuth_average()
+
     values = averaged.differential.to("1 / meter / steradian").magnitude[0]
+
     stderr = averaged.stderr.to("1 / meter / steradian").magnitude[0]
-    axis.errorbar(angles.magnitude, values, yerr=None if count == 1 else stderr, label=f"N = {count}")
+
+    axis.errorbar(
+        result.angles.to("degree").magnitude, values, yerr=None if count == 1 else stderr, label=f"N = {count}"
+    )
+
     means.append(values[0])
+
     errors.append(stderr[0])
+
 axis.set(
     xlabel="Scattering angle (degrees)",
     ylabel="Differential scattering (m⁻¹ sr⁻¹)",
     title="Finite-sample ensemble means",
 )
+
 axis.legend()
+
 axis.grid(alpha=0.25)
 
 # %%
@@ -69,13 +91,19 @@ axis.grid(alpha=0.25)
 # estimates are correlated across N. A realized error need not decrease
 # monotonically; the N**(-1/2) guide describes independent-sample scaling.
 figure, axis = plt.subplots(layout="constrained")
+
 axis.loglog(counts[1:], errors[1:], "o-", label="Forward-scattering standard error")
+
 axis.loglog(counts[1:], errors[-1] * np.sqrt(counts[-1] / np.array(counts[1:])), "--", label="N⁻¹ᐟ² guide")
+
 axis.set(
     xlabel="Independent realizations N", ylabel="Standard error (m⁻¹ sr⁻¹)", title="Sampling uncertainty at θ = 0°"
 )
+
 axis.legend()
+
 axis.grid(alpha=0.25, which="both")
+
 plt.show()
 
 # %%
@@ -84,15 +112,17 @@ plt.show()
 # This is the first realization (seed 42) on the calculation grid,
 # not an ensemble average or an infinite-medium material boundary.
 # Drag to rotate and scroll to zoom in the embedded browser view.
-# Higher-index regions are more opaque; opacity is not absorption.
+# Regions with higher refractive index are more opaque; opacity is not absorption.
 preview_volume = medium.to_volume(
     grid=grid,
     seed=42,
 )
+
 medium_figure = preview_volume.plot_3d(
     mode="volume",
-    field="index",
+    field="refractive_index",
     opacity_scale="increasing",
 )
+
 if "--no-browser" not in sys.argv:
     medium_figure.show(renderer="browser")

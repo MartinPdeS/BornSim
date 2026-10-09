@@ -67,7 +67,7 @@ profiles and their analytical phase functions. These length parameters have
 different definitions; equal values do not describe identical statistics.
 
 :doc:`auto_examples/random_media/random_medium` leads with interactive Gaussian
-and exponential volumes whose higher-index regions are more opaque. Central
+and exponential volumes whose higher refractive index regions are more opaque. Central
 slices and voxel histograms follow as diagnostic checks. It distinguishes the
 Gaussian one-point probability distribution from the choice of spatial
 covariance, and explains why a finite correlated sample need not have
@@ -79,10 +79,10 @@ Structured media
 ``Medium`` is the abstract interface. ``RandomMedium`` describes statistically
 homogeneous fluctuations; ``StructuredMedium`` composes geometric materials. ``Volume`` accepts an explicit
 three-dimensional field and can therefore represent spatially structured
-media. Its background index is uniform, while its fluctuation array may vary
+media. Its background refractive index is uniform, while its fluctuation array may vary
 from voxel to voxel.
 
-:doc:`auto_examples/structured_media/dielectric_sphere` builds two constant-index spheres in a
+:doc:`auto_examples/structured_media/dielectric_sphere` builds two constant refractive index spheres in a
 homogeneous background and plots their voxelized geometry, full directional
 3D phase density and a selected physical meridian. The curved
 interface is voxelized and the dielectric contrast remains linearized;
@@ -151,11 +151,17 @@ norms can still be plotted directly.
    import matplotlib.pyplot as plt
 
    result.plot()  # Differential scattering
+
    result.plot_phase_function()  # Density per steradian
+
    result.plot_phase_function(view="polar")
+
    phase_figure = result.plot_phase_function(view="3d")
+
    phase_figure.show()
+
    numerical.plot_field_norms()  # Per-realization diagnostics
+
    plt.show()
 
 Ensemble ``plot()`` retains differential-scattering standard-error bars.

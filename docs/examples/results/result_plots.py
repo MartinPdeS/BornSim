@@ -26,14 +26,19 @@ grid = Grid(
     shape=(4, 4, 4),
     spacing=50 * ureg.nanometer,
 )
+
 medium = RandomMedium(
     correlation="gaussian",
     correlation_length=100 * ureg.nanometer,
+    background_refractive_index=1.33,
+    refractive_index_std=0.01,
 )
+
 solver = Solver(
     source=Source(wavelength=633 * ureg.nanometer),
     order=3,
 )
+
 result = solver.ensemble(
     medium=medium,
     grid=grid,
@@ -49,6 +54,7 @@ result = solver.ensemble(
 # Differential scattering retains its physical units of inverse metres per
 # steradian. Ensemble results also show standard errors on this plot.
 result.plot(log_y=True)
+
 plt.show()
 
 # %%
@@ -57,6 +63,7 @@ plt.show()
 # Dividing by the integrated coefficient gives a density per steradian.
 # The normalization is over solid angle, including the ``sin(theta)`` measure.
 result.plot_phase_function(log_y=True)
+
 plt.show()
 
 # %%
@@ -64,6 +71,7 @@ plt.show()
 # ------------------
 # The incident beam points towards 0 degrees, at the top of the plot.
 result.plot_phase_function(view="polar")
+
 plt.show()
 
 # %%
@@ -72,6 +80,7 @@ plt.show()
 # Plot the sampled polar and azimuth directions without azimuth averaging.
 # Here four realizations contribute to the ensemble intensity average.
 phase_figure = result.plot_phase_function(view="3d")
+
 if "--no-browser" not in sys.argv:
     phase_figure.show(renderer="browser")
 
@@ -86,7 +95,9 @@ volume = random_volume(
     grid=grid,
     seed=42,
 )
+
 numerical = solver.solve(target=volume)
+
 numerical.plot_field_norms()
 
 plt.show()
@@ -96,11 +107,12 @@ plt.show()
 # ------------------------
 # Inspect the actual finite input sample with physical spatial axes.
 # Drag to rotate and scroll to zoom in the embedded browser view.
-# Higher-index regions are more opaque; opacity is not absorption.
+# Regions with higher refractive index are more opaque; opacity is not absorption.
 medium_figure = volume.plot_3d(
     mode="volume",
-    field="index",
+    field="refractive_index",
     opacity_scale="increasing",
 )
+
 if "--no-browser" not in sys.argv:
     medium_figure.show(renderer="browser")

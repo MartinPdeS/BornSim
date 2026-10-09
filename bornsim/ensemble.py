@@ -7,13 +7,13 @@ from .grid import Grid
 from .sampling import AngularSampling
 from .ensemble_sampling import EnsembleSampling
 from .series import BornSeries
-from .units import Quantity, _si
+from .units import Quantity, validate_units, ureg
 
 
 def ensemble_scattering(
     *,
     medium: Medium,
-    wavelength: Quantity | float,
+    wavelength: Quantity,
     grid=None,
     sampling=None,
     shape=None,
@@ -38,12 +38,12 @@ def ensemble_scattering(
     sampling : AngularSampling, optional
         Shared output and integration settings. Cannot be combined with
         individual angular keywords.
-    wavelength : float or Quantity
-        Positive, finite vacuum wavelength; bare values mean metres.
+    wavelength : Quantity
+        Positive, finite vacuum wavelength; length values require explicit units.
     shape : tuple of int, optional
         Three grid dimensions, each from 2 to 32. Default is (12, 12, 12).
-    spacing : float or Quantity, optional
-        Positive, finite cubic voxel spacing; bare values mean metres.
+    spacing : Quantity, optional
+        Positive, finite cubic voxel spacing; length values require explicit units.
         Default is 50 nm.
     order : int, optional
         Highest cumulative Born order, from 1 to 12. Default is 3.
@@ -54,7 +54,7 @@ def ensemble_scattering(
         used, and the last seed must also lie in this range.
     angles : array_like or Quantity, optional
         One-dimensional plot angles in [0, pi], with 1 to 181 observations.
-        Bare values mean radians. Default is 121 evenly spaced angles.
+        Angular values require explicit units. Default is 121 evenly spaced angles.
     azimuth_samples : int, optional
         Uniform azimuth sample count, from 4 to 32. Default is 8.
     polar_samples : int, optional
@@ -113,43 +113,60 @@ def ensemble_scattering(
     not automatically infinite-medium transport coefficients. Check grid,
     angular integration, sample size, synthesis box, and realization count.
     """
+
     if not isinstance(medium, Medium):
         raise TypeError("medium must be a Medium.")
+
     if not medium.is_random:
         raise ValueError("Ensembles require a random medium or background; use Solver.solve for a fixed volume.")
-    wavelength = _si(
-        value=wavelength,
+
+    validate_units(
+        wavelength,
         unit="meter",
         name="wavelength",
         scalar=True,
     )
+
     grid = Grid._resolve(
         grid=grid,
         shape=shape,
         spacing=spacing,
     )
+
     sampling = AngularSampling._resolve(
         sampling=sampling,
         angles=angles,
         polar_samples=polar_samples,
         azimuth_samples=azimuth_samples,
     )
+
     shape, spacing = grid.shape, grid.spacing
+
     ensemble_sampling = EnsembleSampling._resolve(
         ensemble_sampling=ensemble_sampling,
         realizations=realizations,
         seed=seed,
     )
+
     realizations = ensemble_sampling.realizations
+
     order = _integer(value=order, name="order", low=1, high=12)
+
     sampling.check_work(grid=grid, order=order, realizations=realizations)
+
+    if medium.background_refractive_index is None:
+        raise ValueError("Set an explicit background refractive index before solving an ensemble.")
+
     engine = BornSeries(
         grid=grid,
-        background_index=medium.background_index,
+        background_refractive_index=medium.background_refractive_index,
         wavelength=wavelength,
         directions=sampling.directions,
         order=order,
     )
+
+    notices: set[str]
+
     curve_samples, directional_samples, directional_terms, terms, integrals, norms, notices = (
         [],
         [],
@@ -159,41 +176,66 @@ def ensemble_scattering(
         [],
         set(),
     )
+
     for sample_seed in ensemble_sampling.seeds:
         volume = medium.to_volume(
             grid=grid,
             seed=sample_seed,
         )
+
         result = engine.solve(volume=volume)
+
         sampled = sampling.summarize(result=result)
+
         directional_samples.append(sampled["directional_differential"])
+
         curve_samples.append(sampled["mean"])
+
         terms.append(sampled["terms"])
+
         directional_terms.append(sampled["directional_terms"])
+
         integrals.append(sampled["integrals"])
+
         norms.append(result.field_norms)
+
         notices.update(result.warnings)
+
     curves = np.asarray(curve_samples)
+
     integrated = np.mean(integrals, axis=0)
+
     mu = integrated[:, 0]
+
     anisotropy = np.divide(integrated[:, 1], mu, out=np.full_like(mu, np.nan), where=mu != 0)
+
     metadata = medium.metadata
+
     statistics = metadata.get("background", metadata)
-    correlation_length = statistics.get("correlation_length_m")
+
+    correlation_length_m = statistics.get("correlation_length_m")
+
+    correlation_length = None if correlation_length_m is None else correlation_length_m * ureg.meter
+
     if correlation_length is not None:
         if spacing > correlation_length / 2:
             notices.add("Correlation length is poorly resolved; refine voxel spacing.")
+
         if min(shape) * spacing < 6 * correlation_length:
             notices.add("Sample is smaller than six correlation lengths; check finite-size and synthesis-box effects.")
+
     stderr = curves.std(axis=0, ddof=1) / np.sqrt(realizations) if realizations > 1 else np.full_like(curves[0], np.nan)
+
     directional = np.asarray(directional_samples)
+
     directional_stderr = (
         directional.std(axis=0, ddof=1) / np.sqrt(realizations)
         if realizations > 1
         else np.full_like(directional[0], np.nan)
     )
+
     return {
-        "angles": np.asarray(sampling.angles).copy(),
+        "angles": sampling.angles.copy(),
         "azimuths": sampling.azimuths,
         "directional_differential": directional.mean(axis=0),
         "directional_terms": np.mean(directional_terms, axis=0),

@@ -7,12 +7,18 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent))
 
 from bornsim import __version__
+from bornsim.units import ureg
 
 project = "BornSim"
+
 author = "Martin Poinsinet de Sivry-Houle"
+
 copyright = "2026, Martin Poinsinet de Sivry-Houle"
+
 release = __version__
+
 version = release
+
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
@@ -21,10 +27,15 @@ extensions = [
     "sphinx_gallery.gen_gallery",
     "sphinx_design",
 ]
+
 html_theme = "pydata_sphinx_theme"
+
 html_static_path = ["_static"]
+
 html_logo = "_static/logo.png"
+
 html_favicon = "_static/favicon.png"
+
 html_theme_options = {
     "logo": {"alt_text": "BornSim"},
     "show_nav_level": 0,
@@ -50,6 +61,7 @@ html_theme_options = {
     # The deployment regenerates this remote manifest after the build.
     "check_switcher": False,
 }
+
 html_context = {
     "github_url": "https://github.com",
     "github_user": "MartinPdeS",
@@ -58,9 +70,13 @@ html_context = {
     "doc_path": "docs/source",
     "default_mode": "dark",
 }
+
 exclude_patterns = []
+
 autodoc_typehints = "description"
+
 napoleon_google_docstring = False
+
 napoleon_numpy_docstring = True
 
 
@@ -86,37 +102,48 @@ sphinx_gallery_conf = {
 
 def write_interactive_media(app, exception):
     """Export browser volume views for HTML documentation builds."""
+
     if exception is not None or app.builder.format != "html":
         return
+
     from pathlib import Path
 
     output = Path(app.outdir) / "_static"
+
     output.mkdir(exist_ok=True)
+
     from bornsim import Grid, RandomMedium
 
     grid = Grid(
         shape=(16, 16, 16),
-        spacing=25e-9,
+        spacing=2.5e-08 * ureg.meter,
     )
+
     for correlation in ("gaussian", "exponential"):
         medium = RandomMedium(
-            index_std=0.01,
-            correlation_length=75e-9,
+            refractive_index_std=0.01,
+            correlation_length=7.5e-08 * ureg.meter,
             correlation=correlation,
+            background_refractive_index=1.33,
+            smoothness=1.5,
         )
+
         volume = medium.to_volume(
             grid=grid,
             seed=42,
         )
+
         figure = volume.plot_3d(
             backend="plotly",
             mode="volume",
-            field="index",
+            field="refractive_index",
             surface_count=16,
             opacity=0.2,
             opacity_scale="increasing",
         )
-        figure.update_layout(title=f"{correlation.capitalize()} random medium · higher index is more opaque")
+
+        figure.update_layout(title=f"{correlation.capitalize()} random medium · higher refractive index is more opaque")
+
         figure.write_html(
             file=str(output / f"random-medium-{correlation}.html"),
             include_plotlyjs=True,

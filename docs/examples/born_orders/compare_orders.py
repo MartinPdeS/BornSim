@@ -20,12 +20,14 @@ grid = Grid(
     shape=(8, 8, 8),
     spacing=50 * ureg.nanometer,
 )
+
 medium = RandomMedium(
     correlation="gaussian",
-    background_index=1.33,
-    index_std=0.01,
+    background_refractive_index=1.33,
+    refractive_index_std=0.01,
     correlation_length=100 * ureg.nanometer,
 )
+
 ensemble_solver = Solver(
     source=Source(wavelength=633 * ureg.nanometer),
     order=3,
@@ -39,9 +41,12 @@ result = ensemble_solver.ensemble(
         seed=42,
     ),
 )
+
 for index, coefficient in enumerate(result.mu_s.to("1 / meter").magnitude, start=1):
     print(f"Through order {index}: effective μs = {coefficient:.5g} m⁻¹")
+
 result.plot()
+
 plt.show()
 
 # %%
@@ -50,6 +55,7 @@ plt.show()
 # Compare field terms separately from the scattering curves. Decreasing
 # terms alone do not certify convergence of the Born series.
 result.plot_field_norms()
+
 plt.show()
 
 # %%
@@ -58,15 +64,17 @@ plt.show()
 # This is the first realization (seed 42) on the calculation grid,
 # not an ensemble average or an infinite-medium material boundary.
 # Drag to rotate and scroll to zoom in the embedded browser view.
-# Higher-index regions are more opaque; opacity is not absorption.
+# Regions with higher refractive index are more opaque; opacity is not absorption.
 preview_volume = medium.to_volume(
     grid=grid,
     seed=42,
 )
+
 medium_figure = preview_volume.plot_3d(
     mode="volume",
-    field="index",
+    field="refractive_index",
     opacity_scale="increasing",
 )
+
 if "--no-browser" not in sys.argv:
     medium_figure.show(renderer="browser")

@@ -7,7 +7,7 @@ import numpy as np
 from .source import Source
 from ._archives import _RESULT_UNITS
 from .angular_data import AngularData
-from .units import Quantity, _quantity
+from .units import Quantity, validate_units, ureg
 
 _ANGULAR_FIELDS = (
     "differential",
@@ -39,7 +39,7 @@ class Result:
     Plots of full results select one sampled meridian by default.
 
     Angles use radians, amplitudes metres, differential data m^-1 sr^-1,
-    integrated coefficients m^-1, and sample_volume m^3. Bare arrays mean SI.
+    integrated coefficients m^-1, and sample_volume m^3. Dimensional arrays require explicit units.
     Every full phase density uses its order's solid-angle integral. Cuts have
     no inferred integrated coefficients or phase normalization.
 
@@ -99,55 +99,89 @@ class Result:
     ):
         if not isinstance(source, Source):
             raise TypeError("source must be a Source.")
+
         if kind not in ("analytical", "volume", "ensemble"):
             raise ValueError("kind must be analytical, volume, or ensemble.")
+
         values = {name: value for name, value in locals().items() if name in _RESULT_UNITS}
+
         if angular is not None:
             if not isinstance(angular, AngularData):
                 raise TypeError("angular must be an AngularData.")
+
             conflicts = any(
                 value is not None for name, value in values.items() if name not in ("g", "mu_s_prime", "field_norms")
             )
+
             if conflicts or azimuth_averaged:
                 raise ValueError("Supply angular or individual angular fields, not both.")
+
             if angular.kind != kind:
                 raise ValueError("angular.kind must match result kind.")
+
             for name in _ANGULAR_FIELDS:
                 values[name] = getattr(angular, name)
+
             azimuth_averaged = angular.azimuth_averaged
+
             # Result stores explicit cut directions only; full vectors live in AngularData.
             if angular.azimuths is not None or kind != "volume":
                 values["directions"] = None
+
         for name, value in values.items():
             if value is not None and (angular is None or name not in _ANGULAR_FIELDS):
-                values[name] = _quantity(value=value, unit=_RESULT_UNITS[name], name=name)
+                unit = _RESULT_UNITS[name]
+
+                if unit == "dimensionless" and not isinstance(value, Quantity):
+                    value = np.array(value, copy=True) * ureg.dimensionless
+
+                validate_units(
+                    value,
+                    unit=unit,
+                    name=name,
+                )
+
+                if not np.issubdtype(np.asarray(value.magnitude).dtype, np.number):
+                    raise ValueError(f"{name} must contain numeric values.")
+
+                values[name] = np.array(value.magnitude, copy=True) * value.units
+
         provenance = {} if provenance is None else provenance
+
         if not isinstance(provenance, dict):
             raise ValueError("provenance must be a JSON-compatible dictionary.")
+
         try:
             encoded = json.dumps(provenance, allow_nan=False)
+
             provenance = json.loads(encoded)
         except (TypeError, ValueError) as error:
             raise ValueError("provenance must be a JSON-compatible dictionary with finite values.") from error
+
         if not isinstance(warnings, (tuple, list)) or any(not isinstance(item, str) for item in warnings):
             raise ValueError("warnings must be a sequence of strings.")
+
         state = SimpleNamespace(**values, kind=kind, realizations=realizations, azimuth_averaged=azimuth_averaged)
+
         from ._archives import _ResultArchive
 
         _ResultArchive._promote_legacy_directional_data(result=state)
+
         if state.sample_volume is None and kind != "analytical":
             grid = provenance.get("grid")
+
             if isinstance(grid, dict) and "shape" in grid and "spacing_m" in grid:
-                state.sample_volume = _quantity(
-                    value=float(np.prod(grid["shape"]) * grid["spacing_m"] ** 3), unit="meter**3", name="sample_volume"
-                )
+                state.sample_volume = float(np.prod(grid["shape"]) * grid["spacing_m"] ** 3) * ureg.meter**3
+
         from ._result_validation import _ResultValidator
 
         if angular is None:
             angular = AngularData(
                 **{name: getattr(state, name) for name in _ANGULAR_FIELDS}, kind=kind, azimuth_averaged=azimuth_averaged
             )
+
         _ResultValidator.validate(result=state)
+
         for name, value in {
             "source": source,
             "kind": kind,
@@ -157,84 +191,102 @@ class Result:
             "_provenance_json": encoded,
         }.items():
             object.__setattr__(self, name, value)
+
         for name in ("g", "mu_s_prime", "field_norms"):
             value = getattr(state, name)
+
             if value is not None:
                 value.magnitude.setflags(write=False)
+
             object.__setattr__(self, name, value)
 
     @property
     def differential(self):
         """Read-only angular data owned by angular."""
+
         return self.angular.differential
 
     @property
     def angles(self):
         """Read-only angular data owned by angular."""
+
         return self.angular.angles
 
     @property
     def azimuths(self):
         """Read-only angular data owned by angular."""
+
         return self.angular.azimuths
 
     @property
     def amplitudes(self):
         """Read-only angular data owned by angular."""
+
         return self.angular.amplitudes
 
     @property
     def mu_s(self):
         """Read-only angular data owned by angular."""
+
         return self.angular.mu_s
 
     @property
     def sample_volume(self):
         """Read-only angular data owned by angular."""
+
         return self.angular.sample_volume
 
     @property
     def stderr(self):
         """Read-only angular data owned by angular."""
+
         return self.angular.stderr
 
     @property
     def azimuth_stderr(self):
         """Read-only angular data owned by angular."""
+
         return self.angular.azimuth_stderr
 
     @property
     def term_differential(self):
         """Read-only angular data owned by angular."""
+
         return self.angular.term_differential
 
     @property
     def azimuth_averaged(self):
         """Read-only angular data owned by angular."""
+
         return self.angular.azimuth_averaged
 
     @property
     def directions(self):
         """Explicit cut coordinates; full-grid vectors are angular.directions."""
+
         return self.angular.directions if self.angular.azimuths is None and self.kind == "volume" else None
 
     @property
     def directional_differential(self):
         """Legacy alias for full directional intensities."""
+
         return self.differential if self.differential.ndim == 3 else None
 
     @property
     def directional_amplitudes(self):
         """Legacy alias for full coherent amplitudes."""
+
         return self.amplitudes if self.differential.ndim == 3 else None
 
     @property
     def provenance(self):
         """Return a fresh metadata copy; edits cannot change this result."""
+
         return json.loads(self._provenance_json)
 
     def meridian(self, *, azimuth, method="exact"):
         """Select a physical azimuth from full data without interpolation."""
+
         return self.angular.meridian(
             azimuth=azimuth,
             method=method,
@@ -242,7 +294,9 @@ class Result:
 
     def azimuth_average(self):
         """Return explicit averaged intensities with covariance-correct errors."""
+
         angular = self.angular.azimuth_average()
+
         return Result(
             source=self.source,
             kind=self.kind,
@@ -258,15 +312,19 @@ class Result:
     @property
     def differential_cross_section(self):
         """Finite-sample d-sigma/d-Omega in square metres per steradian."""
+
         if self.sample_volume is None:
             raise ValueError("sample_volume is unavailable; this result has no finite-sample cross section.")
+
         return (getattr(self, "differential") * self.sample_volume).to("meter**2 / steradian")
 
     def __repr__(self):
         shape = self.differential.shape
+
         available = [
             name for name in ("amplitudes", "mu_s", "stderr", "sample_volume") if getattr(self, name) is not None
         ]
+
         return f"Result(kind={self.kind!r}, orders={shape[0]}, angular_shape={shape[1:]}, available={available}, azimuth_averaged={self.azimuth_averaged})"
 
     def save(self, *, path):
@@ -299,6 +357,7 @@ class Result:
         Generated volumes also record their medium and seed. Exact seeded
         reproduction depends on the recorded implementation versions.
         """
+
         from ._archives import _ResultArchive
 
         return _ResultArchive.save(
@@ -329,6 +388,7 @@ class Result:
         OSError
             If the archive cannot be read.
         """
+
         from ._archives import _ResultArchive
 
         return _ResultArchive.load(
@@ -344,6 +404,7 @@ class Result:
         results retain (order, polar angle). Cuts have no normalization.
         Every order uses its own full solid-angle scattering coefficient.
         """
+
         return self.angular.phase_function
 
     def plot(self, *, terms=False, log_y=False, title=None, azimuth=0):
@@ -386,13 +447,29 @@ class Result:
         Examples
         --------
         >>> from bornsim import AnalyticalMedium, Solver, Source
-        >>> solver = Solver(source=Source())
+        ...
+        >>> from bornsim.units import ureg
+        ...
+        >>> solver = Solver(
+        ...     source=Source(
+        ...         wavelength=633e-9 * ureg.meter,
+        ...     )
+        ... )
 
-        >>> result = solver.solve(target=AnalyticalMedium())
+        ...
+        >>> result = solver.solve(
+        ...     target=AnalyticalMedium(
+        ...         background_refractive_index=1.33,
+        ...         refractive_index_std=0.01,
+        ...         correlation_length=100e-9 * ureg.meter,
+        ...         correlation="gaussian",
+        ...     )
+        ... )
         >>> figure = result.plot(log_y=True)
         >>> len(figure.axes[0].lines)
         1
         """
+
         from ._result_plotting import _ResultPlotter
 
         return _ResultPlotter(
@@ -448,6 +525,7 @@ class Result:
         volume must agree with the recorded physical volume and grid.
         Stored scattering data and its SI units remain unchanged.
         """
+
         from ._result_plotting import _ResultPlotter
 
         return _ResultPlotter(
@@ -464,10 +542,12 @@ class Result:
     @property
     def directional_phase_function(self):
         """Compatibility alias for the primary full phase_function."""
+
         if self.differential.ndim != 3:
             raise ValueError(
                 "Directional phase data are unavailable; recompute with Solver.solve using AngularSampling."
             )
+
         return self.phase_function
 
     def plot_phase_function(self, *, view="angular", order=None, log_y=False, azimuth=0, backend=None):
@@ -520,13 +600,29 @@ class Result:
         Examples
         --------
         >>> from bornsim import AnalyticalMedium, Solver, Source
-        >>> solver = Solver(source=Source())
+        ...
+        >>> from bornsim.units import ureg
+        ...
+        >>> solver = Solver(
+        ...     source=Source(
+        ...         wavelength=633e-9 * ureg.meter,
+        ...     )
+        ... )
 
-        >>> result = solver.solve(target=AnalyticalMedium())
+        ...
+        >>> result = solver.solve(
+        ...     target=AnalyticalMedium(
+        ...         background_refractive_index=1.33,
+        ...         refractive_index_std=0.01,
+        ...         correlation_length=100e-9 * ureg.meter,
+        ...         correlation="gaussian",
+        ...     )
+        ... )
         >>> figure = result.plot_phase_function(view="3d")
         >>> figure.data[0].type
         'surface'
         """
+
         from ._result_plotting import _ResultPlotter
 
         return _ResultPlotter(
@@ -564,6 +660,7 @@ class Result:
         The figure preserves per-realization diagnostics. Decreasing field
         terms do not certify Born convergence or remove discretization error.
         """
+
         from ._result_plotting import _ResultPlotter
 
         return _ResultPlotter(

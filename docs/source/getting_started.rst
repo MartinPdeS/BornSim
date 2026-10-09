@@ -14,7 +14,7 @@ First scattering calculation
 ----------------------------
 
 Define a source, material, and grid, then average independent seeded random
-volumes. Quantity inputs use the BornSim unit registry; bare numbers use SI
+volumes. Quantity inputs use the BornSim unit registry; dimensional inputs require explicit
 units. The wavelength is the vacuum wavelength.
 
 .. code-block:: python
@@ -23,30 +23,40 @@ units. The wavelength is the vacuum wavelength.
    from bornsim.units import ureg
 
    source = Source(wavelength=633 * ureg.nanometer)
+
    grid = Grid(
        shape=(8, 8, 8),
        spacing=50 * ureg.nanometer,
    )
+
    medium = RandomMedium(
-       background_index=1.33,
-       index_std=0.01,
+       background_refractive_index=1.33,
+       refractive_index_std=0.01,
        correlation_length=100 * ureg.nanometer,
        correlation="gaussian",
    )
+
    ensemble_sampling = EnsembleSampling(
        realizations=4,
        seed=42,
    )
+
    solver = Solver(
        source=source,
        order=3,
    )
+
    result = solver.ensemble(
        medium=medium,
        grid=grid,
        ensemble_sampling=ensemble_sampling,
    )
-   print(result.mu_s.to("1 / millimeter"), result.g, result.mu_s_prime)
+
+   print(
+       f"mu_s = {result.mu_s.to('1 / millimeter')}, "
+       f"g = {result.g}, "
+       f"mu_s_prime = {result.mu_s_prime.to('1 / millimeter')}"
+   )
 
 The returned coefficients describe finite samples. The ensemble standard
 errors describe sampling uncertainty, not discretization or finite-size
@@ -64,12 +74,16 @@ refractive-index regions can be made more opaque:
        grid=grid,
        seed=42,
    )
+
    medium_figure = volume.plot_3d(
-       field="index",
+       field="refractive_index",
        opacity_scale="increasing",
    )
+
    medium_figure.show()
+
    phase_figure = result.plot_phase_function(view="3d")
+
    phase_figure.show()
 
 The medium view shows physical positions. The phase surface shows scattering
