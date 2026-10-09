@@ -1,0 +1,195 @@
+"""
+Theory figure: covariance and simulated random fields
+=====================================================
+
+Gaussian probability distributions and spatial covariance are separate
+choices. These simulations compare Gaussian, exponential and Matérn
+covariances using the same refractive-index standard deviation and correlation
+length. The plotted covariance estimate averages products within each
+realization, then averages independent realizations. No spatial sample mean
+is removed.
+
+Discrete spectral predictions include the finite periodic synthesis box and
+spectral truncation. Continuum covariance curves are reference functions,
+not exact descriptions of the sampled finite grid.
+"""
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+from bornsim import EnsembleSampling, Grid, RandomMedium
+from bornsim.units import ureg
+
+voxel_spacing = 20 * ureg.nanometer
+
+grid = Grid(
+    shape=(24, 24, 24),
+    spacing=voxel_spacing,
+)
+
+ensemble_sampling = EnsembleSampling(
+    realizations=32,
+    seed=42,
+)
+
+correlation_length = 60 * ureg.nanometer
+
+refractive_index_std = 0.01
+
+covariance_models = (
+    ("gaussian", "Gaussian", "#0072B2"),
+    ("exponential", "Exponential", "#D55E00"),
+    ("matern", "Matérn, ν = 3/2", "#009E73"),
+)
+
+slice_figure, slice_axes = plt.subplots(1, 3, figsize=(12, 4), layout="constrained")
+
+covariance_comparisons = []
+
+# Each offset is a voxel count along x; the corresponding distance carries units.
+voxel_offsets_x = np.arange(9)
+
+distance_between_points = voxel_offsets_x * voxel_spacing
+
+# RandomMedium synthesizes a periodic field on twice the sample size before cropping.
+synthesis_grid_shape = tuple(2 * voxel_count for voxel_count in grid.shape)
+
+voxel_spacing_m = voxel_spacing.to("meter").magnitude
+
+axis_wavenumbers_per_meter = [
+    2 * np.pi * np.fft.fftfreq(voxel_count, d=voxel_spacing_m) for voxel_count in synthesis_grid_shape
+]
+
+squared_wavenumbers = (
+    sum(component**2 for component in np.meshgrid(*axis_wavenumbers_per_meter, indexing="ij")) / ureg.meter**2
+)
+
+for slice_axis, (covariance_model, covariance_label, color) in zip(slice_axes, covariance_models):
+    random_medium = RandomMedium(
+        correlation=covariance_model,
+        smoothness=1.5,
+        correlation_length=correlation_length,
+        refractive_index_std=refractive_index_std,
+        background_refractive_index=1.33,
+    )
+
+    covariance_estimates_by_realization = []
+
+    for realization_seed in ensemble_sampling.seeds:
+        sampled_volume = random_medium.to_volume(
+            grid=grid,
+            seed=realization_seed,
+        )
+
+        refractive_index_fluctuations = sampled_volume.delta_refractive_index
+
+        covariance_estimates_by_offset = [np.mean(refractive_index_fluctuations**2)]
+
+        for voxel_offset_x in voxel_offsets_x[1:]:
+            covariance_estimates_by_offset.append(
+                np.mean(
+                    refractive_index_fluctuations[:-voxel_offset_x] * refractive_index_fluctuations[voxel_offset_x:]
+                )
+            )
+
+        covariance_estimates_by_realization.append(covariance_estimates_by_offset)
+
+        if realization_seed == ensemble_sampling.seed:
+            sample_width_nm = (grid.shape[0] * voxel_spacing).to("nanometer").magnitude
+
+            slice_image = slice_axis.imshow(
+                refractive_index_fluctuations[:, :, grid.shape[2] // 2].T,
+                origin="lower",
+                extent=(-sample_width_nm / 2, sample_width_nm / 2, -sample_width_nm / 2, sample_width_nm / 2),
+                cmap="RdBu_r",
+                vmin=-3 * refractive_index_std,
+                vmax=3 * refractive_index_std,
+            )
+
+    slice_axis.set(title=covariance_label, xlabel="x (nm)", ylabel="y (nm)")
+
+    spectral_weights = random_medium.spectral_weight(q_squared=squared_wavenumbers)
+
+    normalized_discrete_covariance = np.fft.ifftn(spectral_weights / spectral_weights.mean()).real[
+        voxel_offsets_x, 0, 0
+    ]
+
+    distance_over_correlation_length = (distance_between_points / correlation_length).to("dimensionless").magnitude
+
+    if covariance_model == "gaussian":
+        normalized_continuum_covariance = np.exp(-(distance_over_correlation_length**2) / 2)
+    elif covariance_model == "exponential":
+        normalized_continuum_covariance = np.exp(-distance_over_correlation_length)
+    else:
+        normalized_continuum_covariance = (1 + np.sqrt(3) * distance_over_correlation_length) * np.exp(
+            -np.sqrt(3) * distance_over_correlation_length
+        )
+
+    normalized_covariance_samples = np.asarray(covariance_estimates_by_realization) / refractive_index_std**2
+
+    covariance_comparisons.append(
+        (
+            covariance_label,
+            color,
+            normalized_covariance_samples,
+            normalized_discrete_covariance,
+            normalized_continuum_covariance,
+        )
+    )
+
+slice_figure.colorbar(slice_image, ax=slice_axes, label="Refractive-index fluctuation δn", shrink=0.8)
+
+slice_figure.suptitle("Seed 42 · same σn = 0.01 and ℓ = 60 nm · 20 nm voxels")
+
+plt.show()
+
+# %%
+# Compare sampled and predicted covariances
+# -----------------------------------------
+# Reuse the ensemble estimates above. Error bars describe realization
+# sampling; dashed curves use the discrete synthesis and dotted curves the
+# continuum covariance, which need not match on a finite grid.
+covariance_figure, covariance_axis = plt.subplots(figsize=(8, 5), layout="constrained")
+
+for (
+    covariance_label,
+    color,
+    normalized_covariance_samples,
+    normalized_discrete_covariance,
+    normalized_continuum_covariance,
+) in covariance_comparisons:
+    covariance_axis.errorbar(
+        distance_between_points.to("nanometer").magnitude,
+        normalized_covariance_samples.mean(axis=0),
+        yerr=normalized_covariance_samples.std(axis=0, ddof=1) / np.sqrt(ensemble_sampling.realizations),
+        fmt="o",
+        capsize=2,
+        color=color,
+        label=f"{covariance_label}: simulation",
+    )
+
+    covariance_axis.plot(
+        distance_between_points.to("nanometer").magnitude,
+        normalized_discrete_covariance,
+        color=color,
+        linestyle="--",
+    )
+
+    covariance_axis.plot(
+        distance_between_points.to("nanometer").magnitude,
+        normalized_continuum_covariance,
+        color=color,
+        linestyle=":",
+    )
+
+covariance_axis.set(
+    xlabel="Distance between points along x (nm)",
+    ylabel="Covariance / σn²",
+    title="32 realizations: dashed = discrete synthesis; dotted = continuum",
+)
+
+covariance_axis.legend(frameon=False)
+
+covariance_axis.grid(alpha=0.25)
+
+plt.show()
