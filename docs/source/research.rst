@@ -25,7 +25,7 @@ Equal correlation-length parameters across covariance families do not imply
 identical real-space covariance profiles.
 
 Geometry and coherent interference
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Use StructuredMedium to build layers and shaped inclusions, or
 RandomSphereMedium to generate seeded collections of nonoverlapping spheres.
@@ -40,7 +40,7 @@ sequential rejection sampling; they do not represent an equilibrium hard-sphere
 ensemble.
 
 Wavelength and approximation sensitivity
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Sweep explicitly supplied wavelengths to explore spectral trends for a chosen
 medium. The :doc:`auto_examples/random_media/wavelength_dependence` example
