@@ -4,28 +4,28 @@
 
 | Name                            |    Stmts |     Miss |   Branch |   BrPart |      Cover |   Missing |
 |-------------------------------- | -------: | -------: | -------: | -------: | ---------: | --------: |
-| bornsim/\_archives.py           |       75 |        5 |       36 |        5 |     90.99% |83, 125, 138, 142, 146 |
-| bornsim/\_result\_plotting.py   |      181 |       11 |       74 |        8 |     91.76% |37, 56, 59, 150, 165, 167, 221, 292-295 |
-| bornsim/\_result\_validation.py |       51 |        8 |       42 |        8 |     82.80% |18, 20, 34, 36, 38, 44, 56, 64 |
-| bornsim/\_volume\_plotting.py   |      133 |        2 |       46 |        1 |     98.32% |     66-67 |
-| bornsim/angular\_data.py        |      144 |       15 |       80 |       12 |     87.05% |58, 86, 90, 92, 123, 127, 147, 164-166, 172, 178, 199, 201, 204 |
-| bornsim/api.py                  |        9 |        9 |        0 |        0 |      0.00% |      6-15 |
-| bornsim/ensemble.py             |       50 |        1 |       12 |        3 |     93.55% |117, 183-\>188, 186-\>188 |
-| bornsim/ensemble\_sampling.py   |       39 |        1 |       16 |        1 |     96.36% |        52 |
-| bornsim/geometry.py             |      231 |       13 |       62 |        7 |     92.49% |372, 374, 449, 473, 508, 512-515, 518-522 |
-| bornsim/green.py                |       36 |        2 |        4 |        2 |     90.00% |    68, 92 |
-| bornsim/material.py             |       24 |        3 |       10 |        2 |     85.29% |27, 33, 38 |
-| bornsim/media.py                |       76 |        4 |       18 |        0 |     95.74% |26, 44, 52, 57 |
-| bornsim/model.py                |       40 |        1 |       12 |        1 |     96.15% |       214 |
-| bornsim/results.py              |      146 |        5 |       40 |        5 |     94.62% |107, 112, 114, 262, 468 |
-| bornsim/rotation.py             |       29 |        2 |        6 |        2 |     88.57% |    24, 26 |
-| bornsim/sampling.py             |       64 |        1 |       14 |        1 |     97.44% |       123 |
-| bornsim/series.py               |       82 |        3 |       22 |        3 |     94.23% |96, 112, 230 |
-| bornsim/solver.py               |       93 |        3 |       32 |        3 |     95.20% |143, 201, 216 |
-| bornsim/volume.py               |       53 |        3 |       20 |        3 |     91.78% |102, 127, 134 |
-| **TOTAL**                       | **1660** |   **92** |  **572** |   **67** | **92.61%** |           |
+| bornsim/\_archives.py           |       75 |        5 |       36 |        5 |     90.99% |95, 143, 160, 166, 172 |
+| bornsim/\_result\_plotting.py   |      182 |       11 |       74 |        8 |     91.80% |39, 72, 75, 175, 197, 200, 269, 361-366 |
+| bornsim/\_result\_validation.py |       51 |        8 |       42 |        8 |     82.80% |20, 23, 43, 46, 49, 58, 76, 86 |
+| bornsim/\_volume\_plotting.py   |      131 |        2 |       46 |        1 |     98.31% |     83-85 |
+| bornsim/angular\_data.py        |      150 |       16 |       84 |       13 |     86.75% |63, 77, 115, 121, 124, 170, 176, 205, 228-231, 238, 246, 269, 272, 284 |
+| bornsim/directions.py           |       34 |        1 |       10 |        0 |     97.73% |        99 |
+| bornsim/ensemble.py             |       53 |        2 |       14 |        4 |     91.04% |118, 158, 220-\>227, 224-\>227 |
+| bornsim/ensemble\_sampling.py   |       39 |        1 |       16 |        1 |     96.36% |        63 |
+| bornsim/geometry.py             |      285 |       31 |      110 |       25 |     85.32% |64, 67, 96, 99, 141, 151, 169, 172, 234, 271, 290, 293, 334, 353, 356, 400, 426, 429, 499, 502, 608, 646, 694, 699-705, 709-714 |
+| bornsim/green.py                |       38 |        2 |        4 |        2 |     90.48% |   82, 130 |
+| bornsim/material.py             |       24 |        3 |       10 |        2 |     85.29% |30, 36, 44 |
+| bornsim/media.py                |       79 |        4 |       24 |        0 |     96.12% |31, 51, 60, 73 |
+| bornsim/model.py                |       38 |        1 |       12 |        1 |     96.00% |       260 |
+| bornsim/results.py              |      152 |        5 |       44 |        5 |     94.90% |110, 117, 120, 317, 547 |
+| bornsim/rotation.py             |       28 |        2 |        6 |        2 |     88.24% |    31, 34 |
+| bornsim/sampling.py             |       77 |        1 |       20 |        1 |     97.94% |       215 |
+| bornsim/series.py               |       81 |        2 |       20 |        2 |     96.04% |  105, 271 |
+| bornsim/solver.py               |       98 |        3 |       36 |        3 |     95.52% |171, 253, 278 |
+| bornsim/volume.py               |       52 |        3 |       20 |        3 |     91.67% |105, 135, 145 |
+| **TOTAL**                       | **1785** |  **103** |  **664** |   **86** | **92.04%** |           |
 
-5 files skipped due to complete coverage.
+6 files skipped due to complete coverage.
 
 
 ## Setup coverage badge
