@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bornsim.ensemble &#8212; BornSim 0.2.5 documentation</title>
+    <title>bornsim.ensemble &#8212; BornSim 0.2.6 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=cb850272"></script>
+    <script src="../../_static/documentation_options.js?v=fc7d8818"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -61,7 +61,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.5" />
+  <meta name="docsearch:version" content="0.2.6" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -457,7 +457,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.sampling</span><span class="w"> </span><span class="kn">import</span> <span class="n">AngularSampling</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.ensemble_sampling</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnsembleSampling</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.series</span><span class="w"> </span><span class="kn">import</span> <span class="n">BornSeries</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">_si</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">validate_units</span><span class="p">,</span> <span class="n">ureg</span>
 
 
 <div class="viewcode-block" id="ensemble_scattering">
@@ -465,7 +465,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">ensemble_scattering</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">medium</span><span class="p">:</span> <span class="n">Medium</span><span class="p">,</span>
-    <span class="n">wavelength</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">wavelength</span><span class="p">:</span> <span class="n">Quantity</span><span class="p">,</span>
     <span class="n">grid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">sampling</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -490,12 +490,12 @@
 <span class="sd">    sampling : AngularSampling, optional</span>
 <span class="sd">        Shared output and integration settings. Cannot be combined with</span>
 <span class="sd">        individual angular keywords.</span>
-<span class="sd">    wavelength : float or Quantity</span>
-<span class="sd">        Positive, finite vacuum wavelength; bare values mean metres.</span>
+<span class="sd">    wavelength : Quantity</span>
+<span class="sd">        Positive, finite vacuum wavelength; length values require explicit units.</span>
 <span class="sd">    shape : tuple of int, optional</span>
 <span class="sd">        Three grid dimensions, each from 2 to 32. Default is (12, 12, 12).</span>
-<span class="sd">    spacing : float or Quantity, optional</span>
-<span class="sd">        Positive, finite cubic voxel spacing; bare values mean metres.</span>
+<span class="sd">    spacing : Quantity, optional</span>
+<span class="sd">        Positive, finite cubic voxel spacing; length values require explicit units.</span>
 <span class="sd">        Default is 50 nm.</span>
 <span class="sd">    order : int, optional</span>
 <span class="sd">        Highest cumulative Born order, from 1 to 12. Default is 3.</span>
@@ -506,7 +506,7 @@
 <span class="sd">        used, and the last seed must also lie in this range.</span>
 <span class="sd">    angles : array_like or Quantity, optional</span>
 <span class="sd">        One-dimensional plot angles in [0, pi], with 1 to 181 observations.</span>
-<span class="sd">        Bare values mean radians. Default is 121 evenly spaced angles.</span>
+<span class="sd">        Angular values require explicit units. Default is 121 evenly spaced angles.</span>
 <span class="sd">    azimuth_samples : int, optional</span>
 <span class="sd">        Uniform azimuth sample count, from 4 to 32. Default is 8.</span>
 <span class="sd">    polar_samples : int, optional</span>
@@ -565,43 +565,60 @@
 <span class="sd">    not automatically infinite-medium transport coefficients. Check grid,</span>
 <span class="sd">    angular integration, sample size, synthesis box, and realization count.</span>
 <span class="sd">    """</span>
+
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">medium</span><span class="p">,</span> <span class="n">Medium</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"medium must be a Medium."</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="ow">not</span> <span class="n">medium</span><span class="o">.</span><span class="n">is_random</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Ensembles require a random medium or background; use Solver.solve for a fixed volume."</span><span class="p">)</span>
-    <span class="n">wavelength</span> <span class="o">=</span> <span class="n">_si</span><span class="p">(</span>
-        <span class="n">value</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span>
+
+    <span class="n">validate_units</span><span class="p">(</span>
+        <span class="n">wavelength</span><span class="p">,</span>
         <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
         <span class="n">name</span><span class="o">=</span><span class="s2">"wavelength"</span><span class="p">,</span>
         <span class="n">scalar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
+
     <span class="n">grid</span> <span class="o">=</span> <span class="n">Grid</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span>
         <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
         <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span>
         <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span><span class="p">,</span>
     <span class="p">)</span>
+
     <span class="n">sampling</span> <span class="o">=</span> <span class="n">AngularSampling</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span>
         <span class="n">sampling</span><span class="o">=</span><span class="n">sampling</span><span class="p">,</span>
         <span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">,</span>
         <span class="n">polar_samples</span><span class="o">=</span><span class="n">polar_samples</span><span class="p">,</span>
         <span class="n">azimuth_samples</span><span class="o">=</span><span class="n">azimuth_samples</span><span class="p">,</span>
     <span class="p">)</span>
+
     <span class="n">shape</span><span class="p">,</span> <span class="n">spacing</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">spacing</span>
+
     <span class="n">ensemble_sampling</span> <span class="o">=</span> <span class="n">EnsembleSampling</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span>
         <span class="n">ensemble_sampling</span><span class="o">=</span><span class="n">ensemble_sampling</span><span class="p">,</span>
         <span class="n">realizations</span><span class="o">=</span><span class="n">realizations</span><span class="p">,</span>
         <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
     <span class="p">)</span>
+
     <span class="n">realizations</span> <span class="o">=</span> <span class="n">ensemble_sampling</span><span class="o">.</span><span class="n">realizations</span>
+
     <span class="n">order</span> <span class="o">=</span> <span class="n">_integer</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">order</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"order"</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+
     <span class="n">sampling</span><span class="o">.</span><span class="n">check_work</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">,</span> <span class="n">realizations</span><span class="o">=</span><span class="n">realizations</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">medium</span><span class="o">.</span><span class="n">background_refractive_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Set an explicit background refractive index before solving an ensemble."</span><span class="p">)</span>
+
     <span class="n">engine</span> <span class="o">=</span> <span class="n">BornSeries</span><span class="p">(</span>
         <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
-        <span class="n">background_index</span><span class="o">=</span><span class="n">medium</span><span class="o">.</span><span class="n">background_index</span><span class="p">,</span>
+        <span class="n">background_refractive_index</span><span class="o">=</span><span class="n">medium</span><span class="o">.</span><span class="n">background_refractive_index</span><span class="p">,</span>
         <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span>
         <span class="n">directions</span><span class="o">=</span><span class="n">sampling</span><span class="o">.</span><span class="n">directions</span><span class="p">,</span>
         <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">,</span>
     <span class="p">)</span>
+
+    <span class="n">notices</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
     <span class="n">curve_samples</span><span class="p">,</span> <span class="n">directional_samples</span><span class="p">,</span> <span class="n">directional_terms</span><span class="p">,</span> <span class="n">terms</span><span class="p">,</span> <span class="n">integrals</span><span class="p">,</span> <span class="n">norms</span><span class="p">,</span> <span class="n">notices</span> <span class="o">=</span> <span class="p">(</span>
         <span class="p">[],</span>
         <span class="p">[],</span>
@@ -611,41 +628,66 @@
         <span class="p">[],</span>
         <span class="nb">set</span><span class="p">(),</span>
     <span class="p">)</span>
+
     <span class="k">for</span> <span class="n">sample_seed</span> <span class="ow">in</span> <span class="n">ensemble_sampling</span><span class="o">.</span><span class="n">seeds</span><span class="p">:</span>
         <span class="n">volume</span> <span class="o">=</span> <span class="n">medium</span><span class="o">.</span><span class="n">to_volume</span><span class="p">(</span>
             <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
             <span class="n">seed</span><span class="o">=</span><span class="n">sample_seed</span><span class="p">,</span>
         <span class="p">)</span>
+
         <span class="n">result</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">volume</span><span class="o">=</span><span class="n">volume</span><span class="p">)</span>
+
         <span class="n">sampled</span> <span class="o">=</span> <span class="n">sampling</span><span class="o">.</span><span class="n">summarize</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">)</span>
+
         <span class="n">directional_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sampled</span><span class="p">[</span><span class="s2">"directional_differential"</span><span class="p">])</span>
+
         <span class="n">curve_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sampled</span><span class="p">[</span><span class="s2">"mean"</span><span class="p">])</span>
+
         <span class="n">terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sampled</span><span class="p">[</span><span class="s2">"terms"</span><span class="p">])</span>
+
         <span class="n">directional_terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sampled</span><span class="p">[</span><span class="s2">"directional_terms"</span><span class="p">])</span>
+
         <span class="n">integrals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sampled</span><span class="p">[</span><span class="s2">"integrals"</span><span class="p">])</span>
+
         <span class="n">norms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">field_norms</span><span class="p">)</span>
+
         <span class="n">notices</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">warnings</span><span class="p">)</span>
+
     <span class="n">curves</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">curve_samples</span><span class="p">)</span>
+
     <span class="n">integrated</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">integrals</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
     <span class="n">mu</span> <span class="o">=</span> <span class="n">integrated</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+
     <span class="n">anisotropy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">integrated</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">mu</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="n">mu</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+
     <span class="n">metadata</span> <span class="o">=</span> <span class="n">medium</span><span class="o">.</span><span class="n">metadata</span>
+
     <span class="n">statistics</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"background"</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
-    <span class="n">correlation_length</span> <span class="o">=</span> <span class="n">statistics</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"correlation_length_m"</span><span class="p">)</span>
+
+    <span class="n">correlation_length_m</span> <span class="o">=</span> <span class="n">statistics</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"correlation_length_m"</span><span class="p">)</span>
+
+    <span class="n">correlation_length</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">correlation_length_m</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">correlation_length_m</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span>
+
     <span class="k">if</span> <span class="n">correlation_length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">spacing</span> <span class="o">&gt;</span> <span class="n">correlation_length</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
             <span class="n">notices</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">"Correlation length is poorly resolved; refine voxel spacing."</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="nb">min</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="n">spacing</span> <span class="o">&lt;</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">correlation_length</span><span class="p">:</span>
             <span class="n">notices</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">"Sample is smaller than six correlation lengths; check finite-size and synthesis-box effects."</span><span class="p">)</span>
+
     <span class="n">stderr</span> <span class="o">=</span> <span class="n">curves</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">realizations</span><span class="p">)</span> <span class="k">if</span> <span class="n">realizations</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">curves</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
     <span class="n">directional</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">directional_samples</span><span class="p">)</span>
+
     <span class="n">directional_stderr</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">directional</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">realizations</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">realizations</span> <span class="o">&gt;</span> <span class="mi">1</span>
         <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">directional</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
     <span class="p">)</span>
+
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">"angles"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">sampling</span><span class="o">.</span><span class="n">angles</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+        <span class="s2">"angles"</span><span class="p">:</span> <span class="n">sampling</span><span class="o">.</span><span class="n">angles</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
         <span class="s2">"azimuths"</span><span class="p">:</span> <span class="n">sampling</span><span class="o">.</span><span class="n">azimuths</span><span class="p">,</span>
         <span class="s2">"directional_differential"</span><span class="p">:</span> <span class="n">directional</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
         <span class="s2">"directional_terms"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">directional_terms</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>

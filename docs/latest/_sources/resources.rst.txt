@@ -23,7 +23,7 @@ Use reproducible inputs and independent numerical checks to assess a study.
 Reproducibility
 ---------------
 
-Record the BornSim version, vacuum wavelength, background index, fluctuation
+Record the BornSim version, vacuum wavelength, background refractive index, fluctuation
 statistics, material geometry, grid, angular quadrature, Born order, and
 random seeds. Retain ensemble sample counts and standard errors alongside
 the coefficients. Result archives retain settings and amplitudes, but do

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bornsim.volume &#8212; BornSim 0.2.5 documentation</title>
+    <title>bornsim.volume &#8212; BornSim 0.2.6 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=cb850272"></script>
+    <script src="../../_static/documentation_options.js?v=fc7d8818"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -61,7 +61,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.5" />
+  <meta name="docsearch:version" content="0.2.6" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -455,7 +455,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">._validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">_integer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.grid</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">RandomMedium</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">_si</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">_refractive_index_values</span><span class="p">,</span> <span class="n">Quantity</span>
 
 
 <div class="viewcode-block" id="Volume">
@@ -466,18 +466,17 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    delta_index : array_like or Quantity</span>
-<span class="sd">        Finite three-dimensional index fluctuations relative to the background,</span>
-<span class="sd">        with 2 to 32 cells per axis. Dimensionless quantities are accepted.</span>
+<span class="sd">    delta_refractive_index : array_like</span>
+<span class="sd">        Finite three-dimensional refractive index fluctuations relative to the background,</span>
+<span class="sd">        with 2 to 32 cells per axis. Quantities are rejected, including dimensionless ones.</span>
 <span class="sd">    grid : Grid, optional</span>
-<span class="sd">        Shared spatial configuration. Its shape must match delta_index.</span>
+<span class="sd">        Shared spatial configuration. Its shape must match delta_refractive_index.</span>
 <span class="sd">        Supply either grid or spacing.</span>
-<span class="sd">    spacing : float or Quantity, optional</span>
-<span class="sd">        Positive, finite cubic voxel width. Bare values mean metres.</span>
+<span class="sd">    spacing : Quantity, optional</span>
+<span class="sd">        Positive, finite cubic voxel width. Explicit length units are required.</span>
 <span class="sd">        Legacy alternative to supplying grid; shape is inferred from the array.</span>
-<span class="sd">    background_index : float or Quantity, optional</span>
-<span class="sd">        Positive, finite background index. Dimensionless or refractive-index</span>
-<span class="sd">        quantities are accepted; default is 1.33.</span>
+<span class="sd">    background_refractive_index : float</span>
+<span class="sd">        Positive, finite background refractive index. Plain numbers are required; quantities are rejected. A background must be supplied.</span>
 <span class="sd">    medium : RandomMedium, optional</span>
 <span class="sd">        Generation statistics recorded by ``random_volume``. None for a</span>
 <span class="sd">        manually supplied field. Must be supplied together with ``seed``.</span>
@@ -486,14 +485,14 @@
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
-<span class="sd">    delta_index : numpy.ndarray</span>
+<span class="sd">    delta_refractive_index : numpy.ndarray</span>
 <span class="sd">        Copied, read-only, dimensionless fluctuation array of shape (nx, ny, nz).</span>
 <span class="sd">    grid : Grid</span>
 <span class="sd">        Spatial configuration shared with generation and scattering.</span>
-<span class="sd">    spacing : float</span>
-<span class="sd">        Cubic voxel width in metres, also available as grid.spacing.</span>
-<span class="sd">    background_index : float</span>
-<span class="sd">        Dimensionless background index.</span>
+<span class="sd">    spacing : Quantity</span>
+<span class="sd">        Cubic voxel width with its supplied units, also available as grid.spacing.</span>
+<span class="sd">    background_refractive_index : float</span>
+<span class="sd">        Dimensionless background refractive index.</span>
 <span class="sd">    medium : RandomMedium or None</span>
 <span class="sd">        Recorded generation statistics, when available.</span>
 <span class="sd">    seed : int or None</span>
@@ -514,8 +513,8 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    Relative permittivity is ``background_index**2 + 2*background_index*delta_index``.</span>
-<span class="sd">    The quadratic index-fluctuation term is omitted at every Born order.</span>
+<span class="sd">    Relative permittivity is ``background_refractive_index**2 + 2*background_refractive_index*delta_refractive_index``.</span>
+<span class="sd">    The quadratic refractive-index fluctuation term is omitted at every Born order.</span>
 <span class="sd">    Voxel centres are measured relative to the sample centre.</span>
 
 <span class="sd">    Examples</span>
@@ -523,35 +522,40 @@
 <span class="sd">    &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">    &gt;&gt;&gt; from bornsim import Volume</span>
 <span class="sd">    &gt;&gt;&gt; from bornsim.units import ureg</span>
+<span class="sd">    ...</span>
+<span class="sd">    ...</span>
 <span class="sd">    &gt;&gt;&gt; volume = Volume(</span>
-<span class="sd">    ...     delta_index=np.zeros((2, 2, 2)),</span>
+<span class="sd">    ...     delta_refractive_index=np.zeros((2, 2, 2)),</span>
 <span class="sd">    ...     spacing=50 * ureg.nanometer,</span>
+<span class="sd">    ...     background_refractive_index=1.33,</span>
 <span class="sd">    ... )</span>
 <span class="sd">    &gt;&gt;&gt; volume.positions.shape</span>
 <span class="sd">    (2, 2, 2, 3)</span>
 <span class="sd">    """</span>
 
-    <span class="n">delta_index</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
-    <span class="n">spacing</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">delta_refractive_index</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">background_refractive_index</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">spacing</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">grid</span><span class="p">:</span> <span class="n">Grid</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">background_index</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.33</span>
     <span class="n">medium</span><span class="p">:</span> <span class="n">RandomMedium</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-            <span class="n">_si</span><span class="p">(</span>
-                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">delta_index</span><span class="p">,</span>
-                <span class="n">unit</span><span class="o">=</span><span class="s2">"dimensionless"</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">"delta_index"</span><span class="p">,</span>
+            <span class="n">_refractive_index_values</span><span class="p">(</span>
+                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">delta_refractive_index</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">"delta_refractive_index"</span><span class="p">,</span>
             <span class="p">),</span>
             <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
+
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">3</span> <span class="ow">or</span> <span class="nb">any</span><span class="p">(</span><span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">32</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"delta_index must be a finite 3D array with 2–32 cells per axis."</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"delta_refractive_index must be a finite 3D array with 2–32 cells per axis."</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spacing</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Supply grid or spacing for a Volume."</span><span class="p">)</span>
+
             <span class="n">grid</span> <span class="o">=</span> <span class="n">Grid</span><span class="p">(</span>
                 <span class="n">shape</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
                 <span class="n">spacing</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">spacing</span><span class="p">,</span>
@@ -561,31 +565,40 @@
                 <span class="n">grid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
                 <span class="n">spacing</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">spacing</span><span class="p">,</span>
             <span class="p">)</span>
+
             <span class="k">if</span> <span class="n">grid</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"grid shape must match delta_index."</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"grid shape must match delta_refractive_index."</span><span class="p">)</span>
+
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"grid"</span><span class="p">,</span> <span class="n">grid</span><span class="p">)</span>
+
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"spacing"</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">spacing</span><span class="p">)</span>
+
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
-            <span class="s2">"background_index"</span><span class="p">,</span>
-            <span class="n">_si</span><span class="p">(</span>
-                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">background_index</span><span class="p">,</span>
-                <span class="n">unit</span><span class="o">=</span><span class="s2">"dimensionless"</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">"background_index"</span><span class="p">,</span>
+            <span class="s2">"background_refractive_index"</span><span class="p">,</span>
+            <span class="n">_refractive_index_values</span><span class="p">(</span>
+                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">background_refractive_index</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">"background_refractive_index"</span><span class="p">,</span>
                 <span class="n">scalar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">),</span>
         <span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">background_index</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">background_index</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"background_index must be finite and positive."</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">background_index</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">background_index</span> <span class="o">*</span> <span class="n">data</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">background_refractive_index</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">background_refractive_index</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"background_refractive_index must be finite and positive."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">background_refractive_index</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">background_refractive_index</span> <span class="o">*</span> <span class="n">data</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Linearized relative permittivity must stay positive."</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">medium</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"medium and seed must be supplied together."</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">medium</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">medium</span><span class="p">,</span> <span class="n">RandomMedium</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"medium must be a RandomMedium."</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">medium</span><span class="o">.</span><span class="n">background_index</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">background_index</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"medium background_index must match the volume."</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">medium</span><span class="o">.</span><span class="n">background_refractive_index</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">background_refractive_index</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"medium background_refractive_index must match the volume."</span><span class="p">)</span>
+
             <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span>
                 <span class="bp">self</span><span class="p">,</span>
                 <span class="s2">"seed"</span><span class="p">,</span>
@@ -596,35 +609,39 @@
                     <span class="n">high</span><span class="o">=</span><span class="mi">2</span><span class="o">**</span><span class="mi">32</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
                 <span class="p">),</span>
             <span class="p">)</span>
+
         <span class="n">data</span><span class="o">.</span><span class="n">setflags</span><span class="p">(</span><span class="n">write</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"delta_index"</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"delta_refractive_index"</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">positions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">positions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Quantity</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return voxel-centre coordinates relative to the sample centre.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        positions : numpy.ndarray</span>
-<span class="sd">            Numeric coordinates in metres, shape (nx, ny, nz, 3), with the final</span>
+<span class="sd">        positions : Quantity</span>
+<span class="sd">            Unit-bearing coordinates, shape (nx, ny, nz, 3), with the final</span>
 <span class="sd">            axis ordered as x, y, z.</span>
 <span class="sd">        """</span>
+
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"grid"</span><span class="p">)</span><span class="o">.</span><span class="n">positions</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">volume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">volume</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Quantity</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return the total physical volume of all voxels.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        volume : float</span>
-<span class="sd">            Sample volume in cubic metres, equal to ``delta_index.size*spacing**3``.</span>
+<span class="sd">        volume : Quantity</span>
+<span class="sd">            Unit-bearing sample volume, equal to ``delta_refractive_index.size*spacing**3``.</span>
 <span class="sd">        """</span>
+
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"grid"</span><span class="p">)</span><span class="o">.</span><span class="n">volume</span>
 
 <div class="viewcode-block" id="Volume.plot_slice">
 <a class="viewcode-back" href="../../api.html#bornsim.volume.Volume.plot_slice">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">plot_slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">normal</span><span class="o">=</span><span class="s2">"z"</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="s2">"index"</span><span class="p">,</span> <span class="n">length_unit</span><span class="o">=</span><span class="s2">"nanometer"</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">normal</span><span class="o">=</span><span class="s2">"z"</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="s2">"refractive_index"</span><span class="p">,</span> <span class="n">length_unit</span><span class="o">=</span><span class="s2">"nanometer"</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Build a Matplotlib figure of one voxel plane.</span>
 
 <span class="sd">        Parameters</span>
@@ -634,9 +651,9 @@
 <span class="sd">        index : int, optional</span>
 <span class="sd">            Voxel index along the normal. Defaults to n//2, the positive</span>
 <span class="sd">            central plane for an even grid. The title gives its actual position.</span>
-<span class="sd">        field : {'index', 'delta_index', 'permittivity'}, optional</span>
-<span class="sd">            Display n0 + delta_index, fluctuations, or linearized relative</span>
-<span class="sd">            permittivity n0**2 + 2*n0*delta_index. Default 'index'.</span>
+<span class="sd">        field : {'refractive_index', 'delta_refractive_index', 'permittivity'}, optional</span>
+<span class="sd">            Display n0 + delta_refractive_index, fluctuations, or linearized relative</span>
+<span class="sd">            permittivity n0**2 + 2*n0*delta_refractive_index. Default 'refractive_index'.</span>
 <span class="sd">        length_unit : str, optional</span>
 <span class="sd">            Spatial display unit; default 'nanometer'. Stored SI data is unchanged.</span>
 <span class="sd">        title : str, optional</span>
@@ -655,6 +672,7 @@
 <span class="sd">        ValueError</span>
 <span class="sd">            If the plane, index, field, or length unit is invalid.</span>
 <span class="sd">        """</span>
+
         <span class="kn">from</span><span class="w"> </span><span class="nn">._volume_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">_VolumePlotter</span>
 
         <span class="k">return</span> <span class="n">_VolumePlotter</span><span class="p">(</span>
@@ -675,7 +693,7 @@
         <span class="o">*</span><span class="p">,</span>
         <span class="n">backend</span><span class="o">=</span><span class="s2">"plotly"</span><span class="p">,</span>
         <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">field</span><span class="o">=</span><span class="s2">"delta_index"</span><span class="p">,</span>
+        <span class="n">field</span><span class="o">=</span><span class="s2">"delta_refractive_index"</span><span class="p">,</span>
         <span class="n">length_unit</span><span class="o">=</span><span class="s2">"nanometer"</span><span class="p">,</span>
         <span class="n">surface_count</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
         <span class="n">opacity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -691,13 +709,13 @@
 <span class="sd">            explicitly for a Matplotlib figure.</span>
 <span class="sd">        mode : str, optional</span>
 <span class="sd">            Matplotlib supports 'slices' (default) and 'voxels'. Voxels display</span>
-<span class="sd">            cells with nonzero index contrast, or the full box for a zero field.</span>
+<span class="sd">            cells with nonzero refractive index contrast, or the full box for a zero field.</span>
 <span class="sd">            Plotly supports 'volume' (default), 'isosurface', and 'slices'.</span>
 <span class="sd">            Uniform Plotly fields fall back to slices.</span>
-<span class="sd">        field : {'delta_index', 'index', 'permittivity'}, optional</span>
-<span class="sd">            Scalar field to display, default index fluctuation. 'index' displays</span>
-<span class="sd">            n0 + delta_index; 'permittivity' displays the solver's linearized</span>
-<span class="sd">            relative permittivity n0**2 + 2*n0*delta_index, not (n0+delta_index)**2.</span>
+<span class="sd">        field : {'delta_refractive_index', 'refractive_index', 'permittivity'}, optional</span>
+<span class="sd">            Scalar field to display, default refractive index fluctuation. 'refractive_index' displays</span>
+<span class="sd">            n0 + delta_refractive_index; 'permittivity' displays the solver's linearized</span>
+<span class="sd">            relative permittivity n0**2 + 2*n0*delta_refractive_index, not (n0+delta_refractive_index)**2.</span>
 <span class="sd">        length_unit : str, optional</span>
 <span class="sd">            Spatial display unit, default 'nanometer'. Stored SI data is unchanged.</span>
 <span class="sd">        surface_count : int, optional</span>
@@ -710,7 +728,7 @@
 <span class="sd">            Default 'uniform' gives all contours the same opacity. 'increasing'</span>
 <span class="sd">            is available only for Plotly volume mode and scales opacity from</span>
 <span class="sd">            zero at the lowest displayed contour to ``opacity`` at the highest.</span>
-<span class="sd">            Use field='index' to emphasize high refractive index, rather than</span>
+<span class="sd">            Use field='refractive_index' to emphasize high refractive index, rather than</span>
 <span class="sd">            the magnitude of positive and negative fluctuations.</span>
 <span class="sd">        slice_indices : tuple of int, optional</span>
 <span class="sd">            One voxel index for each x, y, z plane, used only for slices.</span>
@@ -741,6 +759,7 @@
 <span class="sd">        limit; browser performance also depends on surface count and graphics</span>
 <span class="sd">        support. This plots the input material, not an electromagnetic field.</span>
 <span class="sd">        """</span>
+
         <span class="kn">from</span><span class="w"> </span><span class="nn">._volume_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">_VolumePlotter</span>
 
         <span class="k">return</span> <span class="n">_VolumePlotter</span><span class="p">(</span>

@@ -26,6 +26,16 @@ The PyPI workflow requires ``PYPI_API_TOKEN``. Conda verification is available
 through a manual workflow; channel upload is not configured. See
 ``CONTRIBUTING.md`` for further instructions.
 
+Code readability
+----------------
+
+Spell out ``refractive_index`` in names for the optical quantity, including
+``background_refractive_index``, ``refractive_index_std`` and
+``delta_refractive_index``. Reserve ``index`` for array positions.
+Separate statements and calculation steps with a blank line, including
+assignments and calls inside loops. Keep imports and related dataclass fields
+grouped, and keep comments attached to the statements they explain.
+
 Internal rendering and archives
 -------------------------------
 

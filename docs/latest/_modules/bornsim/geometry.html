@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bornsim.geometry &#8212; BornSim 0.2.5 documentation</title>
+    <title>bornsim.geometry &#8212; BornSim 0.2.6 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=cb850272"></script>
+    <script src="../../_static/documentation_options.js?v=fc7d8818"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -61,7 +61,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.5" />
+  <meta name="docsearch:version" content="0.2.6" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -450,7 +450,7 @@
   <h1>Source code for bornsim.geometry</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Voxel-centre geometry for finite structured dielectric samples.</span>
 
-<span class="sd">Lengths use SI metres or compatible quantities. Shapes set absolute index,</span>
+<span class="sd">Lengths use SI metres or compatible quantities. Shapes set absolute refractive index,</span>
 <span class="sd">not dielectric contrast; Volume retains the solver's linearized constitutive</span>
 <span class="sd">law. Interfaces are sampled at cell centres without subvoxel averaging.</span>
 <span class="sd">"""</span>
@@ -458,7 +458,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">replace</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">_si</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">_refractive_index_values</span><span class="p">,</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">validate_units</span><span class="p">,</span> <span class="n">ureg</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Medium</span><span class="p">,</span> <span class="n">RandomMedium</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.volume</span><span class="w"> </span><span class="kn">import</span> <span class="n">Volume</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.grid</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span>
@@ -467,35 +467,23 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_length</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">positive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">_si</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_refractive_index</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">refractive_index</span> <span class="o">=</span> <span class="n">_refractive_index_values</span><span class="p">(</span>
         <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
-        <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
-        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-        <span class="n">scalar</span><span class="o">=</span><span class="ow">not</span> <span class="n">vector</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="k">if</span> <span class="n">vector</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must contain three coordinates."</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">positive</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be finite"</span> <span class="o">+</span> <span class="p">(</span><span class="s2">" and positive."</span> <span class="k">if</span> <span class="n">positive</span> <span class="k">else</span> <span class="s2">"."</span><span class="p">))</span>
-    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)</span> <span class="k">if</span> <span class="n">vector</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">_index</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-    <span class="n">index</span> <span class="o">=</span> <span class="n">_si</span><span class="p">(</span>
-        <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
-        <span class="n">unit</span><span class="o">=</span><span class="s2">"dimensionless"</span><span class="p">,</span>
-        <span class="n">name</span><span class="o">=</span><span class="s2">"index"</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">"refractive_index"</span><span class="p">,</span>
         <span class="n">scalar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="ow">or</span> <span class="n">index</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"index must be finite and positive."</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">refractive_index</span><span class="p">)</span> <span class="ow">or</span> <span class="n">refractive_index</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"refractive_index must be finite and positive."</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">refractive_index</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_axis</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">))</span> <span class="ow">or</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"axis must be 0, 1, or 2 (x, y, z)."</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
 
@@ -503,39 +491,80 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">_Transformable</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Return transformed immutable shapes in global SI coordinates."""</span>
 
-    <span class="n">centre</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
-    <span class="n">index</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">centre</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">)</span>
+    <span class="n">refractive_index</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">material</span><span class="p">:</span> <span class="n">Material</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">translated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">offset</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Return a translated shape; offset uses metres or length quantities."""</span>
-        <span class="n">displacement</span> <span class="o">=</span> <span class="n">_length</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">offset</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"offset"</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">centre</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">)</span> <span class="o">+</span> <span class="n">displacement</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">centre</span><span class="o">=</span><span class="n">centre</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_replaced</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">settings</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">"_Transformable"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Clone geometry while retaining unit-bearing lengths."""</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">rotated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rotation</span><span class="p">,</span> <span class="n">about</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">settings</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">translated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="n">Quantity</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"_Transformable"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return a translated shape; offset uses metres or length quantities."""</span>
+
+        <span class="n">validate_units</span><span class="p">(</span>
+            <span class="n">offset</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"offset"</span><span class="p">,</span>
+            <span class="n">scalar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"offset must contain three coordinates."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">offset</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"offset must be finite."</span><span class="p">)</span>
+
+        <span class="n">displacement</span> <span class="o">=</span> <span class="n">offset</span>
+
+        <span class="n">centre</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">centre</span> <span class="o">+</span> <span class="n">displacement</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_replaced</span><span class="p">(</span><span class="n">settings</span><span class="o">=</span><span class="p">{</span><span class="s2">"centre"</span><span class="p">:</span> <span class="n">centre</span><span class="p">,</span> <span class="s2">"refractive_index"</span><span class="p">:</span> <span class="kc">None</span><span class="p">})</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">rotated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rotation</span><span class="p">:</span> <span class="n">Rotation</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">about</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"_Transformable"</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return a rotated shape around its centre or an explicit global point.</span>
 
 <span class="sd">        Rotation is active: R maps local column coordinates to the global</span>
 <span class="sd">        frame. Successive world rotations compose as R_new @ R_existing.</span>
 <span class="sd">        Membership uses local row coordinates (positions-centre) @ R.</span>
 <span class="sd">        """</span>
+
         <span class="n">matrix</span> <span class="o">=</span> <span class="n">Rotation</span><span class="o">.</span><span class="n">_matrix</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="n">rotation</span><span class="p">)</span>
-        <span class="n">centre</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">)</span>
+
+        <span class="n">centre</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">centre</span>
+
         <span class="k">if</span> <span class="n">about</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">_length</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">about</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"about"</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+            <span class="n">validate_units</span><span class="p">(</span>
+                <span class="n">about</span><span class="p">,</span>
+                <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">"about"</span><span class="p">,</span>
+                <span class="n">scalar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">about</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"about must contain three coordinates."</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">about</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"about must be finite."</span><span class="p">)</span>
+
+            <span class="n">point</span> <span class="o">=</span> <span class="n">about</span>
+
             <span class="n">centre</span> <span class="o">=</span> <span class="n">point</span> <span class="o">+</span> <span class="n">matrix</span> <span class="o">@</span> <span class="p">(</span><span class="n">centre</span> <span class="o">-</span> <span class="n">point</span><span class="p">)</span>
-        <span class="n">settings</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"centre"</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">centre</span><span class="p">),</span> <span class="s2">"index"</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+
+        <span class="n">settings</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"centre"</span><span class="p">:</span> <span class="n">centre</span><span class="p">,</span> <span class="s2">"refractive_index"</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"rotation"</span><span class="p">):</span>
             <span class="n">settings</span><span class="p">[</span><span class="s2">"rotation"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">matrix</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotation</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">settings</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_replaced</span><span class="p">(</span><span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Layer">
 <a class="viewcode-back" href="../../api.html#bornsim.geometry.Layer">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Layer</span><span class="p">(</span><span class="n">_Transformable</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""A slab with absolute index inside ``lower &lt;= local[axis] &lt; upper``.</span>
+<span class="w">    </span><span class="sd">"""A slab with absolute refractive index inside ``lower &lt;= local[axis] &lt; upper``.</span>
 
 <span class="sd">    Bounds are SI lengths in the slab local frame, offset by centre and</span>
 <span class="sd">    oriented by rotation. The default axis is</span>
@@ -544,45 +573,74 @@
 <span class="sd">    it represents a finite sample, not an infinite planar background.</span>
 <span class="sd">    """</span>
 
-    <span class="n">lower</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="nb">float</span>
-    <span class="n">upper</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="nb">float</span>
-    <span class="n">index</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">lower</span><span class="p">:</span> <span class="n">Quantity</span>
+    <span class="n">upper</span><span class="p">:</span> <span class="n">Quantity</span>
+    <span class="n">refractive_index</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">material</span><span class="p">:</span> <span class="n">Material</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">axis</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="n">centre</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">centre</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">)</span>
     <span class="n">rotation</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">((</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="s2">"lower"</span><span class="p">,</span>
-            <span class="n">_length</span><span class="p">(</span>
-                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">"lower"</span><span class="p">,</span>
-            <span class="p">),</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">validate_units</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"lower"</span><span class="p">,</span>
+            <span class="n">scalar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="s2">"upper"</span><span class="p">,</span>
-            <span class="n">_length</span><span class="p">(</span>
-                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">upper</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">"upper"</span><span class="p">,</span>
-            <span class="p">),</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"lower must be finite."</span><span class="p">)</span>
+
+        <span class="n">validate_units</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">upper</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"upper"</span><span class="p">,</span>
+            <span class="n">scalar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">material</span> <span class="o">=</span> <span class="n">Material</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span><span class="n">material</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">material</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">upper</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"upper must be finite."</span><span class="p">)</span>
+
+        <span class="n">material</span> <span class="o">=</span> <span class="n">Material</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span><span class="n">material</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">material</span><span class="p">,</span> <span class="n">refractive_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">refractive_index</span><span class="p">)</span>
+
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"material"</span><span class="p">,</span> <span class="n">material</span><span class="p">)</span>
-        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"index"</span><span class="p">,</span> <span class="n">material</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"refractive_index"</span><span class="p">,</span> <span class="n">material</span><span class="o">.</span><span class="n">refractive_index</span><span class="p">)</span>
+
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"axis"</span><span class="p">,</span> <span class="n">_axis</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="p">))</span>
-        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"centre"</span><span class="p">,</span> <span class="n">_length</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"centre"</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+        <span class="n">validate_units</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"centre"</span><span class="p">,</span>
+            <span class="n">scalar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"centre must contain three coordinates."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"centre must be finite."</span><span class="p">)</span>
+
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"rotation"</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">Rotation</span><span class="o">.</span><span class="n">_matrix</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rotation</span><span class="p">)))</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"lower must be smaller than upper."</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Layer.mask">
 <a class="viewcode-back" href="../../api.html#bornsim.geometry.Layer.mask">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">positions</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Return membership at voxel positions in metres, shape (..., 3)."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">positions</span><span class="p">:</span> <span class="n">Quantity</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return membership at unit-bearing voxel positions, shape (..., 3)."""</span>
+
+        <span class="n">validate_units</span><span class="p">(</span>
+            <span class="n">positions</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"positions"</span><span class="p">,</span>
+        <span class="p">)</span>
+
         <span class="n">coordinate</span> <span class="o">=</span> <span class="p">((</span><span class="n">positions</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotation</span><span class="p">))[</span><span class="o">...</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="p">]</span>
+
         <span class="k">return</span> <span class="p">(</span><span class="n">coordinate</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">coordinate</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span></div>
 </div>
 
@@ -592,44 +650,58 @@
 <a class="viewcode-back" href="../../api.html#bornsim.geometry.Sphere">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Sphere</span><span class="p">(</span><span class="n">_Transformable</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Set absolute index where ``sum((r-centre)**2) &lt;= radius**2``.</span>
+<span class="w">    </span><span class="sd">"""Set absolute refractive index where ``sum((r-centre)**2) &lt;= radius**2``.</span>
 
 <span class="sd">    Radius is positive; centre is a three-component SI length or quantity.</span>
 <span class="sd">    The closed surface is sampled at voxel centres, giving a staircase boundary.</span>
 <span class="sd">    """</span>
 
-    <span class="n">radius</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="nb">float</span>
-    <span class="n">index</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">radius</span><span class="p">:</span> <span class="n">Quantity</span>
+    <span class="n">refractive_index</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">material</span><span class="p">:</span> <span class="n">Material</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">centre</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">centre</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="s2">"radius"</span><span class="p">,</span>
-            <span class="n">_length</span><span class="p">(</span>
-                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">"radius"</span><span class="p">,</span>
-                <span class="n">positive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">),</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">validate_units</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"radius"</span><span class="p">,</span>
+            <span class="n">scalar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">material</span> <span class="o">=</span> <span class="n">Material</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span><span class="n">material</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">material</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="p">))</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radius</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"radius must be finite and positive."</span><span class="p">)</span>
+
+        <span class="n">material</span> <span class="o">=</span> <span class="n">Material</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span><span class="n">material</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">material</span><span class="p">,</span> <span class="n">refractive_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">refractive_index</span><span class="p">)</span>
+
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"material"</span><span class="p">,</span> <span class="n">material</span><span class="p">)</span>
-        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"index"</span><span class="p">,</span> <span class="n">material</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
-        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="s2">"centre"</span><span class="p">,</span>
-            <span class="n">_length</span><span class="p">(</span>
-                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">"centre"</span><span class="p">,</span>
-                <span class="n">vector</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">),</span>
+
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"refractive_index"</span><span class="p">,</span> <span class="n">material</span><span class="o">.</span><span class="n">refractive_index</span><span class="p">)</span>
+
+        <span class="n">validate_units</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"centre"</span><span class="p">,</span>
+            <span class="n">scalar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"centre must contain three coordinates."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"centre must be finite."</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Sphere.mask">
 <a class="viewcode-back" href="../../api.html#bornsim.geometry.Sphere.mask">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">positions</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Return membership at voxel positions in metres, shape (..., 3)."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">positions</span><span class="p">:</span> <span class="n">Quantity</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return membership at unit-bearing voxel positions, shape (..., 3)."""</span>
+
+        <span class="n">validate_units</span><span class="p">(</span>
+            <span class="n">positions</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"positions"</span><span class="p">,</span>
+        <span class="p">)</span>
+
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">positions</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="o">**</span><span class="mi">2</span></div>
 </div>
 
@@ -639,49 +711,66 @@
 <a class="viewcode-back" href="../../api.html#bornsim.geometry.Ellipsoid">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Ellipsoid</span><span class="p">(</span><span class="n">_Transformable</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Set absolute index where ``sum((local/radii)**2) &lt;= 1``.</span>
+<span class="w">    </span><span class="sd">"""Set absolute refractive index where ``sum((local/radii)**2) &lt;= 1``.</span>
 
 <span class="sd">    Three positive semi-axis radii align with local x, y, z. All lengths use SI or</span>
 <span class="sd">    compatible quantities. rotation maps local semi-axes into global coordinates.</span>
 <span class="sd">    """</span>
 
-    <span class="n">radii</span><span class="p">:</span> <span class="nb">tuple</span>
-    <span class="n">index</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">radii</span><span class="p">:</span> <span class="n">Quantity</span>
+    <span class="n">refractive_index</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">material</span><span class="p">:</span> <span class="n">Material</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">centre</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">centre</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">)</span>
     <span class="n">rotation</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">((</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="s2">"radii"</span><span class="p">,</span>
-            <span class="n">_length</span><span class="p">(</span>
-                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">radii</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">"radii"</span><span class="p">,</span>
-                <span class="n">positive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">vector</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">),</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">validate_units</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">radii</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"radii"</span><span class="p">,</span>
+            <span class="n">scalar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">material</span> <span class="o">=</span> <span class="n">Material</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span><span class="n">material</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">material</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radii</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"radii must contain three coordinates."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radii</span><span class="p">))</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radii</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"radii must be finite and positive."</span><span class="p">)</span>
+
+        <span class="n">material</span> <span class="o">=</span> <span class="n">Material</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span><span class="n">material</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">material</span><span class="p">,</span> <span class="n">refractive_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">refractive_index</span><span class="p">)</span>
+
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"material"</span><span class="p">,</span> <span class="n">material</span><span class="p">)</span>
-        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"index"</span><span class="p">,</span> <span class="n">material</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
-        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="s2">"centre"</span><span class="p">,</span>
-            <span class="n">_length</span><span class="p">(</span>
-                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">"centre"</span><span class="p">,</span>
-                <span class="n">vector</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">),</span>
+
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"refractive_index"</span><span class="p">,</span> <span class="n">material</span><span class="o">.</span><span class="n">refractive_index</span><span class="p">)</span>
+
+        <span class="n">validate_units</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"centre"</span><span class="p">,</span>
+            <span class="n">scalar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"centre must contain three coordinates."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"centre must be finite."</span><span class="p">)</span>
 
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"rotation"</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">Rotation</span><span class="o">.</span><span class="n">_matrix</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rotation</span><span class="p">)))</span>
 
 <div class="viewcode-block" id="Ellipsoid.mask">
 <a class="viewcode-back" href="../../api.html#bornsim.geometry.Ellipsoid.mask">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">positions</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Return membership at voxel positions in metres, shape (..., 3)."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">positions</span><span class="p">:</span> <span class="n">Quantity</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return membership at unit-bearing voxel positions, shape (..., 3)."""</span>
+
+        <span class="n">validate_units</span><span class="p">(</span>
+            <span class="n">positions</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"positions"</span><span class="p">,</span>
+        <span class="p">)</span>
+
         <span class="n">local</span> <span class="o">=</span> <span class="p">(</span><span class="n">positions</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotation</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">local</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">radii</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span></div>
 </div>
 
@@ -691,50 +780,67 @@
 <a class="viewcode-back" href="../../api.html#bornsim.geometry.Box">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Box</span><span class="p">(</span><span class="n">_Transformable</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Set absolute index where ``abs(local) &lt;= size/2`` in every axis.</span>
+<span class="w">    </span><span class="sd">"""Set absolute refractive index where ``abs(local) &lt;= size/2`` in every axis.</span>
 
 <span class="sd">    Size contains three positive full side lengths along the local axes.</span>
 <span class="sd">    All lengths use SI or compatible quantities; the boundary is closed.</span>
 <span class="sd">    """</span>
 
-    <span class="n">size</span><span class="p">:</span> <span class="nb">tuple</span>
-    <span class="n">index</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">size</span><span class="p">:</span> <span class="n">Quantity</span>
+    <span class="n">refractive_index</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">material</span><span class="p">:</span> <span class="n">Material</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">centre</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">centre</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">)</span>
     <span class="n">rotation</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">((</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="s2">"size"</span><span class="p">,</span>
-            <span class="n">_length</span><span class="p">(</span>
-                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">"size"</span><span class="p">,</span>
-                <span class="n">positive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">vector</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">),</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">validate_units</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"size"</span><span class="p">,</span>
+            <span class="n">scalar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">material</span> <span class="o">=</span> <span class="n">Material</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span><span class="n">material</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">material</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"size must contain three coordinates."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">))</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"size must be finite and positive."</span><span class="p">)</span>
+
+        <span class="n">material</span> <span class="o">=</span> <span class="n">Material</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span><span class="n">material</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">material</span><span class="p">,</span> <span class="n">refractive_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">refractive_index</span><span class="p">)</span>
+
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"material"</span><span class="p">,</span> <span class="n">material</span><span class="p">)</span>
-        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"index"</span><span class="p">,</span> <span class="n">material</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
-        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="s2">"centre"</span><span class="p">,</span>
-            <span class="n">_length</span><span class="p">(</span>
-                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">"centre"</span><span class="p">,</span>
-                <span class="n">vector</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">),</span>
+
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"refractive_index"</span><span class="p">,</span> <span class="n">material</span><span class="o">.</span><span class="n">refractive_index</span><span class="p">)</span>
+
+        <span class="n">validate_units</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"centre"</span><span class="p">,</span>
+            <span class="n">scalar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"centre must contain three coordinates."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"centre must be finite."</span><span class="p">)</span>
 
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"rotation"</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">Rotation</span><span class="o">.</span><span class="n">_matrix</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rotation</span><span class="p">)))</span>
 
 <div class="viewcode-block" id="Box.mask">
 <a class="viewcode-back" href="../../api.html#bornsim.geometry.Box.mask">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">positions</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Return membership at voxel positions in metres, shape (..., 3)."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">positions</span><span class="p">:</span> <span class="n">Quantity</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return membership at unit-bearing voxel positions, shape (..., 3)."""</span>
+
+        <span class="n">validate_units</span><span class="p">(</span>
+            <span class="n">positions</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"positions"</span><span class="p">,</span>
+        <span class="p">)</span>
+
         <span class="n">local</span> <span class="o">=</span> <span class="p">(</span><span class="n">positions</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotation</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">local</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">local</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
 </div>
 
 
@@ -743,62 +849,80 @@
 <a class="viewcode-back" href="../../api.html#bornsim.geometry.Cylinder">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Cylinder</span><span class="p">(</span><span class="n">_Transformable</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""A finite circular cylinder with absolute index and closed boundary.</span>
+<span class="w">    </span><span class="sd">"""A finite circular cylinder with absolute refractive index and closed boundary.</span>
 
 <span class="sd">    Membership requires ``abs(local[axis]) &lt;= height/2`` and squared</span>
 <span class="sd">    transverse distance &lt;= radius**2. Radius and full height are positive SI</span>
 <span class="sd">    lengths or quantities; axis is 0, 1, or 2, default z. Centre has three lengths.</span>
 <span class="sd">    """</span>
 
-    <span class="n">radius</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="nb">float</span>
-    <span class="n">height</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="nb">float</span>
-    <span class="n">index</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">radius</span><span class="p">:</span> <span class="n">Quantity</span>
+    <span class="n">height</span><span class="p">:</span> <span class="n">Quantity</span>
+    <span class="n">refractive_index</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">material</span><span class="p">:</span> <span class="n">Material</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">centre</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">centre</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">)</span>
     <span class="n">axis</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="n">rotation</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">((</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="s2">"radius"</span><span class="p">,</span>
-            <span class="n">_length</span><span class="p">(</span>
-                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">"radius"</span><span class="p">,</span>
-                <span class="n">positive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">),</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">validate_units</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"radius"</span><span class="p">,</span>
+            <span class="n">scalar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="s2">"height"</span><span class="p">,</span>
-            <span class="n">_length</span><span class="p">(</span>
-                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">"height"</span><span class="p">,</span>
-                <span class="n">positive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">),</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="p">))</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radius</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"radius must be finite and positive."</span><span class="p">)</span>
+
+        <span class="n">validate_units</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"height"</span><span class="p">,</span>
+            <span class="n">scalar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">material</span> <span class="o">=</span> <span class="n">Material</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span><span class="n">material</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">material</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">))</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"height must be finite and positive."</span><span class="p">)</span>
+
+        <span class="n">material</span> <span class="o">=</span> <span class="n">Material</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span><span class="n">material</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">material</span><span class="p">,</span> <span class="n">refractive_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">refractive_index</span><span class="p">)</span>
+
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"material"</span><span class="p">,</span> <span class="n">material</span><span class="p">)</span>
-        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"index"</span><span class="p">,</span> <span class="n">material</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
-        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="s2">"centre"</span><span class="p">,</span>
-            <span class="n">_length</span><span class="p">(</span>
-                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">"centre"</span><span class="p">,</span>
-                <span class="n">vector</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">),</span>
+
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"refractive_index"</span><span class="p">,</span> <span class="n">material</span><span class="o">.</span><span class="n">refractive_index</span><span class="p">)</span>
+
+        <span class="n">validate_units</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"centre"</span><span class="p">,</span>
+            <span class="n">scalar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"centre must contain three coordinates."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"centre must be finite."</span><span class="p">)</span>
+
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"axis"</span><span class="p">,</span> <span class="n">_axis</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="p">))</span>
 
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"rotation"</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">Rotation</span><span class="o">.</span><span class="n">_matrix</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rotation</span><span class="p">)))</span>
 
 <div class="viewcode-block" id="Cylinder.mask">
 <a class="viewcode-back" href="../../api.html#bornsim.geometry.Cylinder.mask">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">positions</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Return membership at voxel positions in metres, shape (..., 3)."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">positions</span><span class="p">:</span> <span class="n">Quantity</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return membership at unit-bearing voxel positions, shape (..., 3)."""</span>
+
+        <span class="n">validate_units</span><span class="p">(</span>
+            <span class="n">positions</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"positions"</span><span class="p">,</span>
+        <span class="p">)</span>
+
         <span class="n">displacement</span> <span class="o">=</span> <span class="p">(</span><span class="n">positions</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">centre</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotation</span><span class="p">)</span>
+
         <span class="n">transverse</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="p">]</span>
+
         <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">displacement</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">displacement</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">transverse</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="o">**</span><span class="mi">2</span>
         <span class="p">)</span></div>
@@ -817,8 +941,8 @@
 <span class="sd">    regions : sequence of Layer, Sphere, Ellipsoid, Box, or Cylinder</span>
 <span class="sd">        Regions set absolute refractive index. Overlap precedence follows the</span>
 <span class="sd">        overlap policy; indices are not added. Default is empty.</span>
-<span class="sd">    background_index : float or Quantity</span>
-<span class="sd">        Positive uniform background index, default 1.33. It fills uncovered</span>
+<span class="sd">    background_refractive_index : float</span>
+<span class="sd">        Explicit positive uniform background refractive index. It fills uncovered</span>
 <span class="sd">        voxels and extends outside the finite voxel box.</span>
 
 <span class="sd">    overlap : {"replace", "preserve", "error"}</span>
@@ -829,61 +953,77 @@
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    Configure this mutable builder with ``add_background`` and ``add_structures``.</span>
+<span class="sd">    An empty builder has no background; voxelization requires an explicit one.</span>
 <span class="sd">    Medium remains abstract; random statistics and geometry shapes remain frozen.</span>
 <span class="sd">    Calls update the builder and return None. Previously generated volumes do</span>
 <span class="sd">    not change. Constructor regions are still accepted for existing callers.</span>
-<span class="sd">    Voxelization returns ``delta_index(r) = n(r) - background_index``. The</span>
-<span class="sd">    numerical solver uses ``epsilon_r = n0**2 + 2*n0*delta_index``, omitting</span>
-<span class="sd">    ``delta_index**2`` even at higher Born orders. Strong index differences</span>
+<span class="sd">    Voxelization returns ``delta_refractive_index(r) = n(r) - background_refractive_index``. The</span>
+<span class="sd">    numerical solver uses ``epsilon_r = n0**2 + 2*n0*delta_refractive_index``, omitting</span>
+<span class="sd">    ``delta_refractive_index**2`` even at higher Born orders. Strong refractive index differences</span>
 <span class="sd">    can invalidate this constitutive approximation or Born iteration.</span>
 <span class="sd">    Regions crossing the box are clipped. Layers therefore have finite lateral</span>
 <span class="sd">    extent; this is not a transfer-matrix or layered-background Green solver.</span>
 <span class="sd">    """</span>
 
     <span class="n">regions</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">()</span>
-    <span class="n">background_index</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.33</span>
+    <span class="n">background_refractive_index</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">overlap</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"replace"</span>
     <span class="n">warn_on_clipping</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">_background</span><span class="p">:</span> <span class="n">RandomMedium</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">regions</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regions</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">region</span><span class="p">,</span> <span class="p">(</span><span class="n">Layer</span><span class="p">,</span> <span class="n">Sphere</span><span class="p">,</span> <span class="n">Ellipsoid</span><span class="p">,</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Cylinder</span><span class="p">))</span> <span class="k">for</span> <span class="n">region</span> <span class="ow">in</span> <span class="n">regions</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"regions must contain Layer, Sphere, Ellipsoid, Box, or Cylinder objects."</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"replace"</span><span class="p">,</span> <span class="s2">"preserve"</span><span class="p">,</span> <span class="s2">"error"</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"overlap must be replace, preserve, or error."</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">warn_on_clipping</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"warn_on_clipping must be a bool."</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">regions</span> <span class="o">=</span> <span class="n">regions</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">background_index</span> <span class="o">=</span> <span class="n">_index</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">background_index</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">background_refractive_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">background_refractive_index</span> <span class="o">=</span> <span class="n">_refractive_index</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">background_refractive_index</span><span class="p">)</span>
 
 <div class="viewcode-block" id="StructuredMedium.add_background">
 <a class="viewcode-back" href="../../api.html#bornsim.geometry.StructuredMedium.add_background">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">add_background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">medium</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">material</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">refractive_index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">medium</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">material</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Set the background in place, retaining all existing structures.</span>
 
-<span class="sd">        Supply exactly one of ``index`` (a positive uniform refractive index)</span>
+<span class="sd">        Supply exactly one of ``refractive_index`` (a positive uniform refractive index)</span>
 <span class="sd">        or ``medium`` (RandomMedium statistics). A random background is sampled</span>
 <span class="sd">        with to_volume(seed=...) and fills only voxels outside structures.</span>
-<span class="sd">        The exterior scattering background remains uniform at background_index.</span>
+<span class="sd">        The exterior scattering background remains uniform at background_refractive_index.</span>
 <span class="sd">        Replacing a background changes the reference n0, not structures'</span>
 <span class="sd">        absolute refractive indices. Validation precedes any state change.</span>
 <span class="sd">        Returns None. Random statistics are copied when added.</span>
 <span class="sd">        """</span>
+
         <span class="k">if</span> <span class="n">material</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">resolved</span> <span class="o">=</span> <span class="n">Material</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span><span class="n">material</span><span class="o">=</span><span class="n">material</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
-            <span class="n">index</span> <span class="o">=</span> <span class="n">resolved</span><span class="o">.</span><span class="n">index</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">medium</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Supply exactly one of index or medium."</span><span class="p">)</span>
+            <span class="n">resolved</span> <span class="o">=</span> <span class="n">Material</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span><span class="n">material</span><span class="o">=</span><span class="n">material</span><span class="p">,</span> <span class="n">refractive_index</span><span class="o">=</span><span class="n">refractive_index</span><span class="p">)</span>
+
+            <span class="n">refractive_index</span> <span class="o">=</span> <span class="n">resolved</span><span class="o">.</span><span class="n">refractive_index</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">refractive_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">medium</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Supply exactly one of refractive_index or medium."</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">medium</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">medium</span><span class="p">,</span> <span class="n">RandomMedium</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"medium must be a RandomMedium."</span><span class="p">)</span>
+
             <span class="n">background</span> <span class="o">=</span> <span class="n">replace</span><span class="p">(</span><span class="n">medium</span><span class="p">)</span>
-            <span class="n">background_index</span> <span class="o">=</span> <span class="n">background</span><span class="o">.</span><span class="n">background_index</span>
+
+            <span class="n">background_refractive_index</span> <span class="o">=</span> <span class="n">background</span><span class="o">.</span><span class="n">background_refractive_index</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">background</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="n">background_index</span> <span class="o">=</span> <span class="n">_index</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">background_index</span> <span class="o">=</span> <span class="n">background_index</span>
+
+            <span class="n">background_refractive_index</span> <span class="o">=</span> <span class="n">_refractive_index</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">refractive_index</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">background_refractive_index</span> <span class="o">=</span> <span class="n">background_refractive_index</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_background</span> <span class="o">=</span> <span class="n">background</span></div>
 
 
@@ -898,50 +1038,78 @@
 <span class="sd">        before editing the builder; an empty call is a no-op. Existing voxel</span>
 <span class="sd">        samples are independent snapshots.</span>
 <span class="sd">        """</span>
+
         <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="p">(</span><span class="n">Layer</span><span class="p">,</span> <span class="n">Sphere</span><span class="p">,</span> <span class="n">Ellipsoid</span><span class="p">,</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Cylinder</span><span class="p">))</span> <span class="k">for</span> <span class="n">structure</span> <span class="ow">in</span> <span class="n">structures</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"structures must be Layer, Sphere, Ellipsoid, Box, or Cylinder objects."</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">regions</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">regions</span><span class="p">,</span> <span class="o">*</span><span class="n">structures</span><span class="p">)</span></div>
 
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_random</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""A random background supplies independent composed realizations."""</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Return independent SI geometry descriptions in application order.</span>
 
-<span class="sd">        Region type, absolute index, axis where applicable, and dimensions are</span>
+<span class="sd">        Region type, absolute refractive index, axis where applicable, and dimensions are</span>
 <span class="sd">        recorded. Length keys have the ``_m`` suffix, and vectors are JSON lists.</span>
 <span class="sd">        The list order preserves replacement precedence in overlapping regions.</span>
 <span class="sd">        Voxelization returns a manual volume; retain this description separately</span>
 <span class="sd">        when reconstructing a structured sample.</span>
 <span class="sd">        """</span>
+
         <span class="n">length_fields</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"lower"</span><span class="p">,</span> <span class="s2">"upper"</span><span class="p">,</span> <span class="s2">"radius"</span><span class="p">,</span> <span class="s2">"height"</span><span class="p">,</span> <span class="s2">"centre"</span><span class="p">,</span> <span class="s2">"radii"</span><span class="p">,</span> <span class="s2">"size"</span><span class="p">}</span>
+
         <span class="n">regions</span> <span class="o">=</span> <span class="p">[]</span>
+
         <span class="k">for</span> <span class="n">region</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">regions</span><span class="p">:</span>
             <span class="n">description</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="nb">type</span><span class="p">(</span><span class="n">region</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">}</span>
+
             <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">asdict</span><span class="p">(</span><span class="n">region</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">"material"</span><span class="p">:</span>
                     <span class="k">continue</span>
+
                 <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">"rotation"</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)):</span>
                     <span class="k">continue</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">region</span><span class="p">,</span> <span class="n">Layer</span><span class="p">)</span> <span class="ow">and</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">"centre"</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]):</span>
+
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">region</span><span class="p">,</span> <span class="n">Layer</span><span class="p">)</span> <span class="ow">and</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">"centre"</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">value</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
                     <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">length_fields</span><span class="p">:</span>
+                    <span class="n">magnitude</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"meter"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">magnitude</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
                 <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_m"</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">length_fields</span> <span class="k">else</span> <span class="n">name</span>
+
                 <span class="n">description</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="n">value</span>
+
             <span class="n">regions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">description</span><span class="p">)</span>
+
         <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="s2">"regions"</span><span class="p">:</span> <span class="n">regions</span><span class="p">}</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap</span> <span class="o">!=</span> <span class="s2">"replace"</span><span class="p">:</span>
             <span class="n">metadata</span><span class="p">[</span><span class="s2">"overlap"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">metadata</span><span class="p">[</span><span class="s2">"background"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background</span><span class="o">.</span><span class="n">metadata</span>
+
         <span class="k">return</span> <span class="n">metadata</span>
 
 <div class="viewcode-block" id="StructuredMedium.to_volume">
 <a class="viewcode-back" href="../../api.html#bornsim.geometry.StructuredMedium.to_volume">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">to_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_volume</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">grid</span><span class="p">:</span> <span class="n">Grid</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">shape</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">spacing</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Volume</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Sample regions on cubic voxels and return a validated :class:`Volume`.</span>
 
 <span class="sd">        Pass a shared Grid as grid. Legacy shape and spacing keywords are</span>
@@ -954,14 +1122,21 @@
 <span class="sd">        structures. Uniform backgrounds ignore seed. Keep metadata and seed to</span>
 <span class="sd">        reproduce a composed sample, whose Volume is a manual field.</span>
 <span class="sd">        """</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">background_refractive_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Set a background with add_background before generating a volume."</span><span class="p">)</span>
+
         <span class="n">grid</span> <span class="o">=</span> <span class="n">Grid</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span>
             <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
             <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span>
             <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span><span class="p">,</span>
         <span class="p">)</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"replace"</span><span class="p">,</span> <span class="s2">"preserve"</span><span class="p">,</span> <span class="s2">"error"</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"overlap must be replace, preserve, or error."</span><span class="p">)</span>
+
         <span class="n">positions</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">positions</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">contrast</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -969,48 +1144,66 @@
                 <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
                 <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">contrast</span> <span class="o">=</span> <span class="n">background</span><span class="o">.</span><span class="n">delta_index</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+            <span class="n">contrast</span> <span class="o">=</span> <span class="n">background</span><span class="o">.</span><span class="n">delta_refractive_index</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
         <span class="n">occupied</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">region</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regions</span><span class="p">):</span>
+
+        <span class="k">for</span> <span class="n">region_index</span><span class="p">,</span> <span class="n">region</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regions</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">warn_on_clipping</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_clipped</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">region</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">):</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">"Region </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">region</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">) crosses the voxel box and is clipped."</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">"Region </span><span class="si">{</span><span class="n">region_index</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">region</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">) crosses the voxel box and is clipped."</span><span class="p">,</span>
                     <span class="ne">UserWarning</span><span class="p">,</span>
                     <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
                 <span class="p">)</span>
+
             <span class="n">mask</span> <span class="o">=</span> <span class="n">region</span><span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">positions</span><span class="o">=</span><span class="n">positions</span><span class="p">)</span>
+
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap</span> <span class="o">==</span> <span class="s2">"error"</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">mask</span> <span class="o">&amp;</span> <span class="n">occupied</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Region </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> overlaps existing structures at voxel centres."</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Region </span><span class="si">{</span><span class="n">region_index</span><span class="si">}</span><span class="s2"> overlaps existing structures at voxel centres."</span><span class="p">)</span>
+
             <span class="n">selected</span> <span class="o">=</span> <span class="n">mask</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">occupied</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap</span> <span class="o">==</span> <span class="s2">"preserve"</span> <span class="k">else</span> <span class="n">mask</span>
-            <span class="n">contrast</span><span class="p">[</span><span class="n">selected</span><span class="p">]</span> <span class="o">=</span> <span class="n">region</span><span class="o">.</span><span class="n">index</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">background_index</span>
+
+            <span class="n">contrast</span><span class="p">[</span><span class="n">selected</span><span class="p">]</span> <span class="o">=</span> <span class="n">region</span><span class="o">.</span><span class="n">refractive_index</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">background_refractive_index</span>
+
             <span class="n">occupied</span> <span class="o">|=</span> <span class="n">mask</span>
+
         <span class="k">return</span> <span class="n">Volume</span><span class="p">(</span>
-            <span class="n">delta_index</span><span class="o">=</span><span class="n">contrast</span><span class="p">,</span>
+            <span class="n">delta_refractive_index</span><span class="o">=</span><span class="n">contrast</span><span class="p">,</span>
             <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
-            <span class="n">background_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">background_index</span><span class="p">,</span>
+            <span class="n">background_refractive_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">background_refractive_index</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_is_clipped</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span> <span class="n">grid</span><span class="p">):</span>
         <span class="n">half_box</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="n">grid</span><span class="o">.</span><span class="n">spacing</span> <span class="o">/</span> <span class="mi">2</span>
-        <span class="n">centre</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">region</span><span class="o">.</span><span class="n">centre</span><span class="p">)</span>
+
+        <span class="n">centre</span> <span class="o">=</span> <span class="n">region</span><span class="o">.</span><span class="n">centre</span>
+
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">region</span><span class="p">,</span> <span class="n">Sphere</span><span class="p">):</span>
-            <span class="n">half_extent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">region</span><span class="o">.</span><span class="n">radius</span><span class="p">)</span>
+            <span class="n">half_extent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">region</span><span class="o">.</span><span class="n">radius</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">region</span><span class="o">.</span><span class="n">rotation</span><span class="p">)</span>
+
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">region</span><span class="p">,</span> <span class="n">Layer</span><span class="p">):</span>
                 <span class="n">normal</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">[:,</span> <span class="n">region</span><span class="o">.</span><span class="n">axis</span><span class="p">]</span>
+
                 <span class="n">reach</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">normal</span><span class="p">)</span> <span class="o">*</span> <span class="n">half_box</span><span class="p">)</span>
+
                 <span class="n">shift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">centre</span><span class="p">,</span> <span class="n">normal</span><span class="p">)</span>
+
                 <span class="k">return</span> <span class="n">region</span><span class="o">.</span><span class="n">lower</span> <span class="o">+</span> <span class="n">shift</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">reach</span> <span class="ow">or</span> <span class="n">region</span><span class="o">.</span><span class="n">upper</span> <span class="o">+</span> <span class="n">shift</span> <span class="o">&gt;</span> <span class="n">reach</span>
+
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">region</span><span class="p">,</span> <span class="n">Box</span><span class="p">):</span>
-                <span class="n">half_extent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span> <span class="o">@</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">region</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">half_extent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span> <span class="o">@</span> <span class="p">(</span><span class="n">region</span><span class="o">.</span><span class="n">size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">region</span><span class="p">,</span> <span class="n">Ellipsoid</span><span class="p">):</span>
-                <span class="n">half_extent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">matrix</span><span class="o">**</span><span class="mi">2</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">region</span><span class="o">.</span><span class="n">radii</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">half_extent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">matrix</span><span class="o">**</span><span class="mi">2</span> <span class="o">@</span> <span class="n">region</span><span class="o">.</span><span class="n">radii</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">normal</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">[:,</span> <span class="n">region</span><span class="o">.</span><span class="n">axis</span><span class="p">]</span>
+
                 <span class="n">half_extent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">normal</span><span class="p">)</span> <span class="o">*</span> <span class="n">region</span><span class="o">.</span><span class="n">height</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">region</span><span class="o">.</span><span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">normal</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+
         <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">centre</span><span class="p">)</span> <span class="o">+</span> <span class="n">half_extent</span> <span class="o">&gt;</span> <span class="n">half_box</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">1e-12</span><span class="p">)))</span></div>
 
 </pre></div>

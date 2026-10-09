@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Examples &#8212; BornSim 0.2.5 documentation</title>
+    <title>Examples &#8212; BornSim 0.2.6 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="_static/documentation_options.js?v=cb850272"></script>
+    <script src="_static/documentation_options.js?v=fc7d8818"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/sg-tags.js?v=d80f6fa4"></script>
@@ -65,7 +65,7 @@
     <link rel="prev" title="BornSim" href="overview.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.5" />
+  <meta name="docsearch:version" content="0.2.6" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -553,7 +553,7 @@ spatial covariance at the same length parameter, showing both covariance
 profiles and their analytical phase functions. These length parameters have
 different definitions; equal values do not describe identical statistics.</p>
 <p><a class="reference internal" href="auto_examples/random_media/random_medium.html"><span class="doc">Visualize seeded three-dimensional random media</span></a> leads with interactive Gaussian
-and exponential volumes whose higher-index regions are more opaque. Central
+and exponential volumes whose higher refractive index regions are more opaque. Central
 slices and voxel histograms follow as diagnostic checks. It distinguishes the
 Gaussian one-point probability distribution from the choice of spatial
 covariance, and explains why a finite correlated sample need not have
@@ -564,9 +564,9 @@ exactly the ensemble mean or variance.</p>
 <p><code class="docutils literal notranslate"><span class="pre">Medium</span></code> is the abstract interface. <code class="docutils literal notranslate"><span class="pre">RandomMedium</span></code> describes statistically
 homogeneous fluctuations; <code class="docutils literal notranslate"><span class="pre">StructuredMedium</span></code> composes geometric materials. <code class="docutils literal notranslate"><span class="pre">Volume</span></code> accepts an explicit
 three-dimensional field and can therefore represent spatially structured
-media. Its background index is uniform, while its fluctuation array may vary
+media. Its background refractive index is uniform, while its fluctuation array may vary
 from voxel to voxel.</p>
-<p><a class="reference internal" href="auto_examples/structured_media/dielectric_sphere.html"><span class="doc">A dielectric sphere in a homogeneous background</span></a> builds two constant-index spheres in a
+<p><a class="reference internal" href="auto_examples/structured_media/dielectric_sphere.html"><span class="doc">A dielectric sphere in a homogeneous background</span></a> builds two constant refractive index spheres in a
 homogeneous background and plots their voxelized geometry, full directional
 3D phase density and a selected physical meridian. The curved
 interface is voxelized and the dielectric contrast remains linearized;
@@ -622,11 +622,17 @@ norms can still be plotted directly.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="n">result</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>  <span class="c1"># Differential scattering</span>
+
 <span class="n">result</span><span class="o">.</span><span class="n">plot_phase_function</span><span class="p">()</span>  <span class="c1"># Density per steradian</span>
+
 <span class="n">result</span><span class="o">.</span><span class="n">plot_phase_function</span><span class="p">(</span><span class="n">view</span><span class="o">=</span><span class="s2">"polar"</span><span class="p">)</span>
+
 <span class="n">phase_figure</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">plot_phase_function</span><span class="p">(</span><span class="n">view</span><span class="o">=</span><span class="s2">"3d"</span><span class="p">)</span>
+
 <span class="n">phase_figure</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
 <span class="n">numerical</span><span class="o">.</span><span class="n">plot_field_norms</span><span class="p">()</span>  <span class="c1"># Per-realization diagnostics</span>
+
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Development and releases &#8212; BornSim 0.2.5 documentation</title>
+    <title>Development and releases &#8212; BornSim 0.2.6 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="_static/documentation_options.js?v=cb850272"></script>
+    <script src="_static/documentation_options.js?v=fc7d8818"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/sg-tags.js?v=d80f6fa4"></script>
@@ -63,7 +63,7 @@
     <link rel="prev" title="Resources" href="resources.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.5" />
+  <meta name="docsearch:version" content="0.2.6" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -492,6 +492,15 @@ commits it, creates an annotated tag and pushes HEAD and that tag.</p>
 The PyPI workflow requires <code class="docutils literal notranslate"><span class="pre">PYPI_API_TOKEN</span></code>. Conda verification is available
 through a manual workflow; channel upload is not configured. See
 <code class="docutils literal notranslate"><span class="pre">CONTRIBUTING.md</span></code> for further instructions.</p>
+<section id="code-readability">
+<h2>Code readability<a class="headerlink" href="#code-readability" title="Link to this heading">#</a></h2>
+<p>Spell out <code class="docutils literal notranslate"><span class="pre">refractive_index</span></code> in names for the optical quantity, including
+<code class="docutils literal notranslate"><span class="pre">background_refractive_index</span></code>, <code class="docutils literal notranslate"><span class="pre">refractive_index_std</span></code> and
+<code class="docutils literal notranslate"><span class="pre">delta_refractive_index</span></code>. Reserve <code class="docutils literal notranslate"><span class="pre">index</span></code> for array positions.
+Separate statements and calculation steps with a blank line, including
+assignments and calls inside loops. Keep imports and related dataclass fields
+grouped, and keep comments attached to the statements they explain.</p>
+</section>
 <section id="internal-rendering-and-archives">
 <h2>Internal rendering and archives<a class="headerlink" href="#internal-rendering-and-archives" title="Link to this heading">#</a></h2>
 <p>Keep Volume and Result responsible for physical data, units and validation.
@@ -565,6 +574,7 @@ figures; visually decreasing terms alone cannot validate a simulation.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#code-readability">Code readability</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#internal-rendering-and-archives">Internal rendering and archives</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#documentation-versions">Documentation versions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#theory-figures-and-reproducibility">Theory figures and reproducibility</a></li>

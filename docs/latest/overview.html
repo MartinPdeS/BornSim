@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>BornSim &#8212; BornSim 0.2.5 documentation</title>
+    <title>BornSim &#8212; BornSim 0.2.6 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="_static/documentation_options.js?v=cb850272"></script>
+    <script src="_static/documentation_options.js?v=fc7d8818"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/sg-tags.js?v=d80f6fa4"></script>
@@ -64,7 +64,7 @@
     <link rel="prev" title="Theory and numerical methods" href="theory.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.5" />
+  <meta name="docsearch:version" content="0.2.6" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -523,7 +523,7 @@
 <p>BornSim constructor, function, and method arguments are keyword-only, except
 <code class="docutils literal notranslate"><span class="pre">add_structures(*structures)</span></code>, which takes positional shape objects.
 Calls with multiple arguments use one argument per line and a trailing comma.</p>
-<p>The Python API accepts TypedUnit quantities; bare numbers use SI units. The wavelength is the <strong>vacuum</strong> wavelength. Outputs are angular differential scattering, μs, anisotropy g, and μs′, with scattering coefficients in inverse metres.</p>
+<p>The Python API accepts TypedUnit quantities; dimensional inputs require explicit units. The wavelength is the <strong>vacuum</strong> wavelength. Outputs are angular differential scattering, μs, anisotropy g, and μs′, with scattering coefficients in inverse metres.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnsembleSampling</span><span class="p">,</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">RandomMedium</span><span class="p">,</span> <span class="n">Source</span><span class="p">,</span> <span class="n">Solver</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">bornsim.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">ureg</span>
@@ -532,16 +532,19 @@ Calls with multiple arguments use one argument per line and a trailing comma.</p
     <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
     <span class="n">spacing</span><span class="o">=</span><span class="mi">50</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span>
 <span class="p">)</span>
+
 <span class="n">medium</span> <span class="o">=</span> <span class="n">RandomMedium</span><span class="p">(</span>
-    <span class="n">background_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span>
-    <span class="n">index_std</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">background_refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span>
+    <span class="n">refractive_index_std</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
     <span class="n">correlation_length</span><span class="o">=</span><span class="mi">100</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span>
     <span class="n">correlation</span><span class="o">=</span><span class="s2">"gaussian"</span><span class="p">,</span>
 <span class="p">)</span>
+
 <span class="n">solver</span> <span class="o">=</span> <span class="n">Solver</span><span class="p">(</span>
     <span class="n">source</span><span class="o">=</span><span class="n">Source</span><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mi">633</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">),</span>
     <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
 <span class="p">)</span>
+
 <span class="n">result</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">ensemble</span><span class="p">(</span>
     <span class="n">medium</span><span class="o">=</span><span class="n">medium</span><span class="p">,</span>
     <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
@@ -550,8 +553,15 @@ Calls with multiple arguments use one argument per line and a trailing comma.</p
         <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
     <span class="p">),</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">mu_s</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"1 / millimeter"</span><span class="p">),</span> <span class="n">result</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">mu_s_prime</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">"mu_s = </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">mu_s</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">'1 / millimeter'</span><span class="p">)</span><span class="si">}</span><span class="s2">, "</span>
+    <span class="sa">f</span><span class="s2">"g = </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">g</span><span class="si">}</span><span class="s2">, "</span>
+    <span class="sa">f</span><span class="s2">"mu_s_prime = </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">mu_s_prime</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">'1 / millimeter'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+<span class="p">)</span>
+
 <span class="n">result</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -607,24 +617,32 @@ gallery for independent refinement and sampling checks.</p>
 <p><code class="docutils literal notranslate"><span class="pre">bornsim.units</span></code> exposes TypedUnit’s shared <code class="docutils literal notranslate"><span class="pre">ureg</span></code>, <code class="docutils literal notranslate"><span class="pre">Quantity</span></code>, <code class="docutils literal notranslate"><span class="pre">Length</span></code>,
 <code class="docutils literal notranslate"><span class="pre">Angle</span></code>, <code class="docutils literal notranslate"><span class="pre">Dimensionless</span></code>, and <code class="docutils literal notranslate"><span class="pre">RefractiveIndex</span></code>, using the same registry
 as PyMieSim. Physical inputs accept compatible units and reject incompatible
-dimensions. Bare lengths mean metres and bare angles mean radians.
-<code class="docutils literal notranslate"><span class="pre">RandomMedium</span></code>, <code class="docutils literal notranslate"><span class="pre">StructuredMedium</span></code> and <code class="docutils literal notranslate"><span class="pre">Volume</span></code> normalize their inputs to numeric SI values for
-the existing numerical kernels.</p>
+dimensions. Lengths and angles require explicit units. Refractive indices,
+their standard deviations and fluctuation arrays require plain numbers without
+units, including when passed to Material or shape constructors.
+Physical configuration has no arbitrary defaults. Supply wavelengths,
+refractive indices, fluctuation statistics, covariance choice, grid shape and
+voxel spacing explicitly. <code class="docutils literal notranslate"><span class="pre">StructuredMedium()</span></code> starts as an empty builder;
+call <code class="docutils literal notranslate"><span class="pre">add_background(...)</span></code> before generating a volume. Numerical controls
+retain defaults, and zero centres and identity shape rotations define the
+neutral coordinate conventions.</p>
+<p>Physical settings and coordinates retain quantities in the supplied units.
+Validation checks units and scalar shape without converting them. FFT and
+Fourier kernels extract explicit SI magnitudes where numeric arrays are needed.</p>
 <p><code class="docutils literal notranslate"><span class="pre">Source.wavelength</span></code> and every numerical array in <code class="docutils literal notranslate"><span class="pre">Result</span></code> are quantities.
-Angles are stored in radians, amplitudes in metres, differential scattering
-and its standard error in inverse metres per steradian, and integrated
-coefficients in inverse metres. Anisotropy, direction vectors, and relative
+Angles, amplitudes, scattering coefficients and uncertainties retain physical
+units. Saved archives use radians, metres and inverse metres explicitly. Anisotropy, direction vectors, and relative
 field norms are dimensionless. Use <code class="docutils literal notranslate"><span class="pre">.to(&quot;unit&quot;)</span></code> to convert and
 <code class="docutils literal notranslate"><span class="pre">.magnitude</span></code> to retrieve an array. Plots convert to degrees and SI
 scattering units explicitly, including uncertainty bars.</p>
-<p>The function API also accepts quantities, while returning numeric SI arrays
-and dictionaries as before. This includes <code class="docutils literal notranslate"><span class="pre">random_volume</span></code> voxel spacing
-and <code class="docutils literal notranslate"><span class="pre">ensemble_scattering</span></code> wavelengths, voxel spacing, and angles.</p>
+<p>Analytical functions return unit-bearing scattering coefficients.
+<code class="docutils literal notranslate"><span class="pre">random_volume</span></code> retains unit-bearing voxel spacing and coordinates.
+The low-level Born and ensemble kernels document their numeric SI outputs.</p>
 </section>
 <section id="physical-model">
 <h2>Physical model<a class="headerlink" href="#physical-model" title="Link to this heading">#</a></h2>
-<p>Real-valued index fluctuations are linearized as δε ≈ 2 n₀ δn. For an unpolarized incident wave, the differential scattering coefficient is k₀⁴ Φε(q) (1 + cos²θ)/(32π²), where q = 2 n₀ k₀ sin(θ/2), k₀ = 2π/λvac and Φε is the three-dimensional Fourier transform of the dielectric covariance without a Fourier normalization prefactor.</p>
-<p>The index covariance is σn² exp(−r²/(2ℓ²)) for the Gaussian model and σn² exp(−r/ℓ) for the exponential model. These definitions matter when comparing correlation lengths between publications. Gauss–Legendre quadrature integrates over solid angle. Increase <code class="docutils literal notranslate"><span class="pre">quadrature_order</span></code> to check convergence for strongly forward-peaked scattering.</p>
+<p>Real-valued refractive index fluctuations are linearized as δε ≈ 2 n₀ δn. For an unpolarized incident wave, the differential scattering coefficient is k₀⁴ Φε(q) (1 + cos²θ)/(32π²), where q = 2 n₀ k₀ sin(θ/2), k₀ = 2π/λvac and Φε is the three-dimensional Fourier transform of the dielectric covariance without a Fourier normalization prefactor.</p>
+<p>The refractive index covariance is σn² exp(−r²/(2ℓ²)) for the Gaussian model and σn² exp(−r/ℓ) for the exponential model. These definitions matter when comparing correlation lengths between publications. Gauss–Legendre quadrature integrates over solid angle. Increase <code class="docutils literal notranslate"><span class="pre">quadrature_order</span></code> to check convergence for strongly forward-peaked scattering.</p>
 <p>The analytical solver is a first-order, single-scattering model. The numerical solver includes repeated interactions through the chosen Born order. No slab-transmission observable or particle-packing generator is provided;
 fixed particle configurations can be composed and propagated numerically. A dense medium can still have weak fluctuations; density alone does not establish Born validity. Contrast, correlation length, wavelength, and propagation distance matter. Decreasing Born terms do not certify convergence.</p>
 <p>Scientific references:</p>
@@ -649,12 +667,14 @@ reproduces exponential covariance. <code class="docutils literal notranslate"><s
 instantiate <code class="docutils literal notranslate"><span class="pre">RandomMedium</span></code> or <code class="docutils literal notranslate"><span class="pre">StructuredMedium</span></code> and call <code class="docutils literal notranslate"><span class="pre">to_volume()</span></code>.
 The existing analytical statistics class is named <code class="docutils literal notranslate"><span class="pre">AnalyticalMedium</span></code>.
 Old <code class="docutils literal notranslate"><span class="pre">Medium(...)</span></code> calls must be replaced; choose <code class="docutils literal notranslate"><span class="pre">correlation=&quot;gaussian&quot;</span></code>
-to preserve the former default. <code class="docutils literal notranslate"><span class="pre">RandomMedium</span></code> defaults to Matérn covariance.</p>
+for the analytical Gaussian model. Choose the covariance family explicitly. Matérn models also require smoothness.</p>
 <p><code class="docutils literal notranslate"><span class="pre">StructuredMedium</span></code> voxelizes ordered <code class="docutils literal notranslate"><span class="pre">Layer</span></code>, <code class="docutils literal notranslate"><span class="pre">Sphere</span></code>, <code class="docutils literal notranslate"><span class="pre">Ellipsoid</span></code>,
 <code class="docutils literal notranslate"><span class="pre">Box</span></code>, and <code class="docutils literal notranslate"><span class="pre">Cylinder</span></code> regions. Regions specify absolute indices; later
 regions replace earlier ones in overlaps. Layers are finite slabs clipped
 to the box, with a uniform background outside the sample.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">RandomMedium</span><span class="p">,</span> <span class="n">Layer</span><span class="p">,</span> <span class="n">Sphere</span><span class="p">,</span> <span class="n">StructuredMedium</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">ureg</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">RandomMedium</span><span class="p">,</span> <span class="n">Layer</span><span class="p">,</span> <span class="n">Sphere</span><span class="p">,</span> <span class="n">StructuredMedium</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">bornsim.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">random_volume</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Solver</span><span class="p">,</span> <span class="n">Source</span>
 
@@ -662,25 +682,31 @@ to the box, with a uniform background outside the sample.</p>
     <span class="n">medium</span><span class="o">=</span><span class="n">RandomMedium</span><span class="p">(</span>
         <span class="n">correlation</span><span class="o">=</span><span class="s2">"matern"</span><span class="p">,</span>
         <span class="n">smoothness</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+        <span class="n">background_refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span>
+        <span class="n">refractive_index_std</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+        <span class="n">correlation_length</span><span class="o">=</span><span class="mf">100e-9</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
     <span class="p">),</span>
     <span class="n">grid</span><span class="o">=</span><span class="n">Grid</span><span class="p">(</span>
         <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span>
-        <span class="n">spacing</span><span class="o">=</span><span class="mf">30e-9</span><span class="p">,</span>
+        <span class="n">spacing</span><span class="o">=</span><span class="mf">3e-08</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
     <span class="p">),</span>
     <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
 <span class="p">)</span>
+
 <span class="n">structure</span> <span class="o">=</span> <span class="n">StructuredMedium</span><span class="p">()</span>
-<span class="n">structure</span><span class="o">.</span><span class="n">add_background</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">)</span>
+
+<span class="n">structure</span><span class="o">.</span><span class="n">add_background</span><span class="p">(</span><span class="n">refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">)</span>
+
 <span class="n">layer</span> <span class="o">=</span> <span class="n">Layer</span><span class="p">(</span>
-    <span class="n">lower</span><span class="o">=-</span><span class="mf">180e-9</span><span class="p">,</span>
-    <span class="n">upper</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-    <span class="n">index</span><span class="o">=</span><span class="mf">1.34</span><span class="p">,</span>
+    <span class="n">lower</span><span class="o">=-</span><span class="mf">1.8e-07</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
+    <span class="n">upper</span><span class="o">=</span><span class="mi">0</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
+    <span class="n">refractive_index</span><span class="o">=</span><span class="mf">1.34</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">sphere</span> <span class="o">=</span> <span class="n">Sphere</span><span class="p">(</span>
-    <span class="n">radius</span><span class="o">=</span><span class="mf">70e-9</span><span class="p">,</span>
-    <span class="n">index</span><span class="o">=</span><span class="mf">1.345</span><span class="p">,</span>
-    <span class="n">centre</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">40e-9</span><span class="p">),</span>
+    <span class="n">radius</span><span class="o">=</span><span class="mf">7e-08</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
+    <span class="n">refractive_index</span><span class="o">=</span><span class="mf">1.345</span><span class="p">,</span>
+    <span class="n">centre</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">4e-08</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">structure</span><span class="o">.</span><span class="n">add_structures</span><span class="p">(</span>
@@ -691,11 +717,14 @@ to the box, with a uniform background outside the sample.</p>
 <span class="n">structured_sample</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">to_volume</span><span class="p">(</span>
     <span class="n">grid</span><span class="o">=</span><span class="n">Grid</span><span class="p">(</span>
         <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span>
-        <span class="n">spacing</span><span class="o">=</span><span class="mf">30e-9</span><span class="p">,</span>
+        <span class="n">spacing</span><span class="o">=</span><span class="mf">3e-08</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
     <span class="p">),</span>
 <span class="p">)</span>
+
 <span class="n">solver</span> <span class="o">=</span> <span class="n">Solver</span><span class="p">(</span>
-    <span class="n">source</span><span class="o">=</span><span class="n">Source</span><span class="p">(),</span>
+    <span class="n">source</span><span class="o">=</span><span class="n">Source</span><span class="p">(</span>
+        <span class="n">wavelength</span><span class="o">=</span><span class="mf">633e-9</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
+    <span class="p">),</span>
     <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -717,21 +746,32 @@ scattering normalization.</p>
 <code class="docutils literal notranslate"><span class="pre">result.plot_phase_function(view=&quot;3d&quot;)</span></code> defaults to a Plotly surface.
 Select <code class="docutils literal notranslate"><span class="pre">backend=&quot;matplotlib&quot;</span></code> explicitly for static 3D figures, orthogonal
 slices, or sampled voxel geometry such as spheres.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">RandomMedium</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">ureg</span>
 
-<span class="n">medium</span> <span class="o">=</span> <span class="n">RandomMedium</span><span class="p">()</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">RandomMedium</span>
+
+<span class="n">medium</span> <span class="o">=</span> <span class="n">RandomMedium</span><span class="p">(</span>
+    <span class="n">background_refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span>
+    <span class="n">refractive_index_std</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">correlation_length</span><span class="o">=</span><span class="mf">100e-9</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
+    <span class="n">correlation</span><span class="o">=</span><span class="s2">"matern"</span><span class="p">,</span>
+    <span class="n">smoothness</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+<span class="p">)</span>
+
 <span class="n">volume</span> <span class="o">=</span> <span class="n">medium</span><span class="o">.</span><span class="n">to_volume</span><span class="p">(</span>
     <span class="n">grid</span><span class="o">=</span><span class="n">Grid</span><span class="p">(</span>
         <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>
-        <span class="n">spacing</span><span class="o">=</span><span class="mf">25e-9</span><span class="p">,</span>
+        <span class="n">spacing</span><span class="o">=</span><span class="mf">2.5e-08</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
     <span class="p">),</span>
     <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
 <span class="p">)</span>
+
 <span class="n">figure</span> <span class="o">=</span> <span class="n">volume</span><span class="o">.</span><span class="n">plot_3d</span><span class="p">(</span>
-    <span class="n">field</span><span class="o">=</span><span class="s2">"index"</span><span class="p">,</span>
+    <span class="n">field</span><span class="o">=</span><span class="s2">"refractive_index"</span><span class="p">,</span>
     <span class="n">opacity_scale</span><span class="o">=</span><span class="s2">"increasing"</span><span class="p">,</span>
     <span class="n">length_unit</span><span class="o">=</span><span class="s2">"nanometer"</span><span class="p">,</span>
 <span class="p">)</span>
+
 <span class="n">figure</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -745,44 +785,56 @@ See the medium visualization documentation for units and rendering conventions.<
 <section id="numerical-born-series">
 <h2>Numerical Born series<a class="headerlink" href="#numerical-born-series" title="Link to this heading">#</a></h2>
 <p>Generate a seeded random volume and evaluate cumulative Born orders, or average independent realizations with one-standard-error estimates. Isolated term intensities exclude interference and must not be summed to obtain cumulative intensity.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnsembleSampling</span><span class="p">,</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">RandomMedium</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">ureg</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Directions</span><span class="p">,</span> <span class="n">EnsembleSampling</span><span class="p">,</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">RandomMedium</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">bornsim.series</span><span class="w"> </span><span class="kn">import</span> <span class="n">BornSeries</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">bornsim.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">random_volume</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">bornsim.ensemble</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensemble_scattering</span>
 
 <span class="n">medium</span> <span class="o">=</span> <span class="n">RandomMedium</span><span class="p">(</span>
-    <span class="n">index_std</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
-    <span class="n">correlation_length</span><span class="o">=</span><span class="mf">100e-9</span><span class="p">,</span>
+    <span class="n">refractive_index_std</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">correlation_length</span><span class="o">=</span><span class="mf">1e-07</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
     <span class="n">correlation</span><span class="o">=</span><span class="s2">"gaussian"</span><span class="p">,</span>
+    <span class="n">background_refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span>
 <span class="p">)</span>
+
 <span class="n">volume</span> <span class="o">=</span> <span class="n">random_volume</span><span class="p">(</span>
     <span class="n">medium</span><span class="o">=</span><span class="n">medium</span><span class="p">,</span>
     <span class="n">grid</span><span class="o">=</span><span class="n">Grid</span><span class="p">(</span>
         <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span>
-        <span class="n">spacing</span><span class="o">=</span><span class="mf">50e-9</span><span class="p">,</span>
+        <span class="n">spacing</span><span class="o">=</span><span class="mf">5e-08</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
     <span class="p">),</span>
     <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
 <span class="p">)</span>
+
+<span class="n">directions</span> <span class="o">=</span> <span class="n">Directions</span><span class="p">(</span><span class="n">vectors</span><span class="o">=</span><span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span>
+
+<span class="c1"># directions.vectors is the immutable Cartesian array.</span>
+
 <span class="n">engine</span> <span class="o">=</span> <span class="n">BornSeries</span><span class="p">(</span>
     <span class="n">grid</span><span class="o">=</span><span class="n">volume</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
-    <span class="n">background_index</span><span class="o">=</span><span class="n">volume</span><span class="o">.</span><span class="n">background_index</span><span class="p">,</span>
-    <span class="n">wavelength</span><span class="o">=</span><span class="mf">633e-9</span><span class="p">,</span>
-    <span class="n">directions</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]),</span>
+    <span class="n">background_refractive_index</span><span class="o">=</span><span class="n">volume</span><span class="o">.</span><span class="n">background_refractive_index</span><span class="p">,</span>
+    <span class="n">wavelength</span><span class="o">=</span><span class="mf">6.33e-07</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
+    <span class="n">directions</span><span class="o">=</span><span class="n">directions</span><span class="p">,</span>
     <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">result</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">volume</span><span class="o">=</span><span class="n">volume</span><span class="p">)</span>
+
 <span class="c1"># result.amplitudes[j] is the (j+1)-th term, in metres.</span>
 <span class="c1"># result.differential[j] includes amplitude interference through order j+1.</span>
 <span class="n">ensemble</span> <span class="o">=</span> <span class="n">ensemble_scattering</span><span class="p">(</span>
     <span class="n">medium</span><span class="o">=</span><span class="n">medium</span><span class="p">,</span>
-    <span class="n">wavelength</span><span class="o">=</span><span class="mf">633e-9</span><span class="p">,</span>
+    <span class="n">wavelength</span><span class="o">=</span><span class="mf">6.33e-07</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
     <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
     <span class="n">ensemble_sampling</span><span class="o">=</span><span class="n">EnsembleSampling</span><span class="p">(</span>
         <span class="n">realizations</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
         <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
     <span class="p">),</span>
+    <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span>
+    <span class="n">spacing</span><span class="o">=</span><span class="mf">50e-9</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>

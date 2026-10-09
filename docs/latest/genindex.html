@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; BornSim 0.2.5 documentation</title>
+    <title>Index &#8212; BornSim 0.2.6 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="_static/documentation_options.js?v=cb850272"></script>
+    <script src="_static/documentation_options.js?v=fc7d8818"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/sg-tags.js?v=d80f6fa4"></script>
@@ -61,7 +61,7 @@
     <link rel="search" title="Search" href="search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.5" />
+  <meta name="docsearch:version" content="0.2.6" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -429,6 +429,7 @@
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
  | <a href="#E"><strong>E</strong></a>
+ | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
@@ -496,7 +497,7 @@
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.volume.Volume.background_index">background_index (bornsim.volume.Volume attribute)</a>
+      <li><a href="api.html#bornsim.volume.Volume.background_refractive_index">background_refractive_index (bornsim.volume.Volume attribute)</a>
 </li>
       <li><a href="api.html#bornsim.series.BornSeries">BornSeries (class in bornsim.series)</a>
 </li>
@@ -505,6 +506,13 @@
 
       <ul>
         <li><a href="api.html#module-bornsim.angular_data">module</a>
+</li>
+      </ul></li>
+      <li>
+    bornsim.directions
+
+      <ul>
+        <li><a href="api.html#module-bornsim.directions">module</a>
 </li>
       </ul></li>
       <li>
@@ -645,7 +653,7 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.volume.Volume.delta_index">delta_index (bornsim.volume.Volume attribute)</a>
+      <li><a href="api.html#bornsim.volume.Volume.delta_refractive_index">delta_refractive_index (bornsim.volume.Volume attribute)</a>
 </li>
       <li><a href="api.html#bornsim.results.Result.differential">differential (bornsim.results.Result property)</a>
 </li>
@@ -673,6 +681,8 @@
         <li><a href="api.html#bornsim.sampling.AngularSampling.directions">(bornsim.sampling.AngularSampling property)</a>
 </li>
       </ul></li>
+      <li><a href="api.html#bornsim.directions.Directions">Directions (class in bornsim.directions)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -688,6 +698,14 @@
       <li><a href="api.html#bornsim.ensemble.ensemble_scattering">ensemble_scattering() (in module bornsim.ensemble)</a>
 </li>
       <li><a href="api.html#bornsim.ensemble_sampling.EnsembleSampling">EnsembleSampling (class in bornsim.ensemble_sampling)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#bornsim.directions.Directions.from_angles">from_angles() (bornsim.directions.Directions class method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -777,13 +795,13 @@
         <li><a href="api.html#bornsim.sampling.AngularSampling.metadata">(bornsim.sampling.AngularSampling property)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     module
 
       <ul>
         <li><a href="api.html#module-bornsim.angular_data">bornsim.angular_data</a>
+</li>
+        <li><a href="api.html#module-bornsim.directions">bornsim.directions</a>
 </li>
         <li><a href="api.html#module-bornsim.ensemble">bornsim.ensemble</a>
 </li>
@@ -818,6 +836,8 @@
         <li><a href="api.html#module-bornsim.volume">bornsim.volume</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#bornsim.results.Result.mu_s">mu_s (bornsim.results.Result property)</a>
 </li>
   </ul></td>
@@ -828,9 +848,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#bornsim.series.BornSeries.operator">operator (bornsim.series.BornSeries attribute)</a>
 </li>
+      <li><a href="api.html#bornsim.model.optical_properties">optical_properties() (in module bornsim.model)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.model.optical_properties">optical_properties() (in module bornsim.model)</a>
+      <li><a href="api.html#bornsim.model.OpticalProperties">OpticalProperties (class in bornsim.model)</a>
 </li>
       <li><a href="api.html#bornsim.solver.Solver.order">order (bornsim.solver.Solver attribute)</a>
 </li>

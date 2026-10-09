@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Theory and numerical methods &#8212; BornSim 0.2.5 documentation</title>
+    <title>Theory and numerical methods &#8212; BornSim 0.2.6 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="_static/documentation_options.js?v=cb850272"></script>
+    <script src="_static/documentation_options.js?v=fc7d8818"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/sg-tags.js?v=d80f6fa4"></script>
@@ -65,7 +65,7 @@
     <link rel="prev" title="Guide" href="guide.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.5" />
+  <meta name="docsearch:version" content="0.2.6" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -516,7 +516,7 @@ A Volume stores the real scalar field</p>
 \[\delta n(\mathbf r) = n(\mathbf r)-n_0.\]</div>
 <p>Material objects specify an <strong>absolute refractive index</strong>, rather than a
 contrast. StructuredMedium voxelizes the materials; RandomMedium samples a
-statistical index field. Both produce the same Volume representation.</p>
+statistical refractive index field. Both produce the same Volume representation.</p>
 <div class="pst-scrollable-table-container"><table class="table" id="id1">
 <caption><span class="caption-text">Symbols and their API counterparts</span><a class="headerlink" href="#id1" title="Link to this table">#</a></caption>
 <colgroup>
@@ -540,8 +540,8 @@ statistical index field. Both produce the same Volume representation.</p>
 <td><p><code class="docutils literal notranslate"><span class="pre">Grid.spacing</span></code>, <code class="docutils literal notranslate"><span class="pre">Grid.shape</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p><span class="math notranslate nohighlight">\(n_0\)</span>, <span class="math notranslate nohighlight">\(\delta n\)</span></p></td>
-<td><p>Background index and fluctuation, dimensionless</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">Volume.background_index</span></code>, <code class="docutils literal notranslate"><span class="pre">Volume.delta_index</span></code></p></td>
+<td><p>Background refractive index and fluctuation, dimensionless</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Volume.background_refractive_index</span></code>, <code class="docutils literal notranslate"><span class="pre">Volume.delta_refractive_index</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(M\)</span></p></td>
 <td><p>Highest cumulative Born order</p></td>
@@ -562,7 +562,7 @@ statistical index field. Both produce the same Volume representation.</p>
 </tbody>
 </table>
 </div>
-<p>Bare input lengths mean metres and bare angles mean radians. Compatible
+<p>Input lengths and angles require explicit units. Compatible
 quantities are converted to SI. The time convention is
 <span class="math notranslate nohighlight">\(\exp(-i\omega t)\)</span>, with</p>
 <div class="math notranslate nohighlight">
@@ -585,7 +585,7 @@ establish weak-contrast accuracy.</p>
 V=N_xN_yN_zh^3.\]</div>
 <p>The box extends half a voxel beyond its outer centres. It specifies the sampled
 contrast support; it is not an additional material interface. Outside it, the
-contrast is zero and the background continues indefinitely. A uniform-index
+contrast is zero and the background continues indefinitely. A uniform refractive index
 inclusion that fills the box nevertheless has an interface where its contrast
 ends.</p>
 <p>For a shape centre <span class="math notranslate nohighlight">\(\mathbf c\)</span> and proper rotation matrix <span class="math notranslate nohighlight">\(R\)</span>,
@@ -683,7 +683,7 @@ The resulting first-order scattered field is</p>
 \mathbf E^{[1]}=\mathbf E_{\rm inc}+\mathbf E_{\rm sc}^{(1)}.\]</div>
 <p>This retains one scattering interaction. Contributions from different positions
 still interfere as complex amplitudes. Its accuracy requires the scattered
-field to perturb the internal illumination only weakly; small index contrast
+field to perturb the internal illumination only weakly; small refractive index contrast
 alone is insufficient for a thick sample with appreciable accumulated phase.
 BornSim uses the linearized contrast in <a class="reference internal" href="#equation-constitutive-model">(1)</a> at every order.</p>
 </section>
@@ -774,7 +774,7 @@ order; higher orders also include interactions between particles.</p>
 </a>
 <figcaption>
 <p><span class="caption-text">First-order numerical simulations at 633 nm vacuum wavelength, with
-20 nm voxels and index 1.34 in a 1.33 background. Integer-voxel translation
+20 nm voxels and refractive index 1.34 in a 1.33 background. Integer-voxel translation
 leaves the single-sphere curve unchanged, while two spheres produce
 different meridians. The simulation asserts translation invariance.
 <a class="reference internal" href="auto_examples/structured_media/theory_directional_interference.html"><span class="doc">Simulation code</span></a>.</span><a class="headerlink" href="#id4" title="Link to this image">#</a></p>
@@ -864,10 +864,10 @@ mode is retained. The expected discrete normalized covariance is
 <span class="math notranslate nohighlight">\(\operatorname{IFFT}(w/\overline w)\)</span>. Spectral truncation and finite box
 size change its relationship to the continuum covariance.</p>
 <figure class="align-default" id="id5">
-<a class="reference internal image-reference" href="_images/sphx_glr_theory_random_fields_001.png"><img alt="Seeded index slices from Gaussian, exponential and Matérn covariance fields with a shared color scale." src="_images/sphx_glr_theory_random_fields_001.png" style="width: 95%;" />
+<a class="reference internal image-reference" href="_images/sphx_glr_theory_random_fields_001.png"><img alt="Seeded refractive index slices from Gaussian, exponential and Matérn covariance fields with a shared color scale." src="_images/sphx_glr_theory_random_fields_001.png" style="width: 95%;" />
 </a>
 <figcaption>
-<p><span class="caption-text">Seeded numerical index slices at equal standard deviation and length
+<p><span class="caption-text">Seeded numerical refractive index slices at equal standard deviation and length
 parameter. Covariance changes spatial texture, not the Gaussian probability
 law. <a class="reference internal" href="auto_examples/random_media/theory_random_fields.html"><span class="doc">Simulation code</span></a>.</span><a class="headerlink" href="#id5" title="Link to this image">#</a></p>
 </figcaption>
@@ -983,7 +983,7 @@ for runnable refinement and uncertainty studies.</p>
 </section>
 <section id="further-reading">
 <h2><a class="toc-backref" href="#id20" role="doc-backlink">Further reading</a><a class="headerlink" href="#further-reading" title="Link to this heading">#</a></h2>
-<p>For the connection between index covariance spectra and vector first-order
+<p>For the connection between refractive index covariance spectra and vector first-order
 random-medium scattering, see Rogers, Çapoğlu and Backman (2009),
 <a class="reference external" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3839346/">Nonscalar elastic light scattering from continuous media in the Born approximation</a>. Compare length parameters,
 polarization and Fourier normalizations before transferring formulas between

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bornsim.series &#8212; BornSim 0.2.5 documentation</title>
+    <title>bornsim.series &#8212; BornSim 0.2.6 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=cb850272"></script>
+    <script src="../../_static/documentation_options.js?v=fc7d8818"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -61,7 +61,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.5" />
+  <meta name="docsearch:version" content="0.2.6" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -460,8 +460,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">._validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">_integer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.green</span><span class="w"> </span><span class="kn">import</span> <span class="n">GreenOperator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.grid</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.directions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Directions</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">BornResult</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">_si</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">validate_units</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.volume</span><span class="w"> </span><span class="kn">import</span> <span class="n">Volume</span>
 
 
@@ -478,15 +479,14 @@
 <span class="sd">        Cannot be combined with legacy shape or spacing keywords.</span>
 <span class="sd">    shape : tuple of int, optional</span>
 <span class="sd">        Three grid dimensions, each from 2 to 32.</span>
-<span class="sd">    spacing : float or Quantity, optional</span>
-<span class="sd">        Positive cubic voxel width; bare lengths are metres.</span>
-<span class="sd">    background_index : float or Quantity</span>
-<span class="sd">        Positive uniform background index, dimensionless.</span>
-<span class="sd">    wavelength : float or Quantity</span>
-<span class="sd">        Positive vacuum wavelength; bare lengths are metres.</span>
-<span class="sd">    directions : array_like or Quantity</span>
-<span class="sd">        Dimensionless unit observation vectors, shape (observation, 3), with</span>
-<span class="sd">        1 to 16384 observations. Copied and made read-only.</span>
+<span class="sd">    spacing : Quantity, optional</span>
+<span class="sd">        Positive cubic voxel width; explicit length units are required.</span>
+<span class="sd">    background_refractive_index : float</span>
+<span class="sd">        Positive uniform background refractive index, dimensionless.</span>
+<span class="sd">    wavelength : Quantity</span>
+<span class="sd">        Positive vacuum wavelength; explicit length units are required.</span>
+<span class="sd">    directions : Directions</span>
+<span class="sd">        Validated, immutable Cartesian unit observation vectors.</span>
 <span class="sd">    order : int, optional</span>
 <span class="sd">        Highest cumulative Born order, from 1 to 12; default 3.</span>
 
@@ -499,7 +499,7 @@
 <span class="sd">    -----</span>
 <span class="sd">    The cached incident plane wave travels along +z with x and y polarizations.</span>
 <span class="sd">    For each call, ``E[0] = E_inc`` and ``E[m] = K(chi*E[m-1])``, where</span>
-<span class="sd">    ``chi = 2*n0*delta_index`` and K integrates the background dyadic Green tensor</span>
+<span class="sd">    ``chi = 2*n0*delta_refractive_index`` and K integrates the background dyadic Green tensor</span>
 <span class="sd">    multiplied by ``k0**2``. Order-m far-field amplitude is computed from</span>
 <span class="sd">    ``chi*E[m-1]``. Cumulative intensity is ``|sum_m f[m]|**2``, averaged over the two</span>
 <span class="sd">    polarizations and divided by the entire voxel-box volume.</span>
@@ -513,77 +513,83 @@
 <span class="sd">    """</span>
 
     <span class="n">shape</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">spacing</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">spacing</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">grid</span><span class="p">:</span> <span class="n">Grid</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">background_index</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="nb">float</span>
-    <span class="n">wavelength</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="nb">float</span>
-    <span class="n">directions</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">background_refractive_index</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">wavelength</span><span class="p">:</span> <span class="n">Quantity</span>
+    <span class="n">directions</span><span class="p">:</span> <span class="n">Directions</span>
     <span class="n">order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
     <span class="n">operator</span><span class="p">:</span> <span class="n">GreenOperator</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">_positions</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">_positions</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">_incident_field</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">grid</span> <span class="o">=</span> <span class="n">Grid</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span>
             <span class="n">grid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
             <span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
             <span class="n">spacing</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">spacing</span><span class="p">,</span>
         <span class="p">)</span>
+
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"grid"</span><span class="p">,</span> <span class="n">grid</span><span class="p">)</span>
+
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"shape"</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"spacing"</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">spacing</span><span class="p">)</span>
+
         <span class="n">volume</span> <span class="o">=</span> <span class="n">Volume</span><span class="p">(</span>
-            <span class="n">delta_index</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span>
+            <span class="n">delta_refractive_index</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span>
             <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
-            <span class="n">background_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">background_index</span><span class="p">,</span>
+            <span class="n">background_refractive_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">background_refractive_index</span><span class="p">,</span>
         <span class="p">)</span>
+
         <span class="n">shape</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">shape</span>
-        <span class="n">wavelength</span> <span class="o">=</span> <span class="n">_si</span><span class="p">(</span>
-            <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span>
+
+        <span class="n">wavelength</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wavelength</span>
+
+        <span class="n">validate_units</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span>
             <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
             <span class="n">name</span><span class="o">=</span><span class="s2">"wavelength"</span><span class="p">,</span>
             <span class="n">scalar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">wavelength</span><span class="p">)</span> <span class="ow">or</span> <span class="n">wavelength</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"wavelength must be finite and positive."</span><span class="p">)</span>
+
         <span class="n">order</span> <span class="o">=</span> <span class="n">_integer</span><span class="p">(</span>
             <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span>
             <span class="n">name</span><span class="o">=</span><span class="s2">"order"</span><span class="p">,</span>
             <span class="n">low</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="n">high</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">directions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-            <span class="n">_si</span><span class="p">(</span>
-                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">directions</span><span class="p">,</span>
-                <span class="n">unit</span><span class="o">=</span><span class="s2">"dimensionless"</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">"directions"</span><span class="p">,</span>
-            <span class="p">),</span>
-            <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="n">directions</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">directions</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">3</span> <span class="ow">or</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">directions</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">16384</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"directions must contain 1–16384 unit 3-vectors."</span><span class="p">)</span>
-        <span class="n">invalid_directions</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">directions</span><span class="p">))</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">directions</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="n">invalid_directions</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"directions must be finite unit vectors."</span><span class="p">)</span>
-        <span class="n">directions</span><span class="o">.</span><span class="n">setflags</span><span class="p">(</span><span class="n">write</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directions</span><span class="p">,</span> <span class="n">Directions</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"directions must be a Directions instance."</span><span class="p">)</span>
+
+        <span class="n">directions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">directions</span>
+
         <span class="n">positions</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">positions</span>
-        <span class="n">positions</span><span class="o">.</span><span class="n">setflags</span><span class="p">(</span><span class="n">write</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">phase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">wavelength</span> <span class="o">*</span> <span class="n">volume</span><span class="o">.</span><span class="n">background_index</span> <span class="o">*</span> <span class="n">positions</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
-        <span class="n">incident</span> <span class="o">=</span> <span class="n">phase</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)[:</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="n">positions</span><span class="o">.</span><span class="n">magnitude</span><span class="o">.</span><span class="n">setflags</span><span class="p">(</span><span class="n">write</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">phase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">wavelength</span> <span class="o">*</span> <span class="n">volume</span><span class="o">.</span><span class="n">background_refractive_index</span> <span class="o">*</span> <span class="n">positions</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+
+        <span class="n">incident</span> <span class="o">=</span> <span class="n">phase</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"dimensionless"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)[:</span><span class="mi">2</span><span class="p">]</span>
+
         <span class="n">incident</span><span class="o">.</span><span class="n">setflags</span><span class="p">(</span><span class="n">write</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
         <span class="n">operator</span> <span class="o">=</span> <span class="n">GreenOperator</span><span class="p">(</span>
             <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span>
             <span class="n">spacing</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">spacing</span><span class="p">,</span>
             <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span>
-            <span class="n">background_index</span><span class="o">=</span><span class="n">volume</span><span class="o">.</span><span class="n">background_index</span><span class="p">,</span>
+            <span class="n">background_refractive_index</span><span class="o">=</span><span class="n">volume</span><span class="o">.</span><span class="n">background_refractive_index</span><span class="p">,</span>
         <span class="p">)</span>
+
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">(</span>
             <span class="p">(</span><span class="s2">"shape"</span><span class="p">,</span> <span class="n">shape</span><span class="p">),</span>
             <span class="p">(</span><span class="s2">"spacing"</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">spacing</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">"background_index"</span><span class="p">,</span> <span class="n">volume</span><span class="o">.</span><span class="n">background_index</span><span class="p">),</span>
-            <span class="p">(</span><span class="s2">"wavelength"</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"background_refractive_index"</span><span class="p">,</span> <span class="n">volume</span><span class="o">.</span><span class="n">background_refractive_index</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">"wavelength"</span><span class="p">,</span> <span class="n">wavelength</span><span class="o">.</span><span class="n">copy</span><span class="p">()),</span>
             <span class="p">(</span><span class="s2">"directions"</span><span class="p">,</span> <span class="n">directions</span><span class="p">),</span>
             <span class="p">(</span><span class="s2">"order"</span><span class="p">,</span> <span class="n">order</span><span class="p">),</span>
             <span class="p">(</span><span class="s2">"operator"</span><span class="p">,</span> <span class="n">operator</span><span class="p">),</span>
@@ -592,26 +598,39 @@
         <span class="p">):</span>
             <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_far_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_far_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Project the voxel source onto transverse outgoing amplitudes in metres."""</span>
-        <span class="n">k0</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">wavelength</span>
-        <span class="n">k</span> <span class="o">=</span> <span class="n">k0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">background_index</span>
-        <span class="n">positions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_positions</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+        <span class="c1"># Fourier projection uses numeric SI coordinates and amplitudes in metres.</span>
+        <span class="n">k0</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wavelength</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"meter"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+
+        <span class="n">k</span> <span class="o">=</span> <span class="n">k0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">background_refractive_index</span>
+
+        <span class="n">positions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_positions</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"meter"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+        <span class="n">voxel_spacing_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spacing</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"meter"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+
         <span class="n">values</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
         <span class="n">amplitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directions</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
+
         <span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directions</span><span class="p">),</span> <span class="mi">64</span><span class="p">):</span>
-            <span class="n">direction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">directions</span><span class="p">[</span><span class="n">start</span> <span class="p">:</span> <span class="n">start</span> <span class="o">+</span> <span class="mi">64</span><span class="p">]</span>
+            <span class="n">direction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">directions</span><span class="o">.</span><span class="n">vectors</span><span class="p">[</span><span class="n">start</span> <span class="p">:</span> <span class="n">start</span> <span class="o">+</span> <span class="mi">64</span><span class="p">]</span>
+
             <span class="n">phase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">k</span> <span class="o">*</span> <span class="p">(</span><span class="n">direction</span> <span class="o">@</span> <span class="n">positions</span><span class="o">.</span><span class="n">T</span><span class="p">))</span>
-            <span class="n">integral</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">"dn,npv-&gt;dpv"</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span> <span class="o">*</span> <span class="n">k0</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">spacing</span><span class="o">**</span><span class="mi">3</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+            <span class="n">integral</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">"dn,npv-&gt;dpv"</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span> <span class="o">*</span> <span class="n">k0</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">voxel_spacing_m</span><span class="o">**</span><span class="mi">3</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
             <span class="n">amplitude</span><span class="p">[</span><span class="n">start</span> <span class="p">:</span> <span class="n">start</span> <span class="o">+</span> <span class="mi">64</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">integral</span> <span class="o">-</span> <span class="n">direction</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">"dv,dpv-&gt;dp"</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">integral</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
             <span class="p">)</span>
+
         <span class="k">return</span> <span class="n">amplitude</span>
 
 <div class="viewcode-block" id="BornSeries.solve">
 <a class="viewcode-back" href="../../api.html#bornsim.series.BornSeries.solve">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">volume</span><span class="p">:</span> <span class="n">Volume</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Compute coherent scattering from one compatible finite index volume.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">volume</span><span class="p">:</span> <span class="n">Volume</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BornResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Compute coherent scattering from one compatible finite refractive index volume.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -639,61 +658,94 @@
 <span class="sd">        before squaring, preserving interference. Intensities are finite-sample</span>
 <span class="sd">        cross sections divided by the entire voxel-box volume, not intrinsic</span>
 <span class="sd">        infinite-medium transport coefficients. The dielectric contrast is</span>
-<span class="sd">        ``2*n0*delta_index`` at every order. Growing field terms generate a</span>
+<span class="sd">        ``2*n0*delta_refractive_index`` at every order. Growing field terms generate a</span>
 <span class="sd">        diagnostic; decreasing terms do not certify convergence.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from bornsim.units import ureg</span>
 <span class="sd">        &gt;&gt;&gt; from bornsim import BornSeries, RandomMedium</span>
-<span class="sd">        &gt;&gt;&gt; medium = RandomMedium(correlation="gaussian")</span>
+<span class="sd">        ...</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; medium = RandomMedium(</span>
+<span class="sd">        ...     correlation="gaussian",</span>
+<span class="sd">        ...     background_refractive_index=1.33,</span>
+<span class="sd">        ...     refractive_index_std=0.01,</span>
+<span class="sd">        ...     correlation_length=100e-9 * ureg.meter,</span>
+<span class="sd">        ... )</span>
 
+<span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt; volume = medium.to_volume(</span>
 <span class="sd">        ...     shape=(2, 2, 2),</span>
 <span class="sd">        ...     seed=42,</span>
+<span class="sd">        ...     spacing=50e-9 * ureg.meter,</span>
 <span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; directions = Directions(vectors=[[0.0, 0.0, 1.0]])</span>
 <span class="sd">        &gt;&gt;&gt; engine = BornSeries(</span>
-<span class="sd">        ...     shape=volume.delta_index.shape,</span>
+<span class="sd">        ...     shape=volume.delta_refractive_index.shape,</span>
 <span class="sd">        ...     spacing=volume.spacing,</span>
-<span class="sd">        ...     background_index=volume.background_index,</span>
-<span class="sd">        ...     wavelength=633e-9,</span>
-<span class="sd">        ...     directions=[[0.0, 0.0, 1.0]],</span>
+<span class="sd">        ...     background_refractive_index=volume.background_refractive_index,</span>
+<span class="sd">        ...     wavelength=633 * ureg.nanometer,</span>
+<span class="sd">        ...     directions=directions,</span>
 <span class="sd">        ...     order=2,</span>
 <span class="sd">        ... )</span>
 <span class="sd">        &gt;&gt;&gt; result = engine.solve(volume=volume)</span>
 <span class="sd">        &gt;&gt;&gt; result.amplitudes.shape</span>
 <span class="sd">        (2, 1, 2, 3)</span>
 <span class="sd">        """</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">volume</span><span class="p">,</span> <span class="n">Volume</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"volume must be a Volume."</span><span class="p">)</span>
+
         <span class="n">incompatible_volume</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">volume</span><span class="o">.</span><span class="n">delta_index</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
+            <span class="n">volume</span><span class="o">.</span><span class="n">delta_refractive_index</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
             <span class="ow">or</span> <span class="n">volume</span><span class="o">.</span><span class="n">spacing</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spacing</span>
-            <span class="ow">or</span> <span class="n">volume</span><span class="o">.</span><span class="n">background_index</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">background_index</span>
+            <span class="ow">or</span> <span class="n">volume</span><span class="o">.</span><span class="n">background_refractive_index</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">background_refractive_index</span>
         <span class="p">)</span>
+
         <span class="k">if</span> <span class="n">incompatible_volume</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"volume grid and background_index must match the BornSeries configuration."</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"volume grid and background_refractive_index must match the BornSeries configuration."</span><span class="p">)</span>
+
         <span class="n">field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_incident_field</span>
+
         <span class="n">incident_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
-        <span class="n">contrast</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">volume</span><span class="o">.</span><span class="n">background_index</span> <span class="o">*</span> <span class="n">volume</span><span class="o">.</span><span class="n">delta_index</span>
+
+        <span class="n">contrast</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">volume</span><span class="o">.</span><span class="n">background_refractive_index</span> <span class="o">*</span> <span class="n">volume</span><span class="o">.</span><span class="n">delta_refractive_index</span>
+
         <span class="n">amplitude_terms</span><span class="p">,</span> <span class="n">norms</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">):</span>
             <span class="n">source</span> <span class="o">=</span> <span class="n">contrast</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">field</span>
+
             <span class="n">amplitude_terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_far_field</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">))</span>
+
             <span class="n">field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">)</span>
+
             <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">field</span><span class="p">)):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Born terms overflowed; reduce contrast or order."</span><span class="p">)</span>
+
             <span class="n">norms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">field</span><span class="p">)</span> <span class="o">/</span> <span class="n">incident_norm</span><span class="p">))</span>
+
         <span class="n">amplitudes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">amplitude_terms</span><span class="p">)</span>
+
         <span class="n">cumulative</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">amplitudes</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">differential</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">cumulative</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">volume</span><span class="o">.</span><span class="n">volume</span><span class="p">)</span>
-        <span class="n">separate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">amplitudes</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">volume</span><span class="o">.</span><span class="n">volume</span><span class="p">)</span>
+
+        <span class="n">differential</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">cumulative</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span>
+            <span class="mi">2</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">volume</span><span class="o">.</span><span class="n">volume</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"meter**3"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">separate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">amplitudes</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">volume</span><span class="o">.</span><span class="n">volume</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"meter**3"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">))</span>
+
         <span class="n">warnings</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">volume</span><span class="o">.</span><span class="n">spacing</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">/</span> <span class="n">volume</span><span class="o">.</span><span class="n">background_index</span> <span class="o">/</span> <span class="mi">10</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">volume</span><span class="o">.</span><span class="n">spacing</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">/</span> <span class="n">volume</span><span class="o">.</span><span class="n">background_refractive_index</span> <span class="o">/</span> <span class="mi">10</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Voxel spacing exceeds one tenth of the background wavelength; refine the grid."</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">norms</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="n">b</span> <span class="o">&gt;=</span> <span class="n">a</span> <span class="ow">and</span> <span class="n">b</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">norms</span><span class="p">,</span> <span class="n">norms</span><span class="p">[</span><span class="mi">1</span><span class="p">:])):</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Successive field terms are not decreasing; Born convergence is not established."</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">BornResult</span><span class="p">(</span>
-            <span class="n">directions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">directions</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+            <span class="n">directions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">directions</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
             <span class="n">amplitudes</span><span class="o">=</span><span class="n">amplitudes</span><span class="p">,</span>
             <span class="n">differential</span><span class="o">=</span><span class="n">differential</span><span class="p">,</span>
             <span class="n">term_differential</span><span class="o">=</span><span class="n">separate</span><span class="p">,</span>

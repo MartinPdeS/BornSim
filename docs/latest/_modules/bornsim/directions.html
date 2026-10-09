@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bornsim.source &#8212; BornSim 0.2.6 documentation</title>
+    <title>bornsim.directions &#8212; BornSim 0.2.6 documentation</title>
   
   
   
@@ -47,7 +47,7 @@
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/bornsim/source';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/bornsim/directions';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.19.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/BornSim/documentation_page/version_switcher.json';
@@ -430,7 +430,7 @@
     
     <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">bornsim.source</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">bornsim.directions</span></li>
   </ul>
 </nav>
 </div>
@@ -447,66 +447,111 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <h1>Source code for bornsim.source</h1><div class="highlight"><pre>
-<span></span><span class="sd">"""Incident illumination for BornSim scattering calculations."""</span>
+  <h1>Source code for bornsim.directions</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Validated observation directions for numerical scattering."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">validate_units</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NDArray</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">_dimensionless</span><span class="p">,</span> <span class="n">validate_units</span><span class="p">,</span> <span class="n">ureg</span>
 
 
-<div class="viewcode-block" id="Source">
-<a class="viewcode-back" href="../../api.html#bornsim.source.Source">[docs]</a>
-<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">Source</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Define an unpolarized plane wave propagating along the positive z axis.</span>
+<div class="viewcode-block" id="Directions">
+<a class="viewcode-back" href="../../api.html#bornsim.directions.Directions">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Directions</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Define an ordered collection of Cartesian unit observation vectors.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    wavelength : Quantity</span>
-<span class="sd">        Positive, finite vacuum wavelength. Explicit length units are required;</span>
-<span class="sd">        the supplied units are preserved. A wavelength must be supplied.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    wavelength : Quantity</span>
-<span class="sd">        Scalar vacuum wavelength with its supplied length units.</span>
-
-<span class="sd">    Raises</span>
-<span class="sd">    ------</span>
-<span class="sd">    ValueError</span>
-<span class="sd">        If the wavelength is nonpositive, nonfinite, nonscalar, or has units</span>
-<span class="sd">        incompatible with length.</span>
+<span class="sd">    vectors : array_like or Quantity</span>
+<span class="sd">        Explicit dimensionless vectors of shape (n, 3), with 1 to 16384 rows.</span>
+<span class="sd">        Every vector must be finite and have unit length. Vectors are copied</span>
+<span class="sd">        into an immutable array; they are never normalized automatically.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    The transverse x and y incident polarizations have equal weights and are</span>
-<span class="sd">    averaged incoherently. Arbitrary incidence directions and polarized</span>
-<span class="sd">    illumination are not currently supported.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; from bornsim import Source</span>
-<span class="sd">    &gt;&gt;&gt; from bornsim.units import ureg</span>
-<span class="sd">    ...</span>
-<span class="sd">    ...</span>
-<span class="sd">    &gt;&gt;&gt; source = Source(wavelength=633 * ureg.nanometer)</span>
-<span class="sd">    &gt;&gt;&gt; source.wavelength.check("[length]")</span>
-<span class="sd">    True</span>
+<span class="sd">    Coordinates use the global x, y, z axes. The incident wave propagates</span>
+<span class="sd">    along positive z. Vector order is preserved in scattered amplitudes.</span>
+<span class="sd">    Use ``vectors`` to access the NumPy array and :meth:`from_angles` to</span>
+<span class="sd">    construct vectors from explicitly unit-bearing spherical coordinates.</span>
 <span class="sd">    """</span>
 
-    <span class="n">wavelength</span><span class="p">:</span> <span class="n">Quantity</span>
+    <span class="n">vectors</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">validate_units</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span>
-            <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
-            <span class="n">name</span><span class="o">=</span><span class="s2">"wavelength"</span><span class="p">,</span>
-            <span class="n">scalar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">vectors</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">|</span> <span class="n">Quantity</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">coordinate_values</span> <span class="o">=</span> <span class="n">vectors</span><span class="o">.</span><span class="n">magnitude</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vectors</span><span class="p">,</span> <span class="n">Quantity</span><span class="p">)</span> <span class="k">else</span> <span class="n">vectors</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">iscomplexobj</span><span class="p">(</span><span class="n">coordinate_values</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"directions.vectors must contain real Cartesian coordinates."</span><span class="p">)</span>
+
+        <span class="n">vectors</span> <span class="o">=</span> <span class="n">_dimensionless</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">vectors</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"directions.vectors"</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">vectors</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">vectors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">3</span> <span class="ow">or</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vectors</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">16384</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"directions.vectors must contain 1–16384 unit 3-vectors."</span><span class="p">)</span>
+
+        <span class="n">invalid_vectors</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">vectors</span><span class="p">))</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vectors</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wavelength</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"wavelength must be finite and positive."</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">invalid_vectors</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"directions.vectors must be finite unit vectors."</span><span class="p">)</span>
+
+        <span class="c1"># Immutable backing storage prevents changing a cached solver configuration.</span>
+        <span class="n">immutable_vectors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">vectors</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">vectors</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"vectors"</span><span class="p">,</span> <span class="n">immutable_vectors</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Directions.from_angles">
+<a class="viewcode-back" href="../../api.html#bornsim.directions.Directions.from_angles">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_angles</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">polar_angles</span><span class="p">:</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">azimuth_angles</span><span class="p">:</span> <span class="n">Quantity</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Directions"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Convert paired or broadcastable spherical angles into unit vectors.</span>
+
+<span class="sd">        Polar angles are measured from positive z and lie in [0, pi]. Azimuth</span>
+<span class="sd">        angles are measured from positive x toward positive y and are periodic.</span>
+<span class="sd">        Both inputs require explicit angular units. Broadcast coordinates are</span>
+<span class="sd">        flattened in row-major order, preserving polar/azimuth grid ordering.</span>
+<span class="sd">        """</span>
+
+        <span class="n">validate_units</span><span class="p">(</span>
+            <span class="n">polar_angles</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">"radian"</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"polar_angles"</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">validate_units</span><span class="p">(</span>
+            <span class="n">azimuth_angles</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">"radian"</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"azimuth_angles"</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">invalid_polar_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">polar_angles</span><span class="p">))</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">polar_angles</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">polar_angles</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">radian</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">invalid_polar_angles</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"polar_angles must be finite and between zero and pi."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">azimuth_angles</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"azimuth_angles must be finite."</span><span class="p">)</span>
+
+        <span class="c1"># Trigonometric quantities become dimensionless Cartesian coordinates.</span>
+        <span class="n">cartesian_components</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_arrays</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">polar_angles</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">azimuth_angles</span><span class="p">))</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">polar_angles</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">azimuth_angles</span><span class="p">))</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">polar_angles</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">vectors</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">cartesian_components</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"Directions(n_vectors=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">)"</span></div>
 
 </pre></div>
 

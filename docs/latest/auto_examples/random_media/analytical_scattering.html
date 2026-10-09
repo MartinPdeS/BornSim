@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Analytical scattering with physical units &#8212; BornSim 0.2.5 documentation</title>
+    <title>Analytical scattering with physical units &#8212; BornSim 0.2.6 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=cb850272"></script>
+    <script src="../../_static/documentation_options.js?v=fc7d8818"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -64,7 +64,7 @@
     <link rel="prev" title="Random media" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.5" />
+  <meta name="docsearch:version" content="0.2.6" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -491,7 +491,7 @@ to download the full example code.</p>
 <section class="sphx-glr-example-title" id="analytical-scattering-with-physical-units">
 <span id="sphx-glr-auto-examples-random-media-analytical-scattering-py"></span><h1>Analytical scattering with physical units<a class="headerlink" href="#analytical-scattering-with-physical-units" title="Link to this heading">#</a></h1>
 <p>Compute first-order infinite-medium optical properties using TypedUnit quantities.</p>
-<img src="../../_images/sphx_glr_analytical_scattering_001.png" srcset="../../_images/sphx_glr_analytical_scattering_001.png" alt="Analytical scattering · meridian phi = 0 degrees" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>{'mu_s': &lt;Quantity(1721.7385, '1 / meter')&gt;, 'g': &lt;Quantity(0.554845577, 'dimensionless')&gt;, 'mu_s_prime': &lt;Quantity(766.439507, '1 / meter')&gt;}
+<img src="../../_images/sphx_glr_analytical_scattering_001.png" srcset="../../_images/sphx_glr_analytical_scattering_001.png" alt="Analytical scattering · meridian phi = 0 degrees" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>mu_s = 1.7217e-06 / nm, g = 0.55485 dimensionless, mu_s_prime = 7.6644e-07 / nm
 </pre></div>
 </div>
 <div class="line-block">
@@ -503,18 +503,23 @@ to download the full example code.</p>
 </span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="nn">.</span><span class="nn">units</span><span class="w"> </span><span class="kn">import</span> <span class="n">ureg</span><span class="w">
 </span><span class="w">
 </span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.model.AnalyticalMedium" title="bornsim.AnalyticalMedium"><span class="n">medium</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.model.AnalyticalMedium" title="bornsim.AnalyticalMedium"><span class="n">AnalyticalMedium</span></a><span class="p">(</span><span class="w">
-</span>    <span class="n">background_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span><span class="w">
-</span>    <span class="n">index_std</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span><span class="w">
+</span>    <span class="n">background_refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span><span class="w">
+</span>    <span class="n">refractive_index_std</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span><span class="w">
 </span>    <span class="n">correlation_length</span><span class="o">=</span><span class="mi">100</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span><span class="w">
+</span>    <span class="n">correlation</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">gaussian</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.solver.Solver" title="bornsim.Solver"><span class="n">solver</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.solver.Solver" title="bornsim.Solver"><span class="n">Solver</span></a><span class="p">(</span><span class="n">source</span><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">Source</span></a><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mi">633</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">)</span><span class="p">)</span><span class="w">
 </span><span class="w">
 </span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.results.Result" title="bornsim.Result"><span class="n">result</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.solver.Solver.solve" title="bornsim.Solver.solve"><span class="n">solver</span><span class="o">.</span><span class="n">solve</span></a><span class="p">(</span><span class="n">target</span><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.model.AnalyticalMedium" title="bornsim.AnalyticalMedium"><span class="n">medium</span></a><span class="p">)</span><span class="w">
-</span><span class="nb">print</span><span class="p">(</span><span class="p">{</span><span class="s2">&quot;</span><span class="s2">mu_s</span><span class="s2">&quot;</span><span class="p">:</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-property reference internal" href="../../api.html#bornsim.results.Result.mu_s" title="bornsim.Result.mu_s"><span class="n">result</span><span class="o">.</span><span class="n">mu_s</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">g</span><span class="s2">&quot;</span><span class="p">:</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.results.Result" title="bornsim.Result"><span class="n">result</span></a><span class="o">.</span><span class="n">g</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">mu_s_prime</span><span class="s2">&quot;</span><span class="p">:</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.results.Result" title="bornsim.Result"><span class="n">result</span></a><span class="o">.</span><span class="n">mu_s_prime</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">}</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">mu_s = </span><span class="si">{</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-property reference internal" href="../../api.html#bornsim.results.Result.mu_s" title="bornsim.Result.mu_s"><span class="n">result</span><span class="o">.</span><span class="n">mu_s</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">~.5g</span><span class="si">}</span><span class="s2">, g = </span><span class="si">{</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.results.Result" title="bornsim.Result"><span class="n">result</span></a><span class="o">.</span><span class="n">g</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.5g</span><span class="si">}</span><span class="s2">, mu_s_prime = </span><span class="si">{</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.results.Result" title="bornsim.Result"><span class="n">result</span></a><span class="o">.</span><span class="n">mu_s_prime</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">~.5g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.results.Result.plot" title="bornsim.Result.plot"><span class="n">result</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.209 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.225 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-random-media-analytical-scattering-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/f18dece86fe7a0dfb4357b37a8285865/analytical_scattering.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">analytical_scattering.ipynb</span></code></a></p>

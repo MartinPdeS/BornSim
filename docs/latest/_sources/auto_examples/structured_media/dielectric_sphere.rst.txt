@@ -21,10 +21,10 @@
 A dielectric sphere in a homogeneous background
 ===============================================
 
-Define a finite three-dimensional index field directly rather than drawing
-it from homogeneous random statistics. The sphere has a constant index
+Define a finite three-dimensional refractive index field directly rather than drawing
+it from homogeneous random statistics. The sphere has a constant refractive index
 inside and is surrounded by a uniform background. The fluctuation array
-stores ``n(r) - background_index``: zero outside the sphere, a constant
+stores ``n(r) - background_refractive_index``: zero outside the sphere, a constant
 contrast inside. The scattering problem's background extends beyond the
 voxel box; the box is not an additional material boundary.
 
@@ -34,7 +34,7 @@ before interpreting them quantitatively. BornSim uses the linearized
 dielectric contrast ``2 * n0 * delta_n`` at all Born orders, rather than
 ``n_sphere**2 - n0**2``. This weak-contrast example is not an exact Mie solution.
 
-.. GENERATED FROM PYTHON SOURCE LINES 18-27
+.. GENERATED FROM PYTHON SOURCE LINES 18-26
 
 .. code-block:: Python
 
@@ -42,7 +42,6 @@ dielectric contrast ``2 * n0 * delta_n`` at all Born orders, rather than
     import sys
 
     import matplotlib.pyplot as plt
-    import numpy as np
 
     from bornsim import Material, AngularSampling, Grid, Solver, Source, Sphere, StructuredMedium
     from bornsim.units import ureg
@@ -54,18 +53,18 @@ dielectric contrast ``2 * n0 * delta_n`` at all Born orders, rather than
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 28-36
+.. GENERATED FROM PYTHON SOURCE LINES 27-35
 
-Build a spherical index mask
-----------------------------
+Build a spherical refractive index mask
+---------------------------------------
 Use voxel-centre coordinates measured from the box centre. The background
-index is 1.33 and the sphere index is 1.34. A 150 nm radius fits inside a
+refractive index is 1.33 and the sphere refractive index is 1.34. A 150 nm radius fits inside a
 480 nm box; no random statistics or generation seed are needed.
 The sphere is offset by 40 nm in x and 20 nm in y. Set this vector to zero
 for a centred sphere. Keep abs(centre[a]) + radius below half the box size
 on every axis to avoid clipping. Grid-aligned offsets translate the same mask.
 
-.. GENERATED FROM PYTHON SOURCE LINES 36-76
+.. GENERATED FROM PYTHON SOURCE LINES 35-82
 
 .. code-block:: Python
 
@@ -73,14 +72,21 @@ on every axis to avoid clipping. Grid-aligned offsets translate the same mask.
         shape=(24, 24, 24),
         spacing=20 * ureg.nanometer,
     )
+
     sampling = AngularSampling(
-        angles=np.linspace(0, 180, 91) * ureg.degree,
+        start=0 * ureg.degree,
+        end=180 * ureg.degree,
+        n_points=91,
         polar_samples=32,
         azimuth_samples=16,
     )
+
     structure = StructuredMedium()
-    background = Material(index=1.33)
-    sphere_material = Material(index=1.34)
+
+    background = Material(refractive_index=1.33)
+
+    sphere_material = Material(refractive_index=1.34)
+
     structure.add_background(material=background)
 
 
@@ -116,7 +122,7 @@ on every axis to avoid clipping. Grid-aligned offsets translate the same mask.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 77-82
+.. GENERATED FROM PYTHON SOURCE LINES 83-88
 
 Inspect the medium in 3D
 ------------------------
@@ -124,15 +130,16 @@ Inspect the actual finite input sample with physical spatial axes.
 The gallery embeds an interactive volume; drag to rotate and scroll to zoom.
 Level surfaces interpolate the sampled staircase interface.
 
-.. GENERATED FROM PYTHON SOURCE LINES 82-90
+.. GENERATED FROM PYTHON SOURCE LINES 88-97
 
 .. code-block:: Python
 
     medium_figure = volume.plot_3d(
         mode="volume",
-        field="index",
+        field="refractive_index",
         opacity_scale="increasing",
     )
+
     if "--no-browser" not in sys.argv:
         medium_figure.show(renderer="browser")
 
@@ -147,7 +154,7 @@ Level surfaces interpolate the sampled staircase interface.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 91-97
+.. GENERATED FROM PYTHON SOURCE LINES 98-104
 
 Compute coherent scattering through three Born orders
 -----------------------------------------------------
@@ -156,7 +163,7 @@ divided by the entire voxel-box volume. Multiplying by that physical volume
 recovers a differential cross section, which avoids treating the empty
 background portion of the box as part of an intrinsic transport coefficient.
 
-.. GENERATED FROM PYTHON SOURCE LINES 97-107
+.. GENERATED FROM PYTHON SOURCE LINES 104-114
 
 .. code-block:: Python
 
@@ -177,7 +184,7 @@ background portion of the box as part of an intrinsic transport coefficient.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 108-116
+.. GENERATED FROM PYTHON SOURCE LINES 115-123
 
 Three-dimensional phase function
 ---------------------------------
@@ -188,13 +195,14 @@ structures. Its radius is a probability density per steradian, not a spatial
 coordinate. No realization or azimuth averaging is applied to the 3D view.
 Check polar and azimuth quadrature refinement for quantitative calculations.
 
-.. GENERATED FROM PYTHON SOURCE LINES 116-122
+.. GENERATED FROM PYTHON SOURCE LINES 123-130
 
 .. code-block:: Python
 
     phase_figure = result.plot_phase_function(
         view="3d",
     )
+
     if "--no-browser" not in sys.argv:
         phase_figure.show(renderer="browser")
 
@@ -209,19 +217,21 @@ Check polar and azimuth quadrature refinement for quantitative calculations.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 123-127
+.. GENERATED FROM PYTHON SOURCE LINES 131-135
 
 Select a physical meridian
 ---------------------------
 Select the sampled phi = 90 degree plane without averaging or interpolation.
 The curve keeps the full solve's solid-angle normalization.
 
-.. GENERATED FROM PYTHON SOURCE LINES 127-130
+.. GENERATED FROM PYTHON SOURCE LINES 135-140
 
 .. code-block:: Python
 
     meridian = result.meridian(azimuth=90 * ureg.degree)
+
     meridian.plot_phase_function()
+
     plt.show()
 
 
@@ -238,7 +248,7 @@ The curve keeps the full solve's solid-angle normalization.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 5.772 seconds)
+   **Total running time of the script:** (0 minutes 5.827 seconds)
 
 
 .. _sphx_glr_download_auto_examples_structured_media_dielectric_sphere.py:

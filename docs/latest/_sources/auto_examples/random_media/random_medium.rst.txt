@@ -23,7 +23,8 @@ Visualize seeded three-dimensional random media
 
 Explore the full three-dimensional sample for each spatial covariance model.
 Drag to rotate, scroll to zoom, and hover to inspect the refractive index.
-Low-index regions are transparent and stronger-index regions are more opaque.
+Regions with lower refractive index are transparent; regions with higher
+refractive index are more opaque.
 Opacity is a display setting, not absorption. Histograms and central slices
 follow as secondary checks of the same seeded fields.
 
@@ -33,7 +34,7 @@ histogram need not match the ensemble Gaussian density closely. BornSim
 does not recenter or rescale each realization to impose its mean or variance.
 Finite voxel resolution and the cropped synthesis box also affect statistics.
 
-.. GENERATED FROM PYTHON SOURCE LINES 17-51
+.. GENERATED FROM PYTHON SOURCE LINES 18-71
 
 .. code-block:: Python
 
@@ -46,30 +47,49 @@ Finite voxel resolution and the cropped synthesis box also affect statistics.
     from bornsim import Grid, RandomMedium
     from bornsim.units import ureg
 
-    shape = (16, 16, 16)
-    spacing = 25 * ureg.nanometer
+    grid_shape = (16, 16, 16)
+
+    voxel_spacing = 25 * ureg.nanometer
+
     grid = Grid(
-        shape=shape,
-        spacing=spacing,
+        shape=grid_shape,
+        spacing=voxel_spacing,
     )
-    sigma = 0.01
-    half_side_nm = shape[0] * spacing.to("nanometer").magnitude / 2
-    extent = (-half_side_nm, half_side_nm, -half_side_nm, half_side_nm)
-    values = np.linspace(-4 * sigma, 4 * sigma, 301)
-    gaussian_density = np.exp(-(values**2) / (2 * sigma**2)) / (np.sqrt(2 * np.pi) * sigma)
-    volumes = {}
-    for correlation in ("gaussian", "exponential"):
-        medium = RandomMedium(
-            index_std=sigma,
+
+    refractive_index_std = 0.01
+
+    half_sample_width_nm = grid_shape[0] * voxel_spacing.to("nanometer").magnitude / 2
+
+    slice_extent_nm = (-half_sample_width_nm, half_sample_width_nm, -half_sample_width_nm, half_sample_width_nm)
+
+    # Evaluate the ensemble probability density at these refractive-index fluctuations.
+    refractive_index_fluctuations = np.linspace(-4 * refractive_index_std, 4 * refractive_index_std, 301)
+
+    gaussian_probability_density = np.exp(-(refractive_index_fluctuations**2) / (2 * refractive_index_std**2)) / (
+        np.sqrt(2 * np.pi) * refractive_index_std
+    )
+
+    volumes_by_covariance = {}
+
+    for covariance_model in ("gaussian", "exponential"):
+        random_medium = RandomMedium(
+            refractive_index_std=refractive_index_std,
             correlation_length=75 * ureg.nanometer,
-            correlation=correlation,
+            correlation=covariance_model,
+            background_refractive_index=1.33,
+            smoothness=1.5,
         )
-        volume = medium.to_volume(
+
+        sampled_volume = random_medium.to_volume(
             grid=grid,
             seed=42,
         )
-        volumes[correlation] = volume
-        print(f"{correlation}: sample mean = {volume.delta_index.mean():.4g}, sample std = {volume.delta_index.std():.4g}")
+
+        volumes_by_covariance[covariance_model] = sampled_volume
+
+        print(
+            f"{covariance_model}: sample mean = {sampled_volume.delta_refractive_index.mean():.4g}, sample std = {sampled_volume.delta_refractive_index.std():.4g}"
+        )
 
 
 
@@ -85,25 +105,27 @@ Finite voxel resolution and the cropped synthesis box also affect statistics.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 52-57
+.. GENERATED FROM PYTHON SOURCE LINES 72-77
 
 Gaussian volume with increasing opacity
 ---------------------------------------
 View the full Gaussian sample first. The opacity ramp uses this sample's
-index range; equal opacity across different samples need not mean equal index.
+refractive index range; equal opacity across different samples need not mean equal refractive index.
 Pass ``--no-browser`` to run without opening tabs, as the docs builder does.
 
-.. GENERATED FROM PYTHON SOURCE LINES 57-67
+.. GENERATED FROM PYTHON SOURCE LINES 77-89
 
 .. code-block:: Python
 
-    volume = volumes["gaussian"]
-    gaussian_figure = volume.plot_3d(
-        field="index",
+    gaussian_volume = volumes_by_covariance["gaussian"]
+
+    gaussian_figure = gaussian_volume.plot_3d(
+        field="refractive_index",
         surface_count=16,
         opacity=0.2,
         opacity_scale="increasing",
     )
+
     if "--no-browser" not in sys.argv:
         gaussian_figure.show(renderer="browser")
 
@@ -118,24 +140,26 @@ Pass ``--no-browser`` to run without opening tabs, as the docs builder does.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 68-72
+.. GENERATED FROM PYTHON SOURCE LINES 90-94
 
 Exponential volume with increasing opacity
 ------------------------------------------
 Compare the exponential sample in its own interactive view with the same
 rendering settings. Correlation length conventions differ between models.
 
-.. GENERATED FROM PYTHON SOURCE LINES 72-82
+.. GENERATED FROM PYTHON SOURCE LINES 94-106
 
 .. code-block:: Python
 
-    volume = volumes["exponential"]
-    exponential_figure = volume.plot_3d(
-        field="index",
+    exponential_volume = volumes_by_covariance["exponential"]
+
+    exponential_figure = exponential_volume.plot_3d(
+        field="refractive_index",
         surface_count=16,
         opacity=0.2,
         opacity_scale="increasing",
     )
+
     if "--no-browser" not in sys.argv:
         exponential_figure.show(renderer="browser")
 
@@ -150,42 +174,60 @@ rendering settings. Correlation length conventions differ between models.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 83-87
+.. GENERATED FROM PYTHON SOURCE LINES 107-111
 
 Secondary checks: central slices and one-point distributions
 ------------------------------------------------------------
 Slices show one sampled plane, while histograms describe the finite field's
 one-point distribution. Neither replaces the complete spatial volume above.
 
-.. GENERATED FROM PYTHON SOURCE LINES 87-113
+.. GENERATED FROM PYTHON SOURCE LINES 111-155
 
 .. code-block:: Python
 
-    figure, axes = plt.subplots(2, 2, figsize=(10, 8), layout="constrained")
-    for row, correlation in enumerate(("gaussian", "exponential")):
-        volume = volumes[correlation]
-        image_axis, histogram_axis = axes[row]
-        image = image_axis.imshow(
-            volume.delta_index[:, :, shape[2] // 2].T,
+    slice_figure, slice_and_histogram_axes = plt.subplots(2, 2, figsize=(10, 8), layout="constrained")
+
+    for covariance_row, covariance_model in enumerate(("gaussian", "exponential")):
+        sampled_volume = volumes_by_covariance[covariance_model]
+
+        slice_axis, histogram_axis = slice_and_histogram_axes[covariance_row]
+
+        slice_image = slice_axis.imshow(
+            sampled_volume.delta_refractive_index[:, :, grid_shape[2] // 2].T,
             origin="lower",
-            extent=extent,
+            extent=slice_extent_nm,
             cmap="RdBu_r",
-            vmin=-3 * sigma,
-            vmax=3 * sigma,
+            vmin=-3 * refractive_index_std,
+            vmax=3 * refractive_index_std,
         )
-        z_nm = volume.positions[0, 0, shape[2] // 2, 2] * 1e9
-        image_axis.set(xlabel="x (nm)", ylabel="y (nm)", title=f"{correlation.capitalize()} covariance; z = {z_nm:g} nm")
-        figure.colorbar(image, ax=image_axis, label="Index fluctuation δn", extend="both")
-        histogram_axis.hist(volume.delta_index.ravel(), bins=30, density=True, alpha=0.6, label="One finite volume")
+
+        slice_z_nm = sampled_volume.positions[0, 0, grid_shape[2] // 2, 2].to("nanometer").magnitude
+
+        slice_axis.set(
+            xlabel="x (nm)", ylabel="y (nm)", title=f"{covariance_model.capitalize()} covariance; z = {slice_z_nm:g} nm"
+        )
+
+        slice_figure.colorbar(slice_image, ax=slice_axis, label="Refractive-index fluctuation δn", extend="both")
+
+        histogram_axis.hist(
+            sampled_volume.delta_refractive_index.ravel(), bins=30, density=True, alpha=0.6, label="One finite volume"
+        )
+
         histogram_axis.plot(
-            values,
-            gaussian_density,
+            refractive_index_fluctuations,
+            gaussian_probability_density,
             "k--",
             label="Ensemble Gaussian density",
         )
-        histogram_axis.set(xlabel="Index fluctuation δn", ylabel="Probability density", title="One-point distribution")
+
+        histogram_axis.set(
+            xlabel="Refractive-index fluctuation δn", ylabel="Probability density", title="One-point distribution"
+        )
+
         histogram_axis.legend(frameon=False, loc="upper right", fontsize=9)
-    figure.suptitle("Seed 42; shared color scale; ensemble σn = 0.01")
+
+    slice_figure.suptitle("Seed 42; shared color scale; ensemble σn = 0.01")
+
     plt.show()
 
 
@@ -202,7 +244,7 @@ one-point distribution. Neither replaces the complete spatial volume above.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.667 seconds)
+   **Total running time of the script:** (0 minutes 0.681 seconds)
 
 
 .. _sphx_glr_download_auto_examples_random_media_random_medium.py:

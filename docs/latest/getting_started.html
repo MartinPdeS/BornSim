@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Getting started &#8212; BornSim 0.2.5 documentation</title>
+    <title>Getting started &#8212; BornSim 0.2.6 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="_static/documentation_options.js?v=cb850272"></script>
+    <script src="_static/documentation_options.js?v=fc7d8818"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/sg-tags.js?v=d80f6fa4"></script>
@@ -64,7 +64,7 @@
     <link rel="prev" title="BornSim documentation" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.5" />
+  <meta name="docsearch:version" content="0.2.6" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -479,36 +479,46 @@ environment and install the package:</p>
 <section id="first-scattering-calculation">
 <h2>First scattering calculation<a class="headerlink" href="#first-scattering-calculation" title="Link to this heading">#</a></h2>
 <p>Define a source, material, and grid, then average independent seeded random
-volumes. Quantity inputs use the BornSim unit registry; bare numbers use SI
+volumes. Quantity inputs use the BornSim unit registry; dimensional inputs require explicit
 units. The wavelength is the vacuum wavelength.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnsembleSampling</span><span class="p">,</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">RandomMedium</span><span class="p">,</span> <span class="n">Solver</span><span class="p">,</span> <span class="n">Source</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">bornsim.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">ureg</span>
 
 <span class="n">source</span> <span class="o">=</span> <span class="n">Source</span><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mi">633</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">)</span>
+
 <span class="n">grid</span> <span class="o">=</span> <span class="n">Grid</span><span class="p">(</span>
     <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
     <span class="n">spacing</span><span class="o">=</span><span class="mi">50</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span>
 <span class="p">)</span>
+
 <span class="n">medium</span> <span class="o">=</span> <span class="n">RandomMedium</span><span class="p">(</span>
-    <span class="n">background_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span>
-    <span class="n">index_std</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">background_refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span>
+    <span class="n">refractive_index_std</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
     <span class="n">correlation_length</span><span class="o">=</span><span class="mi">100</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span>
     <span class="n">correlation</span><span class="o">=</span><span class="s2">"gaussian"</span><span class="p">,</span>
 <span class="p">)</span>
+
 <span class="n">ensemble_sampling</span> <span class="o">=</span> <span class="n">EnsembleSampling</span><span class="p">(</span>
     <span class="n">realizations</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
     <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
 <span class="p">)</span>
+
 <span class="n">solver</span> <span class="o">=</span> <span class="n">Solver</span><span class="p">(</span>
     <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span>
     <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
 <span class="p">)</span>
+
 <span class="n">result</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">ensemble</span><span class="p">(</span>
     <span class="n">medium</span><span class="o">=</span><span class="n">medium</span><span class="p">,</span>
     <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
     <span class="n">ensemble_sampling</span><span class="o">=</span><span class="n">ensemble_sampling</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">mu_s</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"1 / millimeter"</span><span class="p">),</span> <span class="n">result</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">mu_s_prime</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">"mu_s = </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">mu_s</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">'1 / millimeter'</span><span class="p">)</span><span class="si">}</span><span class="s2">, "</span>
+    <span class="sa">f</span><span class="s2">"g = </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">g</span><span class="si">}</span><span class="s2">, "</span>
+    <span class="sa">f</span><span class="s2">"mu_s_prime = </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">mu_s_prime</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">'1 / millimeter'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 <p>The returned coefficients describe finite samples. The ensemble standard
@@ -523,12 +533,16 @@ refractive-index regions can be made more opaque:</p>
     <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
     <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
 <span class="p">)</span>
+
 <span class="n">medium_figure</span> <span class="o">=</span> <span class="n">volume</span><span class="o">.</span><span class="n">plot_3d</span><span class="p">(</span>
-    <span class="n">field</span><span class="o">=</span><span class="s2">"index"</span><span class="p">,</span>
+    <span class="n">field</span><span class="o">=</span><span class="s2">"refractive_index"</span><span class="p">,</span>
     <span class="n">opacity_scale</span><span class="o">=</span><span class="s2">"increasing"</span><span class="p">,</span>
 <span class="p">)</span>
+
 <span class="n">medium_figure</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
 <span class="n">phase_figure</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">plot_phase_function</span><span class="p">(</span><span class="n">view</span><span class="o">=</span><span class="s2">"3d"</span><span class="p">)</span>
+
 <span class="n">phase_figure</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>

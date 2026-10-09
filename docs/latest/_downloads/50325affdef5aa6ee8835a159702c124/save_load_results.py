@@ -30,15 +30,20 @@ grid = Grid(
     shape=(4, 4, 4),
     spacing=40 * ureg.nanometer,
 )
+
 medium = RandomMedium(
     correlation="gaussian",
     correlation_length=80 * ureg.nanometer,
+    background_refractive_index=1.33,
+    refractive_index_std=0.01,
 )
+
 volume = random_volume(
     medium=medium,
     grid=grid,
     seed=42,
 )
+
 solver = Solver(
     source=Source(wavelength=633 * ureg.nanometer),
     order=3,
@@ -48,6 +53,7 @@ result = solver.solve(target=volume)
 
 with TemporaryDirectory() as directory:
     path = result.save(path=Path(directory) / "scattering.npz")
+
     restored = Result.load(path=path)
 
 # %%
@@ -55,14 +61,21 @@ with TemporaryDirectory() as directory:
 # ----------------------------------------
 # The arrays have been copied from the archive; they remain usable after the
 # temporary directory is removed. Loading preserves the recorded versions.
-print("BornSim version:", restored.provenance["bornsim_version"])
-print("NumPy version:", restored.provenance["numpy_version"])
-print("Seed:", restored.provenance["seed"])
-print("Grid:", restored.provenance["grid"])
-print("Medium:", restored.provenance["medium"])
-print("Coefficient scope:", restored.provenance["coefficient_scope"])
-print("Wavelength:", restored.source.wavelength.to("nanometer"))
-print("Complex amplitudes retained:", np.iscomplexobj(restored.amplitudes.magnitude))
+print(f"BornSim version: {restored.provenance['bornsim_version']}")
+
+print(f"NumPy version: {restored.provenance['numpy_version']}")
+
+print(f"Seed: {restored.provenance['seed']}")
+
+print(f"Grid: {restored.provenance['grid']}")
+
+print(f"Medium: {restored.provenance['medium']}")
+
+print(f"Coefficient scope: {restored.provenance['coefficient_scope']}")
+
+print(f"Wavelength: {restored.source.wavelength.to('nanometer')}")
+
+print(f"Complex amplitudes retained: {np.iscomplexobj(restored.amplitudes.magnitude)}")
 
 # %%
 # Plot restored scattering and field diagnostics
@@ -70,7 +83,9 @@ print("Complex amplitudes retained:", np.iscomplexobj(restored.amplitudes.magnit
 # Full angular sampling supplies normalized phase functions and finite-sample
 # coefficients. They are not infinite-medium material transport coefficients.
 restored.plot()
+
 restored.plot_field_norms()
+
 plt.show()
 
 # %%
@@ -78,11 +93,12 @@ plt.show()
 # ------------------------
 # Inspect the actual finite input sample with physical spatial axes.
 # Drag to rotate and scroll to zoom in the embedded browser view.
-# Higher-index regions are more opaque; opacity is not absorption.
+# Regions with higher refractive index are more opaque; opacity is not absorption.
 medium_figure = volume.plot_3d(
     mode="volume",
-    field="index",
+    field="refractive_index",
     opacity_scale="increasing",
 )
+
 if "--no-browser" not in sys.argv:
     medium_figure.show(renderer="browser")

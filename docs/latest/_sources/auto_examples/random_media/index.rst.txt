@@ -56,24 +56,7 @@ analytical first-order scattering, phase functions, and wavelength dependence.
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Compare two covariance models with the same index standard deviation and the same length parameter. Their definitions differ: Gaussian covariance is sigma_n2  exp(-r2 / (2  ell2)), while exponential covariance is sigma_n2 * exp(-r / ell). Equal parameters therefore do not give identical real-space profiles or scattering spectra.">
-
-.. only:: html
-
-  .. image:: /auto_examples/random_media/images/thumb/sphx_glr_covariance_models_thumb.png
-    :alt:
-
-  :doc:`/auto_examples/random_media/covariance_models`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Gaussian and exponential spatial covariance</div>
-    </div>
-
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Sweep vacuum wavelength at fixed background index, index-fluctuation strength, and Gaussian covariance length. Total scattering and reduced scattering are different observables: forward scattering increases anisotropy and reduces the contribution to mu_s_prime = mu_s * (1 - g).">
+    <div class="sphx-glr-thumbcontainer" tooltip="Sweep vacuum wavelength at fixed background refractive index, refractive-index fluctuation strength, and Gaussian covariance length. Total scattering and reduced scattering are different observables: forward scattering increases anisotropy and reduces the contribution to mu_s_prime = mu_s * (1 - g).">
 
 .. only:: html
 
@@ -90,7 +73,24 @@ analytical first-order scattering, phase functions, and wavelength dependence.
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Explore the full three-dimensional sample for each spatial covariance model. Drag to rotate, scroll to zoom, and hover to inspect the refractive index. Low-index regions are transparent and stronger-index regions are more opaque. Opacity is a display setting, not absorption. Histograms and central slices follow as secondary checks of the same seeded fields.">
+    <div class="sphx-glr-thumbcontainer" tooltip="Compare two covariance models with the same refractive index standard deviation and the same length parameter. Their definitions differ: Gaussian covariance is sigma_n2  exp(-r2 / (2  ell2)), while exponential covariance is sigma_n2 * exp(-r / ell). Equal parameters therefore do not give identical real-space profiles or scattering spectra. Here, r is the distance between two points in the medium. The covariance describes how their refractive-index fluctuations vary together as that distance increases.">
+
+.. only:: html
+
+  .. image:: /auto_examples/random_media/images/thumb/sphx_glr_covariance_models_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/random_media/covariance_models`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Gaussian and exponential spatial covariance</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Explore the full three-dimensional sample for each spatial covariance model. Drag to rotate, scroll to zoom, and hover to inspect the refractive index. Regions with lower refractive index are transparent; regions with higher refractive index are more opaque. Opacity is a display setting, not absorption. Histograms and central slices follow as secondary checks of the same seeded fields.">
 
 .. only:: html
 
@@ -107,7 +107,7 @@ analytical first-order scattering, phase functions, and wavelength dependence.
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Gaussian probability distributions and spatial covariance are separate choices. These simulations compare Gaussian, exponential and Matérn covariances using the same index standard deviation and length parameter. The plotted covariance estimate averages products within each realization, then averages independent realizations. No spatial sample mean is removed.">
+    <div class="sphx-glr-thumbcontainer" tooltip="Gaussian probability distributions and spatial covariance are separate choices. These simulations compare Gaussian, exponential and Matérn covariances using the same refractive-index standard deviation and correlation length. The plotted covariance estimate averages products within each realization, then averages independent realizations. No spatial sample mean is removed.">
 
 .. only:: html
 
@@ -134,8 +134,8 @@ analytical first-order scattering, phase functions, and wavelength dependence.
 
    /auto_examples/random_media/analytical_scattering
    /auto_examples/random_media/phase_function
-   /auto_examples/random_media/covariance_models
    /auto_examples/random_media/wavelength_dependence
+   /auto_examples/random_media/covariance_models
    /auto_examples/random_media/random_medium
    /auto_examples/random_media/theory_random_fields
 

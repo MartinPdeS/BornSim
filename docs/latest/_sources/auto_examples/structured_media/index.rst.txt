@@ -22,7 +22,7 @@ Explore how geometry and relative positions affect directional scattering.
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Define a finite three-dimensional index field directly rather than drawing it from homogeneous random statistics. The sphere has a constant index inside and is surrounded by a uniform background. The fluctuation array stores n(r) - background_index: zero outside the sphere, a constant contrast inside. The scattering problem&#x27;s background extends beyond the voxel box; the box is not an additional material boundary.">
+    <div class="sphx-glr-thumbcontainer" tooltip="Define a finite three-dimensional refractive index field directly rather than drawing it from homogeneous random statistics. The sphere has a constant refractive index inside and is surrounded by a uniform background. The fluctuation array stores n(r) - background_refractive_index: zero outside the sphere, a constant contrast inside. The scattering problem&#x27;s background extends beyond the voxel box; the box is not an additional material boundary.">
 
 .. only:: html
 

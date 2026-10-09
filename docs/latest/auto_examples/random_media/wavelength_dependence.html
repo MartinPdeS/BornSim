@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Wavelength dependence of scattering and anisotropy &#8212; BornSim 0.2.5 documentation</title>
+    <title>Wavelength dependence of scattering and anisotropy &#8212; BornSim 0.2.6 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=cb850272"></script>
+    <script src="../../_static/documentation_options.js?v=fc7d8818"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -60,11 +60,11 @@
     <link rel="icon" href="../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Visualize seeded three-dimensional random media" href="random_medium.html" />
-    <link rel="prev" title="Gaussian and exponential spatial covariance" href="covariance_models.html" />
+    <link rel="next" title="Gaussian and exponential spatial covariance" href="covariance_models.html" />
+    <link rel="prev" title="Normalized phase function" href="phase_function.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.5" />
+  <meta name="docsearch:version" content="0.2.6" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -490,12 +490,12 @@ to download the full example code.</p>
 </div>
 <section class="sphx-glr-example-title" id="wavelength-dependence-of-scattering-and-anisotropy">
 <span id="sphx-glr-auto-examples-random-media-wavelength-dependence-py"></span><h1>Wavelength dependence of scattering and anisotropy<a class="headerlink" href="#wavelength-dependence-of-scattering-and-anisotropy" title="Link to this heading">#</a></h1>
-<p>Sweep vacuum wavelength at fixed background index, index-fluctuation strength,
+<p>Sweep vacuum wavelength at fixed background refractive index, refractive-index fluctuation strength,
 and Gaussian covariance length. Total scattering and reduced scattering are
 different observables: forward scattering increases anisotropy and reduces
 the contribution to <code class="docutils literal notranslate"><span class="pre">mu_s_prime</span> <span class="pre">=</span> <span class="pre">mu_s</span> <span class="pre">*</span> <span class="pre">(1</span> <span class="pre">-</span> <span class="pre">g)</span></code>.</p>
 <p>These are analytical first-order, infinite-medium coefficients. The background
-index and fluctuation statistics are held constant, so material dispersion is
+refractive index and fluctuation statistics are held constant, so material dispersion is
 not included. The wavelength-to-the-minus-four guide applies in the
 short-correlation limit, not generally at every covariance length.</p>
 <img src="../../_images/sphx_glr_wavelength_dependence_001.png" srcset="../../_images/sphx_glr_wavelength_dependence_001.png" alt="Total and reduced scattering, Mean cosine of scattering angle" class = "sphx-glr-single-img"/><div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="nn">.</span><span class="nn">pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span><span class="w">
@@ -505,50 +505,71 @@ short-correlation limit, not generally at every covariance length.</p>
 </span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="nn">.</span><span class="nn">units</span><span class="w"> </span><span class="kn">import</span> <span class="n">ureg</span><span class="w">
 </span><span class="w">
 </span><span class="n">wavelengths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">61</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="w">
+</span><span class="w">
 </span><span class="n">figure</span><span class="p">,</span> <span class="p">(</span><span class="n">coefficient_axis</span><span class="p">,</span> <span class="n">anisotropy_axis</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">constrained</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span><span class="w">
 </span><span class="k">for</span> <span class="n">length_nm</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="p">(</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">#0072B2</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">,</span> <span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">#D55E00</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">)</span><span class="p">:</span><span class="w">
 </span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.model.AnalyticalMedium" title="bornsim.AnalyticalMedium"><span class="n">medium</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.model.AnalyticalMedium" title="bornsim.AnalyticalMedium"><span class="n">AnalyticalMedium</span></a><span class="p">(</span><span class="w">
-</span>        <span class="n">index_std</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span><span class="w">
+</span>        <span class="n">refractive_index_std</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span><span class="w">
 </span>        <span class="n">correlation_length</span><span class="o">=</span><span class="n">length_nm</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span><span class="w">
+</span>        <span class="n">background_refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span><span class="w">
+</span>        <span class="n">correlation</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">gaussian</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
 </span>    <span class="p">)</span><span class="w">
+</span><span class="w">
 </span>    <span class="n">coefficients</span> <span class="o">=</span> <span class="p">[</span><span class="p">]</span><span class="w">
+</span><span class="w">
 </span>    <span class="n">reduced</span> <span class="o">=</span> <span class="p">[</span><span class="p">]</span><span class="w">
+</span><span class="w">
 </span>    <span class="n">anisotropy</span> <span class="o">=</span> <span class="p">[</span><span class="p">]</span><span class="w">
+</span><span class="w">
 </span>    <span class="k">for</span> <span class="n">wavelength</span> <span class="ow">in</span> <span class="n">wavelengths</span><span class="p">:</span><span class="w">
 </span>        <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.solver.Solver" title="bornsim.Solver"><span class="n">solver</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.solver.Solver" title="bornsim.Solver"><span class="n">Solver</span></a><span class="p">(</span><span class="w">
 </span>            <span class="n">source</span><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">Source</span></a><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">)</span><span class="p">,</span><span class="w">
-</span>            <span class="n">sampling</span><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.sampling.AngularSampling" title="bornsim.AngularSampling"><span class="n">AngularSampling</span></a><span class="p">(</span><span class="n">angles</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span>            <span class="n">sampling</span><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.sampling.AngularSampling" title="bornsim.AngularSampling"><span class="n">AngularSampling</span></a><span class="p">(</span><span class="n">angles</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">radian</span><span class="p">)</span><span class="p">,</span><span class="w">
 </span>        <span class="p">)</span><span class="w">
 </span><span class="w">
 </span>        <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.results.Result" title="bornsim.Result"><span class="n">result</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.solver.Solver.solve" title="bornsim.Solver.solve"><span class="n">solver</span><span class="o">.</span><span class="n">solve</span></a><span class="p">(</span><span class="w">
 </span>            <span class="n">target</span><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.model.AnalyticalMedium" title="bornsim.AnalyticalMedium"><span class="n">medium</span></a><span class="p">,</span><span class="w">
 </span>        <span class="p">)</span><span class="w">
+</span><span class="w">
 </span>        <span class="n">coefficients</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-property reference internal" href="../../api.html#bornsim.results.Result.mu_s" title="bornsim.Result.mu_s"><span class="n">result</span><span class="o">.</span><span class="n">mu_s</span><span class="o">.</span><span class="n">to</span></a><span class="p">(</span><span class="s2">&quot;</span><span class="s2">1 / millimeter</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span>        <span class="n">reduced</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.results.Result" title="bornsim.Result"><span class="n">result</span></a><span class="o">.</span><span class="n">mu_s_prime</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">1 / millimeter</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span>        <span class="n">anisotropy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.results.Result" title="bornsim.Result"><span class="n">result</span></a><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="n">magnitude</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span>    <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="s2">ℓ = </span><span class="si">{</span><span class="n">length_nm</span><span class="si">}</span><span class="s2"> nm</span><span class="s2">&quot;</span><span class="w">
+</span><span class="w">
 </span>    <span class="n">coefficient_axis</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">wavelengths</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">μs, </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span>    <span class="n">coefficient_axis</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">wavelengths</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">reduced</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">--</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">μs′, </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span>    <span class="n">anisotropy_axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="w">
 </span>        <span class="n">wavelengths</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span><span class="w">
 </span>        <span class="n">anisotropy</span><span class="p">,</span><span class="w">
 </span>        <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span><span class="w">
 </span>        <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span><span class="w">
 </span>    <span class="p">)</span><span class="w">
+</span><span class="w">
 </span>    <span class="k">if</span> <span class="n">length_nm</span> <span class="o">==</span> <span class="mi">20</span><span class="p">:</span><span class="w">
 </span>        <span class="n">guide</span> <span class="o">=</span> <span class="n">coefficients</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">wavelengths</span><span class="o">.</span><span class="n">magnitude</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">wavelengths</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span> <span class="o">*</span><span class="o">*</span> <span class="mi">4</span><span class="w">
+</span><span class="w">
 </span>        <span class="n">coefficient_axis</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">wavelengths</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">:</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">black</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">λ⁻⁴ guide</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span><span class="w">
 </span><span class="n">coefficient_axis</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Scattering coefficient (mm⁻¹)</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Total and reduced scattering</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><span class="n">anisotropy_axis</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Anisotropy g</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Mean cosine of scattering angle</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="p">(</span><span class="n">coefficient_axis</span><span class="p">,</span> <span class="n">anisotropy_axis</span><span class="p">)</span><span class="p">:</span><span class="w">
 </span>    <span class="n">axis</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Vacuum wavelength (nm)</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span>    <span class="n">axis</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span>    <span class="n">axis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.669 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 2.100 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-random-media-wavelength-dependence-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/68dd6ecd9a55fd2859ab4fa210c3a94e/wavelength_dependence.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">wavelength_dependence.ipynb</span></code></a></p>

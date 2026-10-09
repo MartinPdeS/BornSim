@@ -23,24 +23,42 @@ from bornsim.units import ureg
 # Longer covariance lengths can produce more forward-peaked scattering.
 # The same result provides the phase function and its mean cosine, ``g``.
 solver = Solver(source=Source(wavelength=633 * ureg.nanometer))
-angles = np.linspace(0, 180, 181) * ureg.degree
-sampling = AngularSampling(angles=angles)
+
+sampling = AngularSampling(
+    start=0 * ureg.degree,
+    end=180 * ureg.degree,
+    n_points=181,
+)
+
 figure, (phase_axis, density_axis) = plt.subplots(1, 2, figsize=(11, 4.5), layout="constrained")
 
 for length_nm, color in zip((30, 100, 300), ("#0072B2", "#D55E00", "#009E73")):
-    medium = AnalyticalMedium(correlation_length=length_nm * ureg.nanometer)
+    medium = AnalyticalMedium(
+        correlation_length=length_nm * ureg.nanometer,
+        background_refractive_index=1.33,
+        refractive_index_std=0.01,
+        correlation="gaussian",
+    )
+
     result = solver.solve(
         target=medium,
         sampling=sampling,
     )
+
     averaged = result.azimuth_average()
+
     phase = averaged.phase_function.magnitude[0]
+
     theta = result.angles.to("radian").magnitude
+
     polar_density = 2 * np.pi * phase * np.sin(theta)
+
     label = f"ℓ = {length_nm} nm, g = {result.g.magnitude[0]:.3f}"
-    phase_axis.semilogy(angles.magnitude, phase, color=color, label=label, linewidth=2)
+
+    phase_axis.semilogy(result.angles.to("degree").magnitude, phase, color=color, label=label, linewidth=2)
+
     density_axis.plot(
-        angles.magnitude,
+        result.angles.to("degree").magnitude,
         polar_density,
         color=color,
         label=label,
@@ -48,10 +66,16 @@ for length_nm, color in zip((30, 100, 300), ("#0072B2", "#D55E00", "#009E73")):
     )
 
 phase_axis.set(title="Phase function per solid angle", ylabel="p(θ) (sr⁻¹)")
+
 density_axis.set(title="Probability density per polar angle", ylabel="2π p(θ) sin θ (rad⁻¹)", ylim=(0, None))
+
 for axis in (phase_axis, density_axis):
     axis.set(xlabel="Scattering angle θ (degrees)", xlim=(0, 180), xticks=np.arange(0, 181, 30))
+
     axis.grid(alpha=0.25)
+
     axis.legend(frameon=False, fontsize=9)
+
 figure.suptitle("Analytical first-order scattering · Gaussian covariance · λvac = 633 nm")
+
 plt.show()

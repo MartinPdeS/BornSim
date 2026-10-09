@@ -2,10 +2,10 @@
 A dielectric sphere in a homogeneous background
 ===============================================
 
-Define a finite three-dimensional index field directly rather than drawing
-it from homogeneous random statistics. The sphere has a constant index
+Define a finite three-dimensional refractive index field directly rather than drawing
+it from homogeneous random statistics. The sphere has a constant refractive index
 inside and is surrounded by a uniform background. The fluctuation array
-stores ``n(r) - background_index``: zero outside the sphere, a constant
+stores ``n(r) - background_refractive_index``: zero outside the sphere, a constant
 contrast inside. The scattering problem's background extends beyond the
 voxel box; the box is not an additional material boundary.
 
@@ -19,16 +19,15 @@ dielectric contrast ``2 * n0 * delta_n`` at all Born orders, rather than
 import sys
 
 import matplotlib.pyplot as plt
-import numpy as np
 
 from bornsim import Material, AngularSampling, Grid, Solver, Source, Sphere, StructuredMedium
 from bornsim.units import ureg
 
 # %%
-# Build a spherical index mask
-# ----------------------------
+# Build a spherical refractive index mask
+# ---------------------------------------
 # Use voxel-centre coordinates measured from the box centre. The background
-# index is 1.33 and the sphere index is 1.34. A 150 nm radius fits inside a
+# refractive index is 1.33 and the sphere refractive index is 1.34. A 150 nm radius fits inside a
 # 480 nm box; no random statistics or generation seed are needed.
 # The sphere is offset by 40 nm in x and 20 nm in y. Set this vector to zero
 # for a centred sphere. Keep abs(centre[a]) + radius below half the box size
@@ -37,14 +36,21 @@ grid = Grid(
     shape=(24, 24, 24),
     spacing=20 * ureg.nanometer,
 )
+
 sampling = AngularSampling(
-    angles=np.linspace(0, 180, 91) * ureg.degree,
+    start=0 * ureg.degree,
+    end=180 * ureg.degree,
+    n_points=91,
     polar_samples=32,
     azimuth_samples=16,
 )
+
 structure = StructuredMedium()
-background = Material(index=1.33)
-sphere_material = Material(index=1.34)
+
+background = Material(refractive_index=1.33)
+
+sphere_material = Material(refractive_index=1.34)
+
 structure.add_background(material=background)
 
 
@@ -81,9 +87,10 @@ volume = structure.to_volume(
 # Level surfaces interpolate the sampled staircase interface.
 medium_figure = volume.plot_3d(
     mode="volume",
-    field="index",
+    field="refractive_index",
     opacity_scale="increasing",
 )
+
 if "--no-browser" not in sys.argv:
     medium_figure.show(renderer="browser")
 
@@ -116,6 +123,7 @@ result = solver.solve(
 phase_figure = result.plot_phase_function(
     view="3d",
 )
+
 if "--no-browser" not in sys.argv:
     phase_figure.show(renderer="browser")
 
@@ -125,5 +133,7 @@ if "--no-browser" not in sys.argv:
 # Select the sampled phi = 90 degree plane without averaging or interpolation.
 # The curve keeps the full solve's solid-angle normalization.
 meridian = result.meridian(azimuth=90 * ureg.degree)
+
 meridian.plot_phase_function()
+
 plt.show()

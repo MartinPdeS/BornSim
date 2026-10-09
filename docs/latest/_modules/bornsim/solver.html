@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bornsim.solver &#8212; BornSim 0.2.5 documentation</title>
+    <title>bornsim.solver &#8212; BornSim 0.2.6 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=cb850272"></script>
+    <script src="../../_static/documentation_options.js?v=fc7d8818"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -61,7 +61,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.5" />
+  <meta name="docsearch:version" content="0.2.6" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -462,10 +462,11 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.series</span><span class="w"> </span><span class="kn">import</span> <span class="n">BornSeries</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.ensemble</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensemble_scattering</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.grid</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.directions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Directions</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.sampling</span><span class="w"> </span><span class="kn">import</span> <span class="n">AngularSampling</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.ensemble_sampling</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnsembleSampling</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.source</span><span class="w"> </span><span class="kn">import</span> <span class="n">Source</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">_si</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">validate_units</span><span class="p">,</span> <span class="n">ureg</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_provenance</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="o">**</span><span class="n">settings</span><span class="p">):</span>
@@ -473,7 +474,7 @@
         <span class="s2">"bornsim_version"</span><span class="p">:</span> <span class="n">__version__</span><span class="p">,</span>
         <span class="s2">"numpy_version"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">__version__</span><span class="p">,</span>
         <span class="s2">"order"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">order</span><span class="p">),</span>
-        <span class="s2">"dielectric_contrast"</span><span class="p">:</span> <span class="s2">"2 * background_index * delta_index"</span><span class="p">,</span>
+        <span class="s2">"dielectric_contrast"</span><span class="p">:</span> <span class="s2">"2 * background_refractive_index * delta_refractive_index"</span><span class="p">,</span>
         <span class="s2">"green_self_cell"</span><span class="p">:</span> <span class="s2">"equal-volume sphere with longitudinal contact term"</span><span class="p">,</span>
         <span class="o">**</span><span class="n">settings</span><span class="p">,</span>
     <span class="p">}</span>
@@ -527,11 +528,23 @@
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; from bornsim import AnalyticalMedium, Solver, Source</span>
+<span class="sd">    ...</span>
+<span class="sd">    &gt;&gt;&gt; from bornsim.units import ureg</span>
+<span class="sd">    ...</span>
 <span class="sd">    &gt;&gt;&gt; solver = Solver(</span>
-<span class="sd">    ...     source=Source(),</span>
+<span class="sd">    ...     source=Source(</span>
+<span class="sd">    ...         wavelength=633e-9 * ureg.meter,</span>
+<span class="sd">    ...     ),</span>
 <span class="sd">    ...     order=3,</span>
 <span class="sd">    ... )</span>
-<span class="sd">    &gt;&gt;&gt; result = solver.solve(target=AnalyticalMedium())</span>
+<span class="sd">    &gt;&gt;&gt; result = solver.solve(</span>
+<span class="sd">    ...     target=AnalyticalMedium(</span>
+<span class="sd">    ...         background_refractive_index=1.33,</span>
+<span class="sd">    ...         refractive_index_std=0.01,</span>
+<span class="sd">    ...         correlation_length=100e-9 * ureg.meter,</span>
+<span class="sd">    ...         correlation="gaussian",</span>
+<span class="sd">    ...     )</span>
+<span class="sd">    ... )</span>
 <span class="sd">    &gt;&gt;&gt; result.differential.shape</span>
 <span class="sd">    (1, 121, 8)</span>
 <span class="sd">    """</span>
@@ -544,29 +557,41 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampling</span><span class="p">,</span> <span class="n">AngularSampling</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"sampling must be an AngularSampling."</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">Source</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"source must be a Source."</span><span class="p">)</span>
+
         <span class="n">_integer</span><span class="p">(</span>
             <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span>
             <span class="n">name</span><span class="o">=</span><span class="s2">"order"</span><span class="p">,</span>
             <span class="n">low</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="n">high</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
         <span class="p">)</span>
+
         <span class="n">invalid_quadrature_order</span> <span class="o">=</span> <span class="p">(</span>
             <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">quadrature_order</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
             <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">quadrature_order</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
             <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">quadrature_order</span> <span class="o">&lt;</span> <span class="mi">16</span>
         <span class="p">)</span>
+
         <span class="k">if</span> <span class="n">invalid_quadrature_order</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"quadrature_order must be an integer of at least 16."</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">wavelength</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="s2">"wavelength"</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"nanometer"</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="sa">f</span><span class="s2">"Solver(wavelength=</span><span class="si">{</span><span class="n">wavelength</span><span class="o">.</span><span class="n">magnitude</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2"> nm, order=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="si">}</span><span class="s2">, sampling=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sampling</span><span class="si">!r}</span><span class="s2">)"</span>
 
 <div class="viewcode-block" id="Solver.solve">
 <a class="viewcode-back" href="../../api.html#bornsim.solver.Solver.solve">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">sampling</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">directions</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">:</span> <span class="n">Volume</span> <span class="o">|</span> <span class="n">AnalyticalMedium</span><span class="p">,</span>
+        <span class="n">sampling</span><span class="p">:</span> <span class="n">AngularSampling</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">angles</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">directions</span><span class="p">:</span> <span class="n">Directions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Compute a full angular scattering distribution with normalization.</span>
 
 <span class="sd">        Parameters</span>
@@ -578,7 +603,7 @@
 <span class="sd">        angles : array_like or Quantity, optional</span>
 <span class="sd">            Deprecated analytical output-angle keyword. Use AngularSampling.</span>
 <span class="sd">            Numerical angular cuts use solve_cut instead.</span>
-<span class="sd">        directions : array_like or Quantity, optional</span>
+<span class="sd">        directions : Directions, optional</span>
 <span class="sd">            Rejected here; arbitrary numerical observations use solve_cut.</span>
 
 <span class="sd">        Returns</span>
@@ -589,55 +614,75 @@
 <span class="sd">            Coefficients for finite samples are cross sections divided by</span>
 <span class="sd">            voxel-box volume, not intrinsic infinite-medium properties.</span>
 <span class="sd">        """</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="p">(</span><span class="n">AnalyticalMedium</span><span class="p">,</span> <span class="n">Volume</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"target must be an AnalyticalMedium or Volume."</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">directions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">Volume</span><span class="p">)</span> <span class="ow">and</span> <span class="n">angles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Use solve_cut for explicit angles or directions; solve always computes full scattering."</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">sampling</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">angles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Supply sampling or analytical angles, not both."</span><span class="p">)</span>
+
         <span class="n">sampling</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling</span> <span class="k">if</span> <span class="n">sampling</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">AngularSampling</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span><span class="n">sampling</span><span class="o">=</span><span class="n">sampling</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">Volume</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solve_volume</span><span class="p">(</span><span class="n">volume</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">sampling</span><span class="o">=</span><span class="n">sampling</span><span class="p">)</span>
-        <span class="n">theta</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">sampling</span><span class="o">.</span><span class="n">angles</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">angles</span> <span class="ow">is</span> <span class="kc">None</span>
-            <span class="k">else</span> <span class="n">_si</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">angles</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"radian"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"angles"</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">angles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">validate_units</span><span class="p">(</span>
+                <span class="n">angles</span><span class="p">,</span>
+                <span class="n">unit</span><span class="o">=</span><span class="s2">"radian"</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">"angles"</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">sampling</span><span class="o">.</span><span class="n">angles</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">if</span> <span class="n">angles</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">angles</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
         <span class="n">invalid_angles</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">theta</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">theta</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">((</span><span class="n">theta</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">theta</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+            <span class="n">theta</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span>
+            <span class="ow">or</span> <span class="n">theta</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+            <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">((</span><span class="n">theta</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">theta</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">radian</span><span class="p">))</span>
         <span class="p">)</span>
+
         <span class="k">if</span> <span class="n">invalid_angles</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"angles must be a nonempty 1D array of finite angles between 0 and pi."</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">angles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">"Use AngularSampling for analytical output angles."</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="n">wavelength</span> <span class="o">=</span> <span class="n">_si</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"wavelength"</span><span class="p">,</span> <span class="n">scalar</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">wavelength</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">wavelength</span>
+
         <span class="n">differential</span> <span class="o">=</span> <span class="n">angular_scattering</span><span class="p">(</span>
             <span class="n">medium</span><span class="o">=</span><span class="n">target</span><span class="p">,</span>
             <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span>
             <span class="n">theta</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span>
         <span class="p">)</span>
+
         <span class="n">coefficients</span> <span class="o">=</span> <span class="n">optical_properties</span><span class="p">(</span>
             <span class="n">medium</span><span class="o">=</span><span class="n">target</span><span class="p">,</span>
             <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span>
             <span class="n">quadrature_order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">quadrature_order</span><span class="p">,</span>
         <span class="p">)</span>
+
         <span class="n">directional</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">differential</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">],</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">sampling</span><span class="o">.</span><span class="n">azimuth_samples</span><span class="p">))</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
         <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
             <span class="n">source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span>
             <span class="n">kind</span><span class="o">=</span><span class="s2">"analytical"</span><span class="p">,</span>
-            <span class="n">angles</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span>
+            <span class="n">angles</span><span class="o">=</span><span class="n">theta</span> <span class="k">if</span> <span class="n">theta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">azimuths</span><span class="o">=</span><span class="n">sampling</span><span class="o">.</span><span class="n">azimuths</span><span class="p">,</span>
             <span class="n">differential</span><span class="o">=</span><span class="n">directional</span><span class="p">,</span>
-            <span class="n">mu_s</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">coefficients</span><span class="p">[</span><span class="s2">"mu_s"</span><span class="p">]]),</span>
+            <span class="n">mu_s</span><span class="o">=</span><span class="n">coefficients</span><span class="p">[</span><span class="s2">"mu_s"</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
             <span class="n">g</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">if</span> <span class="n">coefficients</span><span class="p">[</span><span class="s2">"g"</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">coefficients</span><span class="p">[</span><span class="s2">"g"</span><span class="p">]]),</span>
-            <span class="n">mu_s_prime</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">coefficients</span><span class="p">[</span><span class="s2">"mu_s_prime"</span><span class="p">]]),</span>
+            <span class="n">mu_s_prime</span><span class="o">=</span><span class="n">coefficients</span><span class="p">[</span><span class="s2">"mu_s_prime"</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
             <span class="n">provenance</span><span class="o">=</span><span class="n">_provenance</span><span class="p">(</span>
                 <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                 <span class="n">medium</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
                 <span class="n">quadrature_order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">quadrature_order</span><span class="p">,</span>
-                <span class="n">sampling</span><span class="o">=</span><span class="p">{</span><span class="o">**</span><span class="n">sampling</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="s2">"angles_rad"</span><span class="p">:</span> <span class="n">theta</span><span class="o">.</span><span class="n">tolist</span><span class="p">()},</span>
+                <span class="n">sampling</span><span class="o">=</span><span class="p">{</span><span class="o">**</span><span class="n">sampling</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="s2">"angles_rad"</span><span class="p">:</span> <span class="n">theta</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"radian"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="o">.</span><span class="n">tolist</span><span class="p">()},</span>
                 <span class="n">coefficient_scope</span><span class="o">=</span><span class="s2">"infinite-medium"</span><span class="p">,</span>
             <span class="p">),</span>
         <span class="p">)</span></div>
@@ -645,68 +690,87 @@
 
 <div class="viewcode-block" id="Solver.solve_cut">
 <a class="viewcode-back" href="../../api.html#bornsim.solver.Solver.solve_cut">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">solve_cut</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">directions</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve_cut</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">:</span> <span class="n">Volume</span><span class="p">,</span>
+        <span class="n">angles</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">directions</span><span class="p">:</span> <span class="n">Directions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Compute an unnormalized angular cut through a fixed Volume.</span>
 
-<span class="sd">        Supply polar angles on the x-z meridian or arbitrary unit directions,</span>
-<span class="sd">        but not both. Bare angles mean radians. Default angles span 0 to pi</span>
+<span class="sd">        Supply polar angles on the x-z meridian or a Directions configuration,</span>
+<span class="sd">        but not both. Explicit angular units are required. Default angles span 0 to pi</span>
 <span class="sd">        with 121 samples. Cut amplitudes and intensities retain every requested</span>
 <span class="sd">        direction. A cut alone cannot determine a solid-angle integral;</span>
 <span class="sd">        integrated coefficients and normalized phase functions are unavailable.</span>
 <span class="sd">        """</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">Volume</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"target must be a Volume."</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">angles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">directions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Supply angles or directions, not both."</span><span class="p">)</span>
-        <span class="n">theta</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">directions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">theta</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">121</span><span class="p">)</span> <span class="k">if</span> <span class="n">angles</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">_si</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">angles</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"radian"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"angles"</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">angles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">validate_units</span><span class="p">(</span>
+                <span class="n">angles</span><span class="p">,</span>
+                <span class="n">unit</span><span class="o">=</span><span class="s2">"radian"</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">"angles"</span><span class="p">,</span>
             <span class="p">)</span>
+
+        <span class="n">theta</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">directions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">121</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">radian</span> <span class="k">if</span> <span class="n">angles</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">angles</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
             <span class="n">invalid_angles</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">theta</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span>
                 <span class="ow">or</span> <span class="n">theta</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span>
                 <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
-                <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">((</span><span class="n">theta</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">theta</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+                <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">((</span><span class="n">theta</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">theta</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">radian</span><span class="p">))</span>
             <span class="p">)</span>
+
             <span class="k">if</span> <span class="n">invalid_angles</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"angles must be a nonempty 1D array of finite angles between 0 and pi."</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">directions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">theta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="n">directions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">directions</span> <span class="o">=</span> <span class="n">Directions</span><span class="o">.</span><span class="n">from_angles</span><span class="p">(</span>
+                <span class="n">polar_angles</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span>
+                <span class="n">azimuth_angles</span><span class="o">=</span><span class="mi">0</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">radian</span><span class="p">,</span>
+            <span class="p">)</span>
+
         <span class="n">engine</span> <span class="o">=</span> <span class="n">BornSeries</span><span class="p">(</span>
             <span class="n">grid</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
-            <span class="n">background_index</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">background_index</span><span class="p">,</span>
-            <span class="n">wavelength</span><span class="o">=</span><span class="n">_si</span><span class="p">(</span>
-                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span>
-                <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">"wavelength"</span><span class="p">,</span>
-                <span class="n">scalar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">),</span>
+            <span class="n">background_refractive_index</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">background_refractive_index</span><span class="p">,</span>
+            <span class="n">wavelength</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span>
             <span class="n">directions</span><span class="o">=</span><span class="n">directions</span><span class="p">,</span>
             <span class="n">order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">volume</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
             <span class="n">source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span>
             <span class="n">kind</span><span class="o">=</span><span class="s2">"volume"</span><span class="p">,</span>
             <span class="n">sample_volume</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">volume</span><span class="p">,</span>
-            <span class="n">angles</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span>
+            <span class="n">angles</span><span class="o">=</span><span class="n">theta</span> <span class="k">if</span> <span class="n">theta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">directions</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">directions</span><span class="p">,</span>
-            <span class="n">differential</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">differential</span><span class="p">,</span>
-            <span class="n">amplitudes</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">amplitudes</span><span class="p">,</span>
-            <span class="n">term_differential</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">term_differential</span><span class="p">,</span>
+            <span class="n">differential</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">differential</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">steradian</span><span class="p">),</span>
+            <span class="n">amplitudes</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">amplitudes</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
+            <span class="n">term_differential</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">term_differential</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">steradian</span><span class="p">),</span>
             <span class="n">field_norms</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">field_norms</span><span class="p">,</span>
             <span class="n">warnings</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">warnings</span><span class="p">,</span>
             <span class="n">provenance</span><span class="o">=</span><span class="n">_provenance</span><span class="p">(</span>
                 <span class="n">order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span>
                 <span class="n">grid</span><span class="o">=</span><span class="p">{</span>
-                    <span class="s2">"shape"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">delta_index</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span>
-                    <span class="s2">"spacing_m"</span><span class="p">:</span> <span class="n">target</span><span class="o">.</span><span class="n">spacing</span><span class="p">,</span>
-                    <span class="s2">"background_index"</span><span class="p">:</span> <span class="n">target</span><span class="o">.</span><span class="n">background_index</span><span class="p">,</span>
-                    <span class="s2">"delta_index_sha256"</span><span class="p">:</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span>
-                        <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">delta_index</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"&lt;f8"</span><span class="p">)</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="s2">"C"</span><span class="p">)</span>
+                    <span class="s2">"shape"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">delta_refractive_index</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span>
+                    <span class="s2">"spacing_m"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">spacing</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"meter"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">),</span>
+                    <span class="s2">"background_refractive_index"</span><span class="p">:</span> <span class="n">target</span><span class="o">.</span><span class="n">background_refractive_index</span><span class="p">,</span>
+                    <span class="s2">"delta_refractive_index_sha256"</span><span class="p">:</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">delta_refractive_index</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"&lt;f8"</span><span class="p">)</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="s2">"C"</span><span class="p">)</span>
                     <span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">(),</span>
                 <span class="p">},</span>
                 <span class="n">medium</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">target</span><span class="o">.</span><span class="n">medium</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">target</span><span class="o">.</span><span class="n">medium</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
@@ -718,39 +782,46 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_solve_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">volume</span><span class="p">,</span> <span class="n">sampling</span><span class="p">):</span>
         <span class="n">sampling</span><span class="o">.</span><span class="n">check_work</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">volume</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">)</span>
+
         <span class="n">engine</span> <span class="o">=</span> <span class="n">BornSeries</span><span class="p">(</span>
             <span class="n">grid</span><span class="o">=</span><span class="n">volume</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
-            <span class="n">background_index</span><span class="o">=</span><span class="n">volume</span><span class="o">.</span><span class="n">background_index</span><span class="p">,</span>
+            <span class="n">background_refractive_index</span><span class="o">=</span><span class="n">volume</span><span class="o">.</span><span class="n">background_refractive_index</span><span class="p">,</span>
             <span class="n">wavelength</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span>
             <span class="n">directions</span><span class="o">=</span><span class="n">sampling</span><span class="o">.</span><span class="n">directions</span><span class="p">,</span>
             <span class="n">order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span>
         <span class="p">)</span>
+
         <span class="n">born</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">volume</span><span class="o">=</span><span class="n">volume</span><span class="p">)</span>
+
         <span class="n">sampled</span> <span class="o">=</span> <span class="n">sampling</span><span class="o">.</span><span class="n">summarize</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="n">born</span><span class="p">)</span>
+
         <span class="n">integrated</span> <span class="o">=</span> <span class="n">sampled</span><span class="p">[</span><span class="s2">"integrals"</span><span class="p">]</span>
+
         <span class="n">mu</span> <span class="o">=</span> <span class="n">integrated</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+
         <span class="n">g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">integrated</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">mu</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="n">mu</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
             <span class="n">source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span>
             <span class="n">kind</span><span class="o">=</span><span class="s2">"volume"</span><span class="p">,</span>
             <span class="n">sample_volume</span><span class="o">=</span><span class="n">volume</span><span class="o">.</span><span class="n">volume</span><span class="p">,</span>
             <span class="n">angles</span><span class="o">=</span><span class="n">sampling</span><span class="o">.</span><span class="n">angles</span><span class="p">,</span>
             <span class="n">azimuths</span><span class="o">=</span><span class="n">sampling</span><span class="o">.</span><span class="n">azimuths</span><span class="p">,</span>
-            <span class="n">differential</span><span class="o">=</span><span class="n">sampled</span><span class="p">[</span><span class="s2">"directional_differential"</span><span class="p">],</span>
-            <span class="n">amplitudes</span><span class="o">=</span><span class="n">sampled</span><span class="p">[</span><span class="s2">"directional_amplitudes"</span><span class="p">],</span>
-            <span class="n">term_differential</span><span class="o">=</span><span class="n">sampled</span><span class="p">[</span><span class="s2">"directional_terms"</span><span class="p">],</span>
-            <span class="n">mu_s</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span>
+            <span class="n">differential</span><span class="o">=</span><span class="n">sampled</span><span class="p">[</span><span class="s2">"directional_differential"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">steradian</span><span class="p">),</span>
+            <span class="n">amplitudes</span><span class="o">=</span><span class="n">sampled</span><span class="p">[</span><span class="s2">"directional_amplitudes"</span><span class="p">]</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">,</span>
+            <span class="n">term_differential</span><span class="o">=</span><span class="n">sampled</span><span class="p">[</span><span class="s2">"directional_terms"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">steradian</span><span class="p">),</span>
+            <span class="n">mu_s</span><span class="o">=</span><span class="n">mu</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">),</span>
             <span class="n">g</span><span class="o">=</span><span class="n">g</span><span class="p">,</span>
-            <span class="n">mu_s_prime</span><span class="o">=</span><span class="n">integrated</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>
+            <span class="n">mu_s_prime</span><span class="o">=</span><span class="n">integrated</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">),</span>
             <span class="n">field_norms</span><span class="o">=</span><span class="n">born</span><span class="o">.</span><span class="n">field_norms</span><span class="p">,</span>
             <span class="n">warnings</span><span class="o">=</span><span class="n">born</span><span class="o">.</span><span class="n">warnings</span><span class="p">,</span>
             <span class="n">provenance</span><span class="o">=</span><span class="n">_provenance</span><span class="p">(</span>
                 <span class="n">order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span>
                 <span class="n">grid</span><span class="o">=</span><span class="p">{</span>
                     <span class="o">**</span><span class="n">volume</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
-                    <span class="s2">"background_index"</span><span class="p">:</span> <span class="n">volume</span><span class="o">.</span><span class="n">background_index</span><span class="p">,</span>
-                    <span class="s2">"delta_index_sha256"</span><span class="p">:</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span>
-                        <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">volume</span><span class="o">.</span><span class="n">delta_index</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"&lt;f8"</span><span class="p">)</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="s2">"C"</span><span class="p">)</span>
+                    <span class="s2">"background_refractive_index"</span><span class="p">:</span> <span class="n">volume</span><span class="o">.</span><span class="n">background_refractive_index</span><span class="p">,</span>
+                    <span class="s2">"delta_refractive_index_sha256"</span><span class="p">:</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">volume</span><span class="o">.</span><span class="n">delta_refractive_index</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"&lt;f8"</span><span class="p">)</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="s2">"C"</span><span class="p">)</span>
                     <span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">(),</span>
                 <span class="p">},</span>
                 <span class="n">sampling</span><span class="o">=</span><span class="n">sampling</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
@@ -785,17 +856,17 @@
 <span class="sd">            Random medium or structured medium with a random background.</span>
 <span class="sd">            Deterministic structures use solve on their generated Volume.</span>
 <span class="sd">        grid : Grid, optional</span>
-<span class="sd">            Shared spatial configuration for every realization. Defaults to</span>
-<span class="sd">            Grid(). Cannot be combined with shape or spacing.</span>
+<span class="sd">            Explicit spatial configuration for every realization. Cannot be</span>
+<span class="sd">            combined with shape or spacing.</span>
 <span class="sd">        sampling : AngularSampling, optional</span>
 <span class="sd">            Override shared angular settings. Defaults to the solver's sampling</span>
 <span class="sd">            when individual angular keywords are omitted. Cannot be combined</span>
 <span class="sd">            with angles, polar_samples, or azimuth_samples.</span>
 <span class="sd">        shape : tuple of int, optional</span>
-<span class="sd">            Three grid dimensions, each from 2 to 32. Default is (12, 12, 12).</span>
-<span class="sd">        spacing : float or Quantity, optional</span>
-<span class="sd">            Positive, finite cubic voxel spacing. Bare values mean metres;</span>
-<span class="sd">            default is 50 nm.</span>
+<span class="sd">            Three grid dimensions, each from 2 to 32. Required with spacing when grid is omitted.</span>
+<span class="sd">        spacing : Quantity, optional</span>
+<span class="sd">            Positive, finite cubic voxel spacing. Explicit length units are required;</span>
+<span class="sd">            must be supplied with shape when grid is omitted.</span>
 <span class="sd">        ensemble_sampling : EnsembleSampling, optional</span>
 <span class="sd">            Realization counts and ordered independent seeds. Defaults to</span>
 <span class="sd">            four consecutive seeds starting at zero.</span>
@@ -808,7 +879,7 @@
 <span class="sd">            consecutive seeds; the entire seed range must remain valid.</span>
 <span class="sd">        angles : array_like or Quantity, optional</span>
 <span class="sd">            One-dimensional plot angles in [0, pi], with 1 to 181 observations.</span>
-<span class="sd">            Bare values mean radians. Default is 121 evenly spaced angles.</span>
+<span class="sd">            Angular values require explicit units. Default is 121 evenly spaced angles.</span>
 <span class="sd">        azimuth_samples : int, optional</span>
 <span class="sd">            Uniform azimuth samples for both curves and quadrature, from 4 to 32.</span>
 <span class="sd">            Default is 8.</span>
@@ -854,69 +925,83 @@
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; from bornsim import RandomMedium, Solver, Source</span>
+<span class="sd">        &gt;&gt;&gt; from bornsim.units import ureg</span>
+<span class="sd">        ...</span>
+<span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt; ensemble_solver = Solver(</span>
-<span class="sd">        ...     source=Source(),</span>
+<span class="sd">        ...     source=Source(</span>
+<span class="sd">        ...         wavelength=633e-9 * ureg.meter,</span>
+<span class="sd">        ...     ),</span>
 <span class="sd">        ...     order=2,</span>
 <span class="sd">        ... )</span>
 
+<span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt; result = ensemble_solver.ensemble(</span>
-<span class="sd">        ...     medium=RandomMedium(correlation="gaussian"),</span>
+<span class="sd">        ...     medium=RandomMedium(</span>
+<span class="sd">        ...         correlation="gaussian",</span>
+<span class="sd">        ...         background_refractive_index=1.33,</span>
+<span class="sd">        ...         refractive_index_std=0.01,</span>
+<span class="sd">        ...         correlation_length=100e-9 * ureg.meter,</span>
+<span class="sd">        ...     ),</span>
 <span class="sd">        ...     shape=(2, 2, 2),</span>
 <span class="sd">        ...     realizations=2,</span>
 <span class="sd">        ...     seed=42,</span>
-<span class="sd">        ...     angles=[0, 1],</span>
+<span class="sd">        ...     angles=[0, 1] * ureg.radian,</span>
 <span class="sd">        ...     azimuth_samples=4,</span>
 <span class="sd">        ...     polar_samples=16,</span>
+<span class="sd">        ...     spacing=50e-9 * ureg.meter,</span>
 <span class="sd">        ... )</span>
 <span class="sd">        &gt;&gt;&gt; result.stderr.shape</span>
 <span class="sd">        (2, 2, 4)</span>
 <span class="sd">        """</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">medium</span><span class="p">,</span> <span class="n">Medium</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"medium must be a Medium."</span><span class="p">)</span>
+
         <span class="n">grid</span> <span class="o">=</span> <span class="n">Grid</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span>
             <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
             <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span>
             <span class="n">spacing</span><span class="o">=</span><span class="n">spacing</span><span class="p">,</span>
         <span class="p">)</span>
+
         <span class="k">if</span> <span class="n">sampling</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">azimuth_samples</span><span class="p">,</span> <span class="n">polar_samples</span><span class="p">)):</span>
             <span class="n">sampling</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling</span>
+
         <span class="n">sampling</span> <span class="o">=</span> <span class="n">AngularSampling</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span>
             <span class="n">sampling</span><span class="o">=</span><span class="n">sampling</span><span class="p">,</span>
             <span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">,</span>
             <span class="n">polar_samples</span><span class="o">=</span><span class="n">polar_samples</span><span class="p">,</span>
             <span class="n">azimuth_samples</span><span class="o">=</span><span class="n">azimuth_samples</span><span class="p">,</span>
         <span class="p">)</span>
+
         <span class="n">ensemble_sampling</span> <span class="o">=</span> <span class="n">EnsembleSampling</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span>
             <span class="n">ensemble_sampling</span><span class="o">=</span><span class="n">ensemble_sampling</span><span class="p">,</span>
             <span class="n">realizations</span><span class="o">=</span><span class="n">realizations</span><span class="p">,</span>
             <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
         <span class="p">)</span>
+
         <span class="n">result</span> <span class="o">=</span> <span class="n">ensemble_scattering</span><span class="p">(</span>
             <span class="n">medium</span><span class="o">=</span><span class="n">medium</span><span class="p">,</span>
-            <span class="n">wavelength</span><span class="o">=</span><span class="n">_si</span><span class="p">(</span>
-                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span>
-                <span class="n">unit</span><span class="o">=</span><span class="s2">"meter"</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">"wavelength"</span><span class="p">,</span>
-                <span class="n">scalar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">),</span>
+            <span class="n">wavelength</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">wavelength</span><span class="p">,</span>
             <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
             <span class="n">sampling</span><span class="o">=</span><span class="n">sampling</span><span class="p">,</span>
             <span class="n">order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span>
             <span class="n">ensemble_sampling</span><span class="o">=</span><span class="n">ensemble_sampling</span><span class="p">,</span>
         <span class="p">)</span>
+
         <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
             <span class="n">source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span>
             <span class="n">kind</span><span class="o">=</span><span class="s2">"ensemble"</span><span class="p">,</span>
             <span class="n">sample_volume</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">volume</span><span class="p">,</span>
             <span class="n">angles</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"angles"</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
-            <span class="n">differential</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"directional_differential"</span><span class="p">],</span>
+            <span class="n">differential</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"directional_differential"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">steradian</span><span class="p">),</span>
             <span class="n">azimuths</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"azimuths"</span><span class="p">],</span>
-            <span class="n">term_differential</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"directional_terms"</span><span class="p">],</span>
-            <span class="n">stderr</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"directional_stderr"</span><span class="p">],</span>
-            <span class="n">azimuth_stderr</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"stderr"</span><span class="p">],</span>
-            <span class="n">mu_s</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"mu_s"</span><span class="p">],</span>
+            <span class="n">term_differential</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"directional_terms"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">steradian</span><span class="p">),</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"directional_stderr"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">steradian</span><span class="p">),</span>
+            <span class="n">azimuth_stderr</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"stderr"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">steradian</span><span class="p">),</span>
+            <span class="n">mu_s</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"mu_s"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">),</span>
             <span class="n">g</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"g"</span><span class="p">],</span>
-            <span class="n">mu_s_prime</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"mu_s_prime"</span><span class="p">],</span>
+            <span class="n">mu_s_prime</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"mu_s_prime"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">),</span>
             <span class="n">field_norms</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"field_norms"</span><span class="p">],</span>
             <span class="n">warnings</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"warnings"</span><span class="p">],</span>
             <span class="n">realizations</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">"realizations"</span><span class="p">],</span>

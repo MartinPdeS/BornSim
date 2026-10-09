@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Realization count and sampling uncertainty &#8212; BornSim 0.2.5 documentation</title>
+    <title>Realization count and sampling uncertainty &#8212; BornSim 0.2.6 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=cb850272"></script>
+    <script src="../../_static/documentation_options.js?v=fc7d8818"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -64,7 +64,7 @@
     <link rel="prev" title="Finite samples and analytical first-order scattering" href="finite_size_comparison.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.5" />
+  <meta name="docsearch:version" content="0.2.6" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -506,24 +506,35 @@ measure sampling uncertainty, not voxel, quadrature, or finite-size error.</p>
 </span>    <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span><span class="p">,</span><span class="w">
 </span>    <span class="n">spacing</span><span class="o">=</span><span class="mi">40</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.media.RandomMedium" title="bornsim.RandomMedium"><span class="n">medium</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.media.RandomMedium" title="bornsim.RandomMedium"><span class="n">RandomMedium</span></a><span class="p">(</span><span class="w">
 </span>    <span class="n">correlation</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">gaussian</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
 </span>    <span class="n">correlation_length</span><span class="o">=</span><span class="mi">80</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span><span class="w">
+</span>    <span class="n">background_refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span><span class="w">
+</span>    <span class="n">refractive_index_std</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.solver.Solver" title="bornsim.Solver"><span class="n">solver</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.solver.Solver" title="bornsim.Solver"><span class="n">Solver</span></a><span class="p">(</span><span class="w">
 </span>    <span class="n">source</span><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">Source</span></a><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mi">633</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">)</span><span class="p">,</span><span class="w">
 </span>    <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
-</span><span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">19</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">degree</span><span class="w">
+</span><span class="w">
 </span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.sampling.AngularSampling" title="bornsim.AngularSampling"><span class="n">sampling</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.sampling.AngularSampling" title="bornsim.AngularSampling"><span class="n">AngularSampling</span></a><span class="p">(</span><span class="w">
-</span>    <span class="n">angles</span><span class="o">=</span><span class="n">angles</span><span class="p">,</span><span class="w">
+</span>    <span class="n">start</span><span class="o">=</span><span class="mi">0</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span><span class="w">
+</span>    <span class="n">end</span><span class="o">=</span><span class="mi">180</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span><span class="w">
+</span>    <span class="n">n_points</span><span class="o">=</span><span class="mi">19</span><span class="p">,</span><span class="w">
 </span>    <span class="n">polar_samples</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span><span class="w">
 </span>    <span class="n">azimuth_samples</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><span class="n">counts</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">]</span><span class="w">
+</span><span class="w">
 </span><span class="n">means</span> <span class="o">=</span> <span class="p">[</span><span class="p">]</span><span class="w">
+</span><span class="w">
 </span><span class="n">errors</span> <span class="o">=</span> <span class="p">[</span><span class="p">]</span><span class="w">
+</span><span class="w">
 </span><span class="n">figure</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">constrained</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><span class="k">for</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">counts</span><span class="p">:</span><span class="w">
 </span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.results.Result" title="bornsim.Result"><span class="n">result</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.solver.Solver.ensemble" title="bornsim.Solver.ensemble"><span class="n">solver</span><span class="o">.</span><span class="n">ensemble</span></a><span class="p">(</span><span class="w">
 </span>        <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.media.RandomMedium" title="bornsim.RandomMedium"><span class="n">medium</span></a><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.media.RandomMedium" title="bornsim.RandomMedium"><span class="n">medium</span></a><span class="p">,</span><span class="w">
@@ -534,18 +545,29 @@ measure sampling uncertainty, not voxel, quadrature, or finite-size error.</p>
 </span>        <span class="p">)</span><span class="p">,</span><span class="w">
 </span>        <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.sampling.AngularSampling" title="bornsim.AngularSampling"><span class="n">sampling</span></a><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.sampling.AngularSampling" title="bornsim.AngularSampling"><span class="n">sampling</span></a><span class="p">,</span><span class="w">
 </span>    <span class="p">)</span><span class="w">
+</span><span class="w">
 </span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.results.Result" title="bornsim.Result"><span class="n">averaged</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.results.Result.azimuth_average" title="bornsim.Result.azimuth_average"><span class="n">result</span><span class="o">.</span><span class="n">azimuth_average</span></a><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span>    <span class="n">values</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-property reference internal" href="../../api.html#bornsim.results.Result.differential" title="bornsim.Result.differential"><span class="n">averaged</span><span class="o">.</span><span class="n">differential</span><span class="o">.</span><span class="n">to</span></a><span class="p">(</span><span class="s2">&quot;</span><span class="s2">1 / meter / steradian</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w">
+</span><span class="w">
 </span>    <span class="n">stderr</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-property reference internal" href="../../api.html#bornsim.results.Result.stderr" title="bornsim.Result.stderr"><span class="n">averaged</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">to</span></a><span class="p">(</span><span class="s2">&quot;</span><span class="s2">1 / meter / steradian</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w">
-</span>    <span class="n">axis</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">angles</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">stderr</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">N = </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span>    <span class="n">axis</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="w">
+</span>        <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-property reference internal" href="../../api.html#bornsim.results.Result.angles" title="bornsim.Result.angles"><span class="n">result</span><span class="o">.</span><span class="n">angles</span><span class="o">.</span><span class="n">to</span></a><span class="p">(</span><span class="s2">&quot;</span><span class="s2">degree</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">stderr</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">N = </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">&quot;</span><span class="w">
+</span>    <span class="p">)</span><span class="w">
+</span><span class="w">
 </span>    <span class="n">means</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span>    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stderr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><span class="n">axis</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="w">
 </span>    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Scattering angle (degrees)</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
 </span>    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Differential scattering (m⁻¹ sr⁻¹)</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
 </span>    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Finite-sample ensemble means</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><span class="n">axis</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><span class="n">axis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
 <img src="../../_images/sphx_glr_ensemble_sampling_001.png" srcset="../../_images/sphx_glr_ensemble_sampling_001.png" alt="Finite-sample ensemble means" class = "sphx-glr-single-img"/><section id="sampling-error-at-a-fixed-direction">
@@ -554,13 +576,19 @@ measure sampling uncertainty, not voxel, quadrature, or finite-size error.</p>
 estimates are correlated across N. A realized error need not decrease
 monotonically; the N**(-1/2) guide describes independent-sample scaling.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">figure</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">constrained</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><span class="n">axis</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">counts</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="p">]</span><span class="p">,</span> <span class="n">errors</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="p">]</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">o-</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Forward-scattering standard error</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><span class="n">axis</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">counts</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="p">]</span><span class="p">,</span> <span class="n">errors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">counts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">counts</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="p">]</span><span class="p">)</span><span class="p">)</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">--</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">N⁻¹ᐟ² guide</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><span class="n">axis</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="w">
 </span>    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Independent realizations N</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Standard error (m⁻¹ sr⁻¹)</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Sampling uncertainty at θ = 0°</span><span class="s2">&quot;</span><span class="w">
 </span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><span class="n">axis</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><span class="n">axis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">both</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
 <img src="../../_images/sphx_glr_ensemble_sampling_002.png" srcset="../../_images/sphx_glr_ensemble_sampling_002.png" alt="Sampling uncertainty at θ = 0°" class = "sphx-glr-single-img"/></section>
@@ -569,20 +597,22 @@ monotonically; the N**(-1/2) guide describes independent-sample scaling.</p>
 <p>This is the first realization (seed 42) on the calculation grid,
 not an ensemble average or an infinite-medium material boundary.
 Drag to rotate and scroll to zoom in the embedded browser view.
-Higher-index regions are more opaque; opacity is not absorption.</p>
+Regions with higher refractive index are more opaque; opacity is not absorption.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">preview_volume</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.media.RandomMedium.to_volume" title="bornsim.RandomMedium.to_volume"><span class="n">medium</span><span class="o">.</span><span class="n">to_volume</span></a><span class="p">(</span><span class="w">
 </span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="p">,</span><span class="w">
 </span>    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><span class="n">medium_figure</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.volume.Volume.plot_3d" title="bornsim.Volume.plot_3d"><span class="n">preview_volume</span><span class="o">.</span><span class="n">plot_3d</span></a><span class="p">(</span><span class="w">
 </span>    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">volume</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>    <span class="n">field</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">field</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">refractive_index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
 </span>    <span class="n">opacity_scale</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">increasing</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><span class="k">if</span> <span class="s2">&quot;</span><span class="s2">--no-browser</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span><span class="w">
 </span>    <span class="n">medium_figure</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">renderer</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">browser</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<iframe src="../../_static/gallery/ensemble_sampling-1.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.549 seconds)</p>
+<iframe src="../../_static/gallery/ensemble_sampling-1.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.639 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-validation-ensemble-sampling-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/602f909a214694065f9b0b33f9d1527b/ensemble_sampling.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">ensemble_sampling.ipynb</span></code></a></p>

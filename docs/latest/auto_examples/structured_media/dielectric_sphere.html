@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>A dielectric sphere in a homogeneous background &#8212; BornSim 0.2.5 documentation</title>
+    <title>A dielectric sphere in a homogeneous background &#8212; BornSim 0.2.6 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=cb850272"></script>
+    <script src="../../_static/documentation_options.js?v=fc7d8818"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -64,7 +64,7 @@
     <link rel="prev" title="Structured media" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.5" />
+  <meta name="docsearch:version" content="0.2.6" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -490,10 +490,10 @@ to download the full example code.</p>
 </div>
 <section class="sphx-glr-example-title" id="a-dielectric-sphere-in-a-homogeneous-background">
 <span id="sphx-glr-auto-examples-structured-media-dielectric-sphere-py"></span><h1>A dielectric sphere in a homogeneous background<a class="headerlink" href="#a-dielectric-sphere-in-a-homogeneous-background" title="Link to this heading">#</a></h1>
-<p>Define a finite three-dimensional index field directly rather than drawing
-it from homogeneous random statistics. The sphere has a constant index
+<p>Define a finite three-dimensional refractive index field directly rather than drawing
+it from homogeneous random statistics. The sphere has a constant refractive index
 inside and is surrounded by a uniform background. The fluctuation array
-stores <code class="docutils literal notranslate"><span class="pre">n(r)</span> <span class="pre">-</span> <span class="pre">background_index</span></code>: zero outside the sphere, a constant
+stores <code class="docutils literal notranslate"><span class="pre">n(r)</span> <span class="pre">-</span> <span class="pre">background_refractive_index</span></code>: zero outside the sphere, a constant
 contrast inside. The scattering problem’s background extends beyond the
 voxel box; the box is not an additional material boundary.</p>
 <p>The voxel mask approximates a curved interface with a staircase boundary.
@@ -504,15 +504,14 @@ dielectric contrast <code class="docutils literal notranslate"><span class="pre"
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span><span class="w">
 </span><span class="w">
 </span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="nn">.</span><span class="nn">pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span><span class="w">
-</span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span><span class="w">
 </span><span class="w">
 </span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.material.Material" title="bornsim.Material"><span class="n">Material</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.sampling.AngularSampling" title="bornsim.AngularSampling"><span class="n">AngularSampling</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">Grid</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.solver.Solver" title="bornsim.Solver"><span class="n">Solver</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">Source</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.geometry.Sphere" title="bornsim.Sphere"><span class="n">Sphere</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.geometry.StructuredMedium" title="bornsim.StructuredMedium"><span class="n">StructuredMedium</span></a><span class="w">
 </span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="nn">.</span><span class="nn">units</span><span class="w"> </span><span class="kn">import</span> <span class="n">ureg</span><span class="w">
 </span></pre></div></div>
-<section id="build-a-spherical-index-mask">
-<h2>Build a spherical index mask<a class="headerlink" href="#build-a-spherical-index-mask" title="Link to this heading">#</a></h2>
+<section id="build-a-spherical-refractive-index-mask">
+<h2>Build a spherical refractive index mask<a class="headerlink" href="#build-a-spherical-refractive-index-mask" title="Link to this heading">#</a></h2>
 <p>Use voxel-centre coordinates measured from the box centre. The background
-index is 1.33 and the sphere index is 1.34. A 150 nm radius fits inside a
+refractive index is 1.33 and the sphere refractive index is 1.34. A 150 nm radius fits inside a
 480 nm box; no random statistics or generation seed are needed.
 The sphere is offset by 40 nm in x and 20 nm in y. Set this vector to zero
 for a centred sphere. Keep abs(centre[a]) + radius below half the box size
@@ -521,14 +520,21 @@ on every axis to avoid clipping. Grid-aligned offsets translate the same mask.</
 </span>    <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span><span class="p">,</span><span class="w">
 </span>    <span class="n">spacing</span><span class="o">=</span><span class="mi">20</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.sampling.AngularSampling" title="bornsim.AngularSampling"><span class="n">sampling</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.sampling.AngularSampling" title="bornsim.AngularSampling"><span class="n">AngularSampling</span></a><span class="p">(</span><span class="w">
-</span>    <span class="n">angles</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">91</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span><span class="w">
+</span>    <span class="n">start</span><span class="o">=</span><span class="mi">0</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span><span class="w">
+</span>    <span class="n">end</span><span class="o">=</span><span class="mi">180</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span><span class="w">
+</span>    <span class="n">n_points</span><span class="o">=</span><span class="mi">91</span><span class="p">,</span><span class="w">
 </span>    <span class="n">polar_samples</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span><span class="w">
 </span>    <span class="n">azimuth_samples</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.geometry.StructuredMedium" title="bornsim.StructuredMedium"><span class="n">structure</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.geometry.StructuredMedium" title="bornsim.StructuredMedium"><span class="n">StructuredMedium</span></a><span class="p">(</span><span class="p">)</span><span class="w">
-</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.material.Material" title="bornsim.Material"><span class="n">background</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.material.Material" title="bornsim.Material"><span class="n">Material</span></a><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">)</span><span class="w">
-</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.material.Material" title="bornsim.Material"><span class="n">sphere_material</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.material.Material" title="bornsim.Material"><span class="n">Material</span></a><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="mf">1.34</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.material.Material" title="bornsim.Material"><span class="n">background</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.material.Material" title="bornsim.Material"><span class="n">Material</span></a><span class="p">(</span><span class="n">refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.material.Material" title="bornsim.Material"><span class="n">sphere_material</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.material.Material" title="bornsim.Material"><span class="n">Material</span></a><span class="p">(</span><span class="n">refractive_index</span><span class="o">=</span><span class="mf">1.34</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.geometry.StructuredMedium.add_background" title="bornsim.StructuredMedium.add_background"><span class="n">structure</span><span class="o">.</span><span class="n">add_background</span></a><span class="p">(</span><span class="n">material</span><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.material.Material" title="bornsim.Material"><span class="n">background</span></a><span class="p">)</span><span class="w">
 </span><span class="w">
 </span><span class="w">
@@ -565,9 +571,10 @@ The gallery embeds an interactive volume; drag to rotate and scroll to zoom.
 Level surfaces interpolate the sampled staircase interface.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">medium_figure</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.volume.Volume.plot_3d" title="bornsim.Volume.plot_3d"><span class="n">volume</span><span class="o">.</span><span class="n">plot_3d</span></a><span class="p">(</span><span class="w">
 </span>    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">volume</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>    <span class="n">field</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">field</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">refractive_index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
 </span>    <span class="n">opacity_scale</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">increasing</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><span class="k">if</span> <span class="s2">&quot;</span><span class="s2">--no-browser</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span><span class="w">
 </span>    <span class="n">medium_figure</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">renderer</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">browser</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
@@ -600,6 +607,7 @@ Check polar and azimuth quadrature refinement for quantitative calculations.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">phase_figure</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.results.Result.plot_phase_function" title="bornsim.Result.plot_phase_function"><span class="n">result</span><span class="o">.</span><span class="n">plot_phase_function</span></a><span class="p">(</span><span class="w">
 </span>    <span class="n">view</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">3d</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><span class="k">if</span> <span class="s2">&quot;</span><span class="s2">--no-browser</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span><span class="w">
 </span>    <span class="n">phase_figure</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">renderer</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">browser</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
@@ -609,10 +617,12 @@ Check polar and azimuth quadrature refinement for quantitative calculations.</p>
 <p>Select the sampled phi = 90 degree plane without averaging or interpolation.
 The curve keeps the full solve’s solid-angle normalization.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.angular_data.AngularData" title="bornsim.AngularData"><span class="n">meridian</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.results.Result.meridian" title="bornsim.Result.meridian"><span class="n">result</span><span class="o">.</span><span class="n">meridian</span></a><span class="p">(</span><span class="n">azimuth</span><span class="o">=</span><span class="mi">90</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">degree</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.angular_data.AngularData.plot_phase_function" title="bornsim.AngularData.plot_phase_function"><span class="n">meridian</span><span class="o">.</span><span class="n">plot_phase_function</span></a><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w">
 </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<img src="../../_images/sphx_glr_dielectric_sphere_001.png" srcset="../../_images/sphx_glr_dielectric_sphere_001.png" alt="Directional finite-sample phase function · meridian phi = 90 degrees" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 5.772 seconds)</p>
+<img src="../../_images/sphx_glr_dielectric_sphere_001.png" srcset="../../_images/sphx_glr_dielectric_sphere_001.png" alt="Directional finite-sample phase function · meridian phi = 90 degrees" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 5.827 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-structured-media-dielectric-sphere-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/db36cb6e5825640fc1c782910929c665/dielectric_sphere.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">dielectric_sphere.ipynb</span></code></a></p>
@@ -651,7 +661,7 @@ The curve keeps the full solve’s solid-angle normalization.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-a-spherical-index-mask">Build a spherical index mask</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-a-spherical-refractive-index-mask">Build a spherical refractive index mask</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inspect-the-medium-in-3d">Inspect the medium in 3D</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compute-coherent-scattering-through-three-born-orders">Compute coherent scattering through three Born orders</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#three-dimensional-phase-function">Three-dimensional phase function</a></li>

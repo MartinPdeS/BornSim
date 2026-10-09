@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bornsim.results &#8212; BornSim 0.2.5 documentation</title>
+    <title>bornsim.results &#8212; BornSim 0.2.6 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=cb850272"></script>
+    <script src="../../_static/documentation_options.js?v=fc7d8818"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -61,7 +61,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.2.5" />
+  <meta name="docsearch:version" content="0.2.6" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -457,7 +457,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.source</span><span class="w"> </span><span class="kn">import</span> <span class="n">Source</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">._archives</span><span class="w"> </span><span class="kn">import</span> <span class="n">_RESULT_UNITS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.angular_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">AngularData</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">_quantity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">validate_units</span><span class="p">,</span> <span class="n">ureg</span>
 
 <span class="n">_ANGULAR_FIELDS</span> <span class="o">=</span> <span class="p">(</span>
     <span class="s2">"differential"</span><span class="p">,</span>
@@ -491,7 +491,7 @@
 <span class="sd">    Plots of full results select one sampled meridian by default.</span>
 
 <span class="sd">    Angles use radians, amplitudes metres, differential data m^-1 sr^-1,</span>
-<span class="sd">    integrated coefficients m^-1, and sample_volume m^3. Bare arrays mean SI.</span>
+<span class="sd">    integrated coefficients m^-1, and sample_volume m^3. Dimensional arrays require explicit units.</span>
 <span class="sd">    Every full phase density uses its order's solid-angle integral. Cuts have</span>
 <span class="sd">    no inferred integrated coefficients or phase normalization.</span>
 
@@ -551,55 +551,89 @@
     <span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">Source</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"source must be a Source."</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"analytical"</span><span class="p">,</span> <span class="s2">"volume"</span><span class="p">,</span> <span class="s2">"ensemble"</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"kind must be analytical, volume, or ensemble."</span><span class="p">)</span>
+
         <span class="n">values</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_RESULT_UNITS</span><span class="p">}</span>
+
         <span class="k">if</span> <span class="n">angular</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">angular</span><span class="p">,</span> <span class="n">AngularData</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"angular must be an AngularData."</span><span class="p">)</span>
+
             <span class="n">conflicts</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
                 <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"g"</span><span class="p">,</span> <span class="s2">"mu_s_prime"</span><span class="p">,</span> <span class="s2">"field_norms"</span><span class="p">)</span>
             <span class="p">)</span>
+
             <span class="k">if</span> <span class="n">conflicts</span> <span class="ow">or</span> <span class="n">azimuth_averaged</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Supply angular or individual angular fields, not both."</span><span class="p">)</span>
+
             <span class="k">if</span> <span class="n">angular</span><span class="o">.</span><span class="n">kind</span> <span class="o">!=</span> <span class="n">kind</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"angular.kind must match result kind."</span><span class="p">)</span>
+
             <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_ANGULAR_FIELDS</span><span class="p">:</span>
                 <span class="n">values</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">angular</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
             <span class="n">azimuth_averaged</span> <span class="o">=</span> <span class="n">angular</span><span class="o">.</span><span class="n">azimuth_averaged</span>
+
             <span class="c1"># Result stores explicit cut directions only; full vectors live in AngularData.</span>
             <span class="k">if</span> <span class="n">angular</span><span class="o">.</span><span class="n">azimuths</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">kind</span> <span class="o">!=</span> <span class="s2">"volume"</span><span class="p">:</span>
                 <span class="n">values</span><span class="p">[</span><span class="s2">"directions"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">angular</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_ANGULAR_FIELDS</span><span class="p">):</span>
-                <span class="n">values</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_quantity</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">_RESULT_UNITS</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+                <span class="n">unit</span> <span class="o">=</span> <span class="n">_RESULT_UNITS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">"dimensionless"</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Quantity</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">dimensionless</span>
+
+                <span class="n">validate_units</span><span class="p">(</span>
+                    <span class="n">value</span><span class="p">,</span>
+                    <span class="n">unit</span><span class="o">=</span><span class="n">unit</span><span class="p">,</span>
+                    <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must contain numeric values."</span><span class="p">)</span>
+
+                <span class="n">values</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">*</span> <span class="n">value</span><span class="o">.</span><span class="n">units</span>
+
         <span class="n">provenance</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">provenance</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">provenance</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">provenance</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"provenance must be a JSON-compatible dictionary."</span><span class="p">)</span>
+
         <span class="k">try</span><span class="p">:</span>
             <span class="n">encoded</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">provenance</span><span class="p">,</span> <span class="n">allow_nan</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
             <span class="n">provenance</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"provenance must be a JSON-compatible dictionary with finite values."</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">error</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">warnings</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span> <span class="ow">or</span> <span class="nb">any</span><span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">warnings</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"warnings must be a sequence of strings."</span><span class="p">)</span>
+
         <span class="n">state</span> <span class="o">=</span> <span class="n">SimpleNamespace</span><span class="p">(</span><span class="o">**</span><span class="n">values</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">,</span> <span class="n">realizations</span><span class="o">=</span><span class="n">realizations</span><span class="p">,</span> <span class="n">azimuth_averaged</span><span class="o">=</span><span class="n">azimuth_averaged</span><span class="p">)</span>
+
         <span class="kn">from</span><span class="w"> </span><span class="nn">._archives</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ResultArchive</span>
 
         <span class="n">_ResultArchive</span><span class="o">.</span><span class="n">_promote_legacy_directional_data</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="n">state</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">sample_volume</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">kind</span> <span class="o">!=</span> <span class="s2">"analytical"</span><span class="p">:</span>
             <span class="n">grid</span> <span class="o">=</span> <span class="n">provenance</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"grid"</span><span class="p">)</span>
+
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">"shape"</span> <span class="ow">in</span> <span class="n">grid</span> <span class="ow">and</span> <span class="s2">"spacing_m"</span> <span class="ow">in</span> <span class="n">grid</span><span class="p">:</span>
-                <span class="n">state</span><span class="o">.</span><span class="n">sample_volume</span> <span class="o">=</span> <span class="n">_quantity</span><span class="p">(</span>
-                    <span class="n">value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="s2">"shape"</span><span class="p">])</span> <span class="o">*</span> <span class="n">grid</span><span class="p">[</span><span class="s2">"spacing_m"</span><span class="p">]</span> <span class="o">**</span> <span class="mi">3</span><span class="p">),</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"meter**3"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"sample_volume"</span>
-                <span class="p">)</span>
+                <span class="n">state</span><span class="o">.</span><span class="n">sample_volume</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="s2">"shape"</span><span class="p">])</span> <span class="o">*</span> <span class="n">grid</span><span class="p">[</span><span class="s2">"spacing_m"</span><span class="p">]</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="o">**</span><span class="mi">3</span>
+
         <span class="kn">from</span><span class="w"> </span><span class="nn">._result_validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ResultValidator</span>
 
         <span class="k">if</span> <span class="n">angular</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">angular</span> <span class="o">=</span> <span class="n">AngularData</span><span class="p">(</span>
                 <span class="o">**</span><span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_ANGULAR_FIELDS</span><span class="p">},</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">,</span> <span class="n">azimuth_averaged</span><span class="o">=</span><span class="n">azimuth_averaged</span>
             <span class="p">)</span>
+
         <span class="n">_ResultValidator</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="n">state</span><span class="p">)</span>
+
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">{</span>
             <span class="s2">"source"</span><span class="p">:</span> <span class="n">source</span><span class="p">,</span>
             <span class="s2">"kind"</span><span class="p">:</span> <span class="n">kind</span><span class="p">,</span>
@@ -609,86 +643,104 @@
             <span class="s2">"_provenance_json"</span><span class="p">:</span> <span class="n">encoded</span><span class="p">,</span>
         <span class="p">}</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"g"</span><span class="p">,</span> <span class="s2">"mu_s_prime"</span><span class="p">,</span> <span class="s2">"field_norms"</span><span class="p">):</span>
             <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">value</span><span class="o">.</span><span class="n">magnitude</span><span class="o">.</span><span class="n">setflags</span><span class="p">(</span><span class="n">write</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
             <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">differential</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Read-only angular data owned by angular."""</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">differential</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">angles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Read-only angular data owned by angular."""</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">angles</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">azimuths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Read-only angular data owned by angular."""</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">azimuths</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">amplitudes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Read-only angular data owned by angular."""</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">amplitudes</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">mu_s</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Read-only angular data owned by angular."""</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">mu_s</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">sample_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Read-only angular data owned by angular."""</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">sample_volume</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">stderr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Read-only angular data owned by angular."""</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">stderr</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">azimuth_stderr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Read-only angular data owned by angular."""</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">azimuth_stderr</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">term_differential</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Read-only angular data owned by angular."""</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">term_differential</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">azimuth_averaged</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Read-only angular data owned by angular."""</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">azimuth_averaged</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">directions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Explicit cut coordinates; full-grid vectors are angular.directions."""</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">directions</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">azimuths</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s2">"volume"</span> <span class="k">else</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">directional_differential</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Legacy alias for full directional intensities."""</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">differential</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">differential</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span> <span class="k">else</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">directional_amplitudes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Legacy alias for full coherent amplitudes."""</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">amplitudes</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">differential</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span> <span class="k">else</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">provenance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Return a fresh metadata copy; edits cannot change this result."""</span>
+
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_provenance_json</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Result.meridian">
 <a class="viewcode-back" href="../../api.html#bornsim.results.Result.meridian">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">meridian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"exact"</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Select a physical azimuth from full data without interpolation."""</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">meridian</span><span class="p">(</span>
             <span class="n">azimuth</span><span class="o">=</span><span class="n">azimuth</span><span class="p">,</span>
             <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
@@ -699,7 +751,9 @@
 <a class="viewcode-back" href="../../api.html#bornsim.results.Result.azimuth_average">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">azimuth_average</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Return explicit averaged intensities with covariance-correct errors."""</span>
+
         <span class="n">angular</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">azimuth_average</span><span class="p">()</span>
+
         <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
             <span class="n">source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span>
             <span class="n">kind</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kind</span><span class="p">,</span>
@@ -716,15 +770,19 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">differential_cross_section</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Finite-sample d-sigma/d-Omega in square metres per steradian."""</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_volume</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"sample_volume is unavailable; this result has no finite-sample cross section."</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"differential"</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_volume</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"meter**2 / steradian"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">differential</span><span class="o">.</span><span class="n">shape</span>
+
         <span class="n">available</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"amplitudes"</span><span class="p">,</span> <span class="s2">"mu_s"</span><span class="p">,</span> <span class="s2">"stderr"</span><span class="p">,</span> <span class="s2">"sample_volume"</span><span class="p">)</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="p">]</span>
+
         <span class="k">return</span> <span class="sa">f</span><span class="s2">"Result(kind=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">kind</span><span class="si">!r}</span><span class="s2">, orders=</span><span class="si">{</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">, angular_shape=</span><span class="si">{</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s2">, available=</span><span class="si">{</span><span class="n">available</span><span class="si">}</span><span class="s2">, azimuth_averaged=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">azimuth_averaged</span><span class="si">}</span><span class="s2">)"</span>
 
 <div class="viewcode-block" id="Result.save">
@@ -759,6 +817,7 @@
 <span class="sd">        Generated volumes also record their medium and seed. Exact seeded</span>
 <span class="sd">        reproduction depends on the recorded implementation versions.</span>
 <span class="sd">        """</span>
+
         <span class="kn">from</span><span class="w"> </span><span class="nn">._archives</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ResultArchive</span>
 
         <span class="k">return</span> <span class="n">_ResultArchive</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
@@ -792,6 +851,7 @@
 <span class="sd">        OSError</span>
 <span class="sd">            If the archive cannot be read.</span>
 <span class="sd">        """</span>
+
         <span class="kn">from</span><span class="w"> </span><span class="nn">._archives</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ResultArchive</span>
 
         <span class="k">return</span> <span class="n">_ResultArchive</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
@@ -808,6 +868,7 @@
 <span class="sd">        results retain (order, polar angle). Cuts have no normalization.</span>
 <span class="sd">        Every order uses its own full solid-angle scattering coefficient.</span>
 <span class="sd">        """</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">phase_function</span>
 
 <div class="viewcode-block" id="Result.plot">
@@ -852,13 +913,29 @@
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; from bornsim import AnalyticalMedium, Solver, Source</span>
-<span class="sd">        &gt;&gt;&gt; solver = Solver(source=Source())</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; from bornsim.units import ureg</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; solver = Solver(</span>
+<span class="sd">        ...     source=Source(</span>
+<span class="sd">        ...         wavelength=633e-9 * ureg.meter,</span>
+<span class="sd">        ...     )</span>
+<span class="sd">        ... )</span>
 
-<span class="sd">        &gt;&gt;&gt; result = solver.solve(target=AnalyticalMedium())</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; result = solver.solve(</span>
+<span class="sd">        ...     target=AnalyticalMedium(</span>
+<span class="sd">        ...         background_refractive_index=1.33,</span>
+<span class="sd">        ...         refractive_index_std=0.01,</span>
+<span class="sd">        ...         correlation_length=100e-9 * ureg.meter,</span>
+<span class="sd">        ...         correlation="gaussian",</span>
+<span class="sd">        ...     )</span>
+<span class="sd">        ... )</span>
 <span class="sd">        &gt;&gt;&gt; figure = result.plot(log_y=True)</span>
 <span class="sd">        &gt;&gt;&gt; len(figure.axes[0].lines)</span>
 <span class="sd">        1</span>
 <span class="sd">        """</span>
+
         <span class="kn">from</span><span class="w"> </span><span class="nn">._result_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ResultPlotter</span>
 
         <span class="k">return</span> <span class="n">_ResultPlotter</span><span class="p">(</span>
@@ -917,6 +994,7 @@
 <span class="sd">        volume must agree with the recorded physical volume and grid.</span>
 <span class="sd">        Stored scattering data and its SI units remain unchanged.</span>
 <span class="sd">        """</span>
+
         <span class="kn">from</span><span class="w"> </span><span class="nn">._result_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ResultPlotter</span>
 
         <span class="k">return</span> <span class="n">_ResultPlotter</span><span class="p">(</span>
@@ -934,10 +1012,12 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">directional_phase_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Compatibility alias for the primary full phase_function."""</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">differential</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">"Directional phase data are unavailable; recompute with Solver.solve using AngularSampling."</span>
             <span class="p">)</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase_function</span>
 
 <div class="viewcode-block" id="Result.plot_phase_function">
@@ -992,13 +1072,29 @@
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; from bornsim import AnalyticalMedium, Solver, Source</span>
-<span class="sd">        &gt;&gt;&gt; solver = Solver(source=Source())</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; from bornsim.units import ureg</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; solver = Solver(</span>
+<span class="sd">        ...     source=Source(</span>
+<span class="sd">        ...         wavelength=633e-9 * ureg.meter,</span>
+<span class="sd">        ...     )</span>
+<span class="sd">        ... )</span>
 
-<span class="sd">        &gt;&gt;&gt; result = solver.solve(target=AnalyticalMedium())</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; result = solver.solve(</span>
+<span class="sd">        ...     target=AnalyticalMedium(</span>
+<span class="sd">        ...         background_refractive_index=1.33,</span>
+<span class="sd">        ...         refractive_index_std=0.01,</span>
+<span class="sd">        ...         correlation_length=100e-9 * ureg.meter,</span>
+<span class="sd">        ...         correlation="gaussian",</span>
+<span class="sd">        ...     )</span>
+<span class="sd">        ... )</span>
 <span class="sd">        &gt;&gt;&gt; figure = result.plot_phase_function(view="3d")</span>
 <span class="sd">        &gt;&gt;&gt; figure.data[0].type</span>
 <span class="sd">        'surface'</span>
 <span class="sd">        """</span>
+
         <span class="kn">from</span><span class="w"> </span><span class="nn">._result_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ResultPlotter</span>
 
         <span class="k">return</span> <span class="n">_ResultPlotter</span><span class="p">(</span>
@@ -1039,6 +1135,7 @@
 <span class="sd">        The figure preserves per-realization diagnostics. Decreasing field</span>
 <span class="sd">        terms do not certify Born convergence or remove discretization error.</span>
 <span class="sd">        """</span>
+
         <span class="kn">from</span><span class="w"> </span><span class="nn">._result_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ResultPlotter</span>
 
         <span class="k">return</span> <span class="n">_ResultPlotter</span><span class="p">(</span>

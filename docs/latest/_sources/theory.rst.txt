@@ -29,7 +29,7 @@ A Volume stores the real scalar field
 
 Material objects specify an **absolute refractive index**, rather than a
 contrast. StructuredMedium voxelizes the materials; RandomMedium samples a
-statistical index field. Both produce the same Volume representation.
+statistical refractive index field. Both produce the same Volume representation.
 
 .. list-table:: Symbols and their API counterparts
    :header-rows: 1
@@ -45,8 +45,8 @@ statistical index field. Both produce the same Volume representation.
      - Cubic voxel width and axis counts
      - ``Grid.spacing``, ``Grid.shape``
    * - :math:`n_0`, :math:`\delta n`
-     - Background index and fluctuation, dimensionless
-     - ``Volume.background_index``, ``Volume.delta_index``
+     - Background refractive index and fluctuation, dimensionless
+     - ``Volume.background_refractive_index``, ``Volume.delta_refractive_index``
    * - :math:`M`
      - Highest cumulative Born order
      - ``Solver.order``
@@ -60,7 +60,7 @@ statistical index field. Both produce the same Volume representation.
      - Phase density per solid angle, sr\ :sup:`−1`
      - ``Result.phase_function``
 
-Bare input lengths mean metres and bare angles mean radians. Compatible
+Input lengths and angles require explicit units. Compatible
 quantities are converted to SI. The time convention is
 :math:`\exp(-i\omega t)`, with
 
@@ -94,7 +94,7 @@ Grid gives voxel-centre coordinates and the physical box volume:
 
 The box extends half a voxel beyond its outer centres. It specifies the sampled
 contrast support; it is not an additional material interface. Outside it, the
-contrast is zero and the background continues indefinitely. A uniform-index
+contrast is zero and the background continues indefinitely. A uniform refractive index
 inclusion that fills the box nevertheless has an interface where its contrast
 ends.
 
@@ -206,7 +206,7 @@ The resulting first-order scattered field is
 
 This retains one scattering interaction. Contributions from different positions
 still interfere as complex amplitudes. Its accuracy requires the scattered
-field to perturb the internal illumination only weakly; small index contrast
+field to perturb the internal illumination only weakly; small refractive index contrast
 alone is insufficient for a thick sample with appreciable accumulated phase.
 BornSim uses the linearized contrast in :eq:`constitutive-model` at every order.
 
@@ -320,7 +320,7 @@ order; higher orders also include interactions between particles.
    :alt: Two voxelized spheres, their azimuth-dependent phase density, and selected meridians compared with a translated single sphere.
 
    First-order numerical simulations at 633 nm vacuum wavelength, with
-   20 nm voxels and index 1.34 in a 1.33 background. Integer-voxel translation
+   20 nm voxels and refractive index 1.34 in a 1.33 background. Integer-voxel translation
    leaves the single-sphere curve unchanged, while two spheres produce
    different meridians. The simulation asserts translation invariance.
    :doc:`Simulation code <auto_examples/structured_media/theory_directional_interference>`.
@@ -439,9 +439,9 @@ size change its relationship to the continuum covariance.
 
 .. figure:: auto_examples/random_media/images/sphx_glr_theory_random_fields_001.png
    :width: 95%
-   :alt: Seeded index slices from Gaussian, exponential and Matérn covariance fields with a shared color scale.
+   :alt: Seeded refractive index slices from Gaussian, exponential and Matérn covariance fields with a shared color scale.
 
-   Seeded numerical index slices at equal standard deviation and length
+   Seeded numerical refractive index slices at equal standard deviation and length
    parameter. Covariance changes spatial texture, not the Gaussian probability
    law. :doc:`Simulation code <auto_examples/random_media/theory_random_fields>`.
 
@@ -556,7 +556,7 @@ for runnable refinement and uncertainty studies.
 Further reading
 ---------------
 
-For the connection between index covariance spectra and vector first-order
+For the connection between refractive index covariance spectra and vector first-order
 random-medium scattering, see Rogers, Çapoğlu and Backman (2009),
 `Nonscalar elastic light scattering from continuous media in the Born approximation
 <https://pmc.ncbi.nlm.nih.gov/articles/PMC3839346/>`_. Compare length parameters,
