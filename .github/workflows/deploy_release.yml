@@ -25,11 +25,8 @@ jobs:
       recipe_path: conda.recipe
       # The shared workflow creates this prefix before verification. Avoid
       # `conda run ... python` resolving to the build environment's interpreter.
+      # Keep this command on one line: conda run on Windows rejects newlines.
       test_command: >-
-        if [ -f \"${RUNNER_TEMP}/conda-package-test/python.exe\" ]; then
-          \"${RUNNER_TEMP}/conda-package-test/python.exe\" -c 'import bornsim';
-        else
-          \"${RUNNER_TEMP}/conda-package-test/bin/python\" -c 'import bornsim';
-        fi
+        if [ -f \"${RUNNER_TEMP}/conda-package-test/python.exe\" ]; then \"${RUNNER_TEMP}/conda-package-test/python.exe\" -c 'import bornsim'; else \"${RUNNER_TEMP}/conda-package-test/bin/python\" -c 'import bornsim'; fi
     secrets:
       ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}
