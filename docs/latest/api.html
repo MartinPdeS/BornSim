@@ -557,7 +557,7 @@ analytical formulas are test references, not public solvers.</p>
 </section>
 <section id="field-construction">
 <h2>Field construction<a class="headerlink" href="#field-construction" title="Link to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">Layer</span><span class="p">,</span> <span class="n">StructuredMedium</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">Layer</span><span class="p">,</span> <span class="n">StructuredMedium</span><span class="p">,</span> <span class="n">Volume</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">bornsim.medium.random_medium</span><span class="w"> </span><span class="kn">import</span> <span class="n">WhittleMaternMedium</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">bornsim.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">ureg</span>
 
@@ -590,11 +590,19 @@ analytical formulas are test references, not public solvers.</p>
 <span class="p">)</span>
 
 <span class="n">absolute_refractive_index</span> <span class="o">=</span> <span class="n">volume</span><span class="o">.</span><span class="n">refractive_index</span>
+
+<span class="n">imported_volume</span> <span class="o">=</span> <span class="n">Volume</span><span class="o">.</span><span class="n">from_refractive_index</span><span class="p">(</span>
+    <span class="n">refractive_index</span><span class="o">=</span><span class="n">absolute_refractive_index</span><span class="p">,</span>
+    <span class="n">background_refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 <p>Alternatively, independently generated volumes with matching grids and
 backgrounds can be combined with <code class="docutils literal notranslate"><span class="pre">volume_a</span> <span class="pre">+</span> <span class="pre">volume_b</span></code>. The result’s
-<code class="docutils literal notranslate"><span class="pre">refractive_index</span></code> property exposes its immutable absolute voxel field.</p>
+<code class="docutils literal notranslate"><span class="pre">refractive_index</span></code> property exposes its immutable absolute voxel field.
+<code class="docutils literal notranslate"><span class="pre">Volume.from_refractive_index</span></code> also constructs a volume from an absolute
+unitless index array, converting it to the linearized contrast representation.</p>
 </section>
 <section id="module-bornsim.source">
 <span id="configuration"></span><h2>Configuration<a class="headerlink" href="#module-bornsim.source" title="Link to this heading">#</a></h2>
@@ -1534,8 +1542,11 @@ Background refractive index is a plain number; grid spacing and positions
 carry physical units. Relative permittivity is linearized as
 background_refractive_index**2 + 2*background_refractive_index*delta_refractive_index.
 The quadratic fluctuation term is omitted at every Born order.
-Medium.to_volume records generation statistics and seed. Manually
+Medium.to_volume records generation statistics and seed. <code class="docutils literal notranslate"><span class="pre">medium_metadata</span></code>
+returns the metadata snapshot captured when the volume was created. Manually
 constructed volumes have only their explicitly supplied provenance.</p>
+<p>Use <a class="reference internal" href="#bornsim.volume.Volume.from_refractive_index" title="bornsim.volume.Volume.from_refractive_index"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_refractive_index()</span></code></a> when the input array contains absolute
+refractive indices rather than fluctuations from the background.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1547,6 +1558,54 @@ constructed volumes have only their explicitly supplied provenance.</p>
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bornsim.volume.Volume.from_refractive_index">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_refractive_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">refractive_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_refractive_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">medium</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/volume.html#Volume.from_refractive_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.volume.Volume.from_refractive_index" title="Link to this definition">#</a></dt>
+<dd><p>Construct a volume from an absolute refractive-index field.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>refractive_index</strong> (<em>array_like</em>) – Plain numerical absolute refractive indices, with shape
+<code class="docutils literal notranslate"><span class="pre">grid.shape</span></code>. Values must not carry units.</p></li>
+<li><p><strong>background_refractive_index</strong> (<em>float</em>) – Positive, unitless reference refractive index.</p></li>
+<li><p><strong>grid</strong> (<a class="reference internal" href="#bornsim.grid.Grid" title="bornsim.grid.Grid"><em>Grid</em></a>) – Explicit spatial grid matching the field shape.</p></li>
+<li><p><strong>medium</strong> (<a class="reference internal" href="#bornsim.medium.base.Medium" title="bornsim.medium.base.Medium"><em>Medium</em></a><em>, </em><em>optional</em>) – Medium metadata associated with generation. Must be supplied
+together with <code class="docutils literal notranslate"><span class="pre">seed</span></code>.</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em>) – Generation seed, supplied together with <code class="docutils literal notranslate"><span class="pre">medium</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Immutable volume storing the field as
+<code class="docutils literal notranslate"><span class="pre">refractive_index</span> <span class="pre">-</span> <span class="pre">background_refractive_index</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#bornsim.volume.Volume" title="bornsim.volume.Volume">Volume</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the field, background, grid shape, or resulting linearized
+    permittivity is invalid.</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">medium</span></code> is not a Medium instance.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="bornsim.volume.Volume.medium_metadata">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">medium_metadata</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#bornsim.volume.Volume.medium_metadata" title="Link to this definition">#</a></dt>
+<dd><p>Return a copy of the generation metadata captured at construction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A fresh copy of the source medium’s metadata, or None when the
+volume has no associated medium.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict[str, object] or None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="bornsim.volume.Volume.plot_3d">
 <span class="sig-name descname"><span class="pre">plot_3d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'plotly'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'delta_refractive_index'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nanometer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surface_count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uniform'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/volume.html#Volume.plot_3d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.volume.Volume.plot_3d" title="Link to this definition">#</a></dt>
@@ -1648,6 +1707,15 @@ axis ordered as x, y, z.</p>
 <dt class="sig sig-object py" id="bornsim.volume.Volume.refractive_index">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">refractive_index</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#bornsim.volume.Volume.refractive_index" title="Link to this definition">#</a></dt>
 <dd><p>Return the read-only absolute refractive-index field.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Absolute refractive indices, equal to the background plus
+<code class="docutils literal notranslate"><span class="pre">delta_refractive_index</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>numpy.ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
@@ -2539,6 +2607,8 @@ Directions exposes the observation configuration’s immutable Cartesian array.<
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.volume.Volume"><code class="docutils literal notranslate"><span class="pre">Volume</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.volume.Volume.from_refractive_index"><code class="docutils literal notranslate"><span class="pre">Volume.from_refractive_index()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.volume.Volume.medium_metadata"><code class="docutils literal notranslate"><span class="pre">Volume.medium_metadata</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.volume.Volume.plot_3d"><code class="docutils literal notranslate"><span class="pre">Volume.plot_3d()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.volume.Volume.plot_slice"><code class="docutils literal notranslate"><span class="pre">Volume.plot_slice()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.volume.Volume.positions"><code class="docutils literal notranslate"><span class="pre">Volume.positions</span></code></a></li>

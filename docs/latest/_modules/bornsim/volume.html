@@ -464,12 +464,19 @@
   <h1>Source code for bornsim.volume</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Finite refractive-index fields on centred cubic voxel grids."""</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayLike</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">NotImplementedType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Self</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.grid</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.medium</span><span class="w"> </span><span class="kn">import</span> <span class="n">Medium</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">_integer</span><span class="p">,</span> <span class="n">_refractive_index_values</span><span class="p">,</span> <span class="n">Quantity</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.figure</span><span class="w"> </span><span class="kn">import</span> <span class="n">Figure</span> <span class="k">as</span> <span class="n">MatplotlibFigure</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">plotly.graph_objects</span><span class="w"> </span><span class="kn">import</span> <span class="n">Figure</span> <span class="k">as</span> <span class="n">PlotlyFigure</span>
 
 
 <div class="viewcode-block" id="Volume">
@@ -486,8 +493,13 @@
 <span class="sd">    carry physical units. Relative permittivity is linearized as</span>
 <span class="sd">    background_refractive_index**2 + 2*background_refractive_index*delta_refractive_index.</span>
 <span class="sd">    The quadratic fluctuation term is omitted at every Born order.</span>
-<span class="sd">    Medium.to_volume records generation statistics and seed. Manually</span>
-<span class="sd">    constructed volumes have only their explicitly supplied provenance."""</span>
+<span class="sd">    Medium.to_volume records generation statistics and seed. ``medium_metadata``</span>
+<span class="sd">    returns the metadata snapshot captured when the volume was created. Manually</span>
+<span class="sd">    constructed volumes have only their explicitly supplied provenance.</span>
+
+<span class="sd">    Use :meth:`from_refractive_index` when the input array contains absolute</span>
+<span class="sd">    refractive indices rather than fluctuations from the background.</span>
+<span class="sd">    """</span>
 
     <span class="n">delta_refractive_index</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
     <span class="n">background_refractive_index</span><span class="p">:</span> <span class="nb">float</span>
@@ -495,6 +507,7 @@
     <span class="n">spacing</span><span class="p">:</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">medium</span><span class="p">:</span> <span class="n">Medium</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_medium_metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">compare</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
@@ -554,9 +567,79 @@
                 <span class="p">),</span>
             <span class="p">)</span>
 
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="s2">"_medium_metadata"</span><span class="p">,</span>
+            <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">medium</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">medium</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span>
+
         <span class="n">data</span><span class="o">.</span><span class="n">setflags</span><span class="p">(</span><span class="n">write</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"delta_refractive_index"</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Volume.from_refractive_index">
+<a class="viewcode-back" href="../../api.html#bornsim.volume.Volume.from_refractive_index">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_refractive_index</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">refractive_index</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
+        <span class="n">background_refractive_index</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">grid</span><span class="p">:</span> <span class="n">Grid</span><span class="p">,</span>
+        <span class="n">medium</span><span class="p">:</span> <span class="n">Medium</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Construct a volume from an absolute refractive-index field.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        refractive_index : array_like</span>
+<span class="sd">            Plain numerical absolute refractive indices, with shape</span>
+<span class="sd">            ``grid.shape``. Values must not carry units.</span>
+<span class="sd">        background_refractive_index : float</span>
+<span class="sd">            Positive, unitless reference refractive index.</span>
+<span class="sd">        grid : Grid</span>
+<span class="sd">            Explicit spatial grid matching the field shape.</span>
+<span class="sd">        medium : Medium, optional</span>
+<span class="sd">            Medium metadata associated with generation. Must be supplied</span>
+<span class="sd">            together with ``seed``.</span>
+<span class="sd">        seed : int, optional</span>
+<span class="sd">            Generation seed, supplied together with ``medium``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Volume</span>
+<span class="sd">            Immutable volume storing the field as</span>
+<span class="sd">            ``refractive_index - background_refractive_index``.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the field, background, grid shape, or resulting linearized</span>
+<span class="sd">            permittivity is invalid.</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If ``medium`` is not a Medium instance.</span>
+<span class="sd">        """</span>
+
+        <span class="n">absolute_refractive_index</span> <span class="o">=</span> <span class="n">_refractive_index_values</span><span class="p">(</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">refractive_index</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"refractive_index"</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">background</span> <span class="o">=</span> <span class="n">_refractive_index_values</span><span class="p">(</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">background_refractive_index</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"background_refractive_index"</span><span class="p">,</span>
+            <span class="n">scalar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">delta_refractive_index</span><span class="o">=</span><span class="n">absolute_refractive_index</span> <span class="o">-</span> <span class="n">background</span><span class="p">,</span>
+            <span class="n">background_refractive_index</span><span class="o">=</span><span class="n">background</span><span class="p">,</span>
+            <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+            <span class="n">medium</span><span class="o">=</span><span class="n">medium</span><span class="p">,</span>
+            <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">positions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Quantity</span><span class="p">:</span>
@@ -585,13 +668,33 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">refractive_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return the read-only absolute refractive-index field."""</span>
+<span class="w">        </span><span class="sd">"""Return the read-only absolute refractive-index field.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            Absolute refractive indices, equal to the background plus</span>
+<span class="sd">            ``delta_refractive_index``.</span>
+<span class="sd">        """</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">background_refractive_index</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_refractive_index</span>
 
         <span class="n">data</span><span class="o">.</span><span class="n">setflags</span><span class="p">(</span><span class="n">write</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">medium_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return a copy of the generation metadata captured at construction.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict[str, object] or None</span>
+<span class="sd">            A fresh copy of the source medium's metadata, or None when the</span>
+<span class="sd">            volume has no associated medium.</span>
+<span class="sd">        """</span>
+
+        <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_medium_metadata</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Volume | NotImplementedType"</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Add refractive-index contrasts from volumes on the same grid.</span>
@@ -618,7 +721,15 @@
 
 <div class="viewcode-block" id="Volume.plot_slice">
 <a class="viewcode-back" href="../../api.html#bornsim.volume.Volume.plot_slice">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">plot_slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">normal</span><span class="o">=</span><span class="s2">"z"</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="s2">"refractive_index"</span><span class="p">,</span> <span class="n">length_unit</span><span class="o">=</span><span class="s2">"nanometer"</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_slice</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">normal</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="s2">"z"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"z"</span><span class="p">,</span>
+        <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">field</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"refractive_index"</span><span class="p">,</span> <span class="s2">"delta_refractive_index"</span><span class="p">,</span> <span class="s2">"permittivity"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"refractive_index"</span><span class="p">,</span>
+        <span class="n">length_unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"nanometer"</span><span class="p">,</span>
+        <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"MatplotlibFigure"</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Build a Matplotlib figure of one voxel plane.</span>
 
 <span class="sd">        Parameters</span>
@@ -650,7 +761,6 @@
 <span class="sd">            If the plane, index, field, or length unit is invalid.</span>
 <span class="sd">        """</span>
 
-        <span class="kn">from</span><span class="w"> </span><span class="nn">pint.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DimensionalityError</span><span class="p">,</span> <span class="n">UndefinedUnitError</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
         <span class="k">if</span> <span class="n">normal</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="s2">"z"</span><span class="p">):</span>
@@ -669,10 +779,7 @@
 
         <span class="n">values</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot_field</span><span class="p">(</span><span class="n">field</span><span class="o">=</span><span class="n">field</span><span class="p">)</span>
 
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">spacing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spacing</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">length_unit</span><span class="p">)</span>
-        <span class="k">except</span> <span class="p">(</span><span class="n">DimensionalityError</span><span class="p">,</span> <span class="n">UndefinedUnitError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"length_unit must name a length unit."</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">error</span>
+        <span class="n">spacing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot_spacing</span><span class="p">(</span><span class="n">length_unit</span><span class="o">=</span><span class="n">length_unit</span><span class="p">)</span>
 
         <span class="n">unit</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">spacing</span><span class="o">.</span><span class="n">units</span><span class="si">:</span><span class="s2">~</span><span class="si">}</span><span class="s2">"</span>
 
@@ -684,17 +791,7 @@
 
         <span class="n">half_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_refractive_index</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">vertical</span><span class="p">]</span> <span class="o">*</span> <span class="n">width</span> <span class="o">/</span> <span class="mi">2</span>
 
-        <span class="n">low</span><span class="p">,</span> <span class="n">high</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="nb">float</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
-
-        <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="s2">"delta_refractive_index"</span><span class="p">:</span>
-            <span class="n">high</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
-
-            <span class="n">low</span> <span class="o">=</span> <span class="o">-</span><span class="n">high</span>
-
-        <span class="k">if</span> <span class="n">low</span> <span class="o">==</span> <span class="n">high</span><span class="p">:</span>
-            <span class="n">padding</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">low</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e-6</span>
-
-            <span class="n">low</span><span class="p">,</span> <span class="n">high</span> <span class="o">=</span> <span class="n">low</span> <span class="o">-</span> <span class="n">padding</span><span class="p">,</span> <span class="n">high</span> <span class="o">+</span> <span class="n">padding</span>
+        <span class="n">color_low</span><span class="p">,</span> <span class="n">color_high</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot_color_limits</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">values</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">field</span><span class="p">)</span>
 
         <span class="n">figure</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">"constrained"</span><span class="p">)</span>
 
@@ -705,8 +802,8 @@
             <span class="n">interpolation</span><span class="o">=</span><span class="s2">"nearest"</span><span class="p">,</span>
             <span class="n">aspect</span><span class="o">=</span><span class="s2">"equal"</span><span class="p">,</span>
             <span class="n">cmap</span><span class="o">=</span><span class="s2">"RdBu_r"</span> <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="s2">"delta_refractive_index"</span> <span class="k">else</span> <span class="s2">"viridis"</span><span class="p">,</span>
-            <span class="n">vmin</span><span class="o">=</span><span class="n">low</span><span class="p">,</span>
-            <span class="n">vmax</span><span class="o">=</span><span class="n">high</span><span class="p">,</span>
+            <span class="n">vmin</span><span class="o">=</span><span class="n">color_low</span><span class="p">,</span>
+            <span class="n">vmax</span><span class="o">=</span><span class="n">color_high</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">position</span> <span class="o">=</span> <span class="p">(</span><span class="n">selected</span> <span class="o">-</span> <span class="p">(</span><span class="n">count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">width</span>
@@ -727,14 +824,14 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_3d</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">backend</span><span class="o">=</span><span class="s2">"plotly"</span><span class="p">,</span>
-        <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">field</span><span class="o">=</span><span class="s2">"delta_refractive_index"</span><span class="p">,</span>
-        <span class="n">length_unit</span><span class="o">=</span><span class="s2">"nanometer"</span><span class="p">,</span>
-        <span class="n">surface_count</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
-        <span class="n">opacity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">opacity_scale</span><span class="o">=</span><span class="s2">"uniform"</span><span class="p">,</span>
-    <span class="p">):</span>
+        <span class="n">backend</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"matplotlib"</span><span class="p">,</span> <span class="s2">"plotly"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"plotly"</span><span class="p">,</span>
+        <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"voxels"</span><span class="p">,</span> <span class="s2">"volume"</span><span class="p">,</span> <span class="s2">"isosurface"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">field</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"delta_refractive_index"</span><span class="p">,</span> <span class="s2">"refractive_index"</span><span class="p">,</span> <span class="s2">"permittivity"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"delta_refractive_index"</span><span class="p">,</span>
+        <span class="n">length_unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"nanometer"</span><span class="p">,</span>
+        <span class="n">surface_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+        <span class="n">opacity</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">opacity_scale</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"uniform"</span><span class="p">,</span> <span class="s2">"increasing"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"uniform"</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"MatplotlibFigure | PlotlyFigure"</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Build a three-dimensional figure of the finite voxel medium.</span>
 
 <span class="sd">        Parameters</span>
@@ -796,10 +893,11 @@
         <span class="k">if</span> <span class="n">mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">mode</span> <span class="o">=</span> <span class="s2">"voxels"</span> <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">"matplotlib"</span> <span class="k">else</span> <span class="s2">"volume"</span>
 
-        <span class="n">modes</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"voxels"</span><span class="p">,)</span> <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">"matplotlib"</span> <span class="k">else</span> <span class="p">(</span><span class="s2">"volume"</span><span class="p">,</span> <span class="s2">"isosurface"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">"matplotlib"</span> <span class="ow">and</span> <span class="n">mode</span> <span class="o">!=</span> <span class="s2">"voxels"</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"matplotlib mode must be voxels."</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">modes</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">backend</span><span class="si">}</span><span class="s2"> mode must be one of </span><span class="si">{</span><span class="n">modes</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">"plotly"</span> <span class="ow">and</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"volume"</span><span class="p">,</span> <span class="s2">"isosurface"</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"plotly mode must be volume or isosurface."</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">opacity_scale</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"uniform"</span><span class="p">,</span> <span class="s2">"increasing"</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"opacity_scale must be uniform or increasing."</span><span class="p">)</span>
@@ -827,28 +925,16 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">alpha</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"opacity must be finite and in (0, 1]."</span><span class="p">)</span>
 
-        <span class="kn">from</span><span class="w"> </span><span class="nn">pint.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DimensionalityError</span><span class="p">,</span> <span class="n">UndefinedUnitError</span>
+        <span class="n">spacing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot_spacing</span><span class="p">(</span><span class="n">length_unit</span><span class="o">=</span><span class="n">length_unit</span><span class="p">)</span>
 
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">positions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">positions</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">length_unit</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
-        <span class="k">except</span> <span class="p">(</span><span class="n">DimensionalityError</span><span class="p">,</span> <span class="n">UndefinedUnitError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"length_unit must name a length unit."</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">error</span>
+        <span class="n">positions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">positions</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">spacing</span><span class="o">.</span><span class="n">units</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
 
         <span class="n">low</span><span class="p">,</span> <span class="n">high</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="nb">float</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
 
-        <span class="n">uniform</span> <span class="o">=</span> <span class="n">low</span> <span class="o">==</span> <span class="n">high</span>
+        <span class="n">color_low</span><span class="p">,</span> <span class="n">color_high</span><span class="p">,</span> <span class="n">uniform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot_color_limits</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">values</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">field</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">uniform</span> <span class="ow">and</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">"plotly"</span> <span class="ow">and</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"isosurface"</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"An isosurface cannot be generated from a uniform field; use mode='volume'."</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="s2">"delta_refractive_index"</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">uniform</span><span class="p">:</span>
-            <span class="n">color_low</span><span class="p">,</span> <span class="n">color_high</span> <span class="o">=</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">padding</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">low</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e-6</span> <span class="k">if</span> <span class="n">uniform</span> <span class="k">else</span> <span class="mi">0</span>
-
-            <span class="n">color_low</span><span class="p">,</span> <span class="n">color_high</span> <span class="o">=</span> <span class="n">low</span> <span class="o">-</span> <span class="n">padding</span><span class="p">,</span> <span class="n">high</span> <span class="o">+</span> <span class="n">padding</span>
-
-        <span class="n">colorscale</span> <span class="o">=</span> <span class="s2">"RdBu_r"</span> <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="s2">"delta_refractive_index"</span> <span class="k">else</span> <span class="s2">"Viridis"</span>
 
         <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">"matplotlib"</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot_3d_matplotlib</span><span class="p">(</span>
@@ -862,6 +948,85 @@
                 <span class="n">opacity</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
                 <span class="n">uniform</span><span class="o">=</span><span class="n">uniform</span><span class="p">,</span>
             <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"volume"</span><span class="p">:</span>
+            <span class="n">plotly_mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"volume"</span><span class="p">,</span> <span class="s2">"isosurface"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"volume"</span>
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"isosurface"</span><span class="p">:</span>
+            <span class="n">plotly_mode</span> <span class="o">=</span> <span class="s2">"isosurface"</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"plotly mode must be volume or isosurface."</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot_3d_plotly</span><span class="p">(</span>
+            <span class="n">mode</span><span class="o">=</span><span class="n">plotly_mode</span><span class="p">,</span>
+            <span class="n">field</span><span class="o">=</span><span class="n">field</span><span class="p">,</span>
+            <span class="n">values</span><span class="o">=</span><span class="n">values</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
+            <span class="n">positions</span><span class="o">=</span><span class="n">positions</span><span class="p">,</span>
+            <span class="n">length_unit</span><span class="o">=</span><span class="n">length_unit</span><span class="p">,</span>
+            <span class="n">surface_count</span><span class="o">=</span><span class="n">count</span><span class="p">,</span>
+            <span class="n">opacity</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+            <span class="n">opacity_scale</span><span class="o">=</span><span class="n">opacity_scale</span><span class="p">,</span>
+            <span class="n">low</span><span class="o">=</span><span class="n">low</span><span class="p">,</span>
+            <span class="n">high</span><span class="o">=</span><span class="n">high</span><span class="p">,</span>
+            <span class="n">color_low</span><span class="o">=</span><span class="n">color_low</span><span class="p">,</span>
+            <span class="n">color_high</span><span class="o">=</span><span class="n">color_high</span><span class="p">,</span>
+            <span class="n">uniform</span><span class="o">=</span><span class="n">uniform</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_plot_spacing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">length_unit</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Quantity</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Convert voxel spacing to a display unit or raise a domain error."""</span>
+
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pint.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DimensionalityError</span><span class="p">,</span> <span class="n">UndefinedUnitError</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">spacing</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">length_unit</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">DimensionalityError</span><span class="p">,</span> <span class="n">UndefinedUnitError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"length_unit must name a length unit."</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">error</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_plot_color_limits</span><span class="p">(</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">field</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"delta_refractive_index"</span><span class="p">,</span> <span class="s2">"refractive_index"</span><span class="p">,</span> <span class="s2">"permittivity"</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return a shared color range and whether the field is uniform."""</span>
+
+        <span class="n">low</span><span class="p">,</span> <span class="n">high</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="nb">float</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+
+        <span class="n">uniform</span> <span class="o">=</span> <span class="n">low</span> <span class="o">==</span> <span class="n">high</span>
+
+        <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="s2">"delta_refractive_index"</span><span class="p">:</span>
+            <span class="n">extent</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+
+            <span class="n">low</span><span class="p">,</span> <span class="n">high</span> <span class="o">=</span> <span class="o">-</span><span class="n">extent</span><span class="p">,</span> <span class="n">extent</span>
+
+        <span class="k">if</span> <span class="n">low</span> <span class="o">==</span> <span class="n">high</span><span class="p">:</span>
+            <span class="n">padding</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">low</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e-6</span>
+
+            <span class="n">low</span><span class="p">,</span> <span class="n">high</span> <span class="o">=</span> <span class="n">low</span> <span class="o">-</span> <span class="n">padding</span><span class="p">,</span> <span class="n">high</span> <span class="o">+</span> <span class="n">padding</span>
+
+        <span class="k">return</span> <span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">uniform</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_plot_3d_plotly</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"volume"</span><span class="p">,</span> <span class="s2">"isosurface"</span><span class="p">],</span>
+        <span class="n">field</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"delta_refractive_index"</span><span class="p">,</span> <span class="s2">"refractive_index"</span><span class="p">,</span> <span class="s2">"permittivity"</span><span class="p">],</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">positions</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">length_unit</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">surface_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">opacity</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">opacity_scale</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"uniform"</span><span class="p">,</span> <span class="s2">"increasing"</span><span class="p">],</span>
+        <span class="n">low</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">high</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">color_low</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">color_high</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">uniform</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"PlotlyFigure"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Render volume or isosurface traces using Plotly."""</span>
 
         <span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objects</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
 
@@ -886,9 +1051,9 @@
                 <span class="n">isomax</span><span class="o">=</span><span class="n">color_high</span> <span class="k">if</span> <span class="n">uniform</span> <span class="k">else</span> <span class="n">high</span> <span class="o">-</span> <span class="p">(</span><span class="n">high</span> <span class="o">-</span> <span class="n">low</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.05</span><span class="p">,</span>
                 <span class="n">cmin</span><span class="o">=</span><span class="n">color_low</span><span class="p">,</span>
                 <span class="n">cmax</span><span class="o">=</span><span class="n">color_high</span><span class="p">,</span>
-                <span class="n">surface_count</span><span class="o">=</span><span class="n">count</span><span class="p">,</span>
-                <span class="n">opacity</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
-                <span class="n">colorscale</span><span class="o">=</span><span class="n">colorscale</span><span class="p">,</span>
+                <span class="n">surface_count</span><span class="o">=</span><span class="n">surface_count</span><span class="p">,</span>
+                <span class="n">opacity</span><span class="o">=</span><span class="n">opacity</span><span class="p">,</span>
+                <span class="n">colorscale</span><span class="o">=</span><span class="s2">"RdBu_r"</span> <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="s2">"delta_refractive_index"</span> <span class="k">else</span> <span class="s2">"Viridis"</span><span class="p">,</span>
                 <span class="n">colorbar</span><span class="o">=</span><span class="n">colorbar</span><span class="p">,</span>
                 <span class="n">caps</span><span class="o">=</span><span class="p">{</span><span class="s2">"x_show"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"y_show"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"z_show"</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
                 <span class="n">hovertemplate</span><span class="o">=</span><span class="n">hover</span><span class="p">,</span>
@@ -909,10 +1074,13 @@
             <span class="n">margin</span><span class="o">=</span><span class="p">{</span><span class="s2">"l"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"t"</span><span class="p">:</span> <span class="mi">45</span><span class="p">},</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">figure</span></div>
+        <span class="k">return</span> <span class="n">figure</span>
 
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_plot_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_plot_field</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">field</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"delta_refractive_index"</span><span class="p">,</span> <span class="s2">"refractive_index"</span><span class="p">,</span> <span class="s2">"permittivity"</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return the selected material field and display label."""</span>
 
         <span class="n">fields</span> <span class="o">=</span> <span class="p">{</span>
@@ -933,16 +1101,16 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_plot_3d_matplotlib</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">values</span><span class="p">,</span>
-        <span class="n">label</span><span class="p">,</span>
-        <span class="n">positions</span><span class="p">,</span>
-        <span class="n">length_unit</span><span class="p">,</span>
-        <span class="n">color_low</span><span class="p">,</span>
-        <span class="n">color_high</span><span class="p">,</span>
-        <span class="n">colormap</span><span class="p">,</span>
-        <span class="n">opacity</span><span class="p">,</span>
-        <span class="n">uniform</span><span class="p">,</span>
-    <span class="p">):</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">positions</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">length_unit</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">color_low</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">color_high</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">colormap</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">opacity</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">uniform</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"MatplotlibFigure"</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Render sampled cells with physical extents and a shared color scale."""</span>
 
         <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
