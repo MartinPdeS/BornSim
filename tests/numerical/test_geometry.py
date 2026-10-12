@@ -6,6 +6,41 @@ from bornsim import Box, Cylinder, Ellipsoid, Layer, Solver, Source, Sphere, Str
 from bornsim.units import ureg
 
 
+def test_volume_from_absolute_refractive_index():
+    refractive_index = np.full((2, 2, 2), 1.34)
+
+    refractive_index[0, 0, 0] = 1.35
+
+    grid = Grid(
+        shape=(2, 2, 2),
+        spacing=5e-08 * ureg.meter,
+    )
+
+    volume = Volume.from_refractive_index(
+        refractive_index=refractive_index,
+        background_refractive_index=1.33,
+        grid=grid,
+    )
+
+    np.testing.assert_allclose(volume.delta_refractive_index, refractive_index - 1.33)
+
+    np.testing.assert_array_equal(volume.refractive_index, refractive_index)
+
+    with pytest.raises(ValueError, match="grid shape"):
+        Volume.from_refractive_index(
+            refractive_index=np.ones((3, 2, 2)),
+            background_refractive_index=1.33,
+            grid=grid,
+        )
+
+    with pytest.raises(ValueError, match="permittivity"):
+        Volume.from_refractive_index(
+            refractive_index=np.zeros((2, 2, 2)),
+            background_refractive_index=1.33,
+            grid=grid,
+        )
+
+
 def test_layers_interfaces_units_and_last_region_wins():
     medium = StructuredMedium(
         regions=[

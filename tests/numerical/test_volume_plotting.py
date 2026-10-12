@@ -85,6 +85,22 @@ def test_even_grid_slice_title_and_symmetric_contrast_scale():
     assert axis.images[0].get_clim() == (-0.023, 0.023)
 
 
+def test_two_dimensional_and_plotly_views_share_color_limits():
+    volume = sample()
+
+    slice_figure = volume.plot_slice(field="delta_refractive_index")
+
+    volume_figure = volume.plot_3d(
+        backend="plotly",
+        field="delta_refractive_index",
+    )
+
+    assert slice_figure.axes[0].images[0].get_clim() == (
+        volume_figure.data[0].cmin,
+        volume_figure.data[0].cmax,
+    )
+
+
 @pytest.mark.parametrize(
     "settings", [{"normal": "q"}, {"index": -1}, {"index": True}, {"field": "bad"}, {"length_unit": "second"}]
 )

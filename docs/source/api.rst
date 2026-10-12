@@ -82,7 +82,7 @@ Field construction
 
 .. code-block:: python
 
-   from bornsim import Grid, Layer, StructuredMedium
+   from bornsim import Grid, Layer, StructuredMedium, Volume
    from bornsim.medium.random_medium import WhittleMaternMedium
    from bornsim.units import ureg
 
@@ -116,9 +116,17 @@ Field construction
 
    absolute_refractive_index = volume.refractive_index
 
+   imported_volume = Volume.from_refractive_index(
+       refractive_index=absolute_refractive_index,
+       background_refractive_index=1.33,
+       grid=grid,
+   )
+
 Alternatively, independently generated volumes with matching grids and
 backgrounds can be combined with ``volume_a + volume_b``. The result's
 ``refractive_index`` property exposes its immutable absolute voxel field.
+``Volume.from_refractive_index`` also constructs a volume from an absolute
+unitless index array, converting it to the linearized contrast representation.
 
 Configuration
 -------------

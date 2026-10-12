@@ -172,7 +172,7 @@ class Solver:
                         np.asarray(target.delta_refractive_index, dtype="<f8").tobytes(order="C")
                     ).hexdigest(),
                 },
-                medium=None if target.medium is None else target.medium.metadata,
+                medium=target.medium_metadata,
                 seed=target.seed,
                 coefficient_scope="finite-sample",
             ),
@@ -226,7 +226,7 @@ class Solver:
                     ).hexdigest(),
                 },
                 sampling=sampling.metadata,
-                medium=None if volume.medium is None else volume.medium.metadata,
+                medium=volume.medium_metadata,
                 seed=volume.seed,
                 coefficient_scope="finite-sample",
             ),

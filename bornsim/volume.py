@@ -1,11 +1,18 @@
 """Finite refractive-index fields on centred cubic voxel grids."""
 
+from copy import deepcopy
 from dataclasses import dataclass, field
 import numpy as np
+from numpy.typing import ArrayLike
 from types import NotImplementedType
+from typing import TYPE_CHECKING, Literal, Self
 from .grid import Grid
 from .medium import Medium
 from .units import _integer, _refractive_index_values, Quantity
+
+if TYPE_CHECKING:
+    from matplotlib.figure import Figure as MatplotlibFigure
+    from plotly.graph_objects import Figure as PlotlyFigure
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -20,8 +27,13 @@ class Volume:
     carry physical units. Relative permittivity is linearized as
     background_refractive_index**2 + 2*background_refractive_index*delta_refractive_index.
     The quadratic fluctuation term is omitted at every Born order.
-    Medium.to_volume records generation statistics and seed. Manually
-    constructed volumes have only their explicitly supplied provenance."""
+    Medium.to_volume records generation statistics and seed. ``medium_metadata``
+    returns the metadata snapshot captured when the volume was created. Manually
+    constructed volumes have only their explicitly supplied provenance.
+
+    Use :meth:`from_refractive_index` when the input array contains absolute
+    refractive indices rather than fluctuations from the background.
+    """
 
     delta_refractive_index: np.ndarray
     background_refractive_index: float
@@ -29,6 +41,7 @@ class Volume:
     spacing: Quantity = field(init=False)
     medium: Medium | None = None
     seed: int | None = None
+    _medium_metadata: dict[str, object] | None = field(init=False, default=None, repr=False, compare=False)
 
     def __post_init__(self) -> None:
         data = np.array(
@@ -88,9 +101,76 @@ class Volume:
                 ),
             )
 
+        object.__setattr__(
+            self,
+            "_medium_metadata",
+            deepcopy(self.medium.metadata) if self.medium is not None else None,
+        )
+
         data.setflags(write=False)
 
         object.__setattr__(self, "delta_refractive_index", data)
+
+    @classmethod
+    def from_refractive_index(
+        cls,
+        *,
+        refractive_index: ArrayLike,
+        background_refractive_index: float,
+        grid: Grid,
+        medium: Medium | None = None,
+        seed: int | None = None,
+    ) -> Self:
+        """Construct a volume from an absolute refractive-index field.
+
+        Parameters
+        ----------
+        refractive_index : array_like
+            Plain numerical absolute refractive indices, with shape
+            ``grid.shape``. Values must not carry units.
+        background_refractive_index : float
+            Positive, unitless reference refractive index.
+        grid : Grid
+            Explicit spatial grid matching the field shape.
+        medium : Medium, optional
+            Medium metadata associated with generation. Must be supplied
+            together with ``seed``.
+        seed : int, optional
+            Generation seed, supplied together with ``medium``.
+
+        Returns
+        -------
+        Volume
+            Immutable volume storing the field as
+            ``refractive_index - background_refractive_index``.
+
+        Raises
+        ------
+        ValueError
+            If the field, background, grid shape, or resulting linearized
+            permittivity is invalid.
+        TypeError
+            If ``medium`` is not a Medium instance.
+        """
+
+        absolute_refractive_index = _refractive_index_values(
+            value=refractive_index,
+            name="refractive_index",
+        )
+
+        background = _refractive_index_values(
+            value=background_refractive_index,
+            name="background_refractive_index",
+            scalar=True,
+        )
+
+        return cls(
+            delta_refractive_index=absolute_refractive_index - background,
+            background_refractive_index=background,
+            grid=grid,
+            medium=medium,
+            seed=seed,
+        )
 
     @property
     def positions(self) -> Quantity:
@@ -119,13 +199,33 @@ class Volume:
 
     @property
     def refractive_index(self) -> np.ndarray:
-        """Return the read-only absolute refractive-index field."""
+        """Return the read-only absolute refractive-index field.
+
+        Returns
+        -------
+        numpy.ndarray
+            Absolute refractive indices, equal to the background plus
+            ``delta_refractive_index``.
+        """
 
         data = self.background_refractive_index + self.delta_refractive_index
 
         data.setflags(write=False)
 
         return data
+
+    @property
+    def medium_metadata(self) -> dict[str, object] | None:
+        """Return a copy of the generation metadata captured at construction.
+
+        Returns
+        -------
+        dict[str, object] or None
+            A fresh copy of the source medium's metadata, or None when the
+            volume has no associated medium.
+        """
+
+        return deepcopy(self._medium_metadata)
 
     def __add__(self, other: object) -> "Volume | NotImplementedType":
         """Add refractive-index contrasts from volumes on the same grid.
@@ -150,7 +250,15 @@ class Volume:
             grid=self.grid,
         )
 
-    def plot_slice(self, *, normal="z", index=None, field="refractive_index", length_unit="nanometer", title=None):
+    def plot_slice(
+        self,
+        *,
+        normal: Literal["x", "y", "z"] = "z",
+        index: int | None = None,
+        field: Literal["refractive_index", "delta_refractive_index", "permittivity"] = "refractive_index",
+        length_unit: str = "nanometer",
+        title: str | None = None,
+    ) -> "MatplotlibFigure":
         """Build a Matplotlib figure of one voxel plane.
 
         Parameters
@@ -182,7 +290,6 @@ class Volume:
             If the plane, index, field, or length unit is invalid.
         """
 
-        from pint.errors import DimensionalityError, UndefinedUnitError
         import matplotlib.pyplot as plt
 
         if normal not in ("x", "y", "z"):
@@ -201,10 +308,7 @@ class Volume:
 
         values, label = self._plot_field(field=field)
 
-        try:
-            spacing = self.spacing.to(length_unit)
-        except (DimensionalityError, UndefinedUnitError, TypeError, ValueError) as error:
-            raise ValueError("length_unit must name a length unit.") from error
+        spacing = self._plot_spacing(length_unit=length_unit)
 
         unit = f"{spacing.units:~}"
 
@@ -216,17 +320,7 @@ class Volume:
 
         half_height = self.delta_refractive_index.shape[vertical] * width / 2
 
-        low, high = float(values.min()), float(values.max())
-
-        if field == "delta_refractive_index":
-            high = float(np.abs(values).max())
-
-            low = -high
-
-        if low == high:
-            padding = max(abs(low), 1.0) * 1e-6
-
-            low, high = low - padding, high + padding
+        color_low, color_high, _ = self._plot_color_limits(values=values, field=field)
 
         figure, axis = plt.subplots(layout="constrained")
 
@@ -237,8 +331,8 @@ class Volume:
             interpolation="nearest",
             aspect="equal",
             cmap="RdBu_r" if field == "delta_refractive_index" else "viridis",
-            vmin=low,
-            vmax=high,
+            vmin=color_low,
+            vmax=color_high,
         )
 
         position = (selected - (count - 1) / 2) * width
@@ -256,14 +350,14 @@ class Volume:
     def plot_3d(
         self,
         *,
-        backend="plotly",
-        mode=None,
-        field="delta_refractive_index",
-        length_unit="nanometer",
-        surface_count=8,
-        opacity=None,
-        opacity_scale="uniform",
-    ):
+        backend: Literal["matplotlib", "plotly"] = "plotly",
+        mode: Literal["voxels", "volume", "isosurface"] | None = None,
+        field: Literal["delta_refractive_index", "refractive_index", "permittivity"] = "delta_refractive_index",
+        length_unit: str = "nanometer",
+        surface_count: int = 8,
+        opacity: float | int | None = None,
+        opacity_scale: Literal["uniform", "increasing"] = "uniform",
+    ) -> "MatplotlibFigure | PlotlyFigure":
         """Build a three-dimensional figure of the finite voxel medium.
 
         Parameters
@@ -325,10 +419,11 @@ class Volume:
         if mode is None:
             mode = "voxels" if backend == "matplotlib" else "volume"
 
-        modes = ("voxels",) if backend == "matplotlib" else ("volume", "isosurface")
+        if backend == "matplotlib" and mode != "voxels":
+            raise ValueError("matplotlib mode must be voxels.")
 
-        if mode not in modes:
-            raise ValueError(f"{backend} mode must be one of {modes}.")
+        if backend == "plotly" and mode not in ("volume", "isosurface"):
+            raise ValueError("plotly mode must be volume or isosurface.")
 
         if opacity_scale not in ("uniform", "increasing"):
             raise ValueError("opacity_scale must be uniform or increasing.")
@@ -356,28 +451,16 @@ class Volume:
         if not np.isfinite(alpha) or not 0 < alpha <= 1:
             raise ValueError("opacity must be finite and in (0, 1].")
 
-        from pint.errors import DimensionalityError, UndefinedUnitError
+        spacing = self._plot_spacing(length_unit=length_unit)
 
-        try:
-            positions = self.positions.to(length_unit).magnitude
-        except (DimensionalityError, UndefinedUnitError, TypeError, ValueError) as error:
-            raise ValueError("length_unit must name a length unit.") from error
+        positions = self.positions.to(spacing.units).magnitude
 
         low, high = float(values.min()), float(values.max())
 
-        uniform = low == high
+        color_low, color_high, uniform = self._plot_color_limits(values=values, field=field)
 
         if uniform and backend == "plotly" and mode == "isosurface":
             raise ValueError("An isosurface cannot be generated from a uniform field; use mode='volume'.")
-
-        if field == "delta_refractive_index" and not uniform:
-            color_low, color_high = -float(np.abs(values).max()), float(np.abs(values).max())
-        else:
-            padding = max(abs(low), 1.0) * 1e-6 if uniform else 0
-
-            color_low, color_high = low - padding, high + padding
-
-        colorscale = "RdBu_r" if field == "delta_refractive_index" else "Viridis"
 
         if backend == "matplotlib":
             return self._plot_3d_matplotlib(
@@ -391,6 +474,84 @@ class Volume:
                 opacity=alpha,
                 uniform=uniform,
             )
+
+        if mode == "volume":
+            plotly_mode: Literal["volume", "isosurface"] = "volume"
+        elif mode == "isosurface":
+            plotly_mode = "isosurface"
+        else:
+            raise ValueError("plotly mode must be volume or isosurface.")
+
+        return self._plot_3d_plotly(
+            mode=plotly_mode,
+            field=field,
+            values=values,
+            label=label,
+            positions=positions,
+            length_unit=length_unit,
+            surface_count=count,
+            opacity=alpha,
+            opacity_scale=opacity_scale,
+            low=low,
+            high=high,
+            color_low=color_low,
+            color_high=color_high,
+            uniform=uniform,
+        )
+
+    def _plot_spacing(self, *, length_unit: str) -> Quantity:
+        """Convert voxel spacing to a display unit or raise a domain error."""
+
+        from pint.errors import DimensionalityError, UndefinedUnitError
+
+        try:
+            return self.spacing.to(length_unit)
+        except (DimensionalityError, UndefinedUnitError, TypeError, ValueError) as error:
+            raise ValueError("length_unit must name a length unit.") from error
+
+    @staticmethod
+    def _plot_color_limits(
+        *,
+        values: np.ndarray,
+        field: Literal["delta_refractive_index", "refractive_index", "permittivity"],
+    ) -> tuple[float, float, bool]:
+        """Return a shared color range and whether the field is uniform."""
+
+        low, high = float(values.min()), float(values.max())
+
+        uniform = low == high
+
+        if field == "delta_refractive_index":
+            extent = float(np.abs(values).max())
+
+            low, high = -extent, extent
+
+        if low == high:
+            padding = max(abs(low), 1.0) * 1e-6
+
+            low, high = low - padding, high + padding
+
+        return low, high, uniform
+
+    def _plot_3d_plotly(
+        self,
+        *,
+        mode: Literal["volume", "isosurface"],
+        field: Literal["delta_refractive_index", "refractive_index", "permittivity"],
+        values: np.ndarray,
+        label: str,
+        positions: np.ndarray,
+        length_unit: str,
+        surface_count: int,
+        opacity: float,
+        opacity_scale: Literal["uniform", "increasing"],
+        low: float,
+        high: float,
+        color_low: float,
+        color_high: float,
+        uniform: bool,
+    ) -> "PlotlyFigure":
+        """Render volume or isosurface traces using Plotly."""
 
         import plotly.graph_objects as go
 
@@ -415,9 +576,9 @@ class Volume:
                 isomax=color_high if uniform else high - (high - low) * 0.05,
                 cmin=color_low,
                 cmax=color_high,
-                surface_count=count,
-                opacity=alpha,
-                colorscale=colorscale,
+                surface_count=surface_count,
+                opacity=opacity,
+                colorscale="RdBu_r" if field == "delta_refractive_index" else "Viridis",
                 colorbar=colorbar,
                 caps={"x_show": False, "y_show": False, "z_show": False},
                 hovertemplate=hover,
@@ -440,7 +601,11 @@ class Volume:
 
         return figure
 
-    def _plot_field(self, *, field):
+    def _plot_field(
+        self,
+        *,
+        field: Literal["delta_refractive_index", "refractive_index", "permittivity"],
+    ) -> tuple[np.ndarray, str]:
         """Return the selected material field and display label."""
 
         fields = {
@@ -461,16 +626,16 @@ class Volume:
     def _plot_3d_matplotlib(
         self,
         *,
-        values,
-        label,
-        positions,
-        length_unit,
-        color_low,
-        color_high,
-        colormap,
-        opacity,
-        uniform,
-    ):
+        values: np.ndarray,
+        label: str,
+        positions: np.ndarray,
+        length_unit: str,
+        color_low: float,
+        color_high: float,
+        colormap: str,
+        opacity: float,
+        uniform: bool,
+    ) -> "MatplotlibFigure":
         """Render sampled cells with physical extents and a shared color scale."""
 
         import matplotlib.pyplot as plt

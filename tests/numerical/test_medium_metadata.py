@@ -79,6 +79,44 @@ def test_solver_uses_medium_metadata_polymorphically():
     assert ensemble.provenance["medium"] == medium.metadata
 
 
+def test_volume_and_solver_preserve_a_medium_metadata_snapshot():
+
+    class MutableTaggedRandom(GaussianMedium):
+        @property
+        def metadata(self):
+            return {**super().metadata, "label": self.label}
+
+    medium = MutableTaggedRandom(
+        background_refractive_index=1.33,
+        refractive_index_std=0.01,
+        correlation_length=1e-07 * ureg.meter,
+    )
+
+    object.__setattr__(medium, "label", "captured")
+
+    volume = medium.to_volume(
+        grid=Grid(
+            shape=(2, 2, 2),
+            spacing=5e-08 * ureg.meter,
+        ),
+        seed=17,
+    )
+
+    object.__setattr__(medium, "label", "changed")
+
+    metadata = volume.medium_metadata
+
+    assert metadata["label"] == "captured"
+
+    metadata["label"] = "modified by caller"
+
+    assert volume.medium_metadata["label"] == "captured"
+
+    result = Solver(source=Source(wavelength=6.33e-07 * ureg.meter)).solve(target=volume)
+
+    assert result.provenance["medium"]["label"] == "captured"
+
+
 def test_structured_metadata_preserves_order_units_and_independence():
     medium = StructuredMedium(
         regions=[
