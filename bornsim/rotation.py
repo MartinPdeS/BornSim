@@ -1,8 +1,18 @@
 """Proper three-dimensional rotations for immutable material shapes."""
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 import numpy as np
+from numpy.typing import NDArray
+from typing import TypeAlias
 from .units import Quantity, validate_units, _dimensionless
+
+
+RotationMatrix: TypeAlias = tuple[
+    tuple[float, float, float],
+    tuple[float, float, float],
+    tuple[float, float, float],
+]
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -10,8 +20,12 @@ class Rotation:
     """Define an active right-handed rotation about a dimensionless axis.
 
     angle accepts angular quantities; angular values require explicit units. The axis is
-    normalized. matrix maps local column coordinates into global coordinates.
-    No numerical scattering or voxel resampling is performed by this class.
+    normalized. ``matrix`` maps local column coordinates into global coordinates.
+    It follows the right-hand rule, and successive world rotations compose as
+    ``R_new @ R_existing``. Shape membership uses local row coordinates
+    ``(positions - centre) @ R``. Shapes accept this object, a proper orthonormal
+    3-by-3 matrix, or a dimensionless matrix quantity; they store the normalized
+    matrix as an immutable tuple of tuples. No voxel resampling is performed.
     """
 
     axis: tuple[float, float, float]
@@ -36,7 +50,7 @@ class Rotation:
         object.__setattr__(self, "axis", tuple(axis / np.linalg.norm(axis)))
 
     @property
-    def matrix(self) -> np.ndarray:
+    def matrix(self) -> NDArray[np.float64]:
         """Return Rodrigues' active rotation matrix, shape (3, 3)."""
 
         axis = np.asarray(self.axis)
@@ -52,7 +66,7 @@ class Rotation:
         return cosine * np.eye(3) + (1 - cosine) * np.outer(axis, axis) + sine * skew
 
     @staticmethod
-    def _matrix(*, rotation):
+    def _matrix(*, rotation: "RotationInput") -> NDArray[np.float64]:
         matrix = rotation.matrix if isinstance(rotation, Rotation) else _dimensionless(value=rotation, name="rotation")
 
         invalid = (
@@ -66,3 +80,9 @@ class Rotation:
             raise ValueError("rotation must be a proper orthonormal 3-by-3 matrix or Rotation.")
 
         return matrix
+
+
+RotationInput: TypeAlias = Rotation | RotationMatrix | NDArray[np.float64] | Sequence[Sequence[float]] | Quantity
+
+
+__all__ = ["Rotation", "RotationInput", "RotationMatrix"]

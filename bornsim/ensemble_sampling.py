@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from collections.abc import Sequence
-from ._validation import _integer
+from .units import _integer
 
 
 @dataclass(frozen=True, kw_only=True, init=False)

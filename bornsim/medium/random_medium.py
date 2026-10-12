@@ -4,8 +4,7 @@ from abc import abstractmethod
 from dataclasses import dataclass
 import numpy as np
 from .base import Medium
-from ..units import _refractive_index_values, Quantity, validate_units, ureg
-from .._validation import _integer
+from ..units import _integer, _refractive_index_values, Quantity, validate_units, ureg
 from ..grid import Grid
 from typing import TYPE_CHECKING
 

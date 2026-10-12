@@ -171,7 +171,6 @@ def test_increasing_volume_opacity_preserves_absolute_refractive_index_and_sampl
     [
         {"opacity_scale": "unknown"},
         {"backend": "matplotlib", "opacity_scale": "increasing"},
-        {"backend": "plotly", "mode": "slices", "opacity_scale": "increasing"},
         {"backend": "plotly", "mode": "isosurface", "opacity_scale": "increasing"},
     ],
 )
@@ -182,36 +181,8 @@ def test_opacity_scale_requires_a_plotly_volume(settings):
         volume.plot_3d(**settings)
 
 
-def test_slices_use_requested_voxel_planes_and_shared_color_domain():
-    volume = sample()
-
-    figure = volume.plot_3d(
-        backend="plotly",
-        mode="slices",
-        field="refractive_index",
-        slice_indices=(0, 2, 4),
-    )
-
-    expected = volume.background_refractive_index + volume.delta_refractive_index
-
-    for trace, reference in zip(figure.data, (expected[0], expected[:, 2], expected[:, :, 4])):
-        assert trace.type == "surface"
-
-        np.testing.assert_array_equal(trace.surfacecolor, reference)
-
-        np.testing.assert_array_equal(trace.customdata, reference)
-
-        assert trace.cmin == expected.min()
-
-        assert trace.cmax == expected.max()
-
-    assert sum((trace.showscale for trace in figure.data)) == 1
-
-    np.testing.assert_allclose(figure.data[0].x, volume.positions[0, :, :, 0] * 1000000000.0)
-
-
 @pytest.mark.parametrize("opacity_scale", ["uniform", "increasing"])
-def test_uniform_medium_falls_back_to_visible_slices(opacity_scale):
+def test_uniform_medium_uses_plotly_volume_without_slice_fallback(opacity_scale):
     volume = Volume(
         delta_refractive_index=np.zeros((2, 3, 4)),
         background_refractive_index=1.33,
@@ -226,17 +197,36 @@ def test_uniform_medium_falls_back_to_visible_slices(opacity_scale):
         opacity_scale=opacity_scale,
     )
 
-    assert len(figure.data) == 3
+    assert len(figure.data) == 1
 
-    assert all((trace.type == "surface" for trace in figure.data))
+    trace = figure.data[0]
+
+    assert trace.type == "volume"
 
     assert "uniform field" in figure.layout.title.text
 
-    assert figure.data[0].cmin < 0 < figure.data[0].cmax
+    assert trace.isomin < 0 < trace.isomax
 
-    assert figure.data[0].colorbar.tickvals == (0.0,)
+    assert trace.colorbar.tickvals == (0.0,)
 
-    assert "δn=0" in figure.data[0].hovertemplate
+    assert "δn=%{value:.5g}" in trace.hovertemplate
+
+
+def test_uniform_medium_rejects_plotly_isosurface():
+    volume = Volume(
+        delta_refractive_index=np.zeros((2, 3, 4)),
+        background_refractive_index=1.33,
+        grid=Grid(
+            shape=np.shape(np.zeros((2, 3, 4))),
+            spacing=5e-08 * ureg.meter,
+        ),
+    )
+
+    with pytest.raises(ValueError, match="uniform field"):
+        volume.plot_3d(
+            backend="plotly",
+            mode="isosurface",
+        )
 
 
 def test_structured_medium_and_html_export(tmp_path):
@@ -282,9 +272,7 @@ def test_structured_medium_and_html_export(tmp_path):
         {"opacity": np.nan},
         {"opacity": 2},
         {"opacity": [0.1]},
-        {"mode": "slices", "slice_indices": (3, 0, 0)},
-        {"mode": "slices", "slice_indices": (0, 0)},
-        {"slice_indices": (0, 0, 0)},
+        {"mode": "slices"},
     ],
 )
 def test_invalid_visualization_settings(settings):
@@ -311,69 +299,6 @@ def test_matplotlib_backend_does_not_import_plotly(monkeypatch):
     figure.canvas.draw()
 
     assert figure.axes[0].name == "3d"
-
-
-def test_matplotlib_3d_slices_preserve_every_cell_and_physical_extents(monkeypatch):
-    from mpl_toolkits.mplot3d import Axes3D
-    from matplotlib.colors import Normalize
-    import matplotlib.pyplot as plt
-
-    calls = []
-
-    original = Axes3D.plot_surface
-
-    def record_surface(self, **kwargs):
-        calls.append(kwargs)
-
-        return original(self, **kwargs)
-
-    monkeypatch.setattr(Axes3D, "plot_surface", record_surface)
-
-    volume = sample()
-
-    before = volume.delta_refractive_index.copy()
-
-    figure = volume.plot_3d(
-        backend="matplotlib",
-        field="refractive_index",
-        length_unit="micrometer",
-        slice_indices=(0, 2, 4),
-    )
-
-    figure.canvas.draw()
-
-    axis = figure.axes[0]
-
-    assert axis.name == "3d"
-
-    np.testing.assert_allclose(axis.get_xlim(), [-0.06, 0.06])
-
-    np.testing.assert_allclose(axis.get_ylim(), [-0.08, 0.08])
-
-    np.testing.assert_allclose(axis.get_zlim(), [-0.1, 0.1])
-
-    assert axis.get_xlabel() == "x (micrometer)"
-
-    assert axis.get_zlabel() == "z (micrometer)"
-
-    values = volume.background_refractive_index + volume.delta_refractive_index
-
-    norm = Normalize(vmin=values.min(), vmax=values.max())
-
-    planes = (values[0], values[:, 2], values[:, :, 4])
-
-    expected_positions = (-0.04, 0.02, 0.08)
-
-    assert len(calls) == 3
-
-    for dimension, (call, plane, position) in enumerate(zip(calls, planes, expected_positions)):
-        np.testing.assert_allclose(call["XYZ"[dimension]], position)
-
-        np.testing.assert_allclose(call["facecolors"], plt.get_cmap("viridis")(norm(plane)))
-
-        assert call["X"].shape == (plane.shape[0] + 1, plane.shape[1] + 1)
-
-    np.testing.assert_array_equal(volume.delta_refractive_index, before)
 
 
 def test_matplotlib_voxels_show_the_sampled_sphere_mask(monkeypatch):
@@ -429,8 +354,7 @@ def test_matplotlib_voxels_show_the_sampled_sphere_mask(monkeypatch):
     assert len(figure.axes[0].collections) == 1
 
 
-@pytest.mark.parametrize("mode", ["slices", "voxels"])
-def test_matplotlib_uniform_medium_has_visible_geometry_and_single_color_tick(mode):
+def test_matplotlib_uniform_medium_defaults_to_visible_voxels_and_single_color_tick():
     volume = Volume(
         delta_refractive_index=np.zeros((2, 3, 4)),
         background_refractive_index=1.33,
@@ -440,10 +364,7 @@ def test_matplotlib_uniform_medium_has_visible_geometry_and_single_color_tick(mo
         ),
     )
 
-    figure = volume.plot_3d(
-        backend="matplotlib",
-        mode=mode,
-    )
+    figure = volume.plot_3d(backend="matplotlib")
 
     figure.canvas.draw()
 
@@ -458,10 +379,16 @@ def test_matplotlib_uniform_medium_has_visible_geometry_and_single_color_tick(mo
         {"backend": "bad"},
         {"backend": "matplotlib", "mode": "volume"},
         {"backend": "matplotlib", "mode": "isosurface"},
+        {"backend": "matplotlib", "mode": "slices"},
         {"backend": "plotly", "mode": "voxels"},
-        {"mode": "voxels", "slice_indices": (0, 0, 0)},
+        {"backend": "plotly", "mode": "slices"},
     ],
 )
 def test_backend_mode_contract_is_explicit(settings):
     with pytest.raises(ValueError):
         sample().plot_3d(**settings)
+
+
+def test_plot_3d_no_longer_accepts_slice_indices():
+    with pytest.raises(TypeError, match="slice_indices"):
+        sample().plot_3d(slice_indices=(0, 0, 0))

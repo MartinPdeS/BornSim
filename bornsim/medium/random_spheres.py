@@ -5,8 +5,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 from .base import Medium
 from ..grid import Grid
-from ..units import Quantity, validate_units, _refractive_index_values
-from .._validation import _integer
+from ..units import Quantity, _integer, validate_units, _refractive_index_values
 
 if TYPE_CHECKING:
     from ..volume import Volume

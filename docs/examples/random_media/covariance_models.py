@@ -133,7 +133,7 @@ preview_volume = preview_volumes["gaussian"]
 
 medium_figure = preview_volume.plot_3d(
     backend="matplotlib",
-    mode="slices",
+    mode="voxels",
     field="refractive_index",
 )
 
@@ -149,7 +149,7 @@ preview_volume = preview_volumes["exponential"]
 
 medium_figure = preview_volume.plot_3d(
     backend="matplotlib",
-    mode="slices",
+    mode="voxels",
     field="refractive_index",
 )
 

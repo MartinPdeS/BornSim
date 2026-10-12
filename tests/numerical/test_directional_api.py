@@ -7,7 +7,7 @@ from bornsim import AngularSampling
 from bornsim import Grid
 import numpy as np
 import pytest
-from bornsim import AngularData, Box, Result, Rotation, Solver, Source, Sphere, StructuredMedium
+from bornsim import AngularData, Box, Directions, Result, Solver, Source, Sphere, StructuredMedium
 from bornsim.units import ureg
 
 
@@ -78,7 +78,16 @@ def test_directional_data_and_explicit_cut(tmp_path):
         angles=[0, np.pi / 2] * ureg.radian,
     )
 
+    directional = solver.solve(
+        target=volume,
+        sampling=Directions(vectors=cut.directions),
+    )
+
     assert cut.amplitudes.shape == (2, 2, 2, 3)
+
+    np.testing.assert_array_equal(directional.amplitudes.magnitude, cut.amplitudes.magnitude)
+
+    assert directional.mu_s is None
 
     assert cut.mu_s is None
 
@@ -148,35 +157,11 @@ def test_averaged_ensemble_error_keeps_angular_covariance():
     np.testing.assert_allclose(result.angular.azimuth_average().stderr.magnitude, expected)
 
 
-def test_rotations_translation_and_overlap():
+def test_shape_overlap_and_clipping():
     box = Box(
         size=(4, 2, 2) * ureg.meter,
         refractive_index=1.34,
     )
-
-    rotation = Rotation(
-        axis=(0, 0, 1),
-        angle=90 * ureg.degree,
-    )
-
-    rotated = box.rotated(rotation=rotation)
-
-    positions = np.array([[1.5, 0, 0], [0, 1.5, 0]])
-
-    np.testing.assert_array_equal(box.mask(positions=positions * ureg.meter), [True, False])
-
-    np.testing.assert_array_equal(rotated.mask(positions=positions * ureg.meter), [False, True])
-
-    moved = rotated.translated(offset=(3, 0, 0) * ureg.meter)
-
-    np.testing.assert_array_equal(moved.mask(positions=(positions + [3, 0, 0]) * ureg.meter), [False, True])
-
-    orbited = moved.rotated(
-        rotation=rotation,
-        about=(0, 0, 0) * ureg.meter,
-    )
-
-    np.testing.assert_allclose(orbited.centre, (0, 3, 0), atol=1e-14)
 
     sphere = Sphere(
         radius=1 * ureg.meter,
@@ -213,9 +198,6 @@ def test_rotations_translation_and_overlap():
 
     with pytest.warns(UserWarning, match="clipped"):
         medium.to_volume(grid=grid)
-
-    with pytest.raises(ValueError, match="orthonormal"):
-        box.rotated(rotation=np.diag([1, 1, -1]))
 
 
 @pytest.mark.parametrize(

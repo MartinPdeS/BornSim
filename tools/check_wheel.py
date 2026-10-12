@@ -31,14 +31,10 @@ def main():
                 "bornsim/volume.py",
                 "bornsim/green.py",
                 "bornsim/ensemble.py",
-                "bornsim/_validation.py",
                 "bornsim/api.py",
                 "bornsim/source.py",
                 "bornsim/solver.py",
                 "bornsim/results.py",
-                "bornsim/_archives.py",
-                "bornsim/_result_plotting.py",
-                "bornsim/_volume_plotting.py",
                 "bornsim/units.py",
                 "bornsim/medium/random_medium.py",
                 "bornsim/medium/base.py",
@@ -50,7 +46,6 @@ def main():
                 "bornsim/ensemble_sampling.py",
                 "bornsim/grid.py",
                 "bornsim/sampling.py",
-                "bornsim/_result_validation.py",
             ]
 
             if not all(name in names for name in required):

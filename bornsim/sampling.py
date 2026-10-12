@@ -3,9 +3,10 @@
 from dataclasses import dataclass
 from typing import cast
 import numpy as np
-from ._validation import _integer
 from .directions import Directions
-from .units import Quantity, validate_units, ureg
+from .grid import Grid
+from .results import BornResult
+from .units import Quantity, _integer, validate_units, ureg
 
 
 @dataclass(frozen=True, kw_only=True, init=False)
@@ -14,10 +15,10 @@ class AngularSampling:
 
     Parameters
     ----------
-    angles : array_like or Quantity, optional
-        Output polar angles theta, from 0 to pi, with 1 to 181 entries.
-        Angular values require explicit units. Cannot be combined with start, end or
-        n_points. Omit to generate an evenly spaced range.
+    angles : Quantity, optional
+        One-dimensional output polar angles theta, from 0 to pi, with 1 to
+        181 entries. Angular values require explicit units. Cannot be combined
+        with start, end or n_points. Omit to generate an evenly spaced range.
     start, end : Quantity, optional
         Inclusive range endpoints between 0 and pi. Angular values require explicit units.
         Defaults are 0 and pi; descending ranges are supported.
@@ -55,6 +56,35 @@ class AngularSampling:
         polar_samples: int = 32,
         azimuth_samples: int = 8,
     ) -> None:
+        """Initialize an angular output grid and its integration quadrature.
+
+        Parameters
+        ----------
+        angles : Quantity, optional
+            Explicit one-dimensional polar angles between 0 and pi. Requires
+            explicit angular units and cannot be combined with range settings.
+        start, end : Quantity, optional
+            Inclusive endpoints for an evenly spaced polar-angle range.
+            Defaults are 0 and pi radians.
+        n_points : int, optional
+            Number of output polar angles, from 1 to 181; defaults to 121.
+        polar_samples : int, optional
+            Number of Gauss-Legendre nodes, from 16 to 128; defaults to 32.
+        azimuth_samples : int, optional
+            Number of azimuth directions, from 4 to 32; defaults to 8.
+
+        Returns
+        -------
+        None
+            Initializes the immutable sampling configuration.
+
+        Raises
+        ------
+        ValueError
+            If the angle quantities, angle range, output count, or quadrature
+            sample counts are invalid.
+        """
+
         if angles is not None:
             if any(value is not None for value in (start, end, n_points)):
                 raise ValueError("Supply angles or start/end/n_points, not both.")
@@ -120,6 +150,15 @@ class AngularSampling:
             object.__setattr__(self, name, _integer(value=value, name=name, low=low, high=high))
 
     def __repr__(self) -> str:
+        """Return a compact summary of the angle range and quadrature sizes.
+
+        Returns
+        -------
+        str
+            The number and range of output angles, in degrees, and the
+            integration sample counts.
+        """
+
         angles = self.angles.to("degree").magnitude
 
         low, high = angles.min(), angles.max()
@@ -131,13 +170,26 @@ class AngularSampling:
 
     @property
     def azimuths(self) -> Quantity:
-        """Uniform output and integration azimuths in radians."""
+        """Return uniform output and integration azimuths.
+
+        Returns
+        -------
+        Quantity
+            Azimuth directions spanning one full turn, in radians.
+        """
 
         return np.arange(self.azimuth_samples) * 2 * np.pi / self.azimuth_samples * ureg.radian
 
     @property
     def directions(self) -> Directions:
-        """Unit directions: output grid first, then the integration grid."""
+        """Return unit directions for output and integration grids.
+
+        Returns
+        -------
+        Directions
+            Directions with output polar angles first, followed by the
+            Gauss-Legendre integration nodes, for each azimuth.
+        """
 
         cosine, _ = np.polynomial.legendre.leggauss(self.polar_samples)
 
@@ -149,8 +201,14 @@ class AngularSampling:
         )
 
     @property
-    def metadata(self):
-        """Fresh SI sampling settings for reproducible result archives."""
+    def metadata(self) -> dict[str, list[int | float] | int]:
+        """Return fresh SI sampling settings for reproducible result archives.
+
+        Returns
+        -------
+        dict[str, list[int | float] | int]
+            Output angles in radians and the polar and azimuthal sample counts.
+        """
 
         return {
             "angles_rad": self.angles.to("radian").magnitude.tolist(),
@@ -158,17 +216,56 @@ class AngularSampling:
             "azimuth_samples": self.azimuth_samples,
         }
 
-    def check_work(self, *, grid, order, realizations=1):
-        """Reject synchronous workloads above 100 million voxel-direction-orders."""
+    def check_work(self, *, grid: Grid, order: int, realizations: int = 1) -> None:
+        """Reject synchronous workloads above 100 million voxel-direction-orders.
+
+        Parameters
+        ----------
+        grid : Grid
+            Spatial grid used to estimate the number of voxel-direction pairs.
+        order : int
+            Highest cumulative Born order in the requested calculation.
+        realizations : int, optional
+            Number of independent volumes; defaults to 1.
+
+        Returns
+        -------
+        None
+            Returns normally when the estimated workload is within the limit.
+
+        Raises
+        ------
+        ValueError
+            If the estimate exceeds 100 million voxel-direction-orders.
+        """
 
         directions = (len(self.angles) + self.polar_samples) * self.azimuth_samples
 
         if realizations * np.prod(grid.shape) * directions * order > 100_000_000:
             raise ValueError("Requested scattering is too large; reduce grid, angles, order, or realizations.")
 
-    def summarize(self, *, result):
+    def summarize(self, *, result: BornResult) -> dict[str, np.ndarray]:
         """Reduce numeric Born data while retaining all directional intensities.
 
+        Parameters
+        ----------
+        result : BornResult
+            Numeric Born amplitudes, cumulative differential data, and
+            isolated-term differential data for one volume.
+
+        Returns
+        -------
+        dict[str, numpy.ndarray]
+            Numeric arrays with these keys: ``mean`` and ``terms`` have shape
+            (order, output angle); ``directional_terms`` and
+            ``directional_differential`` have shape (order, output angle,
+            azimuth); ``directional_amplitudes`` adds incident polarization
+            and vector-component axes of sizes two and three; ``integrals``
+            has shape (order, 3), for total, first-moment, and reduced
+            coefficients.
+
+        Notes
+        -----
         Output amplitudes retain (order, theta, phi, incident polarization,
         vector component). Integrated coefficients are finite-sample cross
         sections divided by voxel-box volume, not intrinsic material values.
@@ -209,6 +306,25 @@ class AngularSampling:
 
     @classmethod
     def _resolve(cls, *, sampling: "AngularSampling | None" = None) -> "AngularSampling":
+        """Return the supplied configuration or construct the default.
+
+        Parameters
+        ----------
+        sampling : AngularSampling, optional
+            Configuration to validate and return. If omitted, construct the
+            default angular sampling configuration.
+
+        Returns
+        -------
+        AngularSampling
+            The validated supplied configuration or a default instance.
+
+        Raises
+        ------
+        TypeError
+            If ``sampling`` is not an AngularSampling instance.
+        """
+
         if sampling is None:
             return cls()
 

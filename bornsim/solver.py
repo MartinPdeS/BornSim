@@ -6,7 +6,6 @@ import numpy as np
 from ._version import __version__
 from .medium import Medium
 from .results import Result
-from ._validation import _integer
 from .volume import Volume
 from .series import BornSeries
 from .ensemble import ensemble_scattering
@@ -15,7 +14,7 @@ from .directions import Directions
 from .sampling import AngularSampling
 from .ensemble_sampling import EnsembleSampling
 from .source import Source
-from .units import Quantity, validate_units, ureg
+from .units import Quantity, _integer, validate_units, ureg
 
 
 def _provenance(*, order, **settings):
@@ -66,16 +65,23 @@ class Solver:
         self,
         *,
         target: Volume,
-        sampling: AngularSampling | None = None,
+        sampling: AngularSampling | Directions | None = None,
     ) -> Result:
-        """Compute full directional scattering and finite-sample integrated coefficients.
+        """Compute scattering from a volume using angular or Cartesian sampling.
 
-        Use solve_cut for individual observation directions. The target is an
-        explicit voxelized Volume; random statistics use ensemble instead.
+        Pass AngularSampling for solid-angle integration, or Directions for an
+        unnormalized set of observation directions. The target is an explicit
+        voxelized Volume; random statistics use ensemble instead.
         """
 
         if not isinstance(target, Volume):
             raise TypeError("target must be a Volume.")
+
+        if isinstance(sampling, Directions):
+            return self.solve_cut(
+                target=target,
+                directions=sampling,
+            )
 
         sampling = self.sampling if sampling is None else AngularSampling._resolve(sampling=sampling)
 
@@ -91,10 +97,12 @@ class Solver:
         """Compute an unnormalized angular cut through a fixed Volume.
 
         Supply polar angles on the x-z meridian or a Directions configuration,
-        but not both. Explicit angular units are required. Default angles span 0 to pi
-        with 121 samples. Cut amplitudes and intensities retain every requested
-        direction. A cut alone cannot determine a solid-angle integral;
-        integrated coefficients and normalized phase functions are unavailable.
+        but not both. This is a convenience wrapper for ``solve(target=...,
+        sampling=Directions(...))``. Explicit angular units are required.
+        Default angles span 0 to pi with 121 samples. Cut amplitudes and
+        intensities retain every requested direction. A cut alone cannot
+        determine a solid-angle integral; integrated coefficients and normalized
+        phase functions are unavailable.
         """
 
         if not isinstance(target, Volume):

@@ -2,13 +2,12 @@
 
 from typing import Any
 import numpy as np
-from ._validation import _integer
 from .medium import Medium
 from .grid import Grid
 from .sampling import AngularSampling
 from .ensemble_sampling import EnsembleSampling
 from .series import BornSeries
-from .units import Quantity, validate_units, ureg
+from .units import Quantity, _integer, validate_units, ureg
 
 
 def ensemble_scattering(

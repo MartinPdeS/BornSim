@@ -116,6 +116,93 @@ def test_random_background_seed_and_structure_replacement():
     assert json.loads(json.dumps(medium.metadata)) == medium.metadata
 
 
+def test_additive_fluctuations_are_applied_over_structures_and_recorded():
+    statistics = WhittleMaternMedium(
+        background_refractive_index=1.3,
+        refractive_index_std=0.005,
+        correlation_length=1e-07 * ureg.meter,
+        smoothness=1.5,
+    )
+
+    medium = StructuredMedium(background_refractive_index=1.3)
+
+    sphere = Sphere(
+        radius=2e-08 * ureg.meter,
+        refractive_index=1.31,
+    )
+
+    medium.add_structures(sphere)
+
+    medium.add_fluctuations(medium=statistics)
+
+    grid = Grid(
+        shape=(3, 3, 3),
+        spacing=5e-08 * ureg.meter,
+    )
+
+    volume = medium.to_volume(
+        grid=grid,
+        seed=42,
+    )
+
+    fluctuations = statistics.to_volume(
+        grid=grid,
+        seed=42,
+    )
+
+    expected_structure = np.zeros(grid.shape)
+
+    expected_structure[1, 1, 1] = 0.01
+
+    np.testing.assert_allclose(
+        volume.delta_refractive_index - fluctuations.delta_refractive_index,
+        expected_structure,
+        atol=1e-15,
+    )
+
+    assert medium.is_random
+
+    assert volume.medium is not medium
+
+    assert volume.seed == 42
+
+    assert volume.medium.metadata["fluctuations"] == statistics.metadata
+
+    medium.add_structures(
+        Sphere(
+            radius=1e-08 * ureg.meter,
+            refractive_index=1.32,
+            centre=(5e-08, 0, 0) * ureg.meter,
+        )
+    )
+
+    assert len(volume.medium.metadata["regions"]) == 1
+
+
+def test_additive_fluctuations_require_matching_uniform_background():
+    statistics = WhittleMaternMedium(
+        background_refractive_index=1.31,
+        refractive_index_std=0.005,
+        correlation_length=1e-07 * ureg.meter,
+        smoothness=1.5,
+    )
+
+    medium = StructuredMedium(background_refractive_index=1.3)
+
+    with pytest.raises(ValueError, match="must match the structured medium"):
+        medium.add_fluctuations(medium=statistics)
+
+    assert "fluctuations" not in medium.metadata
+
+    with pytest.raises(ValueError, match="uniform background"):
+        StructuredMedium().add_fluctuations(medium=statistics)
+
+    medium.add_background(medium=statistics)
+
+    with pytest.raises(ValueError, match="cannot be combined with a random background"):
+        medium.add_fluctuations(medium=statistics)
+
+
 def test_replacing_background_retains_absolute_structure_indices_and_old_volumes():
     medium = StructuredMedium(background_refractive_index=1.33)
 

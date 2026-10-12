@@ -6,14 +6,16 @@ law. Interfaces are sampled at cell centres without subvoxel averaging.
 """
 
 from dataclasses import asdict, dataclass, field, replace
+from copy import deepcopy
 import numpy as np
+from numpy.typing import NDArray
 from typing import Any
 from .units import _refractive_index_values, Quantity, validate_units, ureg
 from .medium import Medium
 from .medium.random_medium import RandomFieldMedium
 from .volume import Volume
 from .grid import Grid
-from .rotation import Rotation
+from .rotation import Rotation, RotationInput, RotationMatrix
 from .material import Material
 import warnings
 
@@ -38,6 +40,13 @@ def _axis(*, value):
     return int(value)
 
 
+class _RotationUnset:
+    pass
+
+
+_ROTATION_UNSET = _RotationUnset()
+
+
 @dataclass(frozen=True, kw_only=True)
 class _Transformable:
     """Return transformed immutable shapes in global SI coordinates."""
@@ -45,6 +54,43 @@ class _Transformable:
     centre: Quantity = field(default_factory=lambda: np.zeros(3) * ureg.meter)
     refractive_index: float | None = None
     material: Material | None = None
+
+    def _validate_transform(
+        self,
+        *,
+        rotation: RotationInput | _RotationUnset = _ROTATION_UNSET,
+    ) -> None:
+        material = Material._resolve(material=self.material, refractive_index=self.refractive_index)
+
+        object.__setattr__(self, "material", material)
+
+        object.__setattr__(self, "refractive_index", material.refractive_index)
+
+        validate_units(
+            self.centre,
+            unit="meter",
+            name="centre",
+            scalar=False,
+        )
+
+        if np.shape(self.centre) != (3,):
+            raise ValueError("centre must contain three coordinates.")
+
+        if np.any(~np.isfinite(self.centre)):
+            raise ValueError("centre must be finite.")
+
+        if not isinstance(rotation, _RotationUnset):
+            matrix = Rotation._matrix(rotation=rotation)
+
+            object.__setattr__(
+                self,
+                "rotation",
+                (
+                    (float(matrix[0, 0]), float(matrix[0, 1]), float(matrix[0, 2])),
+                    (float(matrix[1, 0]), float(matrix[1, 1]), float(matrix[1, 2])),
+                    (float(matrix[2, 0]), float(matrix[2, 1]), float(matrix[2, 2])),
+                ),
+            )
 
     def _replaced(self, *, settings: dict[str, Any]) -> "_Transformable":
         """Clone geometry while retaining unit-bearing lengths."""
@@ -73,12 +119,13 @@ class _Transformable:
 
         return self._replaced(settings={"centre": centre, "refractive_index": None})
 
-    def rotated(self, *, rotation: Rotation | np.ndarray, about: Quantity | None = None) -> "_Transformable":
+    def _rotation_settings(self, *, matrix: NDArray[np.float64]) -> dict[str, RotationMatrix]:
+        return {}
+
+    def rotated(self, *, rotation: RotationInput, about: Quantity | None = None) -> "_Transformable":
         """Return a rotated shape around its centre or an explicit global point.
 
-        Rotation is active: R maps local column coordinates to the global
-        frame. Successive world rotations compose as R_new @ R_existing.
-        Membership uses local row coordinates (positions-centre) @ R.
+        See :class:`bornsim.rotation.Rotation` for the rotation convention.
         """
 
         matrix = Rotation._matrix(rotation=rotation)
@@ -105,14 +152,28 @@ class _Transformable:
 
         settings: dict[str, Any] = {"centre": centre, "refractive_index": None}
 
-        if hasattr(self, "rotation"):
-            settings["rotation"] = tuple(tuple(row) for row in matrix @ np.asarray(self.rotation))
+        settings.update(self._rotation_settings(matrix=matrix))
 
         return self._replaced(settings=settings)
 
 
+class _RotatableTransformable(_Transformable):
+    rotation: RotationInput
+
+    def _rotation_settings(self, *, matrix: NDArray[np.float64]) -> dict[str, RotationMatrix]:
+        rotated = matrix @ np.asarray(self.rotation)
+
+        return {
+            "rotation": (
+                (float(rotated[0, 0]), float(rotated[0, 1]), float(rotated[0, 2])),
+                (float(rotated[1, 0]), float(rotated[1, 1]), float(rotated[1, 2])),
+                (float(rotated[2, 0]), float(rotated[2, 1]), float(rotated[2, 2])),
+            )
+        }
+
+
 @dataclass(frozen=True, kw_only=True)
-class Layer(_Transformable):
+class Layer(_RotatableTransformable):
     """A slab with absolute refractive index inside ``lower <= local[axis] < upper``.
 
     Bounds are SI lengths in the slab local frame, offset by centre and
@@ -120,6 +181,9 @@ class Layer(_Transformable):
     z (2); x and y are 0 and 1. The half-open interval gives adjacent slabs an
     unambiguous interface. The slab spans the voxel box in transverse axes;
     it represents a finite sample, not an infinite planar background.
+
+    Use :meth:`from_center_and_thickness` to specify a slab by its centre and
+    full thickness instead of its local lower and upper bounds.
     """
 
     lower: Quantity
@@ -128,7 +192,40 @@ class Layer(_Transformable):
     material: Material | None = None
     axis: int = 2
     centre: Quantity = field(default_factory=lambda: np.zeros(3) * ureg.meter)
-    rotation: tuple = ((1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0))
+    rotation: RotationInput = ((1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0))
+
+    @classmethod
+    def from_center_and_thickness(
+        cls,
+        *,
+        thickness: Quantity,
+        centre: Quantity,
+        refractive_index: float | None = None,
+        material: Material | None = None,
+        axis: int = 2,
+        rotation: RotationInput = ((1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0)),
+    ) -> "Layer":
+        """Create a slab from its centre and full thickness along ``axis``."""
+
+        validate_units(
+            thickness,
+            unit="meter",
+            name="thickness",
+            scalar=True,
+        )
+
+        if not np.isfinite(thickness) or thickness <= 0:
+            raise ValueError("thickness must be finite and positive.")
+
+        return cls(
+            lower=-thickness / 2,
+            upper=thickness / 2,
+            centre=centre,
+            refractive_index=refractive_index,
+            material=material,
+            axis=axis,
+            rotation=rotation,
+        )
 
     def __post_init__(self) -> None:
         validate_units(
@@ -151,28 +248,9 @@ class Layer(_Transformable):
         if np.any(~np.isfinite(self.upper)):
             raise ValueError("upper must be finite.")
 
-        material = Material._resolve(material=self.material, refractive_index=self.refractive_index)
-
-        object.__setattr__(self, "material", material)
-
-        object.__setattr__(self, "refractive_index", material.refractive_index)
-
         object.__setattr__(self, "axis", _axis(value=self.axis))
 
-        validate_units(
-            self.centre,
-            unit="meter",
-            name="centre",
-            scalar=False,
-        )
-
-        if np.shape(self.centre) != (3,):
-            raise ValueError("centre must contain three coordinates.")
-
-        if np.any(~np.isfinite(self.centre)):
-            raise ValueError("centre must be finite.")
-
-        object.__setattr__(self, "rotation", tuple(tuple(row) for row in Rotation._matrix(rotation=self.rotation)))
+        self._validate_transform(rotation=self.rotation)
 
         if self.lower >= self.upper:
             raise ValueError("lower must be smaller than upper.")
@@ -215,24 +293,7 @@ class Sphere(_Transformable):
         if np.any(~np.isfinite(self.radius)) or np.any(self.radius <= 0):
             raise ValueError("radius must be finite and positive.")
 
-        material = Material._resolve(material=self.material, refractive_index=self.refractive_index)
-
-        object.__setattr__(self, "material", material)
-
-        object.__setattr__(self, "refractive_index", material.refractive_index)
-
-        validate_units(
-            self.centre,
-            unit="meter",
-            name="centre",
-            scalar=False,
-        )
-
-        if np.shape(self.centre) != (3,):
-            raise ValueError("centre must contain three coordinates.")
-
-        if np.any(~np.isfinite(self.centre)):
-            raise ValueError("centre must be finite.")
+        self._validate_transform()
 
     def mask(self, *, positions: Quantity) -> np.ndarray:
         """Return membership at unit-bearing voxel positions, shape (..., 3)."""
@@ -247,7 +308,7 @@ class Sphere(_Transformable):
 
 
 @dataclass(frozen=True, kw_only=True)
-class Ellipsoid(_Transformable):
+class Ellipsoid(_RotatableTransformable):
     """Set absolute refractive index where ``sum((local/radii)**2) <= 1``.
 
     Three positive semi-axis radii align with local x, y, z. All lengths use SI or
@@ -258,7 +319,7 @@ class Ellipsoid(_Transformable):
     refractive_index: float | None = None
     material: Material | None = None
     centre: Quantity = field(default_factory=lambda: np.zeros(3) * ureg.meter)
-    rotation: tuple = ((1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0))
+    rotation: RotationInput = ((1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0))
 
     def __post_init__(self) -> None:
         validate_units(
@@ -274,26 +335,7 @@ class Ellipsoid(_Transformable):
         if np.any(~np.isfinite(self.radii)) or np.any(self.radii <= 0):
             raise ValueError("radii must be finite and positive.")
 
-        material = Material._resolve(material=self.material, refractive_index=self.refractive_index)
-
-        object.__setattr__(self, "material", material)
-
-        object.__setattr__(self, "refractive_index", material.refractive_index)
-
-        validate_units(
-            self.centre,
-            unit="meter",
-            name="centre",
-            scalar=False,
-        )
-
-        if np.shape(self.centre) != (3,):
-            raise ValueError("centre must contain three coordinates.")
-
-        if np.any(~np.isfinite(self.centre)):
-            raise ValueError("centre must be finite.")
-
-        object.__setattr__(self, "rotation", tuple(tuple(row) for row in Rotation._matrix(rotation=self.rotation)))
+        self._validate_transform(rotation=self.rotation)
 
     def mask(self, *, positions: Quantity) -> np.ndarray:
         """Return membership at unit-bearing voxel positions, shape (..., 3)."""
@@ -310,7 +352,7 @@ class Ellipsoid(_Transformable):
 
 
 @dataclass(frozen=True, kw_only=True)
-class Box(_Transformable):
+class Box(_RotatableTransformable):
     """Set absolute refractive index where ``abs(local) <= size/2`` in every axis.
 
     Size contains three positive full side lengths along the local axes.
@@ -321,7 +363,7 @@ class Box(_Transformable):
     refractive_index: float | None = None
     material: Material | None = None
     centre: Quantity = field(default_factory=lambda: np.zeros(3) * ureg.meter)
-    rotation: tuple = ((1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0))
+    rotation: RotationInput = ((1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0))
 
     def __post_init__(self) -> None:
         validate_units(
@@ -337,26 +379,7 @@ class Box(_Transformable):
         if np.any(~np.isfinite(self.size)) or np.any(self.size <= 0):
             raise ValueError("size must be finite and positive.")
 
-        material = Material._resolve(material=self.material, refractive_index=self.refractive_index)
-
-        object.__setattr__(self, "material", material)
-
-        object.__setattr__(self, "refractive_index", material.refractive_index)
-
-        validate_units(
-            self.centre,
-            unit="meter",
-            name="centre",
-            scalar=False,
-        )
-
-        if np.shape(self.centre) != (3,):
-            raise ValueError("centre must contain three coordinates.")
-
-        if np.any(~np.isfinite(self.centre)):
-            raise ValueError("centre must be finite.")
-
-        object.__setattr__(self, "rotation", tuple(tuple(row) for row in Rotation._matrix(rotation=self.rotation)))
+        self._validate_transform(rotation=self.rotation)
 
     def mask(self, *, positions: Quantity) -> np.ndarray:
         """Return membership at unit-bearing voxel positions, shape (..., 3)."""
@@ -373,7 +396,7 @@ class Box(_Transformable):
 
 
 @dataclass(frozen=True, kw_only=True)
-class Cylinder(_Transformable):
+class Cylinder(_RotatableTransformable):
     """A finite circular cylinder with absolute refractive index and closed boundary.
 
     Membership requires ``abs(local[axis]) <= height/2`` and squared
@@ -387,7 +410,7 @@ class Cylinder(_Transformable):
     material: Material | None = None
     centre: Quantity = field(default_factory=lambda: np.zeros(3) * ureg.meter)
     axis: int = 2
-    rotation: tuple = ((1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0))
+    rotation: RotationInput = ((1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0))
 
     def __post_init__(self) -> None:
         validate_units(
@@ -410,28 +433,9 @@ class Cylinder(_Transformable):
         if np.any(~np.isfinite(self.height)) or np.any(self.height <= 0):
             raise ValueError("height must be finite and positive.")
 
-        material = Material._resolve(material=self.material, refractive_index=self.refractive_index)
-
-        object.__setattr__(self, "material", material)
-
-        object.__setattr__(self, "refractive_index", material.refractive_index)
-
-        validate_units(
-            self.centre,
-            unit="meter",
-            name="centre",
-            scalar=False,
-        )
-
-        if np.shape(self.centre) != (3,):
-            raise ValueError("centre must contain three coordinates.")
-
-        if np.any(~np.isfinite(self.centre)):
-            raise ValueError("centre must be finite.")
-
         object.__setattr__(self, "axis", _axis(value=self.axis))
 
-        object.__setattr__(self, "rotation", tuple(tuple(row) for row in Rotation._matrix(rotation=self.rotation)))
+        self._validate_transform(rotation=self.rotation)
 
     def mask(self, *, positions: Quantity) -> np.ndarray:
         """Return membership at unit-bearing voxel positions, shape (..., 3)."""
@@ -468,16 +472,20 @@ class StructuredMedium(Medium):
         Later regions win, earlier regions win, or reject shared voxel centres.
     warn_on_clipping : bool
         Warn when geometry extends beyond the voxel box; default False.
+    fluctuations : RandomFieldMedium, configured with :meth:`add_fluctuations`
+        Optional additive field applied over the background and every region.
 
     Notes
     -----
-    Configure this mutable builder with ``add_background`` and ``add_structures``.
+    Configure this mutable builder with ``add_background``, ``add_structures``,
+    and optionally ``add_fluctuations``.
     An empty builder has no background; voxelization requires an explicit one.
     Medium remains abstract; random statistics and geometry shapes remain frozen.
     Calls update the builder and return None. Previously generated volumes do
     not change. Constructor regions are still accepted for existing callers.
-    Voxelization returns ``delta_refractive_index(r) = n(r) - background_refractive_index``. The
-    numerical solver uses ``epsilon_r = n0**2 + 2*n0*delta_refractive_index``, omitting
+    Voxelization returns ``delta_refractive_index(r) = n(r) - background_refractive_index``. A
+    configured additive fluctuation field is added after the absolute-index regions are composed.
+    The numerical solver uses ``epsilon_r = n0**2 + 2*n0*delta_refractive_index``, omitting
     ``delta_refractive_index**2`` even at higher Born orders. Strong refractive index differences
     can invalidate this constitutive approximation or Born iteration.
     Regions crossing the box are clipped. Layers therefore have finite lateral
@@ -489,6 +497,7 @@ class StructuredMedium(Medium):
     overlap: str = "replace"
     warn_on_clipping: bool = False
     _background: RandomFieldMedium | None = field(default=None, init=False, repr=False)
+    _fluctuations: RandomFieldMedium | None = field(default=None, init=False, repr=False)
 
     def __post_init__(self) -> None:
         regions = tuple(self.regions)
@@ -539,18 +548,53 @@ class StructuredMedium(Medium):
 
             background_refractive_index = _refractive_index(value=refractive_index)
 
+        if (
+            self._fluctuations is not None
+            and background_refractive_index != self._fluctuations.background_refractive_index
+        ):
+            raise ValueError("background_refractive_index must match the configured fluctuations.")
+
+        if background is not None and self._fluctuations is not None:
+            raise ValueError("A random background cannot be combined with additive fluctuations.")
+
         self.background_refractive_index = background_refractive_index
 
         self._background = background
+
+    def add_fluctuations(self, *, medium):
+        """Set an additive random field applied over the background and all structures.
+
+        The statistical medium must share the configured uniform background.
+        This replaces any previously configured additive fluctuation field.
+        Random backgrounds and additive fluctuations are mutually exclusive.
+        Returns None. Generated volumes record the medium and seed as provenance.
+        """
+
+        if not isinstance(medium, RandomFieldMedium):
+            raise TypeError("medium must be a RandomFieldMedium.")
+
+        fluctuations = replace(medium)
+
+        if self.background_refractive_index is None:
+            raise ValueError("Set a uniform background before adding fluctuations.")
+
+        if self._background is not None:
+            raise ValueError("Additive fluctuations cannot be combined with a random background.")
+
+        if fluctuations.background_refractive_index != self.background_refractive_index:
+            raise ValueError("fluctuation medium background_refractive_index must match the structured medium.")
+
+        self._fluctuations = fluctuations
 
     def add_structures(self, *structures):
         """Append material regions in argument order; return None.
 
         Accepts any number of positional Layer, Sphere, Ellipsoid, Box, or
-        Cylinder objects. Later arguments replace earlier material in overlaps,
-        including random background fluctuations. All arguments are validated
-        before editing the builder; an empty call is a no-op. Existing voxel
-        samples are independent snapshots.
+        Cylinder objects. Later arguments replace earlier material in overlaps
+        and replace a random background inside their masks. Separately configured
+        additive fluctuations remain present over every region. All arguments
+        are validated before editing the builder; an empty call is a no-op.
+        Existing voxel samples are independent snapshots.
         """
 
         if any(not isinstance(structure, (Layer, Sphere, Ellipsoid, Box, Cylinder)) for structure in structures):
@@ -560,9 +604,9 @@ class StructuredMedium(Medium):
 
     @property
     def is_random(self):
-        """A random background supplies independent composed realizations."""
+        """Random backgrounds or additive fluctuations supply independent realizations."""
 
-        return self._background is not None
+        return self._background is not None or self._fluctuations is not None
 
     @property
     def metadata(self):
@@ -571,8 +615,9 @@ class StructuredMedium(Medium):
         Region type, absolute refractive index, axis where applicable, and dimensions are
         recorded. Length keys have the ``_m`` suffix, and vectors are JSON lists.
         The list order preserves replacement precedence in overlapping regions.
-        Voxelization returns a manual volume; retain this description separately
-        when reconstructing a structured sample.
+        Configured additive fluctuation statistics are recorded under
+        ``fluctuations``. Generated volumes with fluctuations retain a snapshot
+        of this metadata and their seed.
         """
 
         length_fields = {"lower", "upper", "radius", "height", "centre", "radii", "size"}
@@ -611,6 +656,9 @@ class StructuredMedium(Medium):
         if self._background is not None:
             metadata["background"] = self._background.metadata
 
+        if self._fluctuations is not None:
+            metadata["fluctuations"] = self._fluctuations.metadata
+
         return metadata
 
     def to_volume(self, *, grid: Grid, seed: int = 0) -> Volume:
@@ -618,8 +666,8 @@ class StructuredMedium(Medium):
 
         An explicit background is required. Ordered shapes set absolute refractive
         indices; overlap follows replace, preserve, or error. A random background
-        uses the supplied seed; structures replace that background inside their
-        masks rather than adding fluctuations."""
+        uses the supplied seed and is replaced by structures inside their masks.
+        Additive fluctuations use the same seed and are applied over all regions."""
 
         if self.background_refractive_index is None:
             raise ValueError("Set a background with add_background before generating a volume.")
@@ -662,10 +710,20 @@ class StructuredMedium(Medium):
 
             occupied |= mask
 
+        if self._fluctuations is not None:
+            fluctuation_field = self._fluctuations.to_volume(
+                grid=grid,
+                seed=seed,
+            )
+
+            contrast += fluctuation_field.delta_refractive_index
+
         return Volume(
             delta_refractive_index=contrast,
             grid=grid,
             background_refractive_index=self.background_refractive_index,
+            medium=deepcopy(self) if self._fluctuations is not None else None,
+            seed=seed if self._fluctuations is not None else None,
         )
 
     @staticmethod

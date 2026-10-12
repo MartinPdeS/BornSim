@@ -51,6 +51,27 @@ def test_layers_interfaces_units_and_last_region_wins():
     assert volume.medium is None and volume.seed is None
 
 
+def test_layer_from_center_and_thickness():
+    layer = Layer.from_center_and_thickness(
+        centre=(0, 0, 100) * ureg.nanometer,
+        thickness=200 * ureg.nanometer,
+        refractive_index=1.34,
+    )
+
+    assert layer.lower == -100 * ureg.nanometer
+
+    assert layer.upper == 100 * ureg.nanometer
+
+    assert layer.centre[2] == 100 * ureg.nanometer
+
+    with pytest.raises(ValueError, match="thickness must be finite and positive"):
+        Layer.from_center_and_thickness(
+            centre=(0, 0, 0) * ureg.meter,
+            thickness=0 * ureg.meter,
+            refractive_index=1.34,
+        )
+
+
 @pytest.mark.parametrize(
     "region, expected",
     [

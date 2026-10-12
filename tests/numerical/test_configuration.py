@@ -69,6 +69,115 @@ def test_shared_grid_preserves_coordinates_seeded_field_and_identity():
         grid.spacing = 1
 
 
+def test_grid_from_extent_infers_cubic_spacing():
+    grid = Grid.from_extent(
+        shape=(4, 4, 4),
+        extent=(400, 400, 400) * ureg.nanometer,
+    )
+
+    assert grid.shape == (4, 4, 4)
+
+    assert grid.spacing == 100 * ureg.nanometer
+
+    with pytest.raises(ValueError, match="same cubic voxel spacing"):
+        Grid.from_extent(
+            shape=(4, 4, 4),
+            extent=(400, 400, 500) * ureg.nanometer,
+        )
+
+    with pytest.raises(ValueError, match="three axis lengths"):
+        Grid.from_extent(
+            shape=(4, 4, 4),
+            extent=400 * ureg.nanometer,
+        )
+
+
+def test_volume_refractive_index_returns_read_only_absolute_field():
+    volume = Volume(
+        delta_refractive_index=np.full((2, 2, 2), 0.01),
+        background_refractive_index=1.33,
+        grid=Grid(
+            shape=(2, 2, 2),
+            spacing=25 * ureg.nanometer,
+        ),
+    )
+
+    np.testing.assert_array_equal(volume.refractive_index, np.full((2, 2, 2), 1.34))
+
+    assert not volume.refractive_index.flags.writeable
+
+
+def test_adding_volumes_combines_contrasts_without_provenance():
+    grid = Grid(
+        shape=(2, 2, 2),
+        spacing=25 * ureg.nanometer,
+    )
+
+    structured = Volume(
+        delta_refractive_index=np.full(grid.shape, 0.01),
+        background_refractive_index=1.33,
+        grid=grid,
+    )
+
+    fluctuations = Volume(
+        delta_refractive_index=np.full(grid.shape, -0.002),
+        background_refractive_index=1.33,
+        grid=Grid(
+            shape=grid.shape,
+            spacing=0.025 * ureg.micrometer,
+        ),
+    )
+
+    combined = structured + fluctuations
+
+    np.testing.assert_array_equal(combined.delta_refractive_index, np.full(grid.shape, 0.008))
+
+    assert combined.grid is grid
+
+    assert combined.background_refractive_index == 1.33
+
+    assert combined.medium is None
+
+    assert combined.seed is None
+
+
+def test_adding_volumes_requires_matching_grid_and_background():
+    grid = Grid(
+        shape=(2, 2, 2),
+        spacing=25 * ureg.nanometer,
+    )
+
+    volume = Volume(
+        delta_refractive_index=np.zeros(grid.shape),
+        background_refractive_index=1.33,
+        grid=grid,
+    )
+
+    different_grid = Volume(
+        delta_refractive_index=np.zeros(grid.shape),
+        background_refractive_index=1.33,
+        grid=Grid(
+            shape=grid.shape,
+            spacing=30 * ureg.nanometer,
+        ),
+    )
+
+    different_background = Volume(
+        delta_refractive_index=np.zeros(grid.shape),
+        background_refractive_index=1.34,
+        grid=grid,
+    )
+
+    with pytest.raises(ValueError, match="same grid"):
+        volume + different_grid
+
+    with pytest.raises(ValueError, match="same background_refractive_index"):
+        volume + different_background
+
+    with pytest.raises(TypeError):
+        volume + 1
+
+
 def test_full_solve_retains_coherent_directional_amplitudes_normalization_and_archive(tmp_path):
     grid = Grid(
         shape=(2, 3, 2),

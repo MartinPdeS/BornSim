@@ -1,4 +1,4 @@
-"""Shared TypedUnit registry and explicit quantity validation.
+"""Shared TypedUnit registry and explicit input validation.
 
 Validation preserves the supplied units. Dimensional inputs require quantities;
 dimensionless inputs may be bare numbers. Numerical kernels, plotting and
@@ -27,6 +27,15 @@ def validate_units(value: object, *, unit: str, name: str, scalar: bool = False)
 
     if scalar and np.ndim(value.magnitude) != 0:
         raise ValueError(f"{name} must be a scalar.")
+
+
+def _integer(*, value: object, name: str, low: int, high: int) -> int:
+    """Validate an integer setting within inclusive bounds."""
+
+    if isinstance(value, bool) or not isinstance(value, (int, np.integer)) or not low <= value <= high:
+        raise ValueError(f"{name} must be an integer between {low} and {high}.")
+
+    return int(value)
 
 
 @overload

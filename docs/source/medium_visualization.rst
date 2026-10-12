@@ -73,10 +73,10 @@ Exponential covariance
 
    figure.write_html(file='medium.html', include_plotlyjs=True)
 
-Plotly also supports ``mode="isosurface"`` and ``mode="slices"``; its default
-mode is ``volume``. Uniform fields fall back to slices. The HTML export includes
-Plotly itself and works offline. Call ``figure.show()`` to display a Plotly
-figure. See its official `3D isosurface documentation
+Plotly also supports ``mode="isosurface"``; its default mode is ``volume``.
+Uniform fields render as volume data; isosurface mode requires a non-uniform
+field. The HTML export includes Plotly itself and works offline. Call
+``figure.show()`` to display a Plotly figure. See its official `3D isosurface documentation
 <https://plotly.com/python/3d-isosurface-plots/>`_ and
 `rendering documentation <https://plotly.com/python/renderers/>`_.
 
@@ -188,13 +188,12 @@ No azimuth averaging is applied to the 3D view. Increase ``azimuth_samples``
 to resolve finer azimuthal features. One deterministic sample provides no
 estimate of random sampling uncertainty.
 
-Random fields and orthogonal slices
------------------------------------
+Matplotlib voxel rendering
+--------------------------
 
-With ``backend="matplotlib"``, the default ``mode="slices"`` shows one voxel
-plane along each axis. Plotly also supports explicit ``mode="slices"``. All selected
-cells are retained, with voxel-edge extents and a shared color scale. Select
-specific planes with ``slice_indices``; otherwise the middle voxels are used.
+With ``backend="matplotlib"``, ``mode="voxels"`` renders the sampled material
+using its voxel cells and physical extents. Use ``Volume.plot_slice()`` for a
+two-dimensional cross-section of a selected voxel plane.
 
 .. code-block:: python
 
@@ -222,8 +221,8 @@ specific planes with ``slice_indices``; otherwise the middle voxels are used.
 
    figure = volume.plot_3d(
        backend='matplotlib',
+       mode='voxels',
        field='delta_refractive_index',
-       slice_indices=(4, 8, 12),
        length_unit='nanometer',
    )
 
@@ -234,8 +233,9 @@ Structured samples and voxels
 
 ``mode="voxels"`` shows the actual cells with nonzero refractive index contrast. A sphere's
 staircase boundary is therefore visible rather than smoothed by interpolation.
-Only exposed faces are drawn: interior inclusions are easier to inspect using
-slices. For an entirely zero field, voxels display the full uniform box.
+Only exposed faces are drawn. Use ``Volume.plot_slice()`` to inspect exact
+voxel values in a two-dimensional cross-section. For an entirely zero field,
+voxels display the full uniform box.
 
 .. code-block:: python
 
@@ -331,17 +331,17 @@ These views represent the input material, not a calculated electromagnetic
 field. Axis labels state the display unit; stored data remains in SI units.
 The spatial aspect ratio follows physical dimensions.
 
-Matplotlib slices and voxel geometry show the sampled material. Plotly level
-surfaces interpolate between voxel centres and can make curved interfaces
+Matplotlib voxel geometry and ``Volume.plot_slice()`` show the sampled
+material. Plotly level surfaces interpolate between voxel centres and can make curved interfaces
 appear smoother than the solver's staircase mask. Neither visualization
 replaces checks of voxel refinement for quantitative calculations.
 
 The current grid limit is 32 voxels per axis (32,768 samples). Interactive
 volume views reveal high refractive index regions throughout random fields;
-slices remain useful for inspecting exact voxel values. Filled voxel views
-reveal only the outer faces.
+``Volume.plot_slice()`` is useful for inspecting exact voxel values. Filled
+voxel views reveal only the outer faces.
 Dense or transparent Matplotlib scenes can have depth-ordering limitations;
 see the `mplot3d FAQ <https://matplotlib.org/stable/api/toolkits/mplot3d/faq.html>`_.
-Use slices or opaque voxels when checking the sampled geometry. Plotly
+Use ``Volume.plot_slice()`` or opaque voxels when checking the sampled geometry. Plotly
 rendering depends on browser graphics support and surface count; changing
 surface count changes visualization, not numerical resolution.

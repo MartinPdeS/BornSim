@@ -296,9 +296,10 @@ class AngularData:
     def plot(self, *, terms=False, log_y=False, title=None, azimuth=0):
         """Plot one sampled meridian, or an explicitly averaged curve."""
 
-        from ._result_plotting import _ResultPlotter
+        from .results import Result
 
-        return _ResultPlotter(result=self).plot(
+        return Result._plot_differential(
+            result=self,
             terms=terms,
             log_y=log_y,
             title=title,
@@ -308,9 +309,10 @@ class AngularData:
     def plot_phase_function(self, *, view="angular", order=None, log_y=False, azimuth=0, backend=None):
         """Plot normalized directional densities with the same Result interface."""
 
-        from ._result_plotting import _ResultPlotter
+        from .results import Result
 
-        return _ResultPlotter(result=self).plot_phase_function(
+        return Result._plot_phase_function(
+            result=self,
             view=view,
             order=order,
             log_y=log_y,

@@ -7,12 +7,11 @@ unpolarized intensity is evaluated.
 
 from dataclasses import dataclass, field
 import numpy as np
-from ._validation import _integer
 from .green import GreenOperator
 from .grid import Grid
 from .directions import Directions
 from .results import BornResult
-from .units import Quantity, validate_units
+from .units import Quantity, _integer, validate_units
 from .volume import Volume
 
 

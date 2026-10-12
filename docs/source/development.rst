@@ -36,20 +36,14 @@ Separate statements and calculation steps with a blank line, including
 assignments and calls inside loops. Keep imports and related dataclass fields
 grouped, and keep comments attached to the statements they explain.
 
-Internal rendering and archives
--------------------------------
+Validation, rendering and archives
+-----------------------------------
 
-Keep Volume and Result responsible for physical data, units and validation.
-Their public plotting and save/load methods retain their documented keyword
-arguments and delegate to internal helpers:
-
-* ``_VolumePlotter`` in ``bornsim/_volume_plotting.py`` owns slices, 3D
-  geometry, display units, color scales and backend selection.
-* ``_ResultPlotter`` in ``bornsim/_result_plotting.py`` owns scattering,
-  phase-function and field-norm figures.
-* ``_ResultArchive`` in ``bornsim/_archives.py`` owns the shared SI archive
-  schema, NPZ serialization and safe loading without pickle. Results are
-  immutable and validated at construction; loading validates the archive.
+Keep Volume and Result responsible for physical data, units, validation,
+plotting and archive serialization. Rendering methods import their backends
+only when called. Result archives use an explicit SI schema and safe loading
+without pickle. Results are immutable and validated at construction; loading
+validates the archive.
 
 Import Matplotlib and Plotly only when a rendering method needs
 that backend. Rendering must preserve the stored data and SI units. Keep
