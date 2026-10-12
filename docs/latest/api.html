@@ -482,15 +482,18 @@
   <section id="public-python-api">
 <h1>Public Python API<a class="headerlink" href="#public-python-api" title="Link to this heading">#</a></h1>
 <p>BornSim computes scattering from finite voxel samples. Choose physical units,
-spatial and angular configurations explicitly. GaussianMedium, ExponentialMedium,
-and WhittleMaternMedium generate random fields; RandomSphereMedium places identical
-nonoverlapping spheres. StructuredMedium voxelizes backgrounds
-and shapes. Solver solves a fixed Volume or an ensemble of generated volumes.
-Integrated coefficients describe finite-sample cross sections divided by volume.
-Infinite-medium analytical formulas are test references, not public solvers.</p>
+spatial and angular configurations explicitly. Grid.from_extent derives an
+isotropic voxel spacing from explicit axis extents and shape. GaussianMedium,
+ExponentialMedium, and WhittleMaternMedium generate random fields;
+RandomSphereMedium places identical nonoverlapping spheres. StructuredMedium
+voxelizes backgrounds and shapes and can add a seeded fluctuation field over
+the full structure. Solver accepts either AngularSampling or Directions for
+fixed volumes, or an ensemble of generated volumes. Integrated coefficients
+describe finite-sample cross sections divided by volume. Infinite-medium
+analytical formulas are test references, not public solvers.</p>
 <section id="numerical-calculation">
 <h2>Numerical calculation<a class="headerlink" href="#numerical-calculation" title="Link to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">AngularSampling</span><span class="p">,</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">Solver</span><span class="p">,</span> <span class="n">Source</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">AngularSampling</span><span class="p">,</span> <span class="n">Directions</span><span class="p">,</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">Solver</span><span class="p">,</span> <span class="n">Source</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">bornsim.medium.random_medium</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianMedium</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">bornsim.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">ureg</span>
 
@@ -527,8 +530,71 @@ Infinite-medium analytical formulas are test references, not public solvers.</p>
 <span class="n">result</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">volume</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'mu_s = </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">mu_s</span><span class="si">}</span><span class="s1">, g = </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">g</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+<span class="n">directions</span> <span class="o">=</span> <span class="n">Directions</span><span class="p">(</span>
+    <span class="n">vectors</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">directional_result</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span>
+    <span class="n">target</span><span class="o">=</span><span class="n">volume</span><span class="p">,</span>
+    <span class="n">sampling</span><span class="o">=</span><span class="n">directions</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">cut</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">solve_cut</span><span class="p">(</span>
+    <span class="n">target</span><span class="o">=</span><span class="n">volume</span><span class="p">,</span>
+    <span class="n">directions</span><span class="o">=</span><span class="n">directions</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+    <span class="n">directional_result</span><span class="o">.</span><span class="n">differential</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span>
+    <span class="n">cut</span><span class="o">.</span><span class="n">differential</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
 </div>
+</section>
+<section id="field-construction">
+<h2>Field construction<a class="headerlink" href="#field-construction" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">Layer</span><span class="p">,</span> <span class="n">StructuredMedium</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bornsim.medium.random_medium</span><span class="w"> </span><span class="kn">import</span> <span class="n">WhittleMaternMedium</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bornsim.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">ureg</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">Grid</span><span class="o">.</span><span class="n">from_extent</span><span class="p">(</span>
+    <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>
+    <span class="n">extent</span><span class="o">=</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">layer</span> <span class="o">=</span> <span class="n">Layer</span><span class="o">.</span><span class="n">from_center_and_thickness</span><span class="p">(</span>
+    <span class="n">centre</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span>
+    <span class="n">thickness</span><span class="o">=</span><span class="mi">200</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span>
+    <span class="n">refractive_index</span><span class="o">=</span><span class="mf">1.335</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">statistics</span> <span class="o">=</span> <span class="n">WhittleMaternMedium</span><span class="p">(</span>
+    <span class="n">background_refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span>
+    <span class="n">refractive_index_std</span><span class="o">=</span><span class="mf">0.002</span><span class="p">,</span>
+    <span class="n">correlation_length</span><span class="o">=</span><span class="mi">50</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span>
+    <span class="n">smoothness</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">medium</span> <span class="o">=</span> <span class="n">StructuredMedium</span><span class="p">()</span>
+<span class="n">medium</span><span class="o">.</span><span class="n">add_background</span><span class="p">(</span><span class="n">refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">)</span>
+<span class="n">medium</span><span class="o">.</span><span class="n">add_structures</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
+<span class="n">medium</span><span class="o">.</span><span class="n">add_fluctuations</span><span class="p">(</span><span class="n">medium</span><span class="o">=</span><span class="n">statistics</span><span class="p">)</span>
+
+<span class="n">volume</span> <span class="o">=</span> <span class="n">medium</span><span class="o">.</span><span class="n">to_volume</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">absolute_refractive_index</span> <span class="o">=</span> <span class="n">volume</span><span class="o">.</span><span class="n">refractive_index</span>
+</pre></div>
+</div>
+<p>Alternatively, independently generated volumes with matching grids and
+backgrounds can be combined with <code class="docutils literal notranslate"><span class="pre">volume_a</span> <span class="pre">+</span> <span class="pre">volume_b</span></code>. The result’s
+<code class="docutils literal notranslate"><span class="pre">refractive_index</span></code> property exposes its immutable absolute voxel field.</p>
 </section>
 <section id="module-bornsim.source">
 <span id="configuration"></span><h2>Configuration<a class="headerlink" href="#module-bornsim.source" title="Link to this heading">#</a></h2>
@@ -592,11 +658,32 @@ illumination are not currently supported.</p>
 </ul>
 </dd>
 </dl>
+<p>Use <a class="reference internal" href="#bornsim.grid.Grid.from_extent" title="bornsim.grid.Grid.from_extent"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_extent()</span></code></a> when the full physical voxel-box extent is known
+instead of the voxel spacing.</p>
 <p class="rubric">Notes</p>
 <p>Voxel centres are <code class="docutils literal notranslate"><span class="pre">(i</span> <span class="pre">-</span> <span class="pre">(N</span> <span class="pre">-</span> <span class="pre">1)/2)</span> <span class="pre">*</span> <span class="pre">spacing</span></code> on each axis. The box
 extends half a voxel beyond its outer centres. It describes the sampled
 domain, not an additional dielectric boundary. Background refractive index belongs
 to the medium or volume, rather than the spatial grid.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bornsim.grid.Grid.from_extent">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_extent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/grid.html#Grid.from_extent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.grid.Grid.from_extent" title="Link to this definition">#</a></dt>
+<dd><p>Create an isotropic voxel grid from its full physical extent.</p>
+<p><code class="docutils literal notranslate"><span class="pre">extent</span></code> gives the full voxel-box width along x, y, and z. Each
+axis extent must imply the same cubic voxel spacing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>shape</strong> (<em>tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>extent</strong> (<em>Quantity</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#bornsim.grid.Grid" title="bornsim.grid.Grid"><em>Grid</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.grid.Grid.metadata">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">metadata</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#bornsim.grid.Grid.metadata" title="Link to this definition">#</a></dt>
@@ -665,9 +752,9 @@ flattened in row-major order, preserving polar/azimuth grid ordering.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>angles</strong> (<em>array_like</em><em> or </em><em>Quantity</em><em>, </em><em>optional</em>) – Output polar angles theta, from 0 to pi, with 1 to 181 entries.
-Angular values require explicit units. Cannot be combined with start, end or
-n_points. Omit to generate an evenly spaced range.</p></li>
+<li><p><strong>angles</strong> (<em>Quantity</em><em>, </em><em>optional</em>) – One-dimensional output polar angles theta, from 0 to pi, with 1 to
+181 entries. Angular values require explicit units. Cannot be combined
+with start, end or n_points. Omit to generate an evenly spaced range.</p></li>
 <li><p><strong>start</strong> (<em>Quantity</em><em>, </em><em>optional</em>) – Inclusive range endpoints between 0 and pi. Angular values require explicit units.
 Defaults are 0 and pi; descending ranges are supported.</p></li>
 <li><p><strong>end</strong> (<em>Quantity</em><em>, </em><em>optional</em>) – Inclusive range endpoints between 0 and pi. Angular values require explicit units.
@@ -691,36 +778,93 @@ Refine both quadratures independently of output plot resolution.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.sampling.AngularSampling.azimuths">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">azimuths</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Quantity</span></span><a class="headerlink" href="#bornsim.sampling.AngularSampling.azimuths" title="Link to this definition">#</a></dt>
-<dd><p>Uniform output and integration azimuths in radians.</p>
+<dd><p>Return uniform output and integration azimuths.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Azimuth directions spanning one full turn, in radians.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Quantity</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bornsim.sampling.AngularSampling.check_work">
 <span class="sig-name descname"><span class="pre">check_work</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">realizations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/sampling.html#AngularSampling.check_work"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.sampling.AngularSampling.check_work" title="Link to this definition">#</a></dt>
 <dd><p>Reject synchronous workloads above 100 million voxel-direction-orders.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> (<a class="reference internal" href="#bornsim.grid.Grid" title="bornsim.grid.Grid"><em>Grid</em></a>) – Spatial grid used to estimate the number of voxel-direction pairs.</p></li>
+<li><p><strong>order</strong> (<em>int</em>) – Highest cumulative Born order in the requested calculation.</p></li>
+<li><p><strong>realizations</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of independent volumes; defaults to 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns normally when the estimated workload is within the limit.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the estimate exceeds 100 million voxel-direction-orders.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.sampling.AngularSampling.directions">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">directions</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#bornsim.directions.Directions" title="bornsim.directions.Directions"><span class="pre">Directions</span></a></span><a class="headerlink" href="#bornsim.sampling.AngularSampling.directions" title="Link to this definition">#</a></dt>
-<dd><p>output grid first, then the integration grid.</p>
+<dd><p>Return unit directions for output and integration grids.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Unit directions</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Directions with output polar angles first, followed by the
+Gauss-Legendre integration nodes, for each azimuth.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#bornsim.directions.Directions" title="bornsim.directions.Directions">Directions</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.sampling.AngularSampling.metadata">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#bornsim.sampling.AngularSampling.metadata" title="Link to this definition">#</a></dt>
-<dd><p>Fresh SI sampling settings for reproducible result archives.</p>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">metadata</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#bornsim.sampling.AngularSampling.metadata" title="Link to this definition">#</a></dt>
+<dd><p>Return fresh SI sampling settings for reproducible result archives.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Output angles in radians and the polar and azimuthal sample counts.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict[str, list[int | float] | int]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bornsim.sampling.AngularSampling.summarize">
 <span class="sig-name descname"><span class="pre">summarize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">result</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/sampling.html#AngularSampling.summarize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.sampling.AngularSampling.summarize" title="Link to this definition">#</a></dt>
 <dd><p>Reduce numeric Born data while retaining all directional intensities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>result</strong> (<a class="reference internal" href="#bornsim.results.BornResult" title="bornsim.results.BornResult"><em>BornResult</em></a>) – Numeric Born amplitudes, cumulative differential data, and
+isolated-term differential data for one volume.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Numeric arrays with these keys: <code class="docutils literal notranslate"><span class="pre">mean</span></code> and <code class="docutils literal notranslate"><span class="pre">terms</span></code> have shape
+(order, output angle); <code class="docutils literal notranslate"><span class="pre">directional_terms</span></code> and
+<code class="docutils literal notranslate"><span class="pre">directional_differential</span></code> have shape (order, output angle,
+azimuth); <code class="docutils literal notranslate"><span class="pre">directional_amplitudes</span></code> adds incident polarization
+and vector-component axes of sizes two and three; <code class="docutils literal notranslate"><span class="pre">integrals</span></code>
+has shape (order, 3), for total, first-moment, and reduced
+coefficients.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, numpy.ndarray]</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
 <p>Output amplitudes retain (order, theta, phi, incident polarization,
 vector component). Integrated coefficients are finite-sample cross
 sections divided by voxel-box volume, not intrinsic material values.</p>
@@ -1036,7 +1180,7 @@ All lengths use SI or compatible quantities; the boundary is closed.</p>
 <li><p><strong>refractive_index</strong> (<em>float</em><em> | </em><em>None</em>)</p></li>
 <li><p><strong>material</strong> (<a class="reference internal" href="#bornsim.material.Material" title="bornsim.material.Material"><em>Material</em></a><em> | </em><em>None</em>)</p></li>
 <li><p><strong>size</strong> (<em>Quantity</em>)</p></li>
-<li><p><strong>rotation</strong> (<em>tuple</em>)</p></li>
+<li><p><strong>rotation</strong> (<a class="reference internal" href="#bornsim.rotation.Rotation" title="bornsim.rotation.Rotation"><em>Rotation</em></a><em> | </em><em>tuple</em><em>[</em><em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em><em>] </em><em>| </em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>Any</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>Sequence</em><em>[</em><em>Sequence</em><em>[</em><em>float</em><em>]</em><em>] </em><em>| </em><em>Quantity</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1072,7 +1216,7 @@ lengths or quantities; axis is 0, 1, or 2, default z. Centre has three lengths.<
 <li><p><strong>radius</strong> (<em>Quantity</em>)</p></li>
 <li><p><strong>height</strong> (<em>Quantity</em>)</p></li>
 <li><p><strong>axis</strong> (<em>int</em>)</p></li>
-<li><p><strong>rotation</strong> (<em>tuple</em>)</p></li>
+<li><p><strong>rotation</strong> (<a class="reference internal" href="#bornsim.rotation.Rotation" title="bornsim.rotation.Rotation"><em>Rotation</em></a><em> | </em><em>tuple</em><em>[</em><em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em><em>] </em><em>| </em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>Any</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>Sequence</em><em>[</em><em>Sequence</em><em>[</em><em>float</em><em>]</em><em>] </em><em>| </em><em>Quantity</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1105,7 +1249,7 @@ compatible quantities. rotation maps local semi-axes into global coordinates.</p
 <li><p><strong>refractive_index</strong> (<em>float</em><em> | </em><em>None</em>)</p></li>
 <li><p><strong>material</strong> (<a class="reference internal" href="#bornsim.material.Material" title="bornsim.material.Material"><em>Material</em></a><em> | </em><em>None</em>)</p></li>
 <li><p><strong>radii</strong> (<em>Quantity</em>)</p></li>
-<li><p><strong>rotation</strong> (<em>tuple</em>)</p></li>
+<li><p><strong>rotation</strong> (<a class="reference internal" href="#bornsim.rotation.Rotation" title="bornsim.rotation.Rotation"><em>Rotation</em></a><em> | </em><em>tuple</em><em>[</em><em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em><em>] </em><em>| </em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>Any</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>Sequence</em><em>[</em><em>Sequence</em><em>[</em><em>float</em><em>]</em><em>] </em><em>| </em><em>Quantity</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1134,6 +1278,8 @@ oriented by rotation. The default axis is
 z (2); x and y are 0 and 1. The half-open interval gives adjacent slabs an
 unambiguous interface. The slab spans the voxel box in transverse axes;
 it represents a finite sample, not an infinite planar background.</p>
+<p>Use <a class="reference internal" href="#bornsim.geometry.Layer.from_center_and_thickness" title="bornsim.geometry.Layer.from_center_and_thickness"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_center_and_thickness()</span></code></a> to specify a slab by its centre and
+full thickness instead of its local lower and upper bounds.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1143,10 +1289,31 @@ it represents a finite sample, not an infinite planar background.</p>
 <li><p><strong>lower</strong> (<em>Quantity</em>)</p></li>
 <li><p><strong>upper</strong> (<em>Quantity</em>)</p></li>
 <li><p><strong>axis</strong> (<em>int</em>)</p></li>
-<li><p><strong>rotation</strong> (<em>tuple</em>)</p></li>
+<li><p><strong>rotation</strong> (<a class="reference internal" href="#bornsim.rotation.Rotation" title="bornsim.rotation.Rotation"><em>Rotation</em></a><em> | </em><em>tuple</em><em>[</em><em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em><em>] </em><em>| </em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>Any</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>Sequence</em><em>[</em><em>Sequence</em><em>[</em><em>float</em><em>]</em><em>] </em><em>| </em><em>Quantity</em>)</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bornsim.geometry.Layer.from_center_and_thickness">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_center_and_thickness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">thickness</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centre</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refractive_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">material</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">((1.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0),</span> <span class="pre">(0.0,</span> <span class="pre">1.0,</span> <span class="pre">0.0),</span> <span class="pre">(0.0,</span> <span class="pre">0.0,</span> <span class="pre">1.0))</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/geometry.html#Layer.from_center_and_thickness"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.geometry.Layer.from_center_and_thickness" title="Link to this definition">#</a></dt>
+<dd><p>Create a slab from its centre and full thickness along <code class="docutils literal notranslate"><span class="pre">axis</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>thickness</strong> (<em>Quantity</em>)</p></li>
+<li><p><strong>centre</strong> (<em>Quantity</em>)</p></li>
+<li><p><strong>refractive_index</strong> (<em>float</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>material</strong> (<a class="reference internal" href="#bornsim.material.Material" title="bornsim.material.Material"><em>Material</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>axis</strong> (<em>int</em>)</p></li>
+<li><p><strong>rotation</strong> (<a class="reference internal" href="#bornsim.rotation.Rotation" title="bornsim.rotation.Rotation"><em>Rotation</em></a><em> | </em><em>tuple</em><em>[</em><em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em><em>] </em><em>| </em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>Any</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>Sequence</em><em>[</em><em>Sequence</em><em>[</em><em>float</em><em>]</em><em>] </em><em>| </em><em>Quantity</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#bornsim.geometry.Layer" title="bornsim.geometry.Layer"><em>Layer</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="bornsim.geometry.Layer.mask">
 <span class="sig-name descname"><span class="pre">mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">positions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/geometry.html#Layer.mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.geometry.Layer.mask" title="Link to this definition">#</a></dt>
@@ -1208,17 +1375,20 @@ overlap policy; indices are not added. Default is empty.</p></li>
 voxels and extends outside the finite voxel box.</p></li>
 <li><p><strong>overlap</strong> (<em>{&quot;replace&quot;</em><em>, </em><em>&quot;preserve&quot;</em><em>, </em><em>&quot;error&quot;}</em>) – Later regions win, earlier regions win, or reject shared voxel centres.</p></li>
 <li><p><strong>warn_on_clipping</strong> (<em>bool</em>) – Warn when geometry extends beyond the voxel box; default False.</p></li>
+<li><p><strong>fluctuations</strong> (RandomFieldMedium, configured with <a class="reference internal" href="#bornsim.geometry.StructuredMedium.add_fluctuations" title="bornsim.geometry.StructuredMedium.add_fluctuations"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_fluctuations()</span></code></a>) – Optional additive field applied over the background and every region.</p></li>
 </ul>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>Configure this mutable builder with <code class="docutils literal notranslate"><span class="pre">add_background</span></code> and <code class="docutils literal notranslate"><span class="pre">add_structures</span></code>.
+<p>Configure this mutable builder with <code class="docutils literal notranslate"><span class="pre">add_background</span></code>, <code class="docutils literal notranslate"><span class="pre">add_structures</span></code>,
+and optionally <code class="docutils literal notranslate"><span class="pre">add_fluctuations</span></code>.
 An empty builder has no background; voxelization requires an explicit one.
 Medium remains abstract; random statistics and geometry shapes remain frozen.
 Calls update the builder and return None. Previously generated volumes do
 not change. Constructor regions are still accepted for existing callers.
-Voxelization returns <code class="docutils literal notranslate"><span class="pre">delta_refractive_index(r)</span> <span class="pre">=</span> <span class="pre">n(r)</span> <span class="pre">-</span> <span class="pre">background_refractive_index</span></code>. The
-numerical solver uses <code class="docutils literal notranslate"><span class="pre">epsilon_r</span> <span class="pre">=</span> <span class="pre">n0**2</span> <span class="pre">+</span> <span class="pre">2*n0*delta_refractive_index</span></code>, omitting
+Voxelization returns <code class="docutils literal notranslate"><span class="pre">delta_refractive_index(r)</span> <span class="pre">=</span> <span class="pre">n(r)</span> <span class="pre">-</span> <span class="pre">background_refractive_index</span></code>. A
+configured additive fluctuation field is added after the absolute-index regions are composed.
+The numerical solver uses <code class="docutils literal notranslate"><span class="pre">epsilon_r</span> <span class="pre">=</span> <span class="pre">n0**2</span> <span class="pre">+</span> <span class="pre">2*n0*delta_refractive_index</span></code>, omitting
 <code class="docutils literal notranslate"><span class="pre">delta_refractive_index**2</span></code> even at higher Born orders. Strong refractive index differences
 can invalidate this constitutive approximation or Born iteration.
 Regions crossing the box are clipped. Layers therefore have finite lateral
@@ -1237,20 +1407,31 @@ Returns None. Random statistics are copied when added.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="bornsim.geometry.StructuredMedium.add_fluctuations">
+<span class="sig-name descname"><span class="pre">add_fluctuations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">medium</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/geometry.html#StructuredMedium.add_fluctuations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.geometry.StructuredMedium.add_fluctuations" title="Link to this definition">#</a></dt>
+<dd><p>Set an additive random field applied over the background and all structures.</p>
+<p>The statistical medium must share the configured uniform background.
+This replaces any previously configured additive fluctuation field.
+Random backgrounds and additive fluctuations are mutually exclusive.
+Returns None. Generated volumes record the medium and seed as provenance.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="bornsim.geometry.StructuredMedium.add_structures">
 <span class="sig-name descname"><span class="pre">add_structures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">structures</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/geometry.html#StructuredMedium.add_structures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.geometry.StructuredMedium.add_structures" title="Link to this definition">#</a></dt>
 <dd><p>Append material regions in argument order; return None.</p>
 <p>Accepts any number of positional Layer, Sphere, Ellipsoid, Box, or
-Cylinder objects. Later arguments replace earlier material in overlaps,
-including random background fluctuations. All arguments are validated
-before editing the builder; an empty call is a no-op. Existing voxel
-samples are independent snapshots.</p>
+Cylinder objects. Later arguments replace earlier material in overlaps
+and replace a random background inside their masks. Separately configured
+additive fluctuations remain present over every region. All arguments
+are validated before editing the builder; an empty call is a no-op.
+Existing voxel samples are independent snapshots.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.geometry.StructuredMedium.is_random">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">is_random</span></span><a class="headerlink" href="#bornsim.geometry.StructuredMedium.is_random" title="Link to this definition">#</a></dt>
-<dd><p>A random background supplies independent composed realizations.</p>
+<dd><p>Random backgrounds or additive fluctuations supply independent realizations.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -1260,8 +1441,9 @@ samples are independent snapshots.</p>
 <p>Region type, absolute refractive index, axis where applicable, and dimensions are
 recorded. Length keys have the <code class="docutils literal notranslate"><span class="pre">_m</span></code> suffix, and vectors are JSON lists.
 The list order preserves replacement precedence in overlapping regions.
-Voxelization returns a manual volume; retain this description separately
-when reconstructing a structured sample.</p>
+Configured additive fluctuation statistics are recorded under
+<code class="docutils literal notranslate"><span class="pre">fluctuations</span></code>. Generated volumes with fluctuations retain a snapshot
+of this metadata and their seed.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1270,8 +1452,8 @@ when reconstructing a structured sample.</p>
 <dd><p>Voxelize this medium on an explicit Grid.</p>
 <p>An explicit background is required. Ordered shapes set absolute refractive
 indices; overlap follows replace, preserve, or error. A random background
-uses the supplied seed; structures replace that background inside their
-masks rather than adding fluctuations.</p>
+uses the supplied seed and is replaced by structures inside their masks.
+Additive fluctuations use the same seed and are applied over all regions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1307,14 +1489,22 @@ contrast. Supply a plain number; quantities are rejected. Absorption and wavelen
 
 </dd></dl>
 
+<p>Rotation inputs accept a <a class="reference internal" href="#bornsim.rotation.Rotation" title="bornsim.rotation.Rotation"><code class="xref py py-class docutils literal notranslate"><span class="pre">bornsim.rotation.Rotation</span></code></a>, a nested matrix
+sequence, a NumPy array, or a dimensionless quantity. Shapes normalize accepted
+inputs to immutable <code class="xref py py-class docutils literal notranslate"><span class="pre">bornsim.rotation.RotationMatrix</span></code> tuples;
+<code class="xref py py-class docutils literal notranslate"><span class="pre">bornsim.rotation.RotationInput</span></code> describes the accepted forms.</p>
 <p id="module-bornsim.rotation">Proper three-dimensional rotations for immutable material shapes.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bornsim.rotation.Rotation">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">bornsim.rotation.</span></span><span class="sig-name descname"><span class="pre">Rotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/rotation.html#Rotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.rotation.Rotation" title="Link to this definition">#</a></dt>
 <dd><p>Define an active right-handed rotation about a dimensionless axis.</p>
 <p>angle accepts angular quantities; angular values require explicit units. The axis is
-normalized. matrix maps local column coordinates into global coordinates.
-No numerical scattering or voxel resampling is performed by this class.</p>
+normalized. <code class="docutils literal notranslate"><span class="pre">matrix</span></code> maps local column coordinates into global coordinates.
+It follows the right-hand rule, and successive world rotations compose as
+<code class="docutils literal notranslate"><span class="pre">R_new</span> <span class="pre">&#64;</span> <span class="pre">R_existing</span></code>. Shape membership uses local row coordinates
+<code class="docutils literal notranslate"><span class="pre">(positions</span> <span class="pre">-</span> <span class="pre">centre)</span> <span class="pre">&#64;</span> <span class="pre">R</span></code>. Shapes accept this object, a proper orthonormal
+3-by-3 matrix, or a dimensionless matrix quantity; they store the normalized
+matrix as an immutable tuple of tuples. No voxel resampling is performed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1325,7 +1515,7 @@ No numerical scattering or voxel resampling is performed by this class.</p>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.rotation.Rotation.matrix">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">matrix</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#bornsim.rotation.Rotation.matrix" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">matrix</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#bornsim.rotation.Rotation.matrix" title="Link to this definition">#</a></dt>
 <dd><p>Return Rodrigues’ active rotation matrix, shape (3, 3).</p>
 </dd></dl>
 
@@ -1337,6 +1527,9 @@ No numerical scattering or voxel resampling is performed by this class.</p>
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">bornsim.volume.</span></span><span class="sig-name descname"><span class="pre">Volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_refractive_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_refractive_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">medium</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/volume.html#Volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.volume.Volume" title="Link to this definition">#</a></dt>
 <dd><p>Store a finite voxel field and its explicit spatial Grid.</p>
 <p>The copied, read-only delta_refractive_index array has shape grid.shape.
+<code class="docutils literal notranslate"><span class="pre">refractive_index</span></code> returns the read-only absolute field
+<code class="docutils literal notranslate"><span class="pre">background_refractive_index</span> <span class="pre">+</span> <span class="pre">delta_refractive_index</span></code>. Addition combines
+contrasts from volumes only when their grids and backgrounds match.
 Background refractive index is a plain number; grid spacing and positions
 carry physical units. Relative permittivity is linearized as
 background_refractive_index**2 + 2*background_refractive_index*delta_refractive_index.
@@ -1356,17 +1549,16 @@ constructed volumes have only their explicitly supplied provenance.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="bornsim.volume.Volume.plot_3d">
-<span class="sig-name descname"><span class="pre">plot_3d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'plotly'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'delta_refractive_index'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nanometer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surface_count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uniform'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_indices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/volume.html#Volume.plot_3d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.volume.Volume.plot_3d" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">plot_3d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'plotly'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'delta_refractive_index'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nanometer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surface_count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uniform'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/volume.html#Volume.plot_3d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.volume.Volume.plot_3d" title="Link to this definition">#</a></dt>
 <dd><p>Build a three-dimensional figure of the finite voxel medium.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>backend</strong> (<em>{'matplotlib'</em><em>, </em><em>'plotly'}</em><em>, </em><em>optional</em>) – Default is Plotly for browser interaction. Select ‘matplotlib’
 explicitly for a Matplotlib figure.</p></li>
-<li><p><strong>mode</strong> (<em>str</em><em>, </em><em>optional</em>) – Matplotlib supports ‘slices’ (default) and ‘voxels’. Voxels display
-cells with nonzero refractive index contrast, or the full box for a zero field.
-Plotly supports ‘volume’ (default), ‘isosurface’, and ‘slices’.
-Uniform Plotly fields fall back to slices.</p></li>
+<li><p><strong>mode</strong> (<em>str</em><em>, </em><em>optional</em>) – Matplotlib supports ‘voxels’ (default). Plotly supports ‘volume’
+(default) and ‘isosurface’. Uniform Plotly fields are rendered as
+volume data; an isosurface cannot be generated from a uniform field.</p></li>
 <li><p><strong>field</strong> (<em>{'delta_refractive_index'</em><em>, </em><em>'refractive_index'</em><em>, </em><em>'permittivity'}</em><em>, </em><em>optional</em>) – Scalar field to display, default refractive index fluctuation. ‘refractive_index’ displays
 n0 + delta_refractive_index; ‘permittivity’ displays the solver’s linearized
 relative permittivity n0**2 + 2*n0*delta_refractive_index, not (n0+delta_refractive_index)**2.</p></li>
@@ -1374,14 +1566,12 @@ relative permittivity n0**2 + 2*n0*delta_refractive_index, not (n0+delta_refract
 <li><p><strong>surface_count</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of contours, from 1 to 32; default 8. More surfaces increase
 browser rendering cost. Used only by Plotly volume and isosurface modes.</p></li>
 <li><p><strong>opacity</strong> (<em>float</em><em>, </em><em>optional</em>) – Surface opacity in (0, 1]. Default is 1 for Matplotlib and 0.15
-for Plotly. Slices are opaque in both backends.</p></li>
+for Plotly.</p></li>
 <li><p><strong>opacity_scale</strong> (<em>{'uniform'</em><em>, </em><em>'increasing'}</em><em>, </em><em>optional</em>) – Default ‘uniform’ gives all contours the same opacity. ‘increasing’
 is available only for Plotly volume mode and scales opacity from
 zero at the lowest displayed contour to <code class="docutils literal notranslate"><span class="pre">opacity</span></code> at the highest.
 Use field=’refractive_index’ to emphasize high refractive index, rather than
 the magnitude of positive and negative fluctuations.</p></li>
-<li><p><strong>slice_indices</strong> (<em>tuple</em><em> of </em><em>int</em><em>, </em><em>optional</em>) – One voxel index for each x, y, z plane, used only for slices.
-Defaults to the middle voxel along each axis.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1398,15 +1588,14 @@ Constructing a figure opens no window or browser.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>Matplotlib voxels preserve staircase interfaces; slices display every
-selected cell with voxel-edge extents. Dense transparent scenes can have
-depth-ordering limitations in Matplotlib. Plotly contours interpolate
-between voxel centres and are visualization aids,
+<p>Matplotlib voxels preserve staircase interfaces. Dense transparent
+scenes can have depth-ordering limitations in Matplotlib. Plotly
+contours interpolate between voxel centres and are visualization aids,
 not exact curved interfaces or a replacement for grid refinement.
-Slices show sampled values. Aspect ratio follows physical dimensions.
-All voxels are retained, with at most 32**3 samples under Volume’s grid
-limit; browser performance also depends on surface count and graphics
-support. This plots the input material, not an electromagnetic field.</p>
+Aspect ratio follows physical dimensions. All voxels are retained, with
+at most 32**3 samples under Volume’s grid limit; browser performance
+also depends on surface count and graphics support. This plots the
+input material, not an electromagnetic field.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1453,6 +1642,12 @@ axis ordered as x, y, z.</p>
 <dd class="field-even"><p>Quantity</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="bornsim.volume.Volume.refractive_index">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">refractive_index</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#bornsim.volume.Volume.refractive_index" title="Link to this definition">#</a></dt>
+<dd><p>Return the read-only absolute refractive-index field.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -1522,14 +1717,15 @@ coefficients are finite-sample cross sections divided by voxel-box volume.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="bornsim.solver.Solver.solve">
 <span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/solver.html#Solver.solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.solver.Solver.solve" title="Link to this definition">#</a></dt>
-<dd><p>Compute full directional scattering and finite-sample integrated coefficients.</p>
-<p>Use solve_cut for individual observation directions. The target is an
-explicit voxelized Volume; random statistics use ensemble instead.</p>
+<dd><p>Compute scattering from a volume using angular or Cartesian sampling.</p>
+<p>Pass AngularSampling for solid-angle integration, or Directions for an
+unnormalized set of observation directions. The target is an explicit
+voxelized Volume; random statistics use ensemble instead.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>target</strong> (<a class="reference internal" href="#bornsim.volume.Volume" title="bornsim.volume.Volume"><em>Volume</em></a>)</p></li>
-<li><p><strong>sampling</strong> (<a class="reference internal" href="#bornsim.sampling.AngularSampling" title="bornsim.sampling.AngularSampling"><em>AngularSampling</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>sampling</strong> (<a class="reference internal" href="#bornsim.sampling.AngularSampling" title="bornsim.sampling.AngularSampling"><em>AngularSampling</em></a><em> | </em><a class="reference internal" href="#bornsim.directions.Directions" title="bornsim.directions.Directions"><em>Directions</em></a><em> | </em><em>None</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1543,10 +1739,12 @@ explicit voxelized Volume; random statistics use ensemble instead.</p>
 <span class="sig-name descname"><span class="pre">solve_cut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/solver.html#Solver.solve_cut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.solver.Solver.solve_cut" title="Link to this definition">#</a></dt>
 <dd><p>Compute an unnormalized angular cut through a fixed Volume.</p>
 <p>Supply polar angles on the x-z meridian or a Directions configuration,
-but not both. Explicit angular units are required. Default angles span 0 to pi
-with 121 samples. Cut amplitudes and intensities retain every requested
-direction. A cut alone cannot determine a solid-angle integral;
-integrated coefficients and normalized phase functions are unavailable.</p>
+but not both. This is a convenience wrapper for <code class="docutils literal notranslate"><span class="pre">solve(target=...,</span>
+<span class="pre">sampling=Directions(...))</span></code>. Explicit angular units are required.
+Default angles span 0 to pi with 121 samples. Cut amplitudes and
+intensities retain every requested direction. A cut alone cannot
+determine a solid-angle integral; integrated coefficients and normalized
+phase functions are unavailable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -2187,7 +2385,7 @@ Check spatial, angular, finite-size, and ensemble convergence separately.</p>
 </section>
 <section id="module-bornsim.units">
 <span id="units"></span><h2>Units<a class="headerlink" href="#module-bornsim.units" title="Link to this heading">#</a></h2>
-<p>Shared TypedUnit registry and explicit quantity validation.</p>
+<p>Shared TypedUnit registry and explicit input validation.</p>
 <p>Validation preserves the supplied units. Dimensional inputs require quantities;
 dimensionless inputs may be bare numbers. Numerical kernels, plotting and
 serialization explicitly select units when they need magnitudes.</p>
@@ -2244,12 +2442,14 @@ Directions exposes the observation configuration’s immutable Cartesian array.<
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#numerical-calculation">Numerical calculation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#field-construction">Field construction</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-bornsim.source">Configuration</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.source.Source"><code class="docutils literal notranslate"><span class="pre">Source</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.source.Source.wavelength"><code class="docutils literal notranslate"><span class="pre">Source.wavelength</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.grid.Grid"><code class="docutils literal notranslate"><span class="pre">Grid</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.grid.Grid.from_extent"><code class="docutils literal notranslate"><span class="pre">Grid.from_extent()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.grid.Grid.metadata"><code class="docutils literal notranslate"><span class="pre">Grid.metadata</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.grid.Grid.positions"><code class="docutils literal notranslate"><span class="pre">Grid.positions</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.grid.Grid.volume"><code class="docutils literal notranslate"><span class="pre">Grid.volume</span></code></a></li>
@@ -2313,6 +2513,7 @@ Directions exposes the observation configuration’s immutable Cartesian array.<
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.geometry.Layer"><code class="docutils literal notranslate"><span class="pre">Layer</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.geometry.Layer.from_center_and_thickness"><code class="docutils literal notranslate"><span class="pre">Layer.from_center_and_thickness()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.geometry.Layer.mask"><code class="docutils literal notranslate"><span class="pre">Layer.mask()</span></code></a></li>
 </ul>
 </li>
@@ -2322,6 +2523,7 @@ Directions exposes the observation configuration’s immutable Cartesian array.<
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.geometry.StructuredMedium"><code class="docutils literal notranslate"><span class="pre">StructuredMedium</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.geometry.StructuredMedium.add_background"><code class="docutils literal notranslate"><span class="pre">StructuredMedium.add_background()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.geometry.StructuredMedium.add_fluctuations"><code class="docutils literal notranslate"><span class="pre">StructuredMedium.add_fluctuations()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.geometry.StructuredMedium.add_structures"><code class="docutils literal notranslate"><span class="pre">StructuredMedium.add_structures()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.geometry.StructuredMedium.is_random"><code class="docutils literal notranslate"><span class="pre">StructuredMedium.is_random</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.geometry.StructuredMedium.metadata"><code class="docutils literal notranslate"><span class="pre">StructuredMedium.metadata</span></code></a></li>
@@ -2340,6 +2542,7 @@ Directions exposes the observation configuration’s immutable Cartesian array.<
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.volume.Volume.plot_3d"><code class="docutils literal notranslate"><span class="pre">Volume.plot_3d()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.volume.Volume.plot_slice"><code class="docutils literal notranslate"><span class="pre">Volume.plot_slice()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.volume.Volume.positions"><code class="docutils literal notranslate"><span class="pre">Volume.positions</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.volume.Volume.refractive_index"><code class="docutils literal notranslate"><span class="pre">Volume.refractive_index</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.volume.Volume.volume"><code class="docutils literal notranslate"><span class="pre">Volume.volume</span></code></a></li>
 </ul>
 </li>

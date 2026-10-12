@@ -4,14 +4,14 @@ Layers and scatterers with numerical random fluctuations
 
 Compose finite slabs and shaped inclusions using absolute refractive indices.
 Later regions replace earlier ones where they overlap. Add a seeded
-Whittle–Matérn fluctuation field on the same grid, then solve numerically.
-The background outside the voxel box stays homogeneous. This is a finite
-sample with edges, not an infinite planar stack calculation.
+Whittle–Matérn fluctuation field over the complete structure, then solve
+numerically. The background outside the voxel box stays homogeneous. This is a
+finite sample with edges, not an infinite planar stack calculation.
 
 All Born orders retain the linearized contrast ``2*n0*delta_refractive_index``. The
 smoothness convention is ``x=sqrt(2*nu)*r/ell``; probability statistics remain
-Gaussian. A composed manual volume does not retain inferred generation
-metadata: keep the ingredients and seed for reproducibility.
+Gaussian. The sampled structured volume records its fluctuation statistics and
+seed as provenance.
 """
 
 from bornsim.medium.random_medium import WhittleMaternMedium
@@ -21,27 +21,27 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 
-from bornsim import Grid, Layer, Solver, Source, Sphere, StructuredMedium, Volume
+from bornsim import Directions, Grid, Layer, Solver, Source, Sphere, StructuredMedium
 from bornsim.units import ureg
 
-grid = Grid(
+grid = Grid.from_extent(
     shape=(16, 16, 16),
-    spacing=25 * ureg.nanometer,
+    extent=(400, 400, 400) * ureg.nanometer,
 )
 
 structure = StructuredMedium()
 
 structure.add_background(refractive_index=1.33)
 
-layer = Layer(
-    lower=-2e-07 * ureg.meter,
-    upper=0 * ureg.meter,
+layer = Layer.from_center_and_thickness(
+    centre=(0, 0, -100) * ureg.nanometer,
+    thickness=200 * ureg.nanometer,
     refractive_index=1.335,
 )
 
-layer_2 = Layer(
-    lower=0 * ureg.meter,
-    upper=2e-07 * ureg.meter,
+layer_2 = Layer.from_center_and_thickness(
+    centre=(0, 0, 100) * ureg.nanometer,
+    thickness=200 * ureg.nanometer,
     refractive_index=1.34,
 )
 
@@ -68,15 +68,21 @@ statistics = WhittleMaternMedium(
     background_refractive_index=1.33,
 )
 
-fluctuations = statistics.to_volume(
-    grid=grid,
-    seed=42,
+structure_with_fluctuations = StructuredMedium()
+
+structure_with_fluctuations.add_background(refractive_index=1.33)
+
+structure_with_fluctuations.add_structures(
+    layer,
+    layer_2,
+    sphere,
 )
 
-combined = Volume(
-    delta_refractive_index=structured.delta_refractive_index + fluctuations.delta_refractive_index,
+structure_with_fluctuations.add_fluctuations(medium=statistics)
+
+combined = structure_with_fluctuations.to_volume(
     grid=grid,
-    background_refractive_index=structure.background_refractive_index,
+    seed=42,
 )
 
 # %%
@@ -115,7 +121,7 @@ if "--no-browser" not in sys.argv:
 figure, axes = plt.subplots(1, 2, figsize=(10, 4), layout="constrained")
 
 image = axes[0].imshow(
-    (combined.background_refractive_index + combined.delta_refractive_index[:, grid.shape[1] // 2, :]).T,
+    combined.refractive_index[:, grid.shape[1] // 2, :].T,
     origin="lower",
     extent=(-200, 200, -200, 200),
     cmap="viridis",
@@ -132,16 +138,23 @@ solver = Solver(
     order=3,
 )
 
-result = solver.solve_cut(
+angles = np.linspace(0, 180, 91) * ureg.degree
+
+directions = Directions.from_angles(
+    polar_angles=angles,
+    azimuth_angles=0 * ureg.degree,
+)
+
+result = solver.solve(
     target=combined,
-    angles=np.linspace(0, 180, 91) * ureg.degree,
+    sampling=directions,
 )
 
 cross_section = result.differential_cross_section.to("nanometer**2 / steradian")
 
 for order, curve in enumerate(cross_section.magnitude, start=1):
     axes[1].plot(
-        result.angles.to("degree").magnitude,
+        angles.to("degree").magnitude,
         curve,
         label=f"Through order {order}",
     )

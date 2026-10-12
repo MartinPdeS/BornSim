@@ -187,7 +187,7 @@ Show one finite input sample with its physical spatial axes.
 
     medium_figure = preview_volume.plot_3d(
         backend="matplotlib",
-        mode="slices",
+        mode="voxels",
         field="refractive_index",
     )
 
@@ -199,7 +199,7 @@ Show one finite input sample with its physical spatial axes.
 
 
 .. image-sg:: /auto_examples/random_media/images/sphx_glr_phase_function_002.png
-   :alt: Gaussian medium · correlation length 30 nm · seed 42, Refractive index n: slices
+   :alt: Gaussian medium · correlation length 30 nm · seed 42, Refractive index n: voxels
    :srcset: /auto_examples/random_media/images/sphx_glr_phase_function_002.png
    :class: sphx-glr-single-img
 
@@ -221,7 +221,7 @@ Show one finite input sample with its physical spatial axes.
 
     medium_figure = preview_volume.plot_3d(
         backend="matplotlib",
-        mode="slices",
+        mode="voxels",
         field="refractive_index",
     )
 
@@ -233,7 +233,7 @@ Show one finite input sample with its physical spatial axes.
 
 
 .. image-sg:: /auto_examples/random_media/images/sphx_glr_phase_function_003.png
-   :alt: Gaussian medium · correlation length 100 nm · seed 42, Refractive index n: slices
+   :alt: Gaussian medium · correlation length 100 nm · seed 42, Refractive index n: voxels
    :srcset: /auto_examples/random_media/images/sphx_glr_phase_function_003.png
    :class: sphx-glr-single-img
 
@@ -255,7 +255,7 @@ Show one finite input sample with its physical spatial axes.
 
     medium_figure = preview_volume.plot_3d(
         backend="matplotlib",
-        mode="slices",
+        mode="voxels",
         field="refractive_index",
     )
 
@@ -266,7 +266,7 @@ Show one finite input sample with its physical spatial axes.
 
 
 .. image-sg:: /auto_examples/random_media/images/sphx_glr_phase_function_004.png
-   :alt: Gaussian medium · correlation length 300 nm · seed 42, Refractive index n: slices
+   :alt: Gaussian medium · correlation length 300 nm · seed 42, Refractive index n: voxels
    :srcset: /auto_examples/random_media/images/sphx_glr_phase_function_004.png
    :class: sphx-glr-single-img
 
@@ -277,7 +277,7 @@ Show one finite input sample with its physical spatial axes.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.477 seconds)
+   **Total running time of the script:** (0 minutes 1.995 seconds)
 
 
 .. _sphx_glr_download_auto_examples_random_media_phase_function.py:

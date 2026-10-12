@@ -120,7 +120,7 @@ ensemble-averaged medium.
 
    medium_figure = preview_volume.plot_3d(
        backend="matplotlib",
-       mode="slices",
+       mode="voxels",
        field="refractive_index",
    )
 

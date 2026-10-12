@@ -467,9 +467,10 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">cast</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">._validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">_integer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.directions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Directions</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">validate_units</span><span class="p">,</span> <span class="n">ureg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.grid</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">BornResult</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">_integer</span><span class="p">,</span> <span class="n">validate_units</span><span class="p">,</span> <span class="n">ureg</span>
 
 
 <div class="viewcode-block" id="AngularSampling">
@@ -480,10 +481,10 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    angles : array_like or Quantity, optional</span>
-<span class="sd">        Output polar angles theta, from 0 to pi, with 1 to 181 entries.</span>
-<span class="sd">        Angular values require explicit units. Cannot be combined with start, end or</span>
-<span class="sd">        n_points. Omit to generate an evenly spaced range.</span>
+<span class="sd">    angles : Quantity, optional</span>
+<span class="sd">        One-dimensional output polar angles theta, from 0 to pi, with 1 to</span>
+<span class="sd">        181 entries. Angular values require explicit units. Cannot be combined</span>
+<span class="sd">        with start, end or n_points. Omit to generate an evenly spaced range.</span>
 <span class="sd">    start, end : Quantity, optional</span>
 <span class="sd">        Inclusive range endpoints between 0 and pi. Angular values require explicit units.</span>
 <span class="sd">        Defaults are 0 and pi; descending ranges are supported.</span>
@@ -521,6 +522,35 @@
         <span class="n">polar_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span>
         <span class="n">azimuth_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Initialize an angular output grid and its integration quadrature.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        angles : Quantity, optional</span>
+<span class="sd">            Explicit one-dimensional polar angles between 0 and pi. Requires</span>
+<span class="sd">            explicit angular units and cannot be combined with range settings.</span>
+<span class="sd">        start, end : Quantity, optional</span>
+<span class="sd">            Inclusive endpoints for an evenly spaced polar-angle range.</span>
+<span class="sd">            Defaults are 0 and pi radians.</span>
+<span class="sd">        n_points : int, optional</span>
+<span class="sd">            Number of output polar angles, from 1 to 181; defaults to 121.</span>
+<span class="sd">        polar_samples : int, optional</span>
+<span class="sd">            Number of Gauss-Legendre nodes, from 16 to 128; defaults to 32.</span>
+<span class="sd">        azimuth_samples : int, optional</span>
+<span class="sd">            Number of azimuth directions, from 4 to 32; defaults to 8.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">            Initializes the immutable sampling configuration.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the angle quantities, angle range, output count, or quadrature</span>
+<span class="sd">            sample counts are invalid.</span>
+<span class="sd">        """</span>
+
         <span class="k">if</span> <span class="n">angles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">n_points</span><span class="p">)):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Supply angles or start/end/n_points, not both."</span><span class="p">)</span>
@@ -586,6 +616,15 @@
             <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">_integer</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">high</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return a compact summary of the angle range and quadrature sizes.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The number and range of output angles, in degrees, and the</span>
+<span class="sd">            integration sample counts.</span>
+<span class="sd">        """</span>
+
         <span class="n">angles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">angles</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"degree"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
 
         <span class="n">low</span><span class="p">,</span> <span class="n">high</span> <span class="o">=</span> <span class="n">angles</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">angles</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
@@ -597,13 +636,26 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">azimuths</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Quantity</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Uniform output and integration azimuths in radians."""</span>
+<span class="w">        </span><span class="sd">"""Return uniform output and integration azimuths.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Quantity</span>
+<span class="sd">            Azimuth directions spanning one full turn, in radians.</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">azimuth_samples</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuth_samples</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">radian</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">directions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Directions</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Unit directions: output grid first, then the integration grid."""</span>
+<span class="w">        </span><span class="sd">"""Return unit directions for output and integration grids.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Directions</span>
+<span class="sd">            Directions with output polar angles first, followed by the</span>
+<span class="sd">            Gauss-Legendre integration nodes, for each azimuth.</span>
+<span class="sd">        """</span>
 
         <span class="n">cosine</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polynomial</span><span class="o">.</span><span class="n">legendre</span><span class="o">.</span><span class="n">leggauss</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">polar_samples</span><span class="p">)</span>
 
@@ -615,8 +667,14 @@
         <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Fresh SI sampling settings for reproducible result archives."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return fresh SI sampling settings for reproducible result archives.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict[str, list[int | float] | int]</span>
+<span class="sd">            Output angles in radians and the polar and azimuthal sample counts.</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">"angles_rad"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">angles</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"radian"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
@@ -626,8 +684,28 @@
 
 <div class="viewcode-block" id="AngularSampling.check_work">
 <a class="viewcode-back" href="../../api.html#bornsim.sampling.AngularSampling.check_work">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">check_work</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">realizations</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Reject synchronous workloads above 100 million voxel-direction-orders."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_work</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">Grid</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">realizations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Reject synchronous workloads above 100 million voxel-direction-orders.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        grid : Grid</span>
+<span class="sd">            Spatial grid used to estimate the number of voxel-direction pairs.</span>
+<span class="sd">        order : int</span>
+<span class="sd">            Highest cumulative Born order in the requested calculation.</span>
+<span class="sd">        realizations : int, optional</span>
+<span class="sd">            Number of independent volumes; defaults to 1.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">            Returns normally when the estimated workload is within the limit.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the estimate exceeds 100 million voxel-direction-orders.</span>
+<span class="sd">        """</span>
 
         <span class="n">directions</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">angles</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">polar_samples</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuth_samples</span>
 
@@ -637,9 +715,28 @@
 
 <div class="viewcode-block" id="AngularSampling.summarize">
 <a class="viewcode-back" href="../../api.html#bornsim.sampling.AngularSampling.summarize">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">summarize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">summarize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">BornResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Reduce numeric Born data while retaining all directional intensities.</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        result : BornResult</span>
+<span class="sd">            Numeric Born amplitudes, cumulative differential data, and</span>
+<span class="sd">            isolated-term differential data for one volume.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict[str, numpy.ndarray]</span>
+<span class="sd">            Numeric arrays with these keys: ``mean`` and ``terms`` have shape</span>
+<span class="sd">            (order, output angle); ``directional_terms`` and</span>
+<span class="sd">            ``directional_differential`` have shape (order, output angle,</span>
+<span class="sd">            azimuth); ``directional_amplitudes`` adds incident polarization</span>
+<span class="sd">            and vector-component axes of sizes two and three; ``integrals``</span>
+<span class="sd">            has shape (order, 3), for total, first-moment, and reduced</span>
+<span class="sd">            coefficients.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
 <span class="sd">        Output amplitudes retain (order, theta, phi, incident polarization,</span>
 <span class="sd">        vector component). Integrated coefficients are finite-sample cross</span>
 <span class="sd">        sections divided by voxel-box volume, not intrinsic material values.</span>
@@ -681,6 +778,25 @@
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_resolve</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">sampling</span><span class="p">:</span> <span class="s2">"AngularSampling | None"</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"AngularSampling"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the supplied configuration or construct the default.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sampling : AngularSampling, optional</span>
+<span class="sd">            Configuration to validate and return. If omitted, construct the</span>
+<span class="sd">            default angular sampling configuration.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        AngularSampling</span>
+<span class="sd">            The validated supplied configuration or a default instance.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If ``sampling`` is not an AngularSampling instance.</span>
+<span class="sd">        """</span>
+
         <span class="k">if</span> <span class="n">sampling</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span>
 

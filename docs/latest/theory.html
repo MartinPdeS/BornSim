@@ -603,8 +603,9 @@ contrast is zero and the background continues indefinitely. A uniform refractive
 inclusion that fills the box nevertheless has an interface where its contrast
 ends.</p>
 <p>For a shape centre <span class="math notranslate nohighlight">\(\mathbf c\)</span> and proper rotation matrix <span class="math notranslate nohighlight">\(R\)</span>,
-local column coordinates are <span class="math notranslate nohighlight">\(\mathbf u=R^T(\mathbf r-\mathbf c)\)</span>.
-The implementation uses row vectors, <code class="docutils literal notranslate"><span class="pre">(positions</span> <span class="pre">-</span> <span class="pre">centre)</span> <span class="pre">&#64;</span> <span class="pre">R</span></code>.
+local coordinates are <span class="math notranslate nohighlight">\(\mathbf u=R^T(\mathbf r-\mathbf c)\)</span>. Rotation
+input, handedness, composition, and the row-vector implementation convention
+are defined by <a class="reference internal" href="api.html#bornsim.rotation.Rotation" title="bornsim.rotation.Rotation"><code class="xref py py-class docutils literal notranslate"><span class="pre">bornsim.rotation.Rotation</span></code></a>.
 Membership rules are evaluated at voxel centres:</p>
 <div class="pst-scrollable-table-container"><table class="table" id="id2">
 <caption><span class="caption-text">Shape masks in local coordinates</span><a class="headerlink" href="#id2" title="Link to this table">#</a></caption>

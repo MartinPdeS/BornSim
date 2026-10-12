@@ -99,8 +99,9 @@ inclusion that fills the box nevertheless has an interface where its contrast
 ends.
 
 For a shape centre :math:`\mathbf c` and proper rotation matrix :math:`R`,
-local column coordinates are :math:`\mathbf u=R^T(\mathbf r-\mathbf c)`.
-The implementation uses row vectors, ``(positions - centre) @ R``.
+local coordinates are :math:`\mathbf u=R^T(\mathbf r-\mathbf c)`. Rotation
+input, handedness, composition, and the row-vector implementation convention
+are defined by :class:`bornsim.rotation.Rotation`.
 Membership rules are evaluated at voxel centres:
 
 .. list-table:: Shape masks in local coordinates

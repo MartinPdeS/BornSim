@@ -770,9 +770,10 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">terms</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">log_y</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">azimuth</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Plot one sampled meridian, or an explicitly averaged curve."""</span>
 
-        <span class="kn">from</span><span class="w"> </span><span class="nn">._result_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ResultPlotter</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Result</span>
 
-        <span class="k">return</span> <span class="n">_ResultPlotter</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="n">_plot_differential</span><span class="p">(</span>
+            <span class="n">result</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
             <span class="n">terms</span><span class="o">=</span><span class="n">terms</span><span class="p">,</span>
             <span class="n">log_y</span><span class="o">=</span><span class="n">log_y</span><span class="p">,</span>
             <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
@@ -785,9 +786,10 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_phase_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">view</span><span class="o">=</span><span class="s2">"angular"</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">log_y</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">azimuth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Plot normalized directional densities with the same Result interface."""</span>
 
-        <span class="kn">from</span><span class="w"> </span><span class="nn">._result_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ResultPlotter</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Result</span>
 
-        <span class="k">return</span> <span class="n">_ResultPlotter</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">plot_phase_function</span><span class="p">(</span>
+        <span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="n">_plot_phase_function</span><span class="p">(</span>
+            <span class="n">result</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
             <span class="n">view</span><span class="o">=</span><span class="n">view</span><span class="p">,</span>
             <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">,</span>
             <span class="n">log_y</span><span class="o">=</span><span class="n">log_y</span><span class="p">,</span>

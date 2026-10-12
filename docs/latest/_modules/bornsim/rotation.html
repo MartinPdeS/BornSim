@@ -464,9 +464,19 @@
   <h1>Source code for bornsim.rotation</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Proper three-dimensional rotations for immutable material shapes."""</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NDArray</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeAlias</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">validate_units</span><span class="p">,</span> <span class="n">_dimensionless</span>
+
+
+<span class="n">RotationMatrix</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span>
+    <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+<span class="p">]</span>
 
 
 <div class="viewcode-block" id="Rotation">
@@ -476,8 +486,12 @@
 <span class="w">    </span><span class="sd">"""Define an active right-handed rotation about a dimensionless axis.</span>
 
 <span class="sd">    angle accepts angular quantities; angular values require explicit units. The axis is</span>
-<span class="sd">    normalized. matrix maps local column coordinates into global coordinates.</span>
-<span class="sd">    No numerical scattering or voxel resampling is performed by this class.</span>
+<span class="sd">    normalized. ``matrix`` maps local column coordinates into global coordinates.</span>
+<span class="sd">    It follows the right-hand rule, and successive world rotations compose as</span>
+<span class="sd">    ``R_new @ R_existing``. Shape membership uses local row coordinates</span>
+<span class="sd">    ``(positions - centre) @ R``. Shapes accept this object, a proper orthonormal</span>
+<span class="sd">    3-by-3 matrix, or a dimensionless matrix quantity; they store the normalized</span>
+<span class="sd">    matrix as an immutable tuple of tuples. No voxel resampling is performed.</span>
 <span class="sd">    """</span>
 
     <span class="n">axis</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
@@ -502,7 +516,7 @@
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"axis"</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">axis</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">axis</span><span class="p">)))</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return Rodrigues' active rotation matrix, shape (3, 3)."""</span>
 
         <span class="n">axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span>
@@ -518,7 +532,7 @@
         <span class="k">return</span> <span class="n">cosine</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cosine</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span> <span class="o">+</span> <span class="n">sine</span> <span class="o">*</span> <span class="n">skew</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_matrix</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">rotation</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_matrix</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">rotation</span><span class="p">:</span> <span class="s2">"RotationInput"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
         <span class="n">matrix</span> <span class="o">=</span> <span class="n">rotation</span><span class="o">.</span><span class="n">matrix</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rotation</span><span class="p">,</span> <span class="n">Rotation</span><span class="p">)</span> <span class="k">else</span> <span class="n">_dimensionless</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">rotation</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"rotation"</span><span class="p">)</span>
 
         <span class="n">invalid</span> <span class="o">=</span> <span class="p">(</span>
@@ -533,6 +547,12 @@
 
         <span class="k">return</span> <span class="n">matrix</span></div>
 
+
+
+<span class="n">RotationInput</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">Rotation</span> <span class="o">|</span> <span class="n">RotationMatrix</span> <span class="o">|</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">|</span> <span class="n">Quantity</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Rotation"</span><span class="p">,</span> <span class="s2">"RotationInput"</span><span class="p">,</span> <span class="s2">"RotationMatrix"</span><span class="p">]</span>
 </pre></div>
 
                 </article>

@@ -470,7 +470,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">._version</span><span class="w"> </span><span class="kn">import</span> <span class="n">__version__</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.medium</span><span class="w"> </span><span class="kn">import</span> <span class="n">Medium</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Result</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">._validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">_integer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.volume</span><span class="w"> </span><span class="kn">import</span> <span class="n">Volume</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.series</span><span class="w"> </span><span class="kn">import</span> <span class="n">BornSeries</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.ensemble</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensemble_scattering</span>
@@ -479,7 +478,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.sampling</span><span class="w"> </span><span class="kn">import</span> <span class="n">AngularSampling</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.ensemble_sampling</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnsembleSampling</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.source</span><span class="w"> </span><span class="kn">import</span> <span class="n">Source</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">validate_units</span><span class="p">,</span> <span class="n">ureg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">_integer</span><span class="p">,</span> <span class="n">validate_units</span><span class="p">,</span> <span class="n">ureg</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_provenance</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="o">**</span><span class="n">settings</span><span class="p">):</span>
@@ -534,16 +533,23 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">target</span><span class="p">:</span> <span class="n">Volume</span><span class="p">,</span>
-        <span class="n">sampling</span><span class="p">:</span> <span class="n">AngularSampling</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">sampling</span><span class="p">:</span> <span class="n">AngularSampling</span> <span class="o">|</span> <span class="n">Directions</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Compute full directional scattering and finite-sample integrated coefficients.</span>
+<span class="w">        </span><span class="sd">"""Compute scattering from a volume using angular or Cartesian sampling.</span>
 
-<span class="sd">        Use solve_cut for individual observation directions. The target is an</span>
-<span class="sd">        explicit voxelized Volume; random statistics use ensemble instead.</span>
+<span class="sd">        Pass AngularSampling for solid-angle integration, or Directions for an</span>
+<span class="sd">        unnormalized set of observation directions. The target is an explicit</span>
+<span class="sd">        voxelized Volume; random statistics use ensemble instead.</span>
 <span class="sd">        """</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">Volume</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"target must be a Volume."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sampling</span><span class="p">,</span> <span class="n">Directions</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">solve_cut</span><span class="p">(</span>
+                <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span>
+                <span class="n">directions</span><span class="o">=</span><span class="n">sampling</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="n">sampling</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling</span> <span class="k">if</span> <span class="n">sampling</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">AngularSampling</span><span class="o">.</span><span class="n">_resolve</span><span class="p">(</span><span class="n">sampling</span><span class="o">=</span><span class="n">sampling</span><span class="p">)</span>
 
@@ -562,10 +568,12 @@
 <span class="w">        </span><span class="sd">"""Compute an unnormalized angular cut through a fixed Volume.</span>
 
 <span class="sd">        Supply polar angles on the x-z meridian or a Directions configuration,</span>
-<span class="sd">        but not both. Explicit angular units are required. Default angles span 0 to pi</span>
-<span class="sd">        with 121 samples. Cut amplitudes and intensities retain every requested</span>
-<span class="sd">        direction. A cut alone cannot determine a solid-angle integral;</span>
-<span class="sd">        integrated coefficients and normalized phase functions are unavailable.</span>
+<span class="sd">        but not both. This is a convenience wrapper for ``solve(target=...,</span>
+<span class="sd">        sampling=Directions(...))``. Explicit angular units are required.</span>
+<span class="sd">        Default angles span 0 to pi with 121 samples. Cut amplitudes and</span>
+<span class="sd">        intensities retain every requested direction. A cut alone cannot</span>
+<span class="sd">        determine a solid-angle integral; integrated coefficients and normalized</span>
+<span class="sd">        phase functions are unavailable.</span>
 <span class="sd">        """</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">Volume</span><span class="p">):</span>

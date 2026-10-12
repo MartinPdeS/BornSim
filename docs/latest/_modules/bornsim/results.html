@@ -466,12 +466,12 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleNamespace</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClassVar</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.source</span><span class="w"> </span><span class="kn">import</span> <span class="n">Source</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">._archives</span><span class="w"> </span><span class="kn">import</span> <span class="n">_RESULT_UNITS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.angular_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">AngularData</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">validate_units</span><span class="p">,</span> <span class="n">ureg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">_dimensionless</span><span class="p">,</span> <span class="n">_integer</span><span class="p">,</span> <span class="n">validate_units</span><span class="p">,</span> <span class="n">ureg</span>
 
 <span class="n">_ANGULAR_FIELDS</span> <span class="o">=</span> <span class="p">(</span>
     <span class="s2">"differential"</span><span class="p">,</span>
@@ -535,6 +535,22 @@
     <span class="n">realizations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
     <span class="n">_provenance_json</span><span class="p">:</span> <span class="nb">str</span>
 
+    <span class="n">_RESULT_UNITS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"differential"</span><span class="p">:</span> <span class="s2">"1 / meter / steradian"</span><span class="p">,</span>
+        <span class="s2">"term_differential"</span><span class="p">:</span> <span class="s2">"1 / meter / steradian"</span><span class="p">,</span>
+        <span class="s2">"stderr"</span><span class="p">:</span> <span class="s2">"1 / meter / steradian"</span><span class="p">,</span>
+        <span class="s2">"angles"</span><span class="p">:</span> <span class="s2">"radian"</span><span class="p">,</span>
+        <span class="s2">"azimuths"</span><span class="p">:</span> <span class="s2">"radian"</span><span class="p">,</span>
+        <span class="s2">"amplitudes"</span><span class="p">:</span> <span class="s2">"meter"</span><span class="p">,</span>
+        <span class="s2">"mu_s"</span><span class="p">:</span> <span class="s2">"1 / meter"</span><span class="p">,</span>
+        <span class="s2">"mu_s_prime"</span><span class="p">:</span> <span class="s2">"1 / meter"</span><span class="p">,</span>
+        <span class="s2">"g"</span><span class="p">:</span> <span class="s2">"dimensionless"</span><span class="p">,</span>
+        <span class="s2">"directions"</span><span class="p">:</span> <span class="s2">"dimensionless"</span><span class="p">,</span>
+        <span class="s2">"field_norms"</span><span class="p">:</span> <span class="s2">"dimensionless"</span><span class="p">,</span>
+        <span class="s2">"sample_volume"</span><span class="p">:</span> <span class="s2">"meter**3"</span><span class="p">,</span>
+        <span class="s2">"azimuth_stderr"</span><span class="p">:</span> <span class="s2">"1 / meter / steradian"</span><span class="p">,</span>
+    <span class="p">}</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -568,7 +584,7 @@
         <span class="k">if</span> <span class="n">angular</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">differential</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"differential is required."</span><span class="p">)</span>
 
-        <span class="n">values</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_RESULT_UNITS</span><span class="p">}</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_RESULT_UNITS</span><span class="p">}</span>
 
         <span class="k">if</span> <span class="n">angular</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">angular</span><span class="p">,</span> <span class="n">AngularData</span><span class="p">):</span>
@@ -595,7 +611,7 @@
 
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">angular</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_ANGULAR_FIELDS</span><span class="p">):</span>
-                <span class="n">unit</span> <span class="o">=</span> <span class="n">_RESULT_UNITS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="n">unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_RESULT_UNITS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
 
                 <span class="k">if</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">"dimensionless"</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Quantity</span><span class="p">):</span>
                     <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">dimensionless</span>
@@ -628,14 +644,12 @@
 
         <span class="n">state</span> <span class="o">=</span> <span class="n">SimpleNamespace</span><span class="p">(</span><span class="o">**</span><span class="n">values</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">,</span> <span class="n">realizations</span><span class="o">=</span><span class="n">realizations</span><span class="p">,</span> <span class="n">azimuth_averaged</span><span class="o">=</span><span class="n">azimuth_averaged</span><span class="p">)</span>
 
-        <span class="kn">from</span><span class="w"> </span><span class="nn">._result_validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ResultValidator</span>
-
         <span class="k">if</span> <span class="n">angular</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">angular</span> <span class="o">=</span> <span class="n">AngularData</span><span class="p">(</span>
                 <span class="o">**</span><span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_ANGULAR_FIELDS</span><span class="p">},</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">,</span> <span class="n">azimuth_averaged</span><span class="o">=</span><span class="n">azimuth_averaged</span>
             <span class="p">)</span>
 
-        <span class="n">_ResultValidator</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="n">state</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_state</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="n">state</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">{</span>
             <span class="s2">"source"</span><span class="p">:</span> <span class="n">source</span><span class="p">,</span>
@@ -654,6 +668,86 @@
                 <span class="n">value</span><span class="o">.</span><span class="n">magnitude</span><span class="o">.</span><span class="n">setflags</span><span class="p">(</span><span class="n">write</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
             <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_state</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">SimpleNamespace</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Validate result axes, physical ranges and realization uncertainty."""</span>
+
+        <span class="n">orders</span><span class="p">,</span> <span class="n">observations</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">differential</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s2">"ensemble"</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">realizations</span> <span class="o">=</span> <span class="n">_integer</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">realizations</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"realizations"</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">result</span><span class="o">.</span><span class="n">realizations</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"realizations is only available for an ensemble."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">kind</span> <span class="o">!=</span> <span class="s2">"volume"</span> <span class="ow">and</span> <span class="n">result</span><span class="o">.</span><span class="n">directions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"ensemble results require angles and no directions."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">differential</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">result</span><span class="o">.</span><span class="n">directions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Full data require angles and azimuths without cut directions."</span><span class="p">)</span>
+
+        <span class="n">shapes</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"g"</span><span class="p">:</span> <span class="p">(</span><span class="n">orders</span><span class="p">,),</span>
+            <span class="s2">"mu_s_prime"</span><span class="p">:</span> <span class="p">(</span><span class="n">orders</span><span class="p">,),</span>
+            <span class="s2">"field_norms"</span><span class="p">:</span> <span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">realizations</span><span class="p">,</span> <span class="n">orders</span><span class="p">)</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s2">"ensemble"</span> <span class="k">else</span> <span class="p">(</span><span class="n">orders</span><span class="p">,),</span>
+        <span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">shape</span> <span class="ow">in</span> <span class="n">shapes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">quantity</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">quantity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">values</span> <span class="o">=</span> <span class="n">quantity</span><span class="o">.</span><span class="n">magnitude</span>
+
+            <span class="k">if</span> <span class="n">values</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">shape</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must have shape </span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s2">; got </span><span class="si">{</span><span class="n">values</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">iscomplexobj</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must contain numeric real values."</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">values</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">"g"</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">values</span><span class="p">))):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be finite, except for documented unknown values."</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">name</span> <span class="o">!=</span> <span class="s2">"g"</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">values</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be nonnegative."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">g</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="n">magnitude</span>
+
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">+</span> <span class="mf">1e-12</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"g must lie between -1 and 1."</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">mu_s</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">g</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"NaN g requires a zero mu_s coefficient."</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">mu_s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">mu_s</span><span class="o">.</span><span class="n">magnitude</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"g must be NaN exactly where mu_s is zero."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">mu_s</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">mu_s_prime</span><span class="p">)):</span>
+            <span class="n">expected</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">mu_s</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"dimensionless"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">mu_s_prime</span><span class="p">,</span> <span class="n">expected</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"mu_s_prime must equal mu_s * (1 - g), with zero at zero scattering."</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"stderr"</span><span class="p">,</span> <span class="s2">"azimuth_stderr"</span><span class="p">):</span>
+            <span class="n">errors</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">realizations</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">errors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">errors</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be NaN for one realization."</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">realizations</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">errors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">errors</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be finite for multiple realizations."</span><span class="p">)</span>
+
+        <span class="n">incomplete_integrals</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s2">"volume"</span>
+            <span class="ow">and</span> <span class="n">result</span><span class="o">.</span><span class="n">differential</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">azimuth_averaged</span>
+            <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">mu_s</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">mu_s_prime</span><span class="p">))</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">incomplete_integrals</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"integrated coefficients are unavailable for a single-volume angular cut."</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">differential</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -809,12 +903,40 @@
 <span class="sd">        reproduction depends on the recorded implementation versions.</span>
 <span class="sd">        """</span>
 
-        <span class="kn">from</span><span class="w"> </span><span class="nn">._archives</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ResultArchive</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-        <span class="k">return</span> <span class="n">_ResultArchive</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
-            <span class="n">result</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
-            <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
-        <span class="p">)</span></div>
+        <span class="n">arrays</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">units</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_RESULT_UNITS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">arrays</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+
+                <span class="n">units</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">unit</span>
+
+        <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"format"</span><span class="p">:</span> <span class="s2">"bornsim-result"</span><span class="p">,</span>
+            <span class="s2">"schema_version"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">"azimuth_averaged"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuth_averaged</span><span class="p">,</span>
+            <span class="s2">"wavelength_m"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">wavelength</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"meter"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">),</span>
+            <span class="s2">"kind"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">kind</span><span class="p">,</span>
+            <span class="s2">"realizations"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">realizations</span><span class="p">,</span>
+            <span class="s2">"warnings"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="p">,</span>
+            <span class="s2">"provenance"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">provenance</span><span class="p">,</span>
+            <span class="s2">"units"</span><span class="p">:</span> <span class="n">units</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">encoded_metadata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">allow_nan</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">savez_compressed</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">encoded_metadata</span><span class="p">,</span> <span class="o">**</span><span class="n">arrays</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">path</span></div>
 
 
 <div class="viewcode-block" id="Result.load">
@@ -843,12 +965,43 @@
 <span class="sd">            If the archive cannot be read.</span>
 <span class="sd">        """</span>
 
-        <span class="kn">from</span><span class="w"> </span><span class="nn">._archives</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ResultArchive</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">archive</span><span class="p">:</span>
+                <span class="n">metadata</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">archive</span><span class="p">[</span><span class="s2">"metadata"</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()))</span>
 
-        <span class="k">return</span> <span class="n">_ResultArchive</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
-            <span class="n">result_type</span><span class="o">=</span><span class="bp">cls</span><span class="p">,</span>
-            <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
-        <span class="p">)</span></div>
+                <span class="n">unsupported_schema</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">metadata</span><span class="p">[</span><span class="s2">"format"</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">"bornsim-result"</span>
+                    <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"schema_version"</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span>
+                    <span class="ow">or</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">"schema_version"</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">2</span>
+                <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">unsupported_schema</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Unsupported result archive schema."</span><span class="p">)</span>
+
+                <span class="n">units</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">"units"</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">units</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">units</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_RESULT_UNITS</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid result archive fields."</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">unit</span> <span class="o">!=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_RESULT_UNITS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">units</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid result archive units; archives require SI units."</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">files</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">set</span><span class="p">(</span><span class="n">units</span><span class="p">)</span> <span class="o">|</span> <span class="p">{</span><span class="s2">"metadata"</span><span class="p">}</span> <span class="ow">or</span> <span class="s2">"differential"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">units</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Result archive arrays do not match metadata."</span><span class="p">)</span>
+
+                <span class="n">arrays</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">archive</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">units</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+                <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+                    <span class="n">source</span><span class="o">=</span><span class="n">Source</span><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"wavelength_m"</span><span class="p">]</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="p">),</span>
+                    <span class="n">kind</span><span class="o">=</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"kind"</span><span class="p">],</span>
+                    <span class="n">azimuth_averaged</span><span class="o">=</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"azimuth_averaged"</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+                    <span class="n">realizations</span><span class="o">=</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"realizations"</span><span class="p">],</span>
+                    <span class="n">warnings</span><span class="o">=</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"warnings"</span><span class="p">],</span>
+                    <span class="n">provenance</span><span class="o">=</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"provenance"</span><span class="p">],</span>
+                    <span class="o">**</span><span class="n">arrays</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid or incomplete result archive metadata."</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">error</span></div>
 
 
     <span class="nd">@property</span>
@@ -901,13 +1054,12 @@
 <span class="sd">        are shown. This method plots differential scattering, not a normalized</span>
 <span class="sd">        phase function."""</span>
 
-        <span class="kn">from</span><span class="w"> </span><span class="nn">._result_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ResultPlotter</span>
-
-        <span class="k">return</span> <span class="n">_ResultPlotter</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot_differential</span><span class="p">(</span>
+            <span class="n">result</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
             <span class="n">terms</span><span class="o">=</span><span class="n">terms</span><span class="p">,</span>
             <span class="n">log_y</span><span class="o">=</span><span class="n">log_y</span><span class="p">,</span>
-            <span class="n">azimuth</span><span class="o">=</span><span class="n">azimuth</span><span class="p">,</span>
             <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
+            <span class="n">azimuth</span><span class="o">=</span><span class="n">azimuth</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
@@ -958,11 +1110,8 @@
 <span class="sd">        Stored scattering data and its SI units remain unchanged.</span>
 <span class="sd">        """</span>
 
-        <span class="kn">from</span><span class="w"> </span><span class="nn">._result_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ResultPlotter</span>
-
-        <span class="k">return</span> <span class="n">_ResultPlotter</span><span class="p">(</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot_cross_section</span><span class="p">(</span>
             <span class="n">result</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">plot_cross_section</span><span class="p">(</span>
             <span class="n">volume</span><span class="o">=</span><span class="n">volume</span><span class="p">,</span>
             <span class="n">area_unit</span><span class="o">=</span><span class="n">area_unit</span><span class="p">,</span>
             <span class="n">terms</span><span class="o">=</span><span class="n">terms</span><span class="p">,</span>
@@ -1021,9 +1170,8 @@
 <span class="sd">        Samples are sorted by angle for rendering. Error bars for normalized</span>
 <span class="sd">        ratios are omitted because the required covariance is not stored."""</span>
 
-        <span class="kn">from</span><span class="w"> </span><span class="nn">._result_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ResultPlotter</span>
-
-        <span class="k">return</span> <span class="n">_ResultPlotter</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">plot_phase_function</span><span class="p">(</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot_phase_function</span><span class="p">(</span>
+            <span class="n">result</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
             <span class="n">view</span><span class="o">=</span><span class="n">view</span><span class="p">,</span>
             <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">,</span>
             <span class="n">log_y</span><span class="o">=</span><span class="n">log_y</span><span class="p">,</span>
@@ -1060,14 +1208,449 @@
 <span class="sd">        terms do not certify Born convergence or remove discretization error.</span>
 <span class="sd">        """</span>
 
-        <span class="kn">from</span><span class="w"> </span><span class="nn">._result_plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ResultPlotter</span>
-
-        <span class="k">return</span> <span class="n">_ResultPlotter</span><span class="p">(</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot_field_norms</span><span class="p">(</span>
             <span class="n">result</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">plot_field_norms</span><span class="p">(</span>
             <span class="n">log_y</span><span class="o">=</span><span class="n">log_y</span><span class="p">,</span>
         <span class="p">)</span></div>
-</div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_pyplot</span><span class="p">():</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+        <span class="k">return</span> <span class="n">plt</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_select_azimuth</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">):</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">azimuths</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">azimuths</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">_integer</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">azimuth</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"azimuth"</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_angular_label</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">"meridian_azimuth"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">degrees</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">meridian_azimuth</span><span class="o">.</span><span class="n">magnitude</span><span class="p">))</span>
+
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">" · meridian phi = </span><span class="si">{</span><span class="n">degrees</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2"> degrees"</span>
+
+        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">azimuth_averaged</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">" · azimuth average"</span>
+
+        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">azimuths</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">degrees</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">azimuths</span><span class="o">.</span><span class="n">magnitude</span><span class="p">[</span><span class="n">azimuth</span><span class="p">]))</span>
+
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">" · meridian phi = </span><span class="si">{</span><span class="n">degrees</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2"> degrees"</span>
+
+        <span class="k">return</span> <span class="s2">""</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_plot_differential</span><span class="p">(</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">result</span><span class="p">,</span>
+        <span class="n">terms</span><span class="p">,</span>
+        <span class="n">log_y</span><span class="p">,</span>
+        <span class="n">title</span><span class="p">,</span>
+        <span class="n">azimuth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">ylabel</span><span class="o">=</span><span class="s2">"Differential scattering (m⁻¹ sr⁻¹)"</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Render curves and uncertainty using one shared display scale."""</span>
+
+        <span class="n">values</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">term_differential</span> <span class="k">if</span> <span class="n">terms</span> <span class="k">else</span> <span class="n">result</span><span class="o">.</span><span class="n">differential</span>
+
+        <span class="k">if</span> <span class="n">values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Isolated term curves are unavailable for this result."</span><span class="p">)</span>
+
+        <span class="n">values</span> <span class="o">=</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">values</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"1 / meter / steradian"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+
+        <span class="n">selected</span> <span class="o">=</span> <span class="n">Result</span><span class="o">.</span><span class="n">_select_azimuth</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">azimuth</span><span class="o">=</span><span class="n">azimuth</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">values</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">selected</span><span class="p">]</span>
+
+        <span class="n">plt</span> <span class="o">=</span> <span class="n">Result</span><span class="o">.</span><span class="n">_pyplot</span><span class="p">()</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">angles</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">angles</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"radian"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+
+        <span class="n">figure</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">layout</span><span class="o">=</span><span class="s2">"constrained"</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">curve</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+            <span class="n">errors</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">terms</span> <span class="ow">and</span> <span class="n">result</span><span class="o">.</span><span class="n">stderr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">candidate</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"1 / meter / steradian"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">candidate</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">candidate</span> <span class="o">=</span> <span class="n">candidate</span><span class="p">[:,</span> <span class="n">selected</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">candidate</span><span class="p">)):</span>
+                    <span class="n">errors</span> <span class="o">=</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_invalid</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span>
+
+            <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'Term'</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">terms</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">'Through order'</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">"</span>
+
+            <span class="n">style</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"marker"</span><span class="p">:</span> <span class="s2">"o"</span><span class="p">,</span> <span class="s2">"linestyle"</span><span class="p">:</span> <span class="s2">"none"</span><span class="p">}</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">angles</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{</span><span class="s2">"linewidth"</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+
+            <span class="k">if</span> <span class="n">errors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                    <span class="n">x</span><span class="p">,</span>
+                    <span class="n">curve</span><span class="p">,</span>
+                    <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">style</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">axis</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">curve</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">errors</span><span class="p">,</span> <span class="n">capsize</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">style</span><span class="p">)</span>
+
+        <span class="n">default_title</span> <span class="o">=</span> <span class="s2">"Finite-sample scattering"</span>
+
+        <span class="n">default_title</span> <span class="o">+=</span> <span class="n">Result</span><span class="o">.</span><span class="n">_angular_label</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">azimuth</span><span class="o">=</span><span class="n">selected</span><span class="p">)</span>
+
+        <span class="n">axis</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="n">default_title</span> <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">title</span><span class="p">,</span>
+            <span class="n">xlabel</span><span class="o">=</span><span class="s2">"Direction index"</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">angles</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">"Scattering angle (degrees)"</span><span class="p">,</span>
+            <span class="n">ylabel</span><span class="o">=</span><span class="n">ylabel</span><span class="p">,</span>
+            <span class="n">yscale</span><span class="o">=</span><span class="s2">"log"</span> <span class="k">if</span> <span class="n">log_y</span> <span class="k">else</span> <span class="s2">"linear"</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">axis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+
+        <span class="n">axis</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">figure</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_plot_cross_section</span><span class="p">(</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">result</span><span class="p">,</span>
+        <span class="n">volume</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">area_unit</span><span class="o">=</span><span class="s2">"nanometer**2"</span><span class="p">,</span>
+        <span class="n">terms</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">log_y</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">azimuth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Scale finite-sample curves and uncertainties by their box volume."""</span>
+
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.volume</span><span class="w"> </span><span class="kn">import</span> <span class="n">Volume</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pint.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DimensionalityError</span><span class="p">,</span> <span class="n">UndefinedUnitError</span>
+
+        <span class="k">if</span> <span class="n">volume</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">volume</span><span class="p">,</span> <span class="n">Volume</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"volume must be a Volume."</span><span class="p">)</span>
+
+            <span class="n">grid</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">provenance</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"grid"</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">grid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">recorded_background_refractive_index</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="s2">"background_refractive_index"</span><span class="p">,</span>
+                    <span class="n">volume</span><span class="o">.</span><span class="n">background_refractive_index</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="n">incompatible_grid</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="nb">tuple</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="s2">"shape"</span><span class="p">])</span> <span class="o">!=</span> <span class="n">volume</span><span class="o">.</span><span class="n">delta_refractive_index</span><span class="o">.</span><span class="n">shape</span>
+                    <span class="ow">or</span> <span class="n">grid</span><span class="p">[</span><span class="s2">"spacing_m"</span><span class="p">]</span> <span class="o">!=</span> <span class="nb">float</span><span class="p">(</span><span class="n">volume</span><span class="o">.</span><span class="n">spacing</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"meter"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+                    <span class="ow">or</span> <span class="n">recorded_background_refractive_index</span> <span class="o">!=</span> <span class="n">volume</span><span class="o">.</span><span class="n">background_refractive_index</span>
+                <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">incompatible_grid</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"volume must match the recorded sample grid and background_refractive_index."</span><span class="p">)</span>
+
+            <span class="n">physical_volume</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">volume</span><span class="o">.</span><span class="n">volume</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"meter**3"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+
+            <span class="n">recorded</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">sample_volume</span>
+
+            <span class="n">invalid_condition</span> <span class="o">=</span> <span class="n">recorded</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span>
+                <span class="n">recorded</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"meter**3"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">physical_volume</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mi">0</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">invalid_condition</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"volume must match the recorded sample volume."</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">sample_volume</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">"sample_volume is unavailable; supply the sample Volume for a result without recorded volume."</span>
+                <span class="p">)</span>
+
+            <span class="n">physical_volume</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">sample_volume</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"meter**3"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">area</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">area_unit</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">DimensionalityError</span><span class="p">,</span> <span class="n">UndefinedUnitError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"area_unit must name an area unit."</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">error</span>
+
+        <span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="n">_plot_differential</span><span class="p">(</span>
+            <span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">,</span>
+            <span class="n">terms</span><span class="o">=</span><span class="n">terms</span><span class="p">,</span>
+            <span class="n">log_y</span><span class="o">=</span><span class="n">log_y</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">"Finite-sample differential cross section"</span> <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">title</span><span class="p">,</span>
+            <span class="n">scale</span><span class="o">=</span><span class="n">physical_volume</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">area</span><span class="o">.</span><span class="n">magnitude</span><span class="p">),</span>
+            <span class="n">azimuth</span><span class="o">=</span><span class="n">azimuth</span><span class="p">,</span>
+            <span class="n">ylabel</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Differential cross section (</span><span class="si">{</span><span class="n">area</span><span class="o">.</span><span class="n">units</span><span class="si">:</span><span class="s2">~P</span><span class="si">}</span><span class="s2"> sr⁻¹)"</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_plot_phase_function</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">view</span><span class="o">=</span><span class="s2">"angular"</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">log_y</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">azimuth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Render normalized densities while retaining directional 3D asymmetry."""</span>
+
+        <span class="k">if</span> <span class="n">view</span> <span class="o">!=</span> <span class="s2">"angular"</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">"meridian_azimuth"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Use full angular data for polar or 3D plots; a selected meridian has only one side."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">view</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"angular"</span><span class="p">,</span> <span class="s2">"polar"</span><span class="p">,</span> <span class="s2">"3d"</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"view must be angular, polar, or 3d."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">backend</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">backend</span> <span class="o">=</span> <span class="s2">"plotly"</span> <span class="k">if</span> <span class="n">view</span> <span class="o">==</span> <span class="s2">"3d"</span> <span class="k">else</span> <span class="s2">"matplotlib"</span>
+
+        <span class="k">if</span> <span class="n">backend</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"matplotlib"</span><span class="p">,</span> <span class="s2">"plotly"</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"backend must be matplotlib or plotly."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">"plotly"</span> <span class="ow">and</span> <span class="n">view</span> <span class="o">!=</span> <span class="s2">"3d"</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"The Plotly backend is only supported for the 3D phase view."</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">log_y</span> <span class="ow">and</span> <span class="n">view</span> <span class="o">!=</span> <span class="s2">"angular"</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"log_y is only supported for the angular view."</span><span class="p">)</span>
+
+        <span class="n">phase</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">phase_function</span><span class="o">.</span><span class="n">magnitude</span>
+
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">angles</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"radian"</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span>
+
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+        <span class="n">theta</span><span class="p">,</span> <span class="n">phase</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[</span><span class="n">indices</span><span class="p">],</span> <span class="n">phase</span><span class="p">[:,</span> <span class="n">indices</span><span class="p">]</span>
+
+        <span class="n">orders</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">phase</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">order</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="p">[</span>
+                <span class="n">_integer</span><span class="p">(</span>
+                    <span class="n">value</span><span class="o">=</span><span class="n">order</span><span class="p">,</span>
+                    <span class="n">name</span><span class="o">=</span><span class="s2">"order"</span><span class="p">,</span>
+                    <span class="n">low</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="n">high</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">phase</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="o">-</span> <span class="mi">1</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">insufficient_angular_coverage</span> <span class="o">=</span> <span class="n">view</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"polar"</span><span class="p">,</span> <span class="s2">"3d"</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">3</span>
+            <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">insufficient_angular_coverage</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Polar and 3D views require at least three distinct angles spanning 0 to pi."</span><span class="p">)</span>
+
+        <span class="n">title</span> <span class="o">=</span> <span class="s2">"Directional finite-sample phase function"</span>
+
+        <span class="n">meridian</span> <span class="o">=</span> <span class="n">Result</span><span class="o">.</span><span class="n">_select_azimuth</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">azimuth</span><span class="o">=</span><span class="n">azimuth</span><span class="p">)</span>
+
+        <span class="n">degrees</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">view</span> <span class="o">==</span> <span class="s2">"3d"</span><span class="p">:</span>
+            <span class="n">selected</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">order</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">orders</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">phase</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">result</span><span class="o">.</span><span class="n">azimuths</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">]])</span>
+
+                <span class="n">directional</span> <span class="o">=</span> <span class="n">phase</span><span class="p">[</span><span class="n">selected</span><span class="p">]</span>
+
+                <span class="n">radius</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">directional</span><span class="p">,</span> <span class="n">directional</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">1</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="n">surface_label</span> <span class="o">=</span> <span class="s2">"full azimuthal distribution"</span>
+            <span class="k">elif</span> <span class="n">result</span><span class="o">.</span><span class="n">azimuth_averaged</span><span class="p">:</span>
+                <span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">97</span><span class="p">)</span>
+
+                <span class="n">radius</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">phase</span><span class="p">[</span><span class="n">selected</span><span class="p">,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">],</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">phi</span><span class="p">)))</span>
+
+                <span class="n">surface_label</span> <span class="o">=</span> <span class="s2">"explicit azimuth-average surface"</span>
+
+                <span class="n">title</span> <span class="o">=</span> <span class="s2">"Azimuth-averaged finite-sample phase function"</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">"Directional phase data are unavailable; recompute with Solver.solve using AngularSampling."</span>
+                <span class="p">)</span>
+
+            <span class="n">sine</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>
+
+            <span class="n">x</span> <span class="o">=</span> <span class="n">radius</span> <span class="o">*</span> <span class="n">sine</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+
+            <span class="n">y</span> <span class="o">=</span> <span class="n">radius</span> <span class="o">*</span> <span class="n">sine</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+
+            <span class="n">z</span> <span class="o">=</span> <span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">"plotly"</span><span class="p">:</span>
+                <span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objects</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
+
+                <span class="n">figure</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="p">[</span>
+                        <span class="n">go</span><span class="o">.</span><span class="n">Surface</span><span class="p">(</span>
+                            <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+                            <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+                            <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span>
+                            <span class="n">surfacecolor</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span>
+                            <span class="n">customdata</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span>
+                            <span class="n">colorscale</span><span class="o">=</span><span class="s2">"Viridis"</span><span class="p">,</span>
+                            <span class="n">cmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                            <span class="n">cmax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">radius</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span>
+                            <span class="n">colorbar</span><span class="o">=</span><span class="p">{</span><span class="s2">"title"</span><span class="p">:</span> <span class="s2">"p (sr⁻¹)"</span><span class="p">},</span>
+                            <span class="n">hovertemplate</span><span class="o">=</span><span class="s2">"Phase density p=%</span><span class="si">{customdata:.5g}</span><span class="s2"> sr⁻¹&lt;extra&gt;&lt;/extra&gt;"</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="p">],</span>
+                <span class="p">)</span>
+
+                <span class="n">figure</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
+                    <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">&lt;br&gt;Through order </span><span class="si">{</span><span class="n">selected</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> · </span><span class="si">{</span><span class="n">surface_label</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                    <span class="n">scene</span><span class="o">=</span><span class="p">{</span>
+                        <span class="s2">"xaxis_title"</span><span class="p">:</span> <span class="s2">"p ŝx (sr⁻¹)"</span><span class="p">,</span>
+                        <span class="s2">"yaxis_title"</span><span class="p">:</span> <span class="s2">"p ŝy (sr⁻¹)"</span><span class="p">,</span>
+                        <span class="s2">"zaxis_title"</span><span class="p">:</span> <span class="s2">"p ŝz (sr⁻¹); incidence +z"</span><span class="p">,</span>
+                        <span class="s2">"aspectmode"</span><span class="p">:</span> <span class="s2">"data"</span><span class="p">,</span>
+                    <span class="p">},</span>
+                <span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">figure</span>
+
+            <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.cm</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScalarMappable</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.colors</span><span class="w"> </span><span class="kn">import</span> <span class="n">Normalize</span>
+
+            <span class="n">plt</span> <span class="o">=</span> <span class="n">Result</span><span class="o">.</span><span class="n">_pyplot</span><span class="p">()</span>
+
+            <span class="n">norm</span> <span class="o">=</span> <span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">radius</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
+
+            <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s2">"viridis"</span><span class="p">)</span>
+
+            <span class="n">figure</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">layout</span><span class="o">=</span><span class="s2">"constrained"</span><span class="p">)</span>
+
+            <span class="n">axis</span> <span class="o">=</span> <span class="n">figure</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">"3d"</span><span class="p">)</span>
+
+            <span class="n">axis</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span>
+                <span class="n">x</span><span class="p">,</span>
+                <span class="n">y</span><span class="p">,</span>
+                <span class="n">z</span><span class="p">,</span>
+                <span class="n">facecolors</span><span class="o">=</span><span class="n">cmap</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">radius</span><span class="p">)),</span>
+                <span class="n">rcount</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span>
+                <span class="n">ccount</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">phi</span><span class="p">),</span>
+                <span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">shade</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">extent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">ptp</span><span class="p">(</span><span class="n">z</span><span class="p">)])</span>
+
+            <span class="n">axis</span><span class="o">.</span><span class="n">set_box_aspect</span><span class="p">(</span><span class="n">extent</span><span class="p">)</span>
+
+            <span class="n">axis</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                <span class="n">xlabel</span><span class="o">=</span><span class="s2">"p ŝx (sr⁻¹)"</span><span class="p">,</span>
+                <span class="n">ylabel</span><span class="o">=</span><span class="s2">"p ŝy (sr⁻¹)"</span><span class="p">,</span>
+                <span class="n">zlabel</span><span class="o">=</span><span class="s2">"p ŝz (sr⁻¹); incidence +z"</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">axis</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="se">\n</span><span class="s2">Through order </span><span class="si">{</span><span class="n">selected</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> · </span><span class="si">{</span><span class="n">surface_label</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+            <span class="n">axis</span><span class="o">.</span><span class="n">view_init</span><span class="p">(</span><span class="n">elev</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">azim</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
+
+            <span class="n">figure</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">ScalarMappable</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">),</span> <span class="n">ax</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"p (sr⁻¹)"</span><span class="p">,</span> <span class="n">shrink</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mf">0.12</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plt</span> <span class="o">=</span> <span class="n">Result</span><span class="o">.</span><span class="n">_pyplot</span><span class="p">()</span>
+
+            <span class="n">opposite</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="n">phase</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">view</span> <span class="o">==</span> <span class="s2">"polar"</span><span class="p">:</span>
+                    <span class="n">count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">azimuths</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">count</span> <span class="o">%</span> <span class="mi">2</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"A full polar plane requires an even azimuth sample count."</span><span class="p">)</span>
+
+                    <span class="n">opposite</span> <span class="o">=</span> <span class="n">phase</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">(</span><span class="n">meridian</span> <span class="o">+</span> <span class="n">count</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span> <span class="o">%</span> <span class="n">count</span><span class="p">]</span>
+
+                <span class="n">phase</span> <span class="o">=</span> <span class="n">phase</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">meridian</span><span class="p">]</span>
+
+            <span class="n">title</span> <span class="o">+=</span> <span class="n">Result</span><span class="o">.</span><span class="n">_angular_label</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">azimuth</span><span class="o">=</span><span class="n">meridian</span><span class="p">)</span>
+
+            <span class="n">projection</span> <span class="o">=</span> <span class="s2">"polar"</span> <span class="k">if</span> <span class="n">view</span> <span class="o">==</span> <span class="s2">"polar"</span> <span class="k">else</span> <span class="kc">None</span>
+
+            <span class="n">figure</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">subplot_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">"projection"</span><span class="p">:</span> <span class="n">projection</span><span class="p">},</span> <span class="n">layout</span><span class="o">=</span><span class="s2">"constrained"</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">orders</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">view</span> <span class="o">==</span> <span class="s2">"polar"</span><span class="p">:</span>
+                    <span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">theta</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">-</span> <span class="n">theta</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]]),</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">phase</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="p">(</span><span class="n">phase</span> <span class="k">if</span> <span class="n">opposite</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">opposite</span><span class="p">)[</span><span class="n">index</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]]),</span>
+                        <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Through order </span><span class="si">{</span><span class="n">index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                        <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                        <span class="n">degrees</span><span class="p">,</span>
+                        <span class="n">phase</span><span class="p">[</span><span class="n">index</span><span class="p">],</span>
+                        <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Through order </span><span class="si">{</span><span class="n">index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                        <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">view</span> <span class="o">==</span> <span class="s2">"polar"</span><span class="p">:</span>
+                <span class="n">axis</span><span class="o">.</span><span class="n">set_theta_zero_location</span><span class="p">(</span><span class="s2">"N"</span><span class="p">)</span>
+
+                <span class="n">axis</span><span class="o">.</span><span class="n">set_theta_direction</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="n">axis</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">bottom</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+                <span class="n">axis</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="se">\n</span><span class="s2">Meridian cut · incidence at 0° · p (sr⁻¹)"</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">axis</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+                    <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
+                    <span class="n">xlabel</span><span class="o">=</span><span class="s2">"Scattering angle θ (degrees)"</span><span class="p">,</span>
+                    <span class="n">ylabel</span><span class="o">=</span><span class="s2">"Phase function p (sr⁻¹)"</span><span class="p">,</span>
+                    <span class="n">yscale</span><span class="o">=</span><span class="s2">"log"</span> <span class="k">if</span> <span class="n">log_y</span> <span class="k">else</span> <span class="s2">"linear"</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="n">axis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+
+            <span class="n">axis</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">figure</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_plot_field_norms</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">log_y</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Draw relative Born field norms for each available realization."""</span>
+
+        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">field_norms</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Field norms are only available for numerical results."</span><span class="p">)</span>
+
+        <span class="n">norms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span>
+            <span class="n">_dimensionless</span><span class="p">(</span>
+                <span class="n">value</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">field_norms</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">"field_norms"</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">plt</span> <span class="o">=</span> <span class="n">Result</span><span class="o">.</span><span class="n">_pyplot</span><span class="p">()</span>
+
+        <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.ticker</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaxNLocator</span>
+
+        <span class="n">figure</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">layout</span><span class="o">=</span><span class="s2">"constrained"</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">curve</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">norms</span><span class="p">):</span>
+            <span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">curve</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="n">curve</span><span class="p">,</span>
+                <span class="s2">"o-"</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Realization </span><span class="si">{</span><span class="n">index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">axis</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">"Born field terms</span><span class="se">\n</span><span class="s2">Decreasing terms do not certify convergence"</span><span class="p">,</span>
+            <span class="n">xlabel</span><span class="o">=</span><span class="s2">"Field-term order j"</span><span class="p">,</span>
+            <span class="n">ylabel</span><span class="o">=</span><span class="s2">"‖Ej‖ / ‖Einc‖ (dimensionless)"</span><span class="p">,</span>
+            <span class="n">yscale</span><span class="o">=</span><span class="s2">"log"</span> <span class="k">if</span> <span class="n">log_y</span> <span class="k">else</span> <span class="s2">"linear"</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">axis</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">MaxNLocator</span><span class="p">(</span><span class="n">integer</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+        <span class="n">axis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+
+        <span class="n">axis</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">figure</span></div>
 
 
 

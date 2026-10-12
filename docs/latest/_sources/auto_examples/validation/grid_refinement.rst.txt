@@ -146,7 +146,7 @@ orthogonal slices show the uniform cube and its physical extent.
 
 .. raw:: html
 
-   <iframe src="../../_static/gallery/grid_refinement-1.html" title="Refractive index n: slices (uniform field)" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
+   <iframe src="../../_static/gallery/grid_refinement-1.html" title="Refractive index n: volume (uniform field)" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
 
 
 
@@ -155,7 +155,7 @@ orthogonal slices show the uniform cube and its physical extent.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.287 seconds)
+   **Total running time of the script:** (0 minutes 0.254 seconds)
 
 
 .. _sphx_glr_download_auto_examples_validation_grid_refinement.py:

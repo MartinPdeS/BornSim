@@ -203,7 +203,7 @@ Explore how geometry and relative positions affect directional scattering.
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Compose finite slabs and shaped inclusions using absolute refractive indices. Later regions replace earlier ones where they overlap. Add a seeded Whittle–Matérn fluctuation field on the same grid, then solve numerically. The background outside the voxel box stays homogeneous. This is a finite sample with edges, not an infinite planar stack calculation.">
+    <div class="sphx-glr-thumbcontainer" tooltip="Compose finite slabs and shaped inclusions using absolute refractive indices. Later regions replace earlier ones where they overlap. Add a seeded Whittle–Matérn fluctuation field over the complete structure, then solve numerically. The background outside the voxel box stays homogeneous. This is a finite sample with edges, not an infinite planar stack calculation.">
 
 .. only:: html
 
