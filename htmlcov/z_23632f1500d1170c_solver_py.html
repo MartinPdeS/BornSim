@@ -67,7 +67,7 @@
             <a id="nextFileLink" class="nav" href="z_23632f1500d1170c_units_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.16.2">coverage.py v7.16.2</a>,
-            created at 2026-10-12 11:56 +0000
+            created at 2026-10-12 12:13 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -256,7 +256,7 @@
     <p class="run run2"><span class="n"><a id="t172" href="#t172">172</a></span><span class="t">                        <span class="nam">np</span><span class="op">.</span><span class="nam">asarray</span><span class="op">(</span><span class="nam">target</span><span class="op">.</span><span class="nam">delta_refractive_index</span><span class="op">,</span> <span class="nam">dtype</span><span class="op">=</span><span class="str">&quot;&lt;f8&quot;</span><span class="op">)</span><span class="op">.</span><span class="nam">tobytes</span><span class="op">(</span><span class="nam">order</span><span class="op">=</span><span class="str">&quot;C&quot;</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t173" href="#t173">173</a></span><span class="t">                    <span class="op">)</span><span class="op">.</span><span class="nam">hexdigest</span><span class="op">(</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t174" href="#t174">174</a></span><span class="t">                <span class="op">}</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t175" href="#t175">175</a></span><span class="t">                <span class="nam">medium</span><span class="op">=</span><span class="key">None</span> <span class="key">if</span> <span class="nam">target</span><span class="op">.</span><span class="nam">medium</span> <span class="key">is</span> <span class="key">None</span> <span class="key">else</span> <span class="nam">target</span><span class="op">.</span><span class="nam">medium</span><span class="op">.</span><span class="nam">metadata</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t175" href="#t175">175</a></span><span class="t">                <span class="nam">medium</span><span class="op">=</span><span class="nam">target</span><span class="op">.</span><span class="nam">medium_metadata</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t176" href="#t176">176</a></span><span class="t">                <span class="nam">seed</span><span class="op">=</span><span class="nam">target</span><span class="op">.</span><span class="nam">seed</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t177" href="#t177">177</a></span><span class="t">                <span class="nam">coefficient_scope</span><span class="op">=</span><span class="str">&quot;finite-sample&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t178" href="#t178">178</a></span><span class="t">            <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -310,7 +310,7 @@
     <p class="run run2"><span class="n"><a id="t226" href="#t226">226</a></span><span class="t">                    <span class="op">)</span><span class="op">.</span><span class="nam">hexdigest</span><span class="op">(</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t227" href="#t227">227</a></span><span class="t">                <span class="op">}</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t228" href="#t228">228</a></span><span class="t">                <span class="nam">sampling</span><span class="op">=</span><span class="nam">sampling</span><span class="op">.</span><span class="nam">metadata</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t229" href="#t229">229</a></span><span class="t">                <span class="nam">medium</span><span class="op">=</span><span class="key">None</span> <span class="key">if</span> <span class="nam">volume</span><span class="op">.</span><span class="nam">medium</span> <span class="key">is</span> <span class="key">None</span> <span class="key">else</span> <span class="nam">volume</span><span class="op">.</span><span class="nam">medium</span><span class="op">.</span><span class="nam">metadata</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t229" href="#t229">229</a></span><span class="t">                <span class="nam">medium</span><span class="op">=</span><span class="nam">volume</span><span class="op">.</span><span class="nam">medium_metadata</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t230" href="#t230">230</a></span><span class="t">                <span class="nam">seed</span><span class="op">=</span><span class="nam">volume</span><span class="op">.</span><span class="nam">seed</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t231" href="#t231">231</a></span><span class="t">                <span class="nam">coefficient_scope</span><span class="op">=</span><span class="str">&quot;finite-sample&quot;</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t232" href="#t232">232</a></span><span class="t">            <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -395,7 +395,7 @@
             <a class="nav" href="z_23632f1500d1170c_units_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.16.2">coverage.py v7.16.2</a>,
-            created at 2026-10-12 11:56 +0000
+            created at 2026-10-12 12:13 +0000
         </p>
     </div>
 </footer>
