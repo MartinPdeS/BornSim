@@ -1,0 +1,133 @@
+"""
+Realization count and sampling uncertainty
+==========================================
+
+Increase the number of independent volumes at a fixed grid, covariance, and
+Born order. Curves show the estimated mean with one-standard-error bars.
+One realization has unknown error, represented by NaN. Standard errors
+measure sampling uncertainty, not voxel, quadrature, or finite-size error.
+"""
+
+from bornsim.medium.random_medium import GaussianMedium
+
+import sys
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+from bornsim import EnsembleSampling, Grid, AngularSampling, Solver, Source
+from bornsim.units import ureg
+
+grid = Grid(
+    shape=(6, 6, 6),
+    spacing=40 * ureg.nanometer,
+)
+
+medium = GaussianMedium(
+    correlation_length=80 * ureg.nanometer,
+    background_refractive_index=1.33,
+    refractive_index_std=0.01,
+)
+
+source_configuration_1 = Source(wavelength=633 * ureg.nanometer)
+
+solver = Solver(
+    source=source_configuration_1,
+    order=1,
+)
+
+sampling = AngularSampling(
+    start=0 * ureg.degree,
+    end=180 * ureg.degree,
+    n_points=19,
+    polar_samples=16,
+    azimuth_samples=4,
+)
+
+counts = [1, 2, 4, 8, 16, 32]
+
+means = []
+
+errors = []
+
+figure, axis = plt.subplots(layout="constrained")
+
+for count in counts:
+    ensemble_sampling_configuration_1 = EnsembleSampling(
+        realizations=count,
+        seed=42,
+    )
+
+    result = solver.ensemble(
+        medium=medium,
+        grid=grid,
+        ensemble_sampling=ensemble_sampling_configuration_1,
+        sampling=sampling,
+    )
+
+    averaged = result.azimuth_average()
+
+    values = averaged.differential.to("1 / meter / steradian").magnitude[0]
+
+    stderr = averaged.stderr.to("1 / meter / steradian").magnitude[0]
+
+    axis.errorbar(
+        result.angles.to("degree").magnitude, values, yerr=None if count == 1 else stderr, label=f"N = {count}"
+    )
+
+    means.append(values[0])
+
+    errors.append(stderr[0])
+
+axis.set(
+    xlabel="Scattering angle (degrees)",
+    ylabel="Differential scattering (m⁻¹ sr⁻¹)",
+    title="Finite-sample ensemble means",
+)
+
+axis.legend()
+
+axis.grid(alpha=0.25)
+
+# %%
+# Sampling error at a fixed direction
+# -----------------------------------
+# These are nested ensembles, using the first N consecutive seeds. Their
+# estimates are correlated across N. A realized error need not decrease
+# monotonically; the N**(-1/2) guide describes independent-sample scaling.
+figure, axis = plt.subplots(layout="constrained")
+
+axis.loglog(counts[1:], errors[1:], "o-", label="Forward-scattering standard error")
+
+axis.loglog(counts[1:], errors[-1] * np.sqrt(counts[-1] / np.array(counts[1:])), "--", label="N⁻¹ᐟ² guide")
+
+axis.set(
+    xlabel="Independent realizations N", ylabel="Standard error (m⁻¹ sr⁻¹)", title="Sampling uncertainty at θ = 0°"
+)
+
+axis.legend()
+
+axis.grid(alpha=0.25, which="both")
+
+plt.show()
+
+# %%
+# Inspect one ensemble realization in 3D
+# --------------------------------------
+# This is the first realization (seed 42) on the calculation grid,
+# not an ensemble average or an infinite-medium material boundary.
+# Drag to rotate and scroll to zoom in the embedded browser view.
+# Regions with higher refractive index are more opaque; opacity is not absorption.
+preview_volume = medium.to_volume(
+    grid=grid,
+    seed=42,
+)
+
+medium_figure = preview_volume.plot_3d(
+    mode="volume",
+    field="refractive_index",
+    opacity_scale="increasing",
+)
+
+if "--no-browser" not in sys.argv:
+    medium_figure.show(renderer="browser")
