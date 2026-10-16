@@ -157,7 +157,14 @@ def create_release(tag: str, version: str) -> None:
         "bornsim/_version.py",
     )
 
-    run("git", "commit", "-m", f"Release {tag}")
+    run(
+        "git",
+        "commit",
+        "-m",
+        f"Release {tag}",
+        "-m",
+        "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>",
+    )
 
     run("git", "tag", "-a", tag, "-m", f"Release {tag}")
 

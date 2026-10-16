@@ -31,6 +31,7 @@ extensions = [
 html_theme = "pydata_sphinx_theme"
 
 html_static_path = ["_static"]
+html_css_files = ["layout.css"]
 
 html_logo = "_static/logo.png"
 
@@ -39,7 +40,7 @@ html_favicon = "_static/favicon.png"
 html_theme_options = {
     "logo": {"alt_text": "BornSim"},
     "show_nav_level": 0,
-    "navbar_align": "left",
+    "navbar_align": "content",
     "navbar_end": ["version-switcher", "theme-switcher", "navbar-icon-links"],
     "icon_links": [
         {
