@@ -30,12 +30,14 @@
   <link href="../../_static/styles/theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=c83e6b79" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/martinpdes_layout.css?v=a8cc01cd" />
     <link rel="stylesheet" type="text/css" href="../../_static/layout.css?v=dc96f8db" />
   
   <!-- So that users can add custom icons -->
@@ -44,7 +46,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="../../_static/documentation_options.js?v=b9afe91b"></script>
+    <script src="../../_static/documentation_options.js?v=d9b85e4f"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -58,7 +60,7 @@
             true;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../../_static/favicon.svg"/>
+    <link rel="icon" href="../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Normalized phase function" href="phase_function.html" />
@@ -135,9 +137,11 @@
     
     
     
-    <img src="../../_static/logo.svg" class="logo__image only-dark" alt="BornSim"/>
-    <img src="../../_static/logo.svg" class="logo__image only-light pst-js-only" alt="BornSim"/>
+    <img src="../../_static/logo.png" class="logo__image only-dark" alt=""/>
+    <img src="../../_static/logo.png" class="logo__image only-light pst-js-only" alt=""/>
   
+  
+    <p class="title logo__title">BornSim</p>
   
 </a></div>
     
@@ -231,21 +235,6 @@
   </div>
 </div></div>
       
-        <div class="navbar-item">
-
-<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
-    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
-  </button>
-  <ul class="dropdown-menu dropdown-menu-end">
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
-  </ul>
-</div></div>
-      
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
         <li class="nav-item">
@@ -258,6 +247,28 @@
           
           
           <a href="https://github.com/MartinPdeS/BornSim" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/BornSim/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-solid fa-box fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://anaconda.org/MartinPdeS/BornSim" title="Anaconda" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">Anaconda</span></a>
         </li>
 </ul></div>
       
@@ -378,21 +389,6 @@
   </div>
 </div></div>
         
-          <div class="navbar-item">
-
-<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
-    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
-  </button>
-  <ul class="dropdown-menu dropdown-menu-end">
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
-  </ul>
-</div></div>
-        
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
         <li class="nav-item">
@@ -405,6 +401,28 @@
           
           
           <a href="https://github.com/MartinPdeS/BornSim" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/BornSim/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-solid fa-box fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://anaconda.org/MartinPdeS/BornSim" title="Anaconda" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">Anaconda</span></a>
         </li>
 </ul></div>
         
@@ -519,39 +537,39 @@ to resolve each sphere, and use small refractive index contrast for Born scatter
 <div class="line"><br /></div>
 </div>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="nn">.</span><span class="nn">pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span><span class="w">
-</span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">Grid</span></a><span class="w">
-</span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="nn">.</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_spheres.RandomSphereMedium" title="bornsim.RandomSphereMedium"><span class="nn">medium</span></a><span class="nn">.</span><span class="nn">random_spheres</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.medium.random_spheres.RandomSphereMedium" title="bornsim.RandomSphereMedium"><span class="n">RandomSphereMedium</span></a><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="nn">.</span><span class="nn">medium</span><span class="nn">.</span><span class="nn">random_spheres</span><span class="w"> </span><span class="kn">import</span> <span class="n">RandomSphereMedium</span><span class="w">
 </span><span class="kn">from</span><span class="w"> </span><span class="nn">bornsim</span><span class="nn">.</span><span class="nn">units</span><span class="w"> </span><span class="kn">import</span> <span class="n">ureg</span><span class="w">
 </span><span class="w">
 </span><span class="w">
-</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">Grid</span></a><span class="p">(</span><span class="w">
+</span><span class="n">grid</span> <span class="o">=</span> <span class="n">Grid</span><span class="p">(</span><span class="w">
 </span>    <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span><span class="p">,</span><span class="w">
 </span>    <span class="n">spacing</span><span class="o">=</span><span class="mi">25</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
 </span><span class="w">
-</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_spheres.RandomSphereMedium" title="bornsim.RandomSphereMedium"><span class="n">medium</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.medium.random_spheres.RandomSphereMedium" title="bornsim.RandomSphereMedium"><span class="n">RandomSphereMedium</span></a><span class="p">(</span><span class="w">
+</span><span class="n">medium</span> <span class="o">=</span> <span class="n">RandomSphereMedium</span><span class="p">(</span><span class="w">
 </span>    <span class="n">background_refractive_index</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span><span class="w">
 </span>    <span class="n">sphere_refractive_index</span><span class="o">=</span><span class="mf">1.35</span><span class="p">,</span><span class="w">
 </span>    <span class="n">radius</span><span class="o">=</span><span class="mi">40</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">,</span><span class="w">
 </span>    <span class="n">sphere_count</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
 </span><span class="w">
-</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">volume</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.medium.random_spheres.RandomSphereMedium.to_volume" title="bornsim.RandomSphereMedium.to_volume"><span class="n">medium</span><span class="o">.</span><span class="n">to_volume</span></a><span class="p">(</span><span class="w">
-</span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="p">,</span><span class="w">
+</span><span class="n">volume</span> <span class="o">=</span> <span class="n">medium</span><span class="o">.</span><span class="n">to_volume</span><span class="p">(</span><span class="w">
+</span>    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span><span class="w">
 </span>    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
 </span><span class="w">
-</span><span class="n">figure</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.volume.Volume.plot_3d" title="bornsim.Volume.plot_3d"><span class="n">volume</span><span class="o">.</span><span class="n">plot_3d</span></a><span class="p">(</span><span class="w">
+</span><span class="n">figure</span> <span class="o">=</span> <span class="n">volume</span><span class="o">.</span><span class="n">plot_3d</span><span class="p">(</span><span class="w">
 </span>    <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">matplotlib</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
 </span>    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">voxels</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
 </span>    <span class="n">field</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">refractive_index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
 </span><span class="w">
-</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Generated </span><span class="si">{</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_spheres.RandomSphereMedium" title="bornsim.RandomSphereMedium"><span class="n">medium</span></a><span class="o">.</span><span class="n">sphere_count</span><span class="si">}</span><span class="s2"> nonoverlapping spheres with radius </span><span class="si">{</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_spheres.RandomSphereMedium" title="bornsim.RandomSphereMedium"><span class="n">medium</span></a><span class="o">.</span><span class="n">radius</span><span class="si">:</span><span class="s2">~P</span><span class="si">}</span><span class="s2">.</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Generated </span><span class="si">{</span><span class="n">medium</span><span class="o">.</span><span class="n">sphere_count</span><span class="si">}</span><span class="s2"> nonoverlapping spheres with radius </span><span class="si">{</span><span class="n">medium</span><span class="o">.</span><span class="n">radius</span><span class="si">:</span><span class="s2">~P</span><span class="si">}</span><span class="s2">.</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span><span class="w">
 </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.395 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.281 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-random-media-random-spheres-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/5c244e2ac8d986d5c0ba594dd1774acb/random_spheres.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">random_spheres.ipynb</span></code></a></p>
@@ -580,6 +598,22 @@ to resolve each sphere, and use small refractive index contrast for Born scatter
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/MartinPdeS/BornSim/edit/master/docs/source/auto_examples/random_media/random_spheres.rst">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
 
   <div class="sidebar-secondary-item">
 
@@ -615,7 +649,7 @@ to resolve each sphere, and use small refractive index contrast for Born scatter
 
   <p class="copyright">
     
-      © Copyright 2026, Martin Poinsinet de Sivry-Houle.
+      © Copyright Martin Poinsinet de Sivry-Houle.
       <br/>
     
   </p>

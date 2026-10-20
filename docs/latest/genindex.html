@@ -29,12 +29,14 @@
   <link href="_static/styles/theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
 <link href="_static/styles/pydata-sphinx-theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=c83e6b79" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="_static/martinpdes_layout.css?v=a8cc01cd" />
     <link rel="stylesheet" type="text/css" href="_static/layout.css?v=dc96f8db" />
   
   <!-- So that users can add custom icons -->
@@ -43,7 +45,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
 
-    <script src="_static/documentation_options.js?v=b9afe91b"></script>
+    <script src="_static/documentation_options.js?v=d9b85e4f"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/sg-tags.js?v=d80f6fa4"></script>
@@ -57,7 +59,7 @@
             true;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="_static/favicon.svg"/>
+    <link rel="icon" href="_static/favicon.png"/>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -132,9 +134,11 @@
     
     
     
-    <img src="_static/logo.svg" class="logo__image only-dark" alt="BornSim"/>
-    <img src="_static/logo.svg" class="logo__image only-light pst-js-only" alt="BornSim"/>
+    <img src="_static/logo.png" class="logo__image only-dark" alt=""/>
+    <img src="_static/logo.png" class="logo__image only-light pst-js-only" alt=""/>
   
+  
+    <p class="title logo__title">BornSim</p>
   
 </a></div>
     
@@ -228,21 +232,6 @@
   </div>
 </div></div>
       
-        <div class="navbar-item">
-
-<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
-    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
-  </button>
-  <ul class="dropdown-menu dropdown-menu-end">
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
-  </ul>
-</div></div>
-      
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
         <li class="nav-item">
@@ -255,6 +244,28 @@
           
           
           <a href="https://github.com/MartinPdeS/BornSim" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/BornSim/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-solid fa-box fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://anaconda.org/MartinPdeS/BornSim" title="Anaconda" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">Anaconda</span></a>
         </li>
 </ul></div>
       
@@ -373,21 +384,6 @@
   </div>
 </div></div>
         
-          <div class="navbar-item">
-
-<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
-    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
-  </button>
-  <ul class="dropdown-menu dropdown-menu-end">
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
-  </ul>
-</div></div>
-        
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
         <li class="nav-item">
@@ -400,6 +396,28 @@
           
           
           <a href="https://github.com/MartinPdeS/BornSim" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/BornSim/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-solid fa-box fa-lg" aria-hidden="true"></i><span class="visually-hidden">PyPI</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://anaconda.org/MartinPdeS/BornSim" title="Anaconda" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i><span class="visually-hidden">Anaconda</span></a>
         </li>
 </ul></div>
         
@@ -439,78 +457,13 @@
 <h1 id="index">Index</h1>
 
 <div class="genindex-jumpbox">
- <a href="#A"><strong>A</strong></a>
- | <a href="#B"><strong>B</strong></a>
- | <a href="#C"><strong>C</strong></a>
- | <a href="#D"><strong>D</strong></a>
- | <a href="#E"><strong>E</strong></a>
- | <a href="#F"><strong>F</strong></a>
- | <a href="#G"><strong>G</strong></a>
- | <a href="#I"><strong>I</strong></a>
- | <a href="#L"><strong>L</strong></a>
+ <a href="#B"><strong>B</strong></a>
  | <a href="#M"><strong>M</strong></a>
- | <a href="#O"><strong>O</strong></a>
- | <a href="#P"><strong>P</strong></a>
- | <a href="#R"><strong>R</strong></a>
- | <a href="#S"><strong>S</strong></a>
- | <a href="#T"><strong>T</strong></a>
- | <a href="#V"><strong>V</strong></a>
- | <a href="#W"><strong>W</strong></a>
  
 </div>
-<h2 id="A">A</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.geometry.StructuredMedium.add_background">add_background() (bornsim.geometry.StructuredMedium method)</a>
-
-      <ul>
-        <li><a href="api.html#bornsim.medium.base.Medium.add_background">(bornsim.medium.base.Medium method)</a>
-</li>
-      </ul></li>
-      <li><a href="api.html#bornsim.geometry.StructuredMedium.add_fluctuations">add_fluctuations() (bornsim.geometry.StructuredMedium method)</a>
-</li>
-      <li><a href="api.html#bornsim.geometry.StructuredMedium.add_structures">add_structures() (bornsim.geometry.StructuredMedium method)</a>
-
-      <ul>
-        <li><a href="api.html#bornsim.medium.base.Medium.add_structures">(bornsim.medium.base.Medium method)</a>
-</li>
-      </ul></li>
-      <li><a href="api.html#bornsim.results.Result.amplitudes">amplitudes (bornsim.results.Result property)</a>
-</li>
-      <li><a href="api.html#bornsim.results.Result.angles">angles (bornsim.results.Result property)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.angular_data.AngularData">AngularData (class in bornsim.angular_data)</a>
-</li>
-      <li><a href="api.html#bornsim.sampling.AngularSampling">AngularSampling (class in bornsim.sampling)</a>
-</li>
-      <li><a href="api.html#bornsim.angular_data.AngularData.azimuth_average">azimuth_average() (bornsim.angular_data.AngularData method)</a>
-
-      <ul>
-        <li><a href="api.html#bornsim.results.Result.azimuth_average">(bornsim.results.Result method)</a>
-</li>
-      </ul></li>
-      <li><a href="api.html#bornsim.results.Result.azimuth_averaged">azimuth_averaged (bornsim.results.Result property)</a>
-</li>
-      <li><a href="api.html#bornsim.results.Result.azimuth_stderr">azimuth_stderr (bornsim.results.Result property)</a>
-</li>
-      <li><a href="api.html#bornsim.results.Result.azimuths">azimuths (bornsim.results.Result property)</a>
-
-      <ul>
-        <li><a href="api.html#bornsim.sampling.AngularSampling.azimuths">(bornsim.sampling.AngularSampling property)</a>
-</li>
-      </ul></li>
-  </ul></td>
-</tr></table>
-
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.results.BornResult">BornResult (class in bornsim.results)</a>
-</li>
-      <li><a href="api.html#bornsim.series.BornSeries">BornSeries (class in bornsim.series)</a>
-</li>
       <li>
     bornsim.angular_data
 
@@ -639,171 +592,11 @@
         <li><a href="api.html#module-bornsim.volume">module</a>
 </li>
       </ul></li>
-      <li><a href="api.html#bornsim.geometry.Box">Box (class in bornsim.geometry)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="C">C</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.sampling.AngularSampling.check_work">check_work() (bornsim.sampling.AngularSampling method)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.medium.random_medium.RandomFieldMedium.correlation">correlation (bornsim.medium.random_medium.RandomFieldMedium property)</a>
-</li>
-      <li><a href="api.html#bornsim.geometry.Cylinder">Cylinder (class in bornsim.geometry)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="D">D</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.results.Result.differential">differential (bornsim.results.Result property)</a>
-</li>
-      <li><a href="api.html#bornsim.angular_data.AngularData.differential_cross_section">differential_cross_section (bornsim.angular_data.AngularData property)</a>
-
-      <ul>
-        <li><a href="api.html#bornsim.results.Result.differential_cross_section">(bornsim.results.Result property)</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.results.Result.directions">directions (bornsim.results.Result property)</a>
-
-      <ul>
-        <li><a href="api.html#bornsim.sampling.AngularSampling.directions">(bornsim.sampling.AngularSampling property)</a>
-</li>
-      </ul></li>
-      <li><a href="api.html#bornsim.directions.Directions">Directions (class in bornsim.directions)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="E">E</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.geometry.Ellipsoid">Ellipsoid (class in bornsim.geometry)</a>
-</li>
-      <li><a href="api.html#bornsim.solver.Solver.ensemble">ensemble() (bornsim.solver.Solver method)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.ensemble.ensemble_scattering">ensemble_scattering() (in module bornsim.ensemble)</a>
-</li>
-      <li><a href="api.html#bornsim.ensemble_sampling.EnsembleSampling">EnsembleSampling (class in bornsim.ensemble_sampling)</a>
-</li>
-      <li><a href="api.html#bornsim.medium.random_medium.ExponentialMedium">ExponentialMedium (class in bornsim.medium.random_medium)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="F">F</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.directions.Directions.from_angles">from_angles() (bornsim.directions.Directions class method)</a>
-</li>
-      <li><a href="api.html#bornsim.geometry.Layer.from_center_and_thickness">from_center_and_thickness() (bornsim.geometry.Layer class method)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.grid.Grid.from_extent">from_extent() (bornsim.grid.Grid class method)</a>
-</li>
-      <li><a href="api.html#bornsim.volume.Volume.from_refractive_index">from_refractive_index() (bornsim.volume.Volume class method)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="G">G</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.medium.random_medium.GaussianMedium">GaussianMedium (class in bornsim.medium.random_medium)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.grid.Grid">Grid (class in bornsim.grid)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="I">I</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.geometry.StructuredMedium.is_random">is_random (bornsim.geometry.StructuredMedium property)</a>
-
-      <ul>
-        <li><a href="api.html#bornsim.medium.base.Medium.is_random">(bornsim.medium.base.Medium property)</a>
-</li>
-        <li><a href="api.html#bornsim.medium.random_medium.RandomFieldMedium.is_random">(bornsim.medium.random_medium.RandomFieldMedium property)</a>
-</li>
-        <li><a href="api.html#bornsim.medium.random_spheres.RandomSphereMedium.is_random">(bornsim.medium.random_spheres.RandomSphereMedium property)</a>
-</li>
-      </ul></li>
-  </ul></td>
-</tr></table>
-
-<h2 id="L">L</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.geometry.Layer">Layer (class in bornsim.geometry)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.results.Result.load">load() (bornsim.results.Result class method)</a>
-</li>
   </ul></td>
 </tr></table>
 
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.geometry.Box.mask">mask() (bornsim.geometry.Box method)</a>
-
-      <ul>
-        <li><a href="api.html#bornsim.geometry.Cylinder.mask">(bornsim.geometry.Cylinder method)</a>
-</li>
-        <li><a href="api.html#bornsim.geometry.Ellipsoid.mask">(bornsim.geometry.Ellipsoid method)</a>
-</li>
-        <li><a href="api.html#bornsim.geometry.Layer.mask">(bornsim.geometry.Layer method)</a>
-</li>
-        <li><a href="api.html#bornsim.geometry.Sphere.mask">(bornsim.geometry.Sphere method)</a>
-</li>
-      </ul></li>
-      <li><a href="api.html#bornsim.material.Material">Material (class in bornsim.material)</a>
-</li>
-      <li><a href="api.html#bornsim.rotation.Rotation.matrix">matrix (bornsim.rotation.Rotation property)</a>
-</li>
-      <li><a href="api.html#bornsim.medium.base.Medium">Medium (class in bornsim.medium.base)</a>
-</li>
-      <li><a href="api.html#bornsim.volume.Volume.medium_metadata">medium_metadata (bornsim.volume.Volume property)</a>
-</li>
-      <li><a href="api.html#bornsim.angular_data.AngularData.meridian">meridian() (bornsim.angular_data.AngularData method)</a>
-
-      <ul>
-        <li><a href="api.html#bornsim.results.Result.meridian">(bornsim.results.Result method)</a>
-</li>
-      </ul></li>
-      <li><a href="api.html#bornsim.ensemble_sampling.EnsembleSampling.metadata">metadata (bornsim.ensemble_sampling.EnsembleSampling property)</a>
-
-      <ul>
-        <li><a href="api.html#bornsim.geometry.StructuredMedium.metadata">(bornsim.geometry.StructuredMedium property)</a>
-</li>
-        <li><a href="api.html#bornsim.grid.Grid.metadata">(bornsim.grid.Grid property)</a>
-</li>
-        <li><a href="api.html#bornsim.material.Material.metadata">(bornsim.material.Material property)</a>
-</li>
-        <li><a href="api.html#bornsim.medium.base.Medium.metadata">(bornsim.medium.base.Medium property)</a>
-</li>
-        <li><a href="api.html#bornsim.medium.random_medium.RandomFieldMedium.metadata">(bornsim.medium.random_medium.RandomFieldMedium property)</a>
-</li>
-        <li><a href="api.html#bornsim.medium.random_spheres.RandomSphereMedium.metadata">(bornsim.medium.random_spheres.RandomSphereMedium property)</a>
-</li>
-        <li><a href="api.html#bornsim.sampling.AngularSampling.metadata">(bornsim.sampling.AngularSampling property)</a>
-</li>
-      </ul></li>
-  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     module
@@ -846,162 +639,6 @@
         <li><a href="api.html#module-bornsim.volume">bornsim.volume</a>
 </li>
       </ul></li>
-      <li><a href="api.html#bornsim.results.Result.mu_s">mu_s (bornsim.results.Result property)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="O">O</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.series.BornSeries.operator">operator (bornsim.series.BornSeries attribute)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="P">P</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.angular_data.AngularData.phase_function">phase_function (bornsim.angular_data.AngularData property)</a>
-
-      <ul>
-        <li><a href="api.html#bornsim.results.Result.phase_function">(bornsim.results.Result property)</a>
-</li>
-      </ul></li>
-      <li><a href="api.html#bornsim.angular_data.AngularData.plot">plot() (bornsim.angular_data.AngularData method)</a>
-
-      <ul>
-        <li><a href="api.html#bornsim.results.Result.plot">(bornsim.results.Result method)</a>
-</li>
-      </ul></li>
-      <li><a href="api.html#bornsim.volume.Volume.plot_3d">plot_3d() (bornsim.volume.Volume method)</a>
-</li>
-      <li><a href="api.html#bornsim.results.Result.plot_cross_section">plot_cross_section() (bornsim.results.Result method)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.results.Result.plot_field_norms">plot_field_norms() (bornsim.results.Result method)</a>
-</li>
-      <li><a href="api.html#bornsim.angular_data.AngularData.plot_phase_function">plot_phase_function() (bornsim.angular_data.AngularData method)</a>
-
-      <ul>
-        <li><a href="api.html#bornsim.results.Result.plot_phase_function">(bornsim.results.Result method)</a>
-</li>
-      </ul></li>
-      <li><a href="api.html#bornsim.volume.Volume.plot_slice">plot_slice() (bornsim.volume.Volume method)</a>
-</li>
-      <li><a href="api.html#bornsim.grid.Grid.positions">positions (bornsim.grid.Grid property)</a>
-
-      <ul>
-        <li><a href="api.html#bornsim.volume.Volume.positions">(bornsim.volume.Volume property)</a>
-</li>
-      </ul></li>
-      <li><a href="api.html#bornsim.results.Result.provenance">provenance (bornsim.results.Result property)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="R">R</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.medium.random_medium.RandomFieldMedium">RandomFieldMedium (class in bornsim.medium.random_medium)</a>
-</li>
-      <li><a href="api.html#bornsim.medium.random_spheres.RandomSphereMedium">RandomSphereMedium (class in bornsim.medium.random_spheres)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.volume.Volume.refractive_index">refractive_index (bornsim.volume.Volume property)</a>
-</li>
-      <li><a href="api.html#bornsim.results.Result">Result (class in bornsim.results)</a>
-</li>
-      <li><a href="api.html#bornsim.rotation.Rotation">Rotation (class in bornsim.rotation)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="S">S</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.results.Result.sample_volume">sample_volume (bornsim.results.Result property)</a>
-</li>
-      <li><a href="api.html#bornsim.results.Result.save">save() (bornsim.results.Result method)</a>
-</li>
-      <li><a href="api.html#bornsim.series.BornSeries.solve">solve() (bornsim.series.BornSeries method)</a>
-
-      <ul>
-        <li><a href="api.html#bornsim.solver.Solver.solve">(bornsim.solver.Solver method)</a>
-</li>
-      </ul></li>
-      <li><a href="api.html#bornsim.solver.Solver.solve_cut">solve_cut() (bornsim.solver.Solver method)</a>
-</li>
-      <li><a href="api.html#bornsim.solver.Solver">Solver (class in bornsim.solver)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.source.Source">Source (class in bornsim.source)</a>
-</li>
-      <li><a href="api.html#bornsim.medium.random_medium.RandomFieldMedium.spectral_weight">spectral_weight() (bornsim.medium.random_medium.RandomFieldMedium method)</a>
-</li>
-      <li><a href="api.html#bornsim.geometry.Sphere">Sphere (class in bornsim.geometry)</a>
-</li>
-      <li><a href="api.html#bornsim.medium.random_spheres.RandomSphereMedium.sphere_centers">sphere_centers() (bornsim.medium.random_spheres.RandomSphereMedium method)</a>
-</li>
-      <li><a href="api.html#bornsim.results.Result.stderr">stderr (bornsim.results.Result property)</a>
-</li>
-      <li><a href="api.html#bornsim.geometry.StructuredMedium">StructuredMedium (class in bornsim.geometry)</a>
-</li>
-      <li><a href="api.html#bornsim.sampling.AngularSampling.summarize">summarize() (bornsim.sampling.AngularSampling method)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="T">T</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.results.Result.term_differential">term_differential (bornsim.results.Result property)</a>
-</li>
-      <li><a href="api.html#bornsim.geometry.StructuredMedium.to_volume">to_volume() (bornsim.geometry.StructuredMedium method)</a>
-
-      <ul>
-        <li><a href="api.html#bornsim.medium.base.Medium.to_volume">(bornsim.medium.base.Medium method)</a>
-</li>
-        <li><a href="api.html#bornsim.medium.random_medium.RandomFieldMedium.to_volume">(bornsim.medium.random_medium.RandomFieldMedium method)</a>
-</li>
-        <li><a href="api.html#bornsim.medium.random_spheres.RandomSphereMedium.to_volume">(bornsim.medium.random_spheres.RandomSphereMedium method)</a>
-</li>
-      </ul></li>
-  </ul></td>
-</tr></table>
-
-<h2 id="V">V</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.units.validate_units">validate_units() (in module bornsim.units)</a>
-</li>
-      <li><a href="api.html#bornsim.grid.Grid.volume">volume (bornsim.grid.Grid property)</a>
-
-      <ul>
-        <li><a href="api.html#bornsim.volume.Volume.volume">(bornsim.volume.Volume property)</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.volume.Volume">Volume (class in bornsim.volume)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="W">W</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.results.BornResult.warnings">warnings (bornsim.results.BornResult attribute)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#bornsim.source.Source.wavelength">wavelength (bornsim.source.Source attribute)</a>
-</li>
-      <li><a href="api.html#bornsim.medium.random_medium.WhittleMaternMedium">WhittleMaternMedium (class in bornsim.medium.random_medium)</a>
-</li>
   </ul></td>
 </tr></table>
 
@@ -1040,7 +677,7 @@
 
   <p class="copyright">
     
-      © Copyright 2026, Martin Poinsinet de Sivry-Houle.
+      © Copyright Martin Poinsinet de Sivry-Houle.
       <br/>
     
   </p>

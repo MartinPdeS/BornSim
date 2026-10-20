@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:09.212** total execution time for 3 files **from auto_examples/structured_media**:
+**00:06.595** total execution time for 3 files **from auto_examples/structured_media**:
 
 .. container::
 
@@ -33,11 +33,11 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_auto_examples_structured_media_theory_directional_interference.py` (``theory_directional_interference.py``)
-     - 00:04.675
+     - 00:03.330
      - 0.0
    * - :ref:`sphx_glr_auto_examples_structured_media_dielectric_sphere.py` (``dielectric_sphere.py``)
-     - 00:04.204
+     - 00:03.017
      - 0.0
    * - :ref:`sphx_glr_auto_examples_structured_media_structured_media.py` (``structured_media.py``)
-     - 00:00.333
+     - 00:00.248
      - 0.0
