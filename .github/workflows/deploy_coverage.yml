@@ -8,42 +8,13 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 jobs:
   coverage:
-    name: Run tests and generate coverage data
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install headless dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y xvfb
-
-      - name: Set up Python and CI dependencies
-        uses: MartinPdeS/MPSActions/actions/setup-python@0f5927acf88b25b5d253421e508387897096a2cc
-        with:
-          python-version: "3.11"
-          install-command: >-
-            python -m pip install --upgrade pip wheel build && python -m pip install -e ".[testing]"
-          fetch-depth: 0
-
-      - name: Run pytest with coverage
-        run: |
-          python -m pytest \
-            --cov=bornsim \
-            --import-mode=importlib \
-            --cov-config=.coveragerc \
-            --cov-report=term-missing \
-            --cov-report=xml:coverage.xml \
-            tests \
-            --config-file=pytest.ini
-
-      - name: Post coverage comment
-        uses: py-cov-action/python-coverage-comment-action@a05be3d2e8a6272d3ef5fb2840ab20368bb2eb71
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MINIMUM_GREEN: 90
-          MINIMUM_ORANGE: 50
-          COVERAGE_PATH: .
+    uses: MartinPdeS/MPSActions/.github/workflows/publish_coverage.yml@a01969bc5af90666281f9d37acffdf6a4629763a
+    with:
+      python-version: "3.11"
+      apt-package: "xvfb"
+      coverage-package: "bornsim"
+    secrets:
+      _GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

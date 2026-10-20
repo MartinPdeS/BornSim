@@ -18,7 +18,8 @@ requirements:
   run:
     - python {{ PY_VER }}.*
     - numpy >=1.24,<3
-    - typedunit ==0.0.11
+    - typedunit >=0.2.9
+    - pint >=0.24,<0.26
     - matplotlib >=3.7,<4
     - plotly >=6,<7
 
