@@ -7,7 +7,26 @@ BornSim
 
 **Vector Born-series scattering from continuous, isotropic random media.**
 
-|python| |docs| |tests| |quality| |coverage| |release| |license|
+.. list-table::
+   :widths: 50 50
+   :width: 100%
+   :header-rows: 0
+   :class: badge-table
+
+   * - Python
+     - |python|
+   * - Documentation
+     - |docs|
+   * - Tests
+     - |tests|
+   * - Quality
+     - |quality|
+   * - Coverage
+     - |coverage|
+   * - Release
+     - |release|
+   * - License
+     - |license|
 
 BornSim models how light scatters from three-dimensional refractive-index
 fluctuations. Build a random or structured medium, solve its coherent Born
