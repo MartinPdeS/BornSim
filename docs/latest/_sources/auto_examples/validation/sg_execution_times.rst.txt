@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:02.852** total execution time for 4 files **from auto_examples/validation**:
+**00:02.043** total execution time for 4 files **from auto_examples/validation**:
 
 .. container::
 
@@ -32,15 +32,15 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_auto_examples_validation_angular_convergence.py` (``angular_convergence.py``)
-     - 00:01.015
-     - 0.0
    * - :ref:`sphx_glr_auto_examples_validation_finite_size_comparison.py` (``finite_size_comparison.py``)
-     - 00:00.837
+     - 00:00.649
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_validation_angular_convergence.py` (``angular_convergence.py``)
+     - 00:00.621
      - 0.0
    * - :ref:`sphx_glr_auto_examples_validation_ensemble_sampling.py` (``ensemble_sampling.py``)
-     - 00:00.696
+     - 00:00.531
      - 0.0
    * - :ref:`sphx_glr_auto_examples_validation_grid_refinement.py` (``grid_refinement.py``)
-     - 00:00.305
+     - 00:00.243
      - 0.0
