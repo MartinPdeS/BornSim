@@ -55,7 +55,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.19.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/BornSim/documentation_page/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'latest';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.4';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
@@ -63,7 +63,7 @@
     <link rel="icon" href="../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Random nonoverlapping spheres" href="random_spheres.html" />
+    <link rel="next" title="Gaussian and exponential spatial covariance" href="covariance_models.html" />
     <link rel="prev" title="Example gallery" href="../index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -516,24 +516,24 @@
   <section id="random-media">
 <span id="sphx-glr-auto-examples-random-media"></span><h1>Random media<a class="headerlink" href="#random-media" title="Link to this heading">#</a></h1>
 <p>Seeded random fields, numerical ensembles, phase functions, and wavelength dependence.</p>
-<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Generate a reproducible collection of identical spheres in a uniform background. Sphere centres are proposed uniformly within the part of the box that keeps each sphere fully inside. Overlapping proposals are rejected; the generator raises an error if it cannot place every requested sphere within its attempt limit. This is sequential placement, rather than an equilibrium hard-sphere model."><img alt="" src="../../_images/sphx_glr_random_spheres_thumb.png" />
-<p><a class="reference internal" href="random_spheres.html"><span class="doc">Random nonoverlapping spheres</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Random nonoverlapping spheres</div>
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Compare two covariance models with the same refractive index standard deviation and the same length parameter. Their definitions differ: Gaussian covariance is sigma_n2  exp(-r2 / (2  ell2)), while exponential covariance is sigma_n2 * exp(-r / ell). Equal parameters therefore do not give identical real-space profiles or scattering spectra. Here, r is the distance between two points in the medium. The covariance describes how their refractive-index fluctuations vary together as that distance increases."><img alt="" src="../../_images/sphx_glr_covariance_models_thumb.png" />
+<p><a class="reference internal" href="covariance_models.html"><span class="doc">Gaussian and exponential spatial covariance</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Gaussian and exponential spatial covariance</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="Compare finite-sample ensemble phase functions for three Gaussian covariance lengths at a vacuum wavelength of 633 nm. The phase function is a probability density per steradian, normalized over solid angle. The corresponding polar-angle density includes the factor 2pisin(theta) and integrates over radians."><img alt="" src="../../_images/sphx_glr_phase_function_thumb.png" />
 <p><a class="reference internal" href="phase_function.html"><span class="doc">Normalized phase function</span></a></p>
   <div class="sphx-glr-thumbnail-title">Normalized phase function</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="Sweep vacuum wavelength at fixed background refractive index, refractive-index fluctuation strength, and Gaussian covariance length. Total scattering and reduced scattering are different observables: forward scattering increases anisotropy and reduces the contribution to mu_s_prime = mu_s * (1 - g)."><img alt="" src="../../_images/sphx_glr_wavelength_dependence_thumb.png" />
-<p><a class="reference internal" href="wavelength_dependence.html"><span class="doc">Wavelength dependence of scattering and anisotropy</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Wavelength dependence of scattering and anisotropy</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="Compare two covariance models with the same refractive index standard deviation and the same length parameter. Their definitions differ: Gaussian covariance is sigma_n2  exp(-r2 / (2  ell2)), while exponential covariance is sigma_n2 * exp(-r / ell). Equal parameters therefore do not give identical real-space profiles or scattering spectra. Here, r is the distance between two points in the medium. The covariance describes how their refractive-index fluctuations vary together as that distance increases."><img alt="" src="../../_images/sphx_glr_covariance_models_thumb.png" />
-<p><a class="reference internal" href="covariance_models.html"><span class="doc">Gaussian and exponential spatial covariance</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Gaussian and exponential spatial covariance</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="Explore the full three-dimensional sample for each spatial covariance model. Drag to rotate, scroll to zoom, and hover to inspect the refractive index. Regions with lower refractive index are transparent; regions with higher refractive index are more opaque. Opacity is a display setting, not absorption. Histograms and central slices follow as secondary checks of the same seeded fields."><img alt="" src="../../_images/sphx_glr_random_medium_thumb.png" />
 <p><a class="reference internal" href="random_medium.html"><span class="doc">Visualize seeded three-dimensional random media</span></a></p>
   <div class="sphx-glr-thumbnail-title">Visualize seeded three-dimensional random media</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Generate a reproducible collection of identical spheres in a uniform background. Sphere centres are proposed uniformly within the part of the box that keeps each sphere fully inside. Overlapping proposals are rejected; the generator raises an error if it cannot place every requested sphere within its attempt limit. This is sequential placement, rather than an equilibrium hard-sphere model."><img alt="" src="../../_images/sphx_glr_random_spheres_thumb.png" />
+<p><a class="reference internal" href="random_spheres.html"><span class="doc">Random nonoverlapping spheres</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Random nonoverlapping spheres</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="Gaussian probability distributions and spatial covariance are separate choices. These simulations compare Gaussian, exponential and Matérn covariances using the same refractive-index standard deviation and correlation length. The plotted covariance estimate averages products within each realization, then averages independent realizations. No spatial sample mean is removed."><img alt="" src="../../_images/sphx_glr_theory_random_fields_thumb.png" />
 <p><a class="reference internal" href="theory_random_fields.html"><span class="doc">Theory figure: covariance and simulated random fields</span></a></p>
   <div class="sphx-glr-thumbnail-title">Theory figure: covariance and simulated random fields</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Sweep vacuum wavelength at fixed background refractive index, refractive-index fluctuation strength, and Gaussian covariance length. Total scattering and reduced scattering are different observables: forward scattering increases anisotropy and reduces the contribution to mu_s_prime = mu_s * (1 - g)."><img alt="" src="../../_images/sphx_glr_wavelength_dependence_thumb.png" />
+<p><a class="reference internal" href="wavelength_dependence.html"><span class="doc">Wavelength dependence of scattering and anisotropy</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Wavelength dependence of scattering and anisotropy</div>
 </div></div><div class="toctree-wrapper compound">
 </div>
 </section>

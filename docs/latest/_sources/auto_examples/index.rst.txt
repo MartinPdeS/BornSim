@@ -60,18 +60,18 @@ Seeded random fields, numerical ensembles, phase functions, and wavelength depen
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Generate a reproducible collection of identical spheres in a uniform background. Sphere centres are proposed uniformly within the part of the box that keeps each sphere fully inside. Overlapping proposals are rejected; the generator raises an error if it cannot place every requested sphere within its attempt limit. This is sequential placement, rather than an equilibrium hard-sphere model.">
+    <div class="sphx-glr-thumbcontainer" tooltip="Compare two covariance models with the same refractive index standard deviation and the same length parameter. Their definitions differ: Gaussian covariance is sigma_n2  exp(-r2 / (2  ell2)), while exponential covariance is sigma_n2 * exp(-r / ell). Equal parameters therefore do not give identical real-space profiles or scattering spectra. Here, r is the distance between two points in the medium. The covariance describes how their refractive-index fluctuations vary together as that distance increases.">
 
 .. only:: html
 
-  .. image:: /auto_examples/random_media/images/thumb/sphx_glr_random_spheres_thumb.png
+  .. image:: /auto_examples/random_media/images/thumb/sphx_glr_covariance_models_thumb.png
     :alt:
 
-  :doc:`/auto_examples/random_media/random_spheres`
+  :doc:`/auto_examples/random_media/covariance_models`
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Random nonoverlapping spheres</div>
+      <div class="sphx-glr-thumbnail-title">Gaussian and exponential spatial covariance</div>
     </div>
 
 
@@ -94,40 +94,6 @@ Seeded random fields, numerical ensembles, phase functions, and wavelength depen
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Sweep vacuum wavelength at fixed background refractive index, refractive-index fluctuation strength, and Gaussian covariance length. Total scattering and reduced scattering are different observables: forward scattering increases anisotropy and reduces the contribution to mu_s_prime = mu_s * (1 - g).">
-
-.. only:: html
-
-  .. image:: /auto_examples/random_media/images/thumb/sphx_glr_wavelength_dependence_thumb.png
-    :alt:
-
-  :doc:`/auto_examples/random_media/wavelength_dependence`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Wavelength dependence of scattering and anisotropy</div>
-    </div>
-
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Compare two covariance models with the same refractive index standard deviation and the same length parameter. Their definitions differ: Gaussian covariance is sigma_n2  exp(-r2 / (2  ell2)), while exponential covariance is sigma_n2 * exp(-r / ell). Equal parameters therefore do not give identical real-space profiles or scattering spectra. Here, r is the distance between two points in the medium. The covariance describes how their refractive-index fluctuations vary together as that distance increases.">
-
-.. only:: html
-
-  .. image:: /auto_examples/random_media/images/thumb/sphx_glr_covariance_models_thumb.png
-    :alt:
-
-  :doc:`/auto_examples/random_media/covariance_models`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Gaussian and exponential spatial covariance</div>
-    </div>
-
-
-.. raw:: html
-
     <div class="sphx-glr-thumbcontainer" tooltip="Explore the full three-dimensional sample for each spatial covariance model. Drag to rotate, scroll to zoom, and hover to inspect the refractive index. Regions with lower refractive index are transparent; regions with higher refractive index are more opaque. Opacity is a display setting, not absorption. Histograms and central slices follow as secondary checks of the same seeded fields.">
 
 .. only:: html
@@ -145,6 +111,23 @@ Seeded random fields, numerical ensembles, phase functions, and wavelength depen
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Generate a reproducible collection of identical spheres in a uniform background. Sphere centres are proposed uniformly within the part of the box that keeps each sphere fully inside. Overlapping proposals are rejected; the generator raises an error if it cannot place every requested sphere within its attempt limit. This is sequential placement, rather than an equilibrium hard-sphere model.">
+
+.. only:: html
+
+  .. image:: /auto_examples/random_media/images/thumb/sphx_glr_random_spheres_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/random_media/random_spheres`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Random nonoverlapping spheres</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="Gaussian probability distributions and spatial covariance are separate choices. These simulations compare Gaussian, exponential and Matérn covariances using the same refractive-index standard deviation and correlation length. The plotted covariance estimate averages products within each realization, then averages independent realizations. No spatial sample mean is removed.">
 
 .. only:: html
@@ -157,6 +140,23 @@ Seeded random fields, numerical ensembles, phase functions, and wavelength depen
 .. raw:: html
 
       <div class="sphx-glr-thumbnail-title">Theory figure: covariance and simulated random fields</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Sweep vacuum wavelength at fixed background refractive index, refractive-index fluctuation strength, and Gaussian covariance length. Total scattering and reduced scattering are different observables: forward scattering increases anisotropy and reduces the contribution to mu_s_prime = mu_s * (1 - g).">
+
+.. only:: html
+
+  .. image:: /auto_examples/random_media/images/thumb/sphx_glr_wavelength_dependence_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/random_media/wavelength_dependence`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Wavelength dependence of scattering and anisotropy</div>
     </div>
 
 
@@ -261,23 +261,6 @@ Field-term diagnostics alone do not certify convergence.
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Compare finite-sample effective scattering coefficients through order three. The numerical ensemble retains amplitude interference and sampling errors. Integrated coefficients describe finite samples rather than an infinite medium. Error bars describe realization sampling, not discretization error. Field-term diagnostics alone do not certify convergence.">
-
-.. only:: html
-
-  .. image:: /auto_examples/born_orders/images/thumb/sphx_glr_compare_orders_thumb.png
-    :alt:
-
-  :doc:`/auto_examples/born_orders/compare_orders`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Compare numerical Born orders</div>
-    </div>
-
-
-.. raw:: html
-
     <div class="sphx-glr-thumbcontainer" tooltip="Cumulative Born scattering sums complex amplitudes before taking their squared magnitude. Adding isolated-term intensities omits the cross terms and produces a different result. This example compares those two operations on the same seeded finite volume and exposes the signed interference.">
 
 .. only:: html
@@ -290,6 +273,23 @@ Field-term diagnostics alone do not certify convergence.
 .. raw:: html
 
       <div class="sphx-glr-thumbnail-title">Coherent interference between Born terms</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Compare finite-sample effective scattering coefficients through order three. The numerical ensemble retains amplitude interference and sampling errors. Integrated coefficients describe finite samples rather than an infinite medium. Error bars describe realization sampling, not discretization error. Field-term diagnostics alone do not certify convergence.">
+
+.. only:: html
+
+  .. image:: /auto_examples/born_orders/images/thumb/sphx_glr_compare_orders_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/born_orders/compare_orders`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Compare numerical Born orders</div>
     </div>
 
 
@@ -377,6 +377,40 @@ finite-size effects independently.
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Hold the random volumes, Born order, and voxel grid fixed while increasing polar Gauss-Legendre nodes and uniform azimuth samples. Plot angles are independent of the integration nodes: adding points to an angular plot does not refine the integral. The finest calculation is a numerical reference, not an exact solution, and both quadrature axes need checking independently.">
+
+.. only:: html
+
+  .. image:: /auto_examples/validation/images/thumb/sphx_glr_angular_convergence_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/validation/angular_convergence`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Convergence of solid-angle quadrature</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Increase the number of independent volumes at a fixed grid, covariance, and Born order. Curves show the estimated mean with one-standard-error bars. One realization has unknown error, represented by NaN. Standard errors measure sampling uncertainty, not voxel, quadrature, or finite-size error.">
+
+.. only:: html
+
+  .. image:: /auto_examples/validation/images/thumb/sphx_glr_ensemble_sampling_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/validation/ensemble_sampling`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Realization count and sampling uncertainty</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="Compare numerical first-order random-volume ensembles as sample size grows at fixed voxel spacing. The coefficients are cross sections divided by sample volume. Sample size, voxel resolution and realization count describe separate sources of uncertainty and must be checked independently.">
 
 .. only:: html
@@ -406,40 +440,6 @@ finite-size effects independently.
 .. raw:: html
 
       <div class="sphx-glr-thumbnail-title">Grid refinement against an exact cube integral</div>
-    </div>
-
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Increase the number of independent volumes at a fixed grid, covariance, and Born order. Curves show the estimated mean with one-standard-error bars. One realization has unknown error, represented by NaN. Standard errors measure sampling uncertainty, not voxel, quadrature, or finite-size error.">
-
-.. only:: html
-
-  .. image:: /auto_examples/validation/images/thumb/sphx_glr_ensemble_sampling_thumb.png
-    :alt:
-
-  :doc:`/auto_examples/validation/ensemble_sampling`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Realization count and sampling uncertainty</div>
-    </div>
-
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Hold the random volumes, Born order, and voxel grid fixed while increasing polar Gauss-Legendre nodes and uniform azimuth samples. Plot angles are independent of the integration nodes: adding points to an angular plot does not refine the integral. The finest calculation is a numerical reference, not an exact solution, and both quadrature axes need checking independently.">
-
-.. only:: html
-
-  .. image:: /auto_examples/validation/images/thumb/sphx_glr_angular_convergence_thumb.png
-    :alt:
-
-  :doc:`/auto_examples/validation/angular_convergence`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Convergence of solid-angle quadrature</div>
     </div>
 
 

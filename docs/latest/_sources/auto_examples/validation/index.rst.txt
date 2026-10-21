@@ -22,6 +22,40 @@ finite-size effects independently.
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Hold the random volumes, Born order, and voxel grid fixed while increasing polar Gauss-Legendre nodes and uniform azimuth samples. Plot angles are independent of the integration nodes: adding points to an angular plot does not refine the integral. The finest calculation is a numerical reference, not an exact solution, and both quadrature axes need checking independently.">
+
+.. only:: html
+
+  .. image:: /auto_examples/validation/images/thumb/sphx_glr_angular_convergence_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/validation/angular_convergence`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Convergence of solid-angle quadrature</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Increase the number of independent volumes at a fixed grid, covariance, and Born order. Curves show the estimated mean with one-standard-error bars. One realization has unknown error, represented by NaN. Standard errors measure sampling uncertainty, not voxel, quadrature, or finite-size error.">
+
+.. only:: html
+
+  .. image:: /auto_examples/validation/images/thumb/sphx_glr_ensemble_sampling_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/validation/ensemble_sampling`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Realization count and sampling uncertainty</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="Compare numerical first-order random-volume ensembles as sample size grows at fixed voxel spacing. The coefficients are cross sections divided by sample volume. Sample size, voxel resolution and realization count describe separate sources of uncertainty and must be checked independently.">
 
 .. only:: html
@@ -54,40 +88,6 @@ finite-size effects independently.
     </div>
 
 
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Increase the number of independent volumes at a fixed grid, covariance, and Born order. Curves show the estimated mean with one-standard-error bars. One realization has unknown error, represented by NaN. Standard errors measure sampling uncertainty, not voxel, quadrature, or finite-size error.">
-
-.. only:: html
-
-  .. image:: /auto_examples/validation/images/thumb/sphx_glr_ensemble_sampling_thumb.png
-    :alt:
-
-  :doc:`/auto_examples/validation/ensemble_sampling`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Realization count and sampling uncertainty</div>
-    </div>
-
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Hold the random volumes, Born order, and voxel grid fixed while increasing polar Gauss-Legendre nodes and uniform azimuth samples. Plot angles are independent of the integration nodes: adding points to an angular plot does not refine the integral. The finest calculation is a numerical reference, not an exact solution, and both quadrature axes need checking independently.">
-
-.. only:: html
-
-  .. image:: /auto_examples/validation/images/thumb/sphx_glr_angular_convergence_thumb.png
-    :alt:
-
-  :doc:`/auto_examples/validation/angular_convergence`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Convergence of solid-angle quadrature</div>
-    </div>
-
-
 .. thumbnail-parent-div-close
 
 .. raw:: html
@@ -98,8 +98,8 @@ finite-size effects independently.
 .. toctree::
    :hidden:
 
+   /auto_examples/validation/angular_convergence
+   /auto_examples/validation/ensemble_sampling
    /auto_examples/validation/finite_size_comparison
    /auto_examples/validation/grid_refinement
-   /auto_examples/validation/ensemble_sampling
-   /auto_examples/validation/angular_convergence
 

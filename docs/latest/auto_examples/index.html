@@ -55,7 +55,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.19.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/BornSim/documentation_page/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'latest';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.4';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
@@ -533,24 +533,24 @@ documentation works offline. Keep static slices as secondary diagnostic views.</
 <section id="random-media">
 <h1>Random media<a class="headerlink" href="#random-media" title="Link to this heading">#</a></h1>
 <p>Seeded random fields, numerical ensembles, phase functions, and wavelength dependence.</p>
-<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Generate a reproducible collection of identical spheres in a uniform background. Sphere centres are proposed uniformly within the part of the box that keeps each sphere fully inside. Overlapping proposals are rejected; the generator raises an error if it cannot place every requested sphere within its attempt limit. This is sequential placement, rather than an equilibrium hard-sphere model."><img alt="" src="../_images/sphx_glr_random_spheres_thumb.png" />
-<p><a class="reference internal" href="random_media/random_spheres.html"><span class="doc">Random nonoverlapping spheres</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Random nonoverlapping spheres</div>
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Compare two covariance models with the same refractive index standard deviation and the same length parameter. Their definitions differ: Gaussian covariance is sigma_n2  exp(-r2 / (2  ell2)), while exponential covariance is sigma_n2 * exp(-r / ell). Equal parameters therefore do not give identical real-space profiles or scattering spectra. Here, r is the distance between two points in the medium. The covariance describes how their refractive-index fluctuations vary together as that distance increases."><img alt="" src="../_images/sphx_glr_covariance_models_thumb.png" />
+<p><a class="reference internal" href="random_media/covariance_models.html"><span class="doc">Gaussian and exponential spatial covariance</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Gaussian and exponential spatial covariance</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="Compare finite-sample ensemble phase functions for three Gaussian covariance lengths at a vacuum wavelength of 633 nm. The phase function is a probability density per steradian, normalized over solid angle. The corresponding polar-angle density includes the factor 2pisin(theta) and integrates over radians."><img alt="" src="../_images/sphx_glr_phase_function_thumb.png" />
 <p><a class="reference internal" href="random_media/phase_function.html"><span class="doc">Normalized phase function</span></a></p>
   <div class="sphx-glr-thumbnail-title">Normalized phase function</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="Sweep vacuum wavelength at fixed background refractive index, refractive-index fluctuation strength, and Gaussian covariance length. Total scattering and reduced scattering are different observables: forward scattering increases anisotropy and reduces the contribution to mu_s_prime = mu_s * (1 - g)."><img alt="" src="../_images/sphx_glr_wavelength_dependence_thumb.png" />
-<p><a class="reference internal" href="random_media/wavelength_dependence.html"><span class="doc">Wavelength dependence of scattering and anisotropy</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Wavelength dependence of scattering and anisotropy</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="Compare two covariance models with the same refractive index standard deviation and the same length parameter. Their definitions differ: Gaussian covariance is sigma_n2  exp(-r2 / (2  ell2)), while exponential covariance is sigma_n2 * exp(-r / ell). Equal parameters therefore do not give identical real-space profiles or scattering spectra. Here, r is the distance between two points in the medium. The covariance describes how their refractive-index fluctuations vary together as that distance increases."><img alt="" src="../_images/sphx_glr_covariance_models_thumb.png" />
-<p><a class="reference internal" href="random_media/covariance_models.html"><span class="doc">Gaussian and exponential spatial covariance</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Gaussian and exponential spatial covariance</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="Explore the full three-dimensional sample for each spatial covariance model. Drag to rotate, scroll to zoom, and hover to inspect the refractive index. Regions with lower refractive index are transparent; regions with higher refractive index are more opaque. Opacity is a display setting, not absorption. Histograms and central slices follow as secondary checks of the same seeded fields."><img alt="" src="../_images/sphx_glr_random_medium_thumb.png" />
 <p><a class="reference internal" href="random_media/random_medium.html"><span class="doc">Visualize seeded three-dimensional random media</span></a></p>
   <div class="sphx-glr-thumbnail-title">Visualize seeded three-dimensional random media</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Generate a reproducible collection of identical spheres in a uniform background. Sphere centres are proposed uniformly within the part of the box that keeps each sphere fully inside. Overlapping proposals are rejected; the generator raises an error if it cannot place every requested sphere within its attempt limit. This is sequential placement, rather than an equilibrium hard-sphere model."><img alt="" src="../_images/sphx_glr_random_spheres_thumb.png" />
+<p><a class="reference internal" href="random_media/random_spheres.html"><span class="doc">Random nonoverlapping spheres</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Random nonoverlapping spheres</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="Gaussian probability distributions and spatial covariance are separate choices. These simulations compare Gaussian, exponential and Matérn covariances using the same refractive-index standard deviation and correlation length. The plotted covariance estimate averages products within each realization, then averages independent realizations. No spatial sample mean is removed."><img alt="" src="../_images/sphx_glr_theory_random_fields_thumb.png" />
 <p><a class="reference internal" href="random_media/theory_random_fields.html"><span class="doc">Theory figure: covariance and simulated random fields</span></a></p>
   <div class="sphx-glr-thumbnail-title">Theory figure: covariance and simulated random fields</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Sweep vacuum wavelength at fixed background refractive index, refractive-index fluctuation strength, and Gaussian covariance length. Total scattering and reduced scattering are different observables: forward scattering increases anisotropy and reduces the contribution to mu_s_prime = mu_s * (1 - g)."><img alt="" src="../_images/sphx_glr_wavelength_dependence_thumb.png" />
+<p><a class="reference internal" href="random_media/wavelength_dependence.html"><span class="doc">Wavelength dependence of scattering and anisotropy</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Wavelength dependence of scattering and anisotropy</div>
 </div></div></section>
 <section id="structured-media">
 <h1>Structured media<a class="headerlink" href="#structured-media" title="Link to this heading">#</a></h1>
@@ -570,12 +570,12 @@ Explore how geometry and relative positions affect directional scattering.</p>
 <h1>Born orders and interference<a class="headerlink" href="#born-orders-and-interference" title="Link to this heading">#</a></h1>
 <p>Compare cumulative Born orders and inspect coherent amplitude interference.
 Field-term diagnostics alone do not certify convergence.</p>
-<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Compare finite-sample effective scattering coefficients through order three. The numerical ensemble retains amplitude interference and sampling errors. Integrated coefficients describe finite samples rather than an infinite medium. Error bars describe realization sampling, not discretization error. Field-term diagnostics alone do not certify convergence."><img alt="" src="../_images/sphx_glr_compare_orders_thumb.png" />
-<p><a class="reference internal" href="born_orders/compare_orders.html"><span class="doc">Compare numerical Born orders</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Compare numerical Born orders</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="Cumulative Born scattering sums complex amplitudes before taking their squared magnitude. Adding isolated-term intensities omits the cross terms and produces a different result. This example compares those two operations on the same seeded finite volume and exposes the signed interference."><img alt="" src="../_images/sphx_glr_born_interference_thumb.png" />
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Cumulative Born scattering sums complex amplitudes before taking their squared magnitude. Adding isolated-term intensities omits the cross terms and produces a different result. This example compares those two operations on the same seeded finite volume and exposes the signed interference."><img alt="" src="../_images/sphx_glr_born_interference_thumb.png" />
 <p><a class="reference internal" href="born_orders/born_interference.html"><span class="doc">Coherent interference between Born terms</span></a></p>
   <div class="sphx-glr-thumbnail-title">Coherent interference between Born terms</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Compare finite-sample effective scattering coefficients through order three. The numerical ensemble retains amplitude interference and sampling errors. Integrated coefficients describe finite samples rather than an infinite medium. Error bars describe realization sampling, not discretization error. Field-term diagnostics alone do not certify convergence."><img alt="" src="../_images/sphx_glr_compare_orders_thumb.png" />
+<p><a class="reference internal" href="born_orders/compare_orders.html"><span class="doc">Compare numerical Born orders</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Compare numerical Born orders</div>
 </div></div></section>
 <section id="plotting-and-saving-results">
 <h1>Plotting and saving results<a class="headerlink" href="#plotting-and-saving-results" title="Link to this heading">#</a></h1>
@@ -592,18 +592,18 @@ restore unitful results with their calculation settings.</p>
 <h1>Numerical validation<a class="headerlink" href="#numerical-validation" title="Link to this heading">#</a></h1>
 <p>Check voxel and angular refinement, ensemble sampling uncertainty, and
 finite-size effects independently.</p>
-<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Compare numerical first-order random-volume ensembles as sample size grows at fixed voxel spacing. The coefficients are cross sections divided by sample volume. Sample size, voxel resolution and realization count describe separate sources of uncertainty and must be checked independently."><img alt="" src="../_images/sphx_glr_finite_size_comparison_thumb.png" />
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Hold the random volumes, Born order, and voxel grid fixed while increasing polar Gauss-Legendre nodes and uniform azimuth samples. Plot angles are independent of the integration nodes: adding points to an angular plot does not refine the integral. The finest calculation is a numerical reference, not an exact solution, and both quadrature axes need checking independently."><img alt="" src="../_images/sphx_glr_angular_convergence_thumb.png" />
+<p><a class="reference internal" href="validation/angular_convergence.html"><span class="doc">Convergence of solid-angle quadrature</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Convergence of solid-angle quadrature</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Increase the number of independent volumes at a fixed grid, covariance, and Born order. Curves show the estimated mean with one-standard-error bars. One realization has unknown error, represented by NaN. Standard errors measure sampling uncertainty, not voxel, quadrature, or finite-size error."><img alt="" src="../_images/sphx_glr_ensemble_sampling_thumb.png" />
+<p><a class="reference internal" href="validation/ensemble_sampling.html"><span class="doc">Realization count and sampling uncertainty</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Realization count and sampling uncertainty</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Compare numerical first-order random-volume ensembles as sample size grows at fixed voxel spacing. The coefficients are cross sections divided by sample volume. Sample size, voxel resolution and realization count describe separate sources of uncertainty and must be checked independently."><img alt="" src="../_images/sphx_glr_finite_size_comparison_thumb.png" />
 <p><a class="reference internal" href="validation/finite_size_comparison.html"><span class="doc">Finite-sample size convergence</span></a></p>
   <div class="sphx-glr-thumbnail-title">Finite-sample size convergence</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="Refine a fixed physical cube rather than drawing a new random field on each grid. Its first-order amplitude has an independent closed-form reference, so this example isolates voxel midpoint-quadrature error. It does not test higher-order Green-tensor discretization or random-field synthesis."><img alt="" src="../_images/sphx_glr_grid_refinement_thumb.png" />
 <p><a class="reference internal" href="validation/grid_refinement.html"><span class="doc">Grid refinement against an exact cube integral</span></a></p>
   <div class="sphx-glr-thumbnail-title">Grid refinement against an exact cube integral</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="Increase the number of independent volumes at a fixed grid, covariance, and Born order. Curves show the estimated mean with one-standard-error bars. One realization has unknown error, represented by NaN. Standard errors measure sampling uncertainty, not voxel, quadrature, or finite-size error."><img alt="" src="../_images/sphx_glr_ensemble_sampling_thumb.png" />
-<p><a class="reference internal" href="validation/ensemble_sampling.html"><span class="doc">Realization count and sampling uncertainty</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Realization count and sampling uncertainty</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="Hold the random volumes, Born order, and voxel grid fixed while increasing polar Gauss-Legendre nodes and uniform azimuth samples. Plot angles are independent of the integration nodes: adding points to an angular plot does not refine the integral. The finest calculation is a numerical reference, not an exact solution, and both quadrature axes need checking independently."><img alt="" src="../_images/sphx_glr_angular_convergence_thumb.png" />
-<p><a class="reference internal" href="validation/angular_convergence.html"><span class="doc">Convergence of solid-angle quadrature</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Convergence of solid-angle quadrature</div>
 </div></div><div class="toctree-wrapper compound">
 </div>
 <p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
