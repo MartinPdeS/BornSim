@@ -47,6 +47,10 @@ globals().update(
     )
 )
 
+# The wordmark and project identity are already visible in the header; keep
+# the generated Sphinx/theme credit lines out of the documentation footer.
+html_theme_options["footer_end"] = []
+
 def write_interactive_media(app, exception):
     """Export browser volume views for HTML documentation builds."""
 
