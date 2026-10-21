@@ -28,7 +28,7 @@ keywords = ["born approximation", "light scattering", "random media", "tissue op
 dependencies = ["numpy>=1.24,<3", "TypedUnit==0.0.11", "matplotlib>=3.7,<4"]
 
 [project.optional-dependencies]
-visualization = ["plotly>=6,<7"]
+visualization = ["plotly>=6,<8"]
 testing = ["pytest>=8,<10", "pytest-cov>=5,<8"]
 test = ["BornSim[testing]"]
 documentation = ["sphinx>=7,<10", "pydata-sphinx-theme>=0.16,<0.20", "sphinx-gallery>=0.19,<1"]
