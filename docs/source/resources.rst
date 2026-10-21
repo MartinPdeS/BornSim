@@ -39,3 +39,4 @@ and sampling uncertainty, and consult :doc:`theory` for model limitations.
    :maxdepth: 1
 
    development
+   research
