@@ -1,6 +1,5 @@
 """BornSim documentation configuration."""
 
-import os
 import sys
 from pathlib import Path
 
@@ -14,8 +13,6 @@ project = "BornSim"
 package = "BornSim"
 repository = "MartinPdeS/BornSim"
 author = "Martin Poinsinet de Sivry-Houle"
-documentation_version = os.getenv("tag", "latest")
-
 release = __version__
 version = release
 
@@ -26,10 +23,9 @@ globals().update(
         package=package,
         author=author,
         repository=repository,
-        version=documentation_version,
         logo="_static/logo.png",
         favicon="_static/favicon.png",
-        sphinx_gallery_conf={
+        gallery_options={
             "examples_dirs": "../examples",
             "gallery_dirs": "auto_examples",
             "filename_pattern": r"\.py$",
@@ -50,7 +46,6 @@ globals().update(
     )
 )
 
-extensions += ["sphinx.ext.mathjax"]
 html_css_files += ["layout.css"]
 html_context.update({"doc_path": "docs/source", "default_mode": "dark"})
 
