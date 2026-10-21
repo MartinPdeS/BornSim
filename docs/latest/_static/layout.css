@@ -11,6 +11,11 @@ html {
     width: 100%;
 }
 
+/* The logo asset already contains the BornSim wordmark. */
+#pst-header .navbar-brand .logo__title {
+    display: none;
+}
+
 .bd-main .bd-content .bd-article-container {
     flex: 1 1 0;
     min-width: 0;
