@@ -43,12 +43,9 @@ globals().update(
                 "../examples/validation",
             ],
         },
+        html_css_files=["layout.css"],
     )
 )
-
-html_css_files += ["layout.css"]
-html_context.update({"doc_path": "docs/source", "default_mode": "dark"})
-
 
 def write_interactive_media(app, exception):
     """Export browser volume views for HTML documentation builds."""
