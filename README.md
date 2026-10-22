@@ -25,9 +25,9 @@
 | bornsim/solver.py                      |       74 |        6 |       22 |        4 |     89.58% |50, 60-62, 109, 134, 256 |
 | bornsim/units.py                       |       34 |        1 |       20 |        1 |     96.30% |        66 |
 | bornsim/volume.py                      |      179 |        4 |       60 |        4 |     96.65% |56, 78, 88, 483 |
-| **TOTAL**                              | **1827** |  **122** |  **614** |   **88** | **91.07%** |           |
+| **TOTAL**                              | **1850** |  **122** |  **614** |   **88** | **91.15%** |           |
 
-10 files skipped due to complete coverage.
+11 files skipped due to complete coverage.
 
 
 ## Setup coverage badge
