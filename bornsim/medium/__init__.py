@@ -6,7 +6,7 @@ from .random_medium import GaussianMedium, ExponentialMedium, WhittleMaternMediu
 
 __all__ = ["Medium", "GaussianMedium", "ExponentialMedium", "WhittleMaternMedium", "RandomSphereMedium"]
 
-__all__ += ["StructuredMedium", "PeriodicMedium", "CoreShellMedium", "EllipsoidMedium"]
+__all__ += ["StructuredMedium", "PeriodicMedium", "CoreShellMedium", "EllipsoidMedium", "CylinderMedium"]
 
 
 def __getattr__(name):
@@ -16,7 +16,7 @@ def __getattr__(name):
 
         return getattr(structured, name)
 
-    if name in ("CoreShellMedium", "EllipsoidMedium"):
+    if name in ("CoreShellMedium", "EllipsoidMedium", "CylinderMedium"):
         from . import particles
 
         return getattr(particles, name)

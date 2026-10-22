@@ -2,7 +2,7 @@
 
 import numpy as np
 import pytest
-from bornsim import CoreShellMedium, EllipsoidMedium, PeriodicMedium, Grid, Sphere, StructuredMedium
+from bornsim import CoreShellMedium, CylinderMedium, EllipsoidMedium, PeriodicMedium, Grid, Sphere, StructuredMedium
 from bornsim.units import ureg
 
 
@@ -53,6 +53,26 @@ def test_ellipsoid_axes():
 
     assert volume.refractive_index[7, 4, 4] == pytest.approx(1.4)
     assert volume.refractive_index[4, 7, 4] == pytest.approx(1.3)
+
+
+def test_cylinder_rod():
+    grid = Grid(shape=(9, 9, 9), spacing=1 * ureg.nanometer)
+
+    medium = CylinderMedium(
+        background_refractive_index=1.3,
+        particle_refractive_index=1.4,
+        radius=1.1 * ureg.nanometer,
+        height=5.1 * ureg.nanometer,
+        centre=np.zeros(3) * ureg.nanometer,
+        axis=2,
+    )
+
+    volume = medium.to_volume(grid=grid)
+
+    assert volume.refractive_index[4, 4, 6] == pytest.approx(1.4)
+    assert volume.refractive_index[4, 5, 4] == pytest.approx(1.4)
+    assert volume.refractive_index[4, 6, 4] == pytest.approx(1.3)
+    assert volume.medium_metadata["model"] == "cylinder"
 
 
 def test_periodic_array_and_overlap():

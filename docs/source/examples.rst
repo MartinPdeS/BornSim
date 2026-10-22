@@ -109,6 +109,11 @@ incoherent intensity reference and checks the forward first-order amplitude
 addition through its intensity scaling. Lattice vectors specify finite site
 positions; the example does not impose infinite periodic boundary conditions.
 
+:doc:`auto_examples/structured_media/antenna_rods` uses ``CylinderMedium``
+for a tilted finite dielectric rod. It demonstrates the voxelized cross-section
+and directional scattering while explaining the distinction between a dielectric
+antenna-like scatterer and a conducting electromagnetic antenna.
+
 Normalized phase function
 -------------------------
 

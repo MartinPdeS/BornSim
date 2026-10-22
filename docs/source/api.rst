@@ -157,6 +157,9 @@ Existing top-level and historical module imports remain supported.
 ``CoreShellMedium`` represents a spherical core inside a spherical shell,
 with explicit radii, centre, and three absolute refractive indices.
 ``EllipsoidMedium`` represents an oriented particle with three semi-axis radii.
+``CylinderMedium`` represents a finite dielectric rod with explicit radius,
+height, axis, centre, and orientation; it is suitable for antenna-like
+dielectric scatterers.
 Both sample interfaces at voxel centres and clip geometry to the grid.
 ``PeriodicMedium`` repeats existing geometry objects on a centred finite
 lattice; its three length-bearing lattice vectors are rows of a matrix.
@@ -171,6 +174,9 @@ limitations as other BornSim media.
    :members:
 
 .. automodule:: bornsim.medium.particles.ellipsoid
+   :members:
+
+.. automodule:: bornsim.medium.particles.cylinder
    :members:
 
 .. automodule:: bornsim.medium.base
