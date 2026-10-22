@@ -149,7 +149,7 @@ The implemented model uses real scalar refractive indices, an unpolarized plane
 wave along +z, a uniform exterior background, and the linearized dielectric
 contrast ``2 * background_refractive_index * delta_refractive_index``. Higher Born
 orders do not restore the omitted quadratic refractive-index term. Strong
-contrast, absorption, or more general illumination requires a model beyond
+contrast or more general illumination requires a model beyond
 these assumptions. See :doc:`theory` for the equations and Green-tensor self-cell
 convention.
 

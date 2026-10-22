@@ -22,6 +22,23 @@ Field-term diagnostics alone do not certify convergence.
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Compare exactly the same seeded real-index fluctuations with and without absorption. Both calculations retain four coherent scattering orders. The host is lossless; absorption is confined to the finite voxel sample. These are finite-sample coefficients, not converged infinite-medium transport properties.">
+
+.. only:: html
+
+  .. image:: /auto_examples/born_orders/images/thumb/sphx_glr_absorbing_random_medium_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/born_orders/absorbing_random_medium`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Absorbing random medium through fourth Born order</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="Cumulative Born scattering sums complex amplitudes before taking their squared magnitude. Adding isolated-term intensities omits the cross terms and produces a different result. This example compares those two operations on the same seeded finite volume and exposes the signed interference.">
 
 .. only:: html
@@ -64,6 +81,7 @@ Field-term diagnostics alone do not certify convergence.
 .. toctree::
    :hidden:
 
+   /auto_examples/born_orders/absorbing_random_medium
    /auto_examples/born_orders/born_interference
    /auto_examples/born_orders/compare_orders
 
