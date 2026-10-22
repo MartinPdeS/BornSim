@@ -1,11 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 160" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 190" role="img" aria-labelledby="title desc">
   <title id="title">BornSim</title>
-  <desc id="desc">A circular aperture and scattering wedge beside the BornSim wordmark.</desc>
-  <g transform="translate(14 20)">
-    <path fill="#14134f" d="M60 0a60 60 0 1 0 0 120A60 60 0 0 0 60 0Zm0 14a46 46 0 1 1 0 92A46 46 0 0 1 60 14Z"/>
-    <path fill="#ff5a4f" d="M60 60 114 30a60 60 0 0 1 0 60Z"/>
-    <path fill="#fff" d="m54 3 8 0-8 57-8 0Z"/>
-    <path fill="#fff" d="m54 60 8 0 10 54-8 0Z"/>
+  <desc id="desc">Layered green contour mark beside the BornSim wordmark.</desc>
+  <g transform="translate(18 15)">
+    <path fill="#064c3a" d="M18 82C18 34 62 5 111 5c35 0 51 20 81 35 29 15 53 25 53 48 0 25-28 35-57 48-34 16-53 35-86 35-45 0-84-35-84-89Z"/>
+    <path fill="#f8faf6" d="M42 82c0-34 31-57 68-57 28 0 42 17 68 29 24 11 42 19 42 34 0 17-23 25-46 35-27 12-43 28-68 28-37 0-64-27-64-69Z"/>
+    <path fill="#15845a" d="M61 82c0-25 23-42 50-42 22 0 34 13 55 22 19 9 33 15 33 26 0 13-18 20-36 27-21 9-34 21-53 21-28 0-49-21-49-54Z"/>
+    <path fill="#f8faf6" d="M81 82c0-17 16-29 34-29 15 0 24 9 38 15 13 6 23 10 23 18 0 9-12 14-25 19-14 6-23 14-36 14-19 0-34-14-34-37Z"/>
+    <ellipse cx="116" cy="82" rx="16" ry="13" fill="#a7d600"/>
   </g>
-  <text x="168" y="101" fill="#141414" font-family="Georgia, 'Times New Roman', serif" font-size="70" font-weight="600" letter-spacing="-2">BornSim</text>
+  <text x="306" y="124" fill="#064c3a" font-family="Arial, Helvetica, sans-serif" font-size="82" font-weight="700" letter-spacing="-4">BornSim</text>
 </svg>
