@@ -41,6 +41,7 @@ class Volume:
     spacing: Quantity = field(init=False)
     medium: Medium | None = None
     seed: int | None = None
+    extinction_coefficient: np.ndarray | float = 0.0
     _medium_metadata: dict[str, object] | None = field(init=False, default=None, repr=False, compare=False)
 
     def __post_init__(self) -> None:
@@ -110,6 +111,35 @@ class Volume:
         data.setflags(write=False)
 
         object.__setattr__(self, "delta_refractive_index", data)
+
+        absorption = np.array(
+            _refractive_index_values(value=self.extinction_coefficient, name="extinction_coefficient"),
+            copy=True,
+        )
+        if absorption.ndim == 0:
+            absorption = np.full(grid.shape, float(absorption))
+        if absorption.shape != grid.shape or not np.all(np.isfinite(absorption)) or np.any(absorption < 0):
+            raise ValueError("extinction_coefficient must be finite, nonnegative and scalar or grid-shaped.")
+        absorption.setflags(write=False)
+        object.__setattr__(self, "extinction_coefficient", absorption)
+
+    def with_absorption(self, *, extinction_coefficient) -> Self:
+        """Return a sample with passive absorption in a real, lossless host.
+
+        Parameters
+        ----------
+        extinction_coefficient : float or array_like
+            Unitless nonnegative kappa, scalar or matching the voxel grid.
+            Uses exp(-i omega t) and linearized contrast 2*n0*(delta_n+i*kappa).
+
+        Returns
+        -------
+        Volume
+            Immutable sample retaining its real index field and generation metadata.
+        """
+        from dataclasses import replace
+
+        return replace(self, extinction_coefficient=extinction_coefficient)
 
     @classmethod
     def from_refractive_index(
@@ -246,6 +276,7 @@ class Volume:
 
         return Volume(
             delta_refractive_index=self.delta_refractive_index + other.delta_refractive_index,
+            extinction_coefficient=self.extinction_coefficient + other.extinction_coefficient,
             background_refractive_index=self.background_refractive_index,
             grid=self.grid,
         )

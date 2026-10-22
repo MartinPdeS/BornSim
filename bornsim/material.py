@@ -10,7 +10,8 @@ class Material:
     """A nondispersive real refractive index shared by any number of shapes.
 
     ``refractive_index`` is an absolute positive dimensionless refractive index, not a
-    contrast. Supply a plain number; quantities are rejected. Absorption and wavelength dispersion are not implemented.
+    contrast. Supply a plain number; quantities are rejected. Attach sample absorption
+    after voxelization with ``Volume.with_absorption``. Wavelength dispersion is not implemented.
     """
 
     refractive_index: float

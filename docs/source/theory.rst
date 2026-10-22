@@ -78,8 +78,9 @@ The constitutive model is deliberately linearized:
 
 The quadratic term :math:`\delta n^2` in :math:`(n_0+\delta n)^2` is omitted
 **at every Born order**. More iterations do not restore it. The implementation
-requires positive linearized permittivity and does not model absorption,
-magnetic contrast or tensor permittivity. Positive permittivity alone does not
+requires a positive real part of the linearized permittivity. Passive sample
+absorption adds ``2j*n0*kappa`` to this contrast; see :doc:`absorption`.
+Magnetic contrast and tensor permittivity are not supported. Positive permittivity alone does not
 establish weak-contrast accuracy.
 
 Geometry and the finite domain

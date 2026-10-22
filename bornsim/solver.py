@@ -161,6 +161,7 @@ class Solver:
             amplitudes=result.amplitudes * ureg.meter,
             term_differential=result.term_differential * (1 / ureg.meter / ureg.steradian),
             field_norms=result.field_norms,
+            mu_a=result.mu_a * (1 / ureg.meter),
             warnings=result.warnings,
             provenance=_provenance(
                 order=self.order,
@@ -175,6 +176,13 @@ class Solver:
                 medium=target.medium_metadata,
                 seed=target.seed,
                 coefficient_scope="finite-sample",
+                absorption={
+                    "contrast": "2*n0*(delta_n+i*kappa)",
+                    "field_order": "M-1 for absorption reported at scattering order M",
+                    "extinction_coefficient_sha256": hashlib.sha256(
+                        np.asarray(target.extinction_coefficient, dtype="<f8").tobytes(order="C")
+                    ).hexdigest(),
+                },
             ),
         )
 
@@ -215,6 +223,7 @@ class Solver:
             g=g,
             mu_s_prime=integrated[:, 2] * (1 / ureg.meter),
             field_norms=born.field_norms,
+            mu_a=born.mu_a * (1 / ureg.meter),
             warnings=born.warnings,
             provenance=_provenance(
                 order=self.order,
@@ -229,6 +238,13 @@ class Solver:
                 medium=volume.medium_metadata,
                 seed=volume.seed,
                 coefficient_scope="finite-sample",
+                absorption={
+                    "contrast": "2*n0*(delta_n+i*kappa)",
+                    "field_order": "M-1 for absorption reported at scattering order M",
+                    "extinction_coefficient_sha256": hashlib.sha256(
+                        np.asarray(volume.extinction_coefficient, dtype="<f8").tobytes(order="C")
+                    ).hexdigest(),
+                },
             ),
         )
 

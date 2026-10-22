@@ -47,6 +47,10 @@ class Result:
     entire voxel-box volume. ``differential_cross_section`` restores area per
     steradian using stored sample_volume.
 
+    ``mu_a`` is the finite-sample absorption coefficient, if available. At
+    scattering order M it uses the cumulative internal field through M-1.
+    ``absorption_cross_section`` restores absorbed-power cross sections.
+
     Source and kind are required. Supply angular or individual differential
     data, never both. Results are immutable; provenance returns a fresh copy. Other fields describe sampling,
     isolated terms, integrated moments, uncertainty, diagnostics and provenance.
@@ -63,6 +67,7 @@ class Result:
     kind: str
     angular: AngularData
     g: Quantity | None
+    mu_a: Quantity | None
     mu_s_prime: Quantity | None
     field_norms: Quantity | None
     warnings: tuple
@@ -78,6 +83,7 @@ class Result:
         "amplitudes": "meter",
         "mu_s": "1 / meter",
         "mu_s_prime": "1 / meter",
+        "mu_a": "1 / meter",
         "g": "dimensionless",
         "directions": "dimensionless",
         "field_norms": "dimensionless",
@@ -101,6 +107,7 @@ class Result:
         mu_s=None,
         g=None,
         mu_s_prime=None,
+        mu_a=None,
         amplitudes=None,
         term_differential=None,
         stderr=None,
@@ -125,7 +132,9 @@ class Result:
                 raise TypeError("angular must be an AngularData.")
 
             conflicts = any(
-                value is not None for name, value in values.items() if name not in ("g", "mu_s_prime", "field_norms")
+                value is not None
+                for name, value in values.items()
+                if name not in ("g", "mu_s_prime", "mu_a", "field_norms")
             )
 
             if conflicts or azimuth_averaged:
@@ -195,7 +204,7 @@ class Result:
         }.items():
             object.__setattr__(self, name, value)
 
-        for name in ("g", "mu_s_prime", "field_norms"):
+        for name in ("g", "mu_s_prime", "mu_a", "field_norms"):
             value = getattr(state, name)
 
             if value is not None:
@@ -223,6 +232,7 @@ class Result:
         shapes = {
             "g": (orders,),
             "mu_s_prime": (orders,),
+            "mu_a": (orders,),
             "field_norms": (result.realizations, orders) if result.kind == "ensemble" else (orders,),
         }
 
@@ -374,11 +384,20 @@ class Result:
             angular=angular,
             g=self.g,
             mu_s_prime=self.mu_s_prime,
+            mu_a=self.mu_a,
             field_norms=self.field_norms,
             warnings=self.warnings,
             realizations=self.realizations,
             provenance=self.provenance,
         )
+
+    @property
+    def absorption_cross_section(self):
+        """Absorbed power divided by incident irradiance, in area units."""
+        if self.mu_a is None or self.sample_volume is None:
+            return None
+
+        return self.mu_a * self.sample_volume
 
     @property
     def differential_cross_section(self):
@@ -1208,3 +1227,4 @@ class BornResult:
     term_differential: np.ndarray  # each term alone, excludes interference
     field_norms: np.ndarray  # ||E_j|| / ||E_inc||
     warnings: tuple[str, ...]
+    mu_a: np.ndarray | None = None

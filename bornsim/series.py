@@ -245,11 +245,22 @@ class BornSeries:
 
         incident_norm = np.linalg.norm(field)
 
-        contrast = 2 * volume.background_refractive_index * volume.delta_refractive_index
+        contrast = np.asarray(2 * volume.background_refractive_index * volume.delta_refractive_index, dtype=complex)
+
+        if np.any(volume.extinction_coefficient):
+            contrast = contrast + 2j * volume.background_refractive_index * volume.extinction_coefficient
+
+        total_field = np.array(field, copy=True)
+        absorption = []
+        k0 = 2 * np.pi / float(self.wavelength.to("meter").magnitude)
 
         amplitude_terms, norms = [], []
 
         for _ in range(self.order):
+            # P_abs / (incident intensity * box volume), averaged over polarizations.
+            absorption.append(
+                float(k0 * np.mean(volume.extinction_coefficient * np.sum(np.abs(total_field) ** 2, axis=(-1, -2))))
+            )
             source = contrast[..., None, None] * field
 
             amplitude_terms.append(self._far_field(source=source))
@@ -260,6 +271,7 @@ class BornSeries:
                 raise ValueError("Born terms overflowed; reduce contrast or order.")
 
             norms.append(float(np.linalg.norm(field) / incident_norm))
+            total_field += field
 
         amplitudes = np.asarray(amplitude_terms)
 
@@ -286,4 +298,5 @@ class BornSeries:
             term_differential=separate,
             field_norms=np.array(norms),
             warnings=tuple(warnings),
+            mu_a=np.array(absorption),
         )

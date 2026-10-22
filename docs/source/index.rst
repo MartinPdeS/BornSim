@@ -53,4 +53,5 @@ refractive-index media.
    Guide <guide>
    Examples <examples>
    API <api>
+   Absorption <absorption>
    Resources <resources>
