@@ -149,6 +149,30 @@ Configuration
 Media and geometry
 ------------------
 
+Media are grouped by construction: ``bornsim.medium.random`` contains continuous
+random fields, ``bornsim.medium.structured`` contains composite and finite
+periodic structures, and ``bornsim.medium.particles`` contains particle media.
+Existing top-level and historical module imports remain supported.
+
+``CoreShellMedium`` represents a spherical core inside a spherical shell,
+with explicit radii, centre, and three absolute refractive indices.
+``EllipsoidMedium`` represents an oriented particle with three semi-axis radii.
+Both sample interfaces at voxel centres and clip geometry to the grid.
+``PeriodicMedium`` repeats existing geometry objects on a centred finite
+lattice; its three length-bearing lattice vectors are rows of a matrix.
+It uses finite-volume scattering, without periodic boundary conditions.
+These media retain the same linearized dielectric contrast and Born validity
+limitations as other BornSim media.
+
+.. automodule:: bornsim.medium.structured.periodic
+   :members:
+
+.. automodule:: bornsim.medium.particles.core_shell
+   :members:
+
+.. automodule:: bornsim.medium.particles.ellipsoid
+   :members:
+
 .. automodule:: bornsim.medium.base
    :members:
 

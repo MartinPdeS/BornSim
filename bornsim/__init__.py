@@ -15,8 +15,13 @@ from .results import Result
 from .angular_data import AngularData
 from .material import Material
 from .ensemble_sampling import EnsembleSampling
+from .medium.structured import PeriodicMedium
+from .medium.particles import CoreShellMedium, EllipsoidMedium
 
 __all__ = [
+    "PeriodicMedium",
+    "CoreShellMedium",
+    "EllipsoidMedium",
     "Directions",
     "Material",
     "EnsembleSampling",
