@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 160" role="img" aria-labelledby="title desc">
+  <title id="title">BornSim</title>
+  <desc id="desc">A circular aperture and scattering wedge beside the BornSim wordmark.</desc>
+  <g transform="translate(14 20)">
+    <path fill="#14134f" d="M60 0a60 60 0 1 0 0 120A60 60 0 0 0 60 0Zm0 14a46 46 0 1 1 0 92A46 46 0 0 1 60 14Z"/>
+    <path fill="#ff5a4f" d="M60 60 114 30a60 60 0 0 1 0 60Z"/>
+    <path fill="#fff" d="m54 3 8 0-8 57-8 0Z"/>
+    <path fill="#fff" d="m54 60 8 0 10 54-8 0Z"/>
+  </g>
+  <text x="168" y="101" fill="#141414" font-family="Georgia, 'Times New Roman', serif" font-size="70" font-weight="600" letter-spacing="-2">BornSim</text>
+</svg>

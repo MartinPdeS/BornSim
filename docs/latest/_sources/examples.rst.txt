@@ -98,6 +98,22 @@ the example does not replace an exact Mie calculation.
 :doc:`auto_examples/structured_media/structured_media` combines finite layers,
 a sphere, and additive seeded random fluctuations in a custom voxel field.
 
+:doc:`auto_examples/structured_media/particle_families` constructs a
+``CoreShellMedium`` and a rotated ``EllipsoidMedium``, shows their voxelized
+geometries and central slices, and compares first-order scattering along one
+observation meridian. Radii, positions, and rotation angles carry explicit units.
+
+:doc:`auto_examples/structured_media/periodic_array` repeats a sphere motif
+using ``PeriodicMedium``. It compares coherent array scattering with an
+incoherent intensity reference and checks the forward first-order amplitude
+addition through its intensity scaling. Lattice vectors specify finite site
+positions; the example does not impose infinite periodic boundary conditions.
+
+:doc:`auto_examples/structured_media/antenna_rods` uses ``CylinderMedium``
+for a tilted finite dielectric rod. It demonstrates the voxelized cross-section
+and directional scattering while explaining the distinction between a dielectric
+antenna-like scatterer and a conducting electromagnetic antenna.
+
 Normalized phase function
 -------------------------
 
