@@ -53,6 +53,7 @@ class StructuredMedium(Medium):
     background_refractive_index: float | None = None
     overlap: str = "replace"
     warn_on_clipping: bool = False
+    _background_extinction: float = field(default=0.0, init=False, repr=False)
     _background: RandomFieldMedium | None = field(default=None, init=False, repr=False)
     _fluctuations: RandomFieldMedium | None = field(default=None, init=False, repr=False)
 
@@ -85,10 +86,12 @@ class StructuredMedium(Medium):
         Returns None. Random statistics are copied when added.
         """
 
+        extinction = 0.0
         if material is not None:
             resolved = Material._resolve(material=material, refractive_index=refractive_index)
 
             refractive_index = resolved.refractive_index
+            extinction = resolved.extinction_coefficient
 
         if (refractive_index is None) == (medium is None):
             raise ValueError("Supply exactly one of refractive_index or medium.")
@@ -117,6 +120,7 @@ class StructuredMedium(Medium):
         self.background_refractive_index = background_refractive_index
 
         self._background = background
+        self._background_extinction = extinction
 
     def add_fluctuations(self, *, medium):
         """Set an additive random field applied over the background and all structures.
@@ -203,9 +207,13 @@ class StructuredMedium(Medium):
 
                 description[key] = list(value) if isinstance(value, tuple) else value
 
+            if region.material.extinction_coefficient:
+                description["extinction_coefficient"] = region.material.extinction_coefficient
             regions.append(description)
 
         metadata: dict[str, object] = {**super().metadata, "regions": regions}
+        if self._background_extinction:
+            metadata["extinction_coefficient"] = self._background_extinction
 
         if self.overlap != "replace":
             metadata["overlap"] = self.overlap
@@ -238,6 +246,7 @@ class StructuredMedium(Medium):
 
         if self._background is None:
             contrast = np.zeros(grid.shape)
+            extinction = np.full(grid.shape, self._background_extinction)
         else:
             background = self._background.to_volume(
                 grid=grid,
@@ -245,6 +254,7 @@ class StructuredMedium(Medium):
             )
 
             contrast = background.delta_refractive_index.copy()
+            extinction = np.array(background.extinction_coefficient, copy=True)
 
         occupied = np.zeros(grid.shape, dtype=bool)
 
@@ -264,6 +274,7 @@ class StructuredMedium(Medium):
             selected = mask & ~occupied if self.overlap == "preserve" else mask
 
             contrast[selected] = region.refractive_index - self.background_refractive_index
+            extinction[selected] = region.material.extinction_coefficient
 
             occupied |= mask
 
@@ -274,9 +285,11 @@ class StructuredMedium(Medium):
             )
 
             contrast += fluctuation_field.delta_refractive_index
+            extinction += fluctuation_field.extinction_coefficient
 
         return Volume(
             delta_refractive_index=contrast,
+            extinction_coefficient=extinction,
             grid=grid,
             background_refractive_index=self.background_refractive_index,
             medium=deepcopy(self) if self._fluctuations is not None else None,

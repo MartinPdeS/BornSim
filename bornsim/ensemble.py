@@ -87,6 +87,9 @@ def ensemble_scattering(
         set(),
     )
 
+    absorption_samples, residual_samples = [], []
+    amplitude_sum = None
+
     for sample_seed in ensemble_sampling.seeds:
         volume = medium.to_volume(
             grid=grid,
@@ -96,6 +99,12 @@ def ensemble_scattering(
         result = engine.solve(volume=volume)
 
         sampled = sampling.summarize(result=result)
+
+        assert result.mu_a is not None and result.residual_norms is not None
+        absorption_samples.append(result.mu_a)
+        residual_samples.append(result.residual_norms)
+        cumulative = np.cumsum(sampled["directional_amplitudes"], axis=0)
+        amplitude_sum = cumulative.copy() if amplitude_sum is None else amplitude_sum + cumulative
 
         directional_samples.append(sampled["directional_differential"])
 
@@ -144,7 +153,17 @@ def ensemble_scattering(
         else np.full_like(directional[0], np.nan)
     )
 
+    assert amplitude_sum is not None
     return {
+        "mu_a": np.mean(absorption_samples, axis=0),
+        "mu_a_stderr": (
+            np.std(absorption_samples, axis=0, ddof=1) / np.sqrt(realizations)
+            if realizations > 1
+            else np.full(order, np.nan)
+        ),
+        "residual_norms": np.asarray(residual_samples),
+        "coherent_differential": np.sum(np.abs(amplitude_sum / realizations) ** 2, axis=(-1, -2))
+        / (2 * float(grid.volume.to("meter**3").magnitude)),
         "angles": sampling.angles.copy(),
         "azimuths": sampling.azimuths,
         "directional_differential": directional.mean(axis=0),

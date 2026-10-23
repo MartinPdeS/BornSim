@@ -107,6 +107,10 @@ What BornSim models
 * **Results:** differential scattering, full directional phase functions,
   cross sections, uncertainty estimates, saved provenance, and Matplotlib or
   Plotly visualizations.
+* **Reliability:** integral-equation residuals, explicit refinement reports,
+  and weak-contrast absorbing-sphere validation against Mie theory.
+* **Absorption and ensembles:** passive absorbing materials and random fields,
+  absorption uncertainty, and coherent/diffuse scattering decomposition.
 * **Units:** explicit physical units for wavelengths, lengths, angles, and
   scattering coefficients through ``bornsim.units.ureg``.
 

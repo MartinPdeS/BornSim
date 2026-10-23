@@ -1,7 +1,7 @@
 """Reusable finite-volume vector Born-series engine.
 
 Time convention exp(-i omega t). Relative dielectric contrast is linearized
-as 2 n0 delta_n at every order. Amplitudes interfere coherently before the
+as 2 n0 (delta_n + i kappa) at every order. Amplitudes interfere coherently before the
 unpolarized intensity is evaluated.
 """
 
@@ -299,4 +299,8 @@ class BornSeries:
             field_norms=np.array(norms),
             warnings=tuple(warnings),
             mu_a=np.array(absorption),
+            residual_norms=np.array(
+                norms[1:]
+                + [float(np.linalg.norm(self.operator.apply(source=contrast[..., None, None] * field)) / incident_norm)]
+            ),
         )

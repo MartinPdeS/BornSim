@@ -22,6 +22,16 @@ _ANGULAR_FIELDS = (
     "sample_volume",
 )
 
+_DIAGNOSTIC_FIELDS = (
+    "g",
+    "mu_s_prime",
+    "mu_a",
+    "mu_a_stderr",
+    "residual_norms",
+    "coherent_differential",
+    "field_norms",
+)
+
 
 @dataclass(frozen=True, kw_only=True, repr=False, init=False)
 class Result:
@@ -68,6 +78,9 @@ class Result:
     angular: AngularData
     g: Quantity | None
     mu_a: Quantity | None
+    residual_norms: Quantity | None
+    mu_a_stderr: Quantity | None
+    coherent_differential: Quantity | None
     mu_s_prime: Quantity | None
     field_norms: Quantity | None
     warnings: tuple
@@ -84,6 +97,9 @@ class Result:
         "mu_s": "1 / meter",
         "mu_s_prime": "1 / meter",
         "mu_a": "1 / meter",
+        "mu_a_stderr": "1 / meter",
+        "residual_norms": "dimensionless",
+        "coherent_differential": "1 / meter / steradian",
         "g": "dimensionless",
         "directions": "dimensionless",
         "field_norms": "dimensionless",
@@ -108,6 +124,9 @@ class Result:
         g=None,
         mu_s_prime=None,
         mu_a=None,
+        mu_a_stderr=None,
+        residual_norms=None,
+        coherent_differential=None,
         amplitudes=None,
         term_differential=None,
         stderr=None,
@@ -131,11 +150,7 @@ class Result:
             if not isinstance(angular, AngularData):
                 raise TypeError("angular must be an AngularData.")
 
-            conflicts = any(
-                value is not None
-                for name, value in values.items()
-                if name not in ("g", "mu_s_prime", "mu_a", "field_norms")
-            )
+            conflicts = any(value is not None for name, value in values.items() if name not in _DIAGNOSTIC_FIELDS)
 
             if conflicts or azimuth_averaged:
                 raise ValueError("Supply angular or individual angular fields, not both.")
@@ -204,7 +219,7 @@ class Result:
         }.items():
             object.__setattr__(self, name, value)
 
-        for name in ("g", "mu_s_prime", "mu_a", "field_norms"):
+        for name in _DIAGNOSTIC_FIELDS:
             value = getattr(state, name)
 
             if value is not None:
@@ -233,8 +248,21 @@ class Result:
             "g": (orders,),
             "mu_s_prime": (orders,),
             "mu_a": (orders,),
+            "mu_a_stderr": (orders,),
+            "residual_norms": (result.realizations, orders) if result.kind == "ensemble" else (orders,),
+            "coherent_differential": result.differential.shape,
             "field_norms": (result.realizations, orders) if result.kind == "ensemble" else (orders,),
         }
+
+        if result.coherent_differential is not None:
+            if result.kind != "ensemble":
+                raise ValueError("coherent_differential requires an ensemble.")
+            if result.coherent_differential.shape != result.differential.shape:
+                raise ValueError("coherent_differential must match differential.")
+            total = result.differential.to("1 / meter / steradian").magnitude
+            coherent = result.coherent_differential.to("1 / meter / steradian").magnitude
+            if np.any(coherent > total + 1e-12 * np.maximum(total, np.finfo(float).tiny)):
+                raise ValueError("Coherent intensity cannot exceed total ensemble intensity.")
 
         for name, shape in shapes.items():
             quantity = getattr(result, name)
@@ -250,7 +278,7 @@ class Result:
             if not np.issubdtype(values.dtype, np.number) or np.iscomplexobj(values):
                 raise ValueError(f"{name} must contain numeric real values.")
 
-            if np.any(np.isinf(values)) or (name != "g" and np.any(~np.isfinite(values))):
+            if np.any(np.isinf(values)) or (name not in ("g", "mu_a_stderr") and np.any(~np.isfinite(values))):
                 raise ValueError(f"{name} must be finite, except for documented unknown values.")
 
             if name != "g" and np.any(values < 0):
@@ -274,7 +302,10 @@ class Result:
             if not np.allclose(result.mu_s_prime, expected, rtol=1e-10, atol=0):
                 raise ValueError("mu_s_prime must equal mu_s * (1 - g), with zero at zero scattering.")
 
-        for name in ("stderr", "azimuth_stderr"):
+        if result.mu_a_stderr is not None and result.kind != "ensemble":
+            raise ValueError("mu_a_stderr is only available for ensembles.")
+
+        for name in ("stderr", "azimuth_stderr", "mu_a_stderr"):
             errors = getattr(result, name)
 
             if result.realizations == 1 and errors is not None and not np.all(np.isnan(errors.magnitude)):
@@ -385,11 +416,33 @@ class Result:
             g=self.g,
             mu_s_prime=self.mu_s_prime,
             mu_a=self.mu_a,
+            mu_a_stderr=self.mu_a_stderr,
+            residual_norms=self.residual_norms,
+            coherent_differential=(
+                self.coherent_differential.mean(axis=-1)
+                if self.coherent_differential is not None and self.differential.ndim == 3
+                else self.coherent_differential
+            ),
             field_norms=self.field_norms,
             warnings=self.warnings,
             realizations=self.realizations,
             provenance=self.provenance,
         )
+
+    @property
+    def diffuse_differential(self):
+        """Finite-ensemble mean intensity minus squared mean amplitude (m⁻¹ sr⁻¹).
+
+        The coherent estimate includes the ensemble-mean scattered field, not
+        the direct incident beam. With N samples, this uncorrected diffuse
+        estimate has factor (N-1)/N finite-sample bias; it is zero for N=1.
+        """
+        if self.coherent_differential is None:
+            return None
+
+        values = np.maximum(self.differential - self.coherent_differential, 0 * self.differential.units)
+        values.magnitude.setflags(write=False)
+        return values
 
     @property
     def absorption_cross_section(self):
@@ -1228,3 +1281,4 @@ class BornResult:
     field_norms: np.ndarray  # ||E_j|| / ||E_inc||
     warnings: tuple[str, ...]
     mu_a: np.ndarray | None = None
+    residual_norms: np.ndarray | None = None

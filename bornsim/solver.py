@@ -162,6 +162,7 @@ class Solver:
             term_differential=result.term_differential * (1 / ureg.meter / ureg.steradian),
             field_norms=result.field_norms,
             mu_a=result.mu_a * (1 / ureg.meter),
+            residual_norms=result.residual_norms,
             warnings=result.warnings,
             provenance=_provenance(
                 order=self.order,
@@ -224,6 +225,7 @@ class Solver:
             mu_s_prime=integrated[:, 2] * (1 / ureg.meter),
             field_norms=born.field_norms,
             mu_a=born.mu_a * (1 / ureg.meter),
+            residual_norms=born.residual_norms,
             warnings=born.warnings,
             provenance=_provenance(
                 order=self.order,
@@ -302,6 +304,10 @@ class Solver:
             g=result["g"],
             mu_s_prime=result["mu_s_prime"] * (1 / ureg.meter),
             field_norms=result["field_norms"],
+            mu_a=result["mu_a"] * (1 / ureg.meter),
+            mu_a_stderr=result["mu_a_stderr"] * (1 / ureg.meter),
+            residual_norms=result["residual_norms"],
+            coherent_differential=result["coherent_differential"] * (1 / ureg.meter / ureg.steradian),
             warnings=result["warnings"],
             realizations=result["realizations"],
             provenance=_provenance(

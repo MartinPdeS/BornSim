@@ -12,6 +12,7 @@ from .grid import Grid
 from .directions import Directions
 from .sampling import AngularSampling
 from .results import Result
+from .convergence import ConvergenceReport
 from .angular_data import AngularData
 from .material import Material
 from .ensemble_sampling import EnsembleSampling
@@ -19,6 +20,7 @@ from .medium.structured import PeriodicMedium
 from .medium.particles import CoreShellMedium, EllipsoidMedium, CylinderMedium
 
 __all__ = [
+    "ConvergenceReport",
     "PeriodicMedium",
     "CoreShellMedium",
     "EllipsoidMedium",

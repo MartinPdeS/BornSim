@@ -24,6 +24,7 @@ class RandomFieldMedium(Medium):
     background_refractive_index: float
     refractive_index_std: float
     correlation_length: Quantity
+    extinction_coefficient: float = 0.0
 
     @property
     @abstractmethod
@@ -43,7 +44,7 @@ class RandomFieldMedium(Medium):
         if not np.isfinite(self.correlation_length) or self.correlation_length <= 0:
             raise ValueError("correlation_length must be finite and positive.")
 
-        for name in ("background_refractive_index", "refractive_index_std"):
+        for name in ("background_refractive_index", "refractive_index_std", "extinction_coefficient"):
             value = _refractive_index_values(
                 value=getattr(self, name),
                 name=name,
@@ -75,6 +76,7 @@ class RandomFieldMedium(Medium):
             "correlation_length_m": float(self.correlation_length.to("meter").magnitude),
             "correlation": self.correlation,
             "smoothness": getattr(self, "smoothness", None),
+            **({"extinction_coefficient": self.extinction_coefficient} if self.extinction_coefficient else {}),
         }
 
     def spectral_weight(self, *, q_squared: Quantity) -> np.ndarray:
@@ -157,6 +159,7 @@ class RandomFieldMedium(Medium):
 
         return Volume(
             delta_refractive_index=synthesized_refractive_index_fluctuations[sample_crop],
+            extinction_coefficient=self.extinction_coefficient,
             grid=grid,
             background_refractive_index=self.background_refractive_index,
             medium=self,

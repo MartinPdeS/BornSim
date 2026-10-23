@@ -131,6 +131,9 @@ unitless index array, converting it to the linearized contrast representation.
 Configuration
 -------------
 
+.. automodule:: bornsim.convergence
+   :members:
+
 .. automodule:: bornsim.source
    :members:
 

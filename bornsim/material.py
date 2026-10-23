@@ -10,11 +10,14 @@ class Material:
     """A nondispersive real refractive index shared by any number of shapes.
 
     ``refractive_index`` is an absolute positive dimensionless refractive index, not a
-    contrast. Supply a plain number; quantities are rejected. Attach sample absorption
-    after voxelization with ``Volume.with_absorption``. Wavelength dispersion is not implemented.
+    contrast. Supply plain numbers; quantities are rejected. The nonnegative
+    ``extinction_coefficient`` is kappa in n+i*kappa, using exp(-i omega t).
+    Voxelization retains absorption within the finite sample; the exterior
+    host remains lossless. Wavelength dispersion is not implemented.
     """
 
     refractive_index: float
+    extinction_coefficient: float = 0.0
 
     def __post_init__(self) -> None:
         refractive_index = _refractive_index_values(value=self.refractive_index, name="refractive_index", scalar=True)
@@ -24,11 +27,21 @@ class Material:
 
         object.__setattr__(self, "refractive_index", refractive_index)
 
+        extinction = _refractive_index_values(
+            value=self.extinction_coefficient, name="extinction_coefficient", scalar=True
+        )
+        if not np.isfinite(extinction) or extinction < 0:
+            raise ValueError("extinction_coefficient must be finite and nonnegative.")
+        object.__setattr__(self, "extinction_coefficient", extinction)
+
     @property
     def metadata(self):
         """Fresh JSON-compatible material description."""
 
-        return {"refractive_index": self.refractive_index}
+        return {
+            "refractive_index": self.refractive_index,
+            **({"extinction_coefficient": self.extinction_coefficient} if self.extinction_coefficient else {}),
+        }
 
     @classmethod
     def _resolve(cls, *, material=None, refractive_index=None):
