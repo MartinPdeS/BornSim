@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:26.223** total execution time for 21 files **from all galleries**:
+**00:46.353** total execution time for 24 files **from all galleries**:
 
 .. container::
 
@@ -33,65 +33,74 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_auto_examples_random_media_theory_random_fields.py` (``../examples/random_media/theory_random_fields.py``)
-     - 00:11.159
+     - 00:14.601
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_validation_convergence_reports.py` (``../examples/validation/convergence_reports.py``)
+     - 00:06.518
      - 0.0
    * - :ref:`sphx_glr_auto_examples_structured_media_theory_directional_interference.py` (``../examples/structured_media/theory_directional_interference.py``)
-     - 00:03.258
+     - 00:04.664
      - 0.0
    * - :ref:`sphx_glr_auto_examples_structured_media_dielectric_sphere.py` (``../examples/structured_media/dielectric_sphere.py``)
-     - 00:02.975
+     - 00:04.103
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_results_coherent_diffuse.py` (``../examples/results/coherent_diffuse.py``)
+     - 00:02.730
      - 0.0
    * - :ref:`sphx_glr_auto_examples_random_media_wavelength_dependence.py` (``../examples/random_media/wavelength_dependence.py``)
-     - 00:01.229
+     - 00:01.814
      - 0.0
    * - :ref:`sphx_glr_auto_examples_random_media_phase_function.py` (``../examples/random_media/phase_function.py``)
-     - 00:01.102
+     - 00:01.545
      - 0.0
    * - :ref:`sphx_glr_auto_examples_random_media_covariance_models.py` (``../examples/random_media/covariance_models.py``)
-     - 00:00.883
+     - 00:01.201
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_validation_absorbing_sphere_balance.py` (``../examples/validation/absorbing_sphere_balance.py``)
+     - 00:01.109
      - 0.0
    * - :ref:`sphx_glr_auto_examples_structured_media_particle_families.py` (``../examples/structured_media/particle_families.py``)
-     - 00:00.740
+     - 00:01.057
      - 0.0
    * - :ref:`sphx_glr_auto_examples_structured_media_periodic_array.py` (``../examples/structured_media/periodic_array.py``)
-     - 00:00.539
+     - 00:00.912
      - 0.0
    * - :ref:`sphx_glr_auto_examples_structured_media_antenna_rods.py` (``../examples/structured_media/antenna_rods.py``)
-     - 00:00.508
+     - 00:00.675
      - 0.0
    * - :ref:`sphx_glr_auto_examples_results_result_plots.py` (``../examples/results/result_plots.py``)
-     - 00:00.466
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_born_orders_compare_orders.py` (``../examples/born_orders/compare_orders.py``)
-     - 00:00.424
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_born_orders_absorbing_random_medium.py` (``../examples/born_orders/absorbing_random_medium.py``)
-     - 00:00.420
+     - 00:00.654
      - 0.0
    * - :ref:`sphx_glr_auto_examples_validation_finite_size_comparison.py` (``../examples/validation/finite_size_comparison.py``)
-     - 00:00.417
+     - 00:00.627
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_born_orders_absorbing_random_medium.py` (``../examples/born_orders/absorbing_random_medium.py``)
+     - 00:00.590
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_born_orders_compare_orders.py` (``../examples/born_orders/compare_orders.py``)
+     - 00:00.586
      - 0.0
    * - :ref:`sphx_glr_auto_examples_validation_angular_convergence.py` (``../examples/validation/angular_convergence.py``)
-     - 00:00.400
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_random_media_random_medium.py` (``../examples/random_media/random_medium.py``)
-     - 00:00.388
+     - 00:00.562
      - 0.0
    * - :ref:`sphx_glr_auto_examples_validation_ensemble_sampling.py` (``../examples/validation/ensemble_sampling.py``)
-     - 00:00.333
+     - 00:00.508
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_random_media_random_medium.py` (``../examples/random_media/random_medium.py``)
+     - 00:00.497
      - 0.0
    * - :ref:`sphx_glr_auto_examples_random_media_random_spheres.py` (``../examples/random_media/random_spheres.py``)
-     - 00:00.244
+     - 00:00.362
      - 0.0
    * - :ref:`sphx_glr_auto_examples_structured_media_structured_media.py` (``../examples/structured_media/structured_media.py``)
-     - 00:00.241
+     - 00:00.339
      - 0.0
    * - :ref:`sphx_glr_auto_examples_results_save_load_results.py` (``../examples/results/save_load_results.py``)
-     - 00:00.199
+     - 00:00.278
      - 0.0
    * - :ref:`sphx_glr_auto_examples_validation_grid_refinement.py` (``../examples/validation/grid_refinement.py``)
-     - 00:00.155
+     - 00:00.217
      - 0.0
    * - :ref:`sphx_glr_auto_examples_born_orders_born_interference.py` (``../examples/born_orders/born_interference.py``)
-     - 00:00.142
+     - 00:00.204
      - 0.0

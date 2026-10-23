@@ -22,6 +22,23 @@ restore unitful results with their calculation settings.
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Absorption belongs to the random-medium configuration, so every realization has a reproducible kappa field. Compare total intensity, the intensity of the mean scattered amplitude, and their difference through third Born order.">
+
+.. only:: html
+
+  .. image:: /auto_examples/results/images/thumb/sphx_glr_coherent_diffuse_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/results/coherent_diffuse`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Coherent and diffuse scattering in an absorbing ensemble</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="Use plotting methods directly on a result, then call plt.show() to display angular Matplotlib figures. The docs embed interactive Plotly volumes and phase surfaces; drag to rotate and scroll to zoom.">
 
 .. only:: html
@@ -64,6 +81,7 @@ restore unitful results with their calculation settings.
 .. toctree::
    :hidden:
 
+   /auto_examples/results/coherent_diffuse
    /auto_examples/results/result_plots
    /auto_examples/results/save_load_results
 

@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:00.666** total execution time for 2 files **from auto_examples/results**:
+**00:03.663** total execution time for 3 files **from auto_examples/results**:
 
 .. container::
 
@@ -32,9 +32,12 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
+   * - :ref:`sphx_glr_auto_examples_results_coherent_diffuse.py` (``coherent_diffuse.py``)
+     - 00:02.730
+     - 0.0
    * - :ref:`sphx_glr_auto_examples_results_result_plots.py` (``result_plots.py``)
-     - 00:00.466
+     - 00:00.654
      - 0.0
    * - :ref:`sphx_glr_auto_examples_results_save_load_results.py` (``save_load_results.py``)
-     - 00:00.199
+     - 00:00.278
      - 0.0

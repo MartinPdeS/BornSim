@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Plotting and saving results &#8212; BornSim 0.6.0 documentation</title>
+    <title>Plotting and saving results &#8212; BornSim 0.7.0 documentation</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=dda85ae5"></script>
+    <script src="../../_static/documentation_options.js?v=b9678aa1"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -54,7 +54,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/BornSim/documentation_page/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.6.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.7.0';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
@@ -62,12 +62,12 @@
     <link rel="icon" href="../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Result plots and interactive 3D views" href="result_plots.html" />
+    <link rel="next" title="Coherent and diffuse scattering in an absorbing ensemble" href="coherent_diffuse.html" />
     <link rel="prev" title="Compare numerical Born orders" href="../born_orders/compare_orders.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0" />
+  <meta name="docsearch:version" content="0.7.0" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -189,13 +189,30 @@
   </a>
 </li>
 
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../reliability.html">
+    Reliability
+  </a>
+</li>
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../resources.html">
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../resources.html">
     Resources
   </a>
 </li>
 
+                </ul>
+            </li>
+            
   </ul>
 </nav></div>
       
@@ -349,6 +366,13 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../absorption.html">
     Absorption
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../reliability.html">
+    Reliability
   </a>
 </li>
 
@@ -518,7 +542,10 @@
 <span id="sphx-glr-auto-examples-results"></span><h1>Plotting and saving results<a class="headerlink" href="#plotting-and-saving-results" title="Link to this heading">#</a></h1>
 <p>Plot differential scattering and directional phase functions, then save and
 restore unitful results with their calculation settings.</p>
-<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Use plotting methods directly on a result, then call plt.show() to display angular Matplotlib figures. The docs embed interactive Plotly volumes and phase surfaces; drag to rotate and scroll to zoom."><img alt="" src="../../_images/sphx_glr_result_plots_thumb.png" />
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Absorption belongs to the random-medium configuration, so every realization has a reproducible kappa field. Compare total intensity, the intensity of the mean scattered amplitude, and their difference through third Born order."><img alt="" src="../../_images/sphx_glr_coherent_diffuse_thumb.png" />
+<p><a class="reference internal" href="coherent_diffuse.html"><span class="doc">Coherent and diffuse scattering in an absorbing ensemble</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Coherent and diffuse scattering in an absorbing ensemble</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Use plotting methods directly on a result, then call plt.show() to display angular Matplotlib figures. The docs embed interactive Plotly volumes and phase surfaces; drag to rotate and scroll to zoom."><img alt="" src="../../_images/sphx_glr_result_plots_thumb.png" />
 <p><a class="reference internal" href="result_plots.html"><span class="doc">Result plots and interactive 3D views</span></a></p>
   <div class="sphx-glr-thumbnail-title">Result plots and interactive 3D views</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="Save a numerical result and restore it with its physical units, complex amplitudes, diagnostics, and original calculation settings. The versioned NumPy archive uses JSON metadata and loads without pickle."><img alt="" src="../../_images/sphx_glr_save_load_results_thumb.png" />
@@ -547,7 +574,7 @@ restore unitful results with their calculation settings.</p>
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.6.0/docs/source/auto_examples/results/index.rst">
+    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.7.0/docs/source/auto_examples/results/index.rst">
       <i class="fa-solid fa-pencil"></i>
       
       

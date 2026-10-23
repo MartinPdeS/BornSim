@@ -22,6 +22,23 @@ finite-size effects independently.
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Assign absorption to a reusable Material before voxelization. Compare forward extinction from the optical theorem against scattering plus dissipation. Finite-order Born approximations need not satisfy this balance exactly.">
+
+.. only:: html
+
+  .. image:: /auto_examples/validation/images/thumb/sphx_glr_absorbing_sphere_balance_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/validation/absorbing_sphere_balance`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Absorbing material and an optical-theorem check</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="Hold the random volumes, Born order, and voxel grid fixed while increasing polar Gauss-Legendre nodes and uniform azimuth samples. Plot angles are independent of the integration nodes: adding points to an angular plot does not refine the integral. The finest calculation is a numerical reference, not an exact solution, and both quadrature axes need checking independently.">
 
 .. only:: html
@@ -34,6 +51,23 @@ finite-size effects independently.
 .. raw:: html
 
       <div class="sphx-glr-thumbnail-title">Convergence of solid-angle quadrature</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Change one numerical control at a time. Grid studies below retain the same physical sphere and box; extent studies retain voxel spacing and sphere size. Statistical sample-size studies require independently assessing representative volume effects and must not be confused with padding a deterministic sphere.">
+
+.. only:: html
+
+  .. image:: /auto_examples/validation/images/thumb/sphx_glr_convergence_reports_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/validation/convergence_reports`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Explicit refinement studies and equation residuals</div>
     </div>
 
 
@@ -98,7 +132,9 @@ finite-size effects independently.
 .. toctree::
    :hidden:
 
+   /auto_examples/validation/absorbing_sphere_balance
    /auto_examples/validation/angular_convergence
+   /auto_examples/validation/convergence_reports
    /auto_examples/validation/ensemble_sampling
    /auto_examples/validation/finite_size_comparison
    /auto_examples/validation/grid_refinement

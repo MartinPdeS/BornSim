@@ -53,9 +53,10 @@ it is not a multiplicative attenuation applied to the final phase function.
 ``mu_a`` is preserved by result archives and azimuth averaging. Existing
 archives without absorption data return ``mu_a=None``.
 
-An absorbing exterior host and gain media are not supported. Generated-medium
-ensemble calls currently describe real-index media; for absorbing random media,
-attach absorption to each seeded volume and solve the realizations individually.
+An absorbing exterior host and gain media are not supported. Random-field
+media accept ``extinction_coefficient`` directly and their ensemble solves
+return ``mu_a`` and ``mu_a_stderr``. Material objects also accept kappa for
+structured regions. See :doc:`reliability` for composition rules and examples.
 Do not assume a finite Born truncation satisfies the optical theorem exactly.
 Check grid and order convergence before interpreting energy budgets, especially
 for optically thick or strongly absorbing samples.
