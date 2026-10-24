@@ -35,7 +35,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-testing = ["pytest>=8,<10", "pytest-cov>=5,<8"]
+release = ["martinpdes-maintenance==0.2.2"]
+testing = ["martinpdes-maintenance==0.2.2", "pytest>=8,<10", "pytest-cov>=5,<8"]
 test = ["BornSim[testing]"]
 documentation = [
     "MartinPdeS-docs>=0.2.5,<0.3",
@@ -59,3 +60,10 @@ files = ["bornsim/convergence.py", "bornsim/directions.py", "bornsim/series.py",
 follow_imports = "silent"
 ignore_missing_imports = true
 check_untyped_defs = true
+
+[tool.mps-maintenance]
+version-file = "bornsim/_version.py"
+version-method = "literal"
+conda-recipe = "conda.recipe/meta.yaml"
+zenodo = ".zenodo.json"
+citation = "CITATION.cff"
