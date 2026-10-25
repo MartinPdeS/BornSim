@@ -3,7 +3,9 @@ Examples
 
 Browse runnable examples by topic: random media, structured media, Born orders
 and interference, plotting and saving results, and numerical validation.
-Each gallery example includes a three-dimensional view of its input medium.
+Each topic contains six runnable examples. Input media are shown with
+three-dimensional views or Matplotlib slices, with explicit physical settings.
+The gallery includes Born calculations through orders two to five.
 Ensemble examples show a labelled seeded realization on the calculation grid;
 that view is one finite sample, rather than the ensemble average. Comparisons
 of covariance models, correlation lengths, or sphere arrangements show each
@@ -242,3 +244,19 @@ empirical covariance with the discrete spectral and continuum predictions.
 translation invariance and shows how relative sphere positions introduce
 azimuth-dependent interference. Both examples expose their grids, materials,
 seeds and numerical settings.
+
+More higher-order studies
+-------------------------
+
+* :doc:`auto_examples/born_orders/contrast_sensitivity` compares positive and
+  negative refractive index offsets through fourth order.
+* :doc:`auto_examples/born_orders/wavelength_corrections` holds geometry fixed
+  and compares wavelength-dependent corrections through fifth order.
+* :doc:`auto_examples/born_orders/coupled_spheres` compares a joint third-order
+  solve with the coherent amplitude sum of isolated particles.
+* :doc:`auto_examples/results/phase_normalization` distinguishes per-steradian
+  phase density from polar-angle probability through third order.
+* :doc:`auto_examples/results/angular_cut_and_full` compares second-order
+  meridian data and explains why cuts lack integrated coefficients.
+* :doc:`auto_examples/results/cross_section_and_volume` separates physical
+  cross sections from box normalization through fourth order.
