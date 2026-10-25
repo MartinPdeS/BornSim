@@ -8,6 +8,11 @@ Born orders and interference
 Compare cumulative Born orders and inspect coherent amplitude interference.
 Field-term diagnostics alone do not certify convergence.
 
+Six examples cover order comparisons, term interference, absorption,
+contrast sensitivity, wavelength dependence through fifth order, and coupling
+between two spheres. Higher orders retain the linearized dielectric contrast
+and spherical Green self cell; decreasing corrections do not certify convergence.
+
 
 .. raw:: html
 
@@ -71,6 +76,57 @@ Field-term diagnostics alone do not certify convergence.
     </div>
 
 
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Compare positive and negative refractive index offsets at fixed geometry. The first intensity is even in contrast; higher orders can break that symmetry. All orders use linearized dielectric contrast and the spherical Green self cell. These small examples illustrate corrections, not a universal convergence bound.">
+
+.. only:: html
+
+  .. image:: /auto_examples/born_orders/images/thumb/sphx_glr_contrast_sensitivity_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/born_orders/contrast_sensitivity`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Contrast sensitivity of successive Born corrections</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Compare a jointly solved sphere pair with the coherent sum of isolated sphere amplitudes. At first order these coincide. Higher orders in the joint solve also include propagation between particles; isolated solves omit it. The spheres do not overlap. This remains a linearized dielectric model.">
+
+.. only:: html
+
+  .. image:: /auto_examples/born_orders/images/thumb/sphx_glr_coupled_spheres_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/born_orders/coupled_spheres`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Higher-order coupling in a pair of spheres</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Keep one voxelized sphere fixed while changing vacuum wavelength. Compare cumulative orders through fifth order using the same angular cut. The material is nondispersive here: its refractive index is held fixed. A small correction does not assess grid accuracy or the contrast approximation.">
+
+.. only:: html
+
+  .. image:: /auto_examples/born_orders/images/thumb/sphx_glr_wavelength_corrections_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/born_orders/wavelength_corrections`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Wavelength dependence of higher-order corrections</div>
+    </div>
+
+
 .. thumbnail-parent-div-close
 
 .. raw:: html
@@ -84,4 +140,7 @@ Field-term diagnostics alone do not certify convergence.
    /auto_examples/born_orders/absorbing_random_medium
    /auto_examples/born_orders/born_interference
    /auto_examples/born_orders/compare_orders
+   /auto_examples/born_orders/contrast_sensitivity
+   /auto_examples/born_orders/coupled_spheres
+   /auto_examples/born_orders/wavelength_corrections
 

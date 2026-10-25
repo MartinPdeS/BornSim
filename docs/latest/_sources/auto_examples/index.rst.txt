@@ -302,6 +302,11 @@ Born orders and interference
 Compare cumulative Born orders and inspect coherent amplitude interference.
 Field-term diagnostics alone do not certify convergence.
 
+Six examples cover order comparisons, term interference, absorption,
+contrast sensitivity, wavelength dependence through fifth order, and coupling
+between two spheres. Higher orders retain the linearized dielectric contrast
+and spherical Green self cell; decreasing corrections do not certify convergence.
+
 
 .. raw:: html
 
@@ -365,6 +370,57 @@ Field-term diagnostics alone do not certify convergence.
     </div>
 
 
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Compare positive and negative refractive index offsets at fixed geometry. The first intensity is even in contrast; higher orders can break that symmetry. All orders use linearized dielectric contrast and the spherical Green self cell. These small examples illustrate corrections, not a universal convergence bound.">
+
+.. only:: html
+
+  .. image:: /auto_examples/born_orders/images/thumb/sphx_glr_contrast_sensitivity_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/born_orders/contrast_sensitivity`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Contrast sensitivity of successive Born corrections</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Compare a jointly solved sphere pair with the coherent sum of isolated sphere amplitudes. At first order these coincide. Higher orders in the joint solve also include propagation between particles; isolated solves omit it. The spheres do not overlap. This remains a linearized dielectric model.">
+
+.. only:: html
+
+  .. image:: /auto_examples/born_orders/images/thumb/sphx_glr_coupled_spheres_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/born_orders/coupled_spheres`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Higher-order coupling in a pair of spheres</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Keep one voxelized sphere fixed while changing vacuum wavelength. Compare cumulative orders through fifth order using the same angular cut. The material is nondispersive here: its refractive index is held fixed. A small correction does not assess grid accuracy or the contrast approximation.">
+
+.. only:: html
+
+  .. image:: /auto_examples/born_orders/images/thumb/sphx_glr_wavelength_corrections_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/born_orders/wavelength_corrections`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Wavelength dependence of higher-order corrections</div>
+    </div>
+
+
 .. thumbnail-parent-div-close
 
 .. raw:: html
@@ -376,6 +432,11 @@ Plotting and saving results
 
 Plot differential scattering and directional phase functions, then save and
 restore unitful results with their calculation settings.
+
+Six examples cover plotting, archives, coherent and diffuse scattering,
+phase-density normalization, angular cuts versus full directional solves,
+and the distinction between cross sections and box-normalized coefficients.
+The calculations include second-, third-, and fourth-order solves.
 
 
 .. raw:: html
@@ -391,6 +452,23 @@ restore unitful results with their calculation settings.
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Compare a meridian cut with the matching meridian of a full solve through second order. The cut keeps complex amplitudes but has no integrated scattering coefficient. Full quadrature additionally supplies finite-sample coefficients. Changing observation sampling does not change the internal Born field.">
+
+.. only:: html
+
+  .. image:: /auto_examples/results/images/thumb/sphx_glr_angular_cut_and_full_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/results/angular_cut_and_full`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Angular cuts and full directional results</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="Absorption belongs to the random-medium configuration, so every realization has a reproducible kappa field. Compare total intensity, the intensity of the mean scattered amplitude, and their difference through third Born order.">
 
 .. only:: html
@@ -403,6 +481,40 @@ restore unitful results with their calculation settings.
 .. raw:: html
 
       <div class="sphx-glr-thumbnail-title">Coherent and diffuse scattering in an absorbing ensemble</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Pad one fixed physical sphere with background voxels at fixed spacing. The box-normalized scattering coefficient changes with sample volume, while its product with that volume is the scattering cross section. Padding tests representation and normalization, not an infinite-medium transport limit.">
+
+.. only:: html
+
+  .. image:: /auto_examples/results/images/thumb/sphx_glr_cross_section_and_volume_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/results/cross_section_and_volume`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Cross sections and box-normalized coefficients</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A phase function is a density per steradian. After explicit azimuth averaging, 2pip(theta)*sin(theta) is the polar-angle probability density per radian. Full solid-angle sampling supplies normalization separately at each Born order. An angular cut alone cannot provide this normalization.">
+
+.. only:: html
+
+  .. image:: /auto_examples/results/images/thumb/sphx_glr_phase_normalization_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/results/phase_normalization`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Phase density and polar-angle probability</div>
     </div>
 
 

@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Example gallery &#8212; BornSim 0.7.0 documentation</title>
+    <title>Example gallery &#8212; BornSim 0.8.0 documentation</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=b9678aa1"></script>
+    <script src="../_static/documentation_options.js?v=cce5339e"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -54,7 +54,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/BornSim/documentation_page/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.7.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.8.0';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
@@ -67,7 +67,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.7.0" />
+  <meta name="docsearch:version" content="0.8.0" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -608,6 +608,10 @@ axis and orientation controls.</p>
 <h1>Born orders and interference<a class="headerlink" href="#born-orders-and-interference" title="Link to this heading">#</a></h1>
 <p>Compare cumulative Born orders and inspect coherent amplitude interference.
 Field-term diagnostics alone do not certify convergence.</p>
+<p>Six examples cover order comparisons, term interference, absorption,
+contrast sensitivity, wavelength dependence through fifth order, and coupling
+between two spheres. Higher orders retain the linearized dielectric contrast
+and spherical Green self cell; decreasing corrections do not certify convergence.</p>
 <div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Compare exactly the same seeded real-index fluctuations with and without absorption. Both calculations retain four coherent scattering orders. The host is lossless; absorption is confined to the finite voxel sample. These are finite-sample coefficients, not converged infinite-medium transport properties."><img alt="" src="../_images/sphx_glr_absorbing_random_medium_thumb.png" />
 <p><a class="reference internal" href="born_orders/absorbing_random_medium.html"><span class="doc">Absorbing random medium through fourth Born order</span></a></p>
   <div class="sphx-glr-thumbnail-title">Absorbing random medium through fourth Born order</div>
@@ -617,14 +621,36 @@ Field-term diagnostics alone do not certify convergence.</p>
 </div><div class="sphx-glr-thumbcontainer" tooltip="Compare finite-sample effective scattering coefficients through order three. The numerical ensemble retains amplitude interference and sampling errors. Integrated coefficients describe finite samples rather than an infinite medium. Error bars describe realization sampling, not discretization error. Field-term diagnostics alone do not certify convergence."><img alt="" src="../_images/sphx_glr_compare_orders_thumb.png" />
 <p><a class="reference internal" href="born_orders/compare_orders.html"><span class="doc">Compare numerical Born orders</span></a></p>
   <div class="sphx-glr-thumbnail-title">Compare numerical Born orders</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Compare positive and negative refractive index offsets at fixed geometry. The first intensity is even in contrast; higher orders can break that symmetry. All orders use linearized dielectric contrast and the spherical Green self cell. These small examples illustrate corrections, not a universal convergence bound."><img alt="" src="../_images/sphx_glr_contrast_sensitivity_thumb.png" />
+<p><a class="reference internal" href="born_orders/contrast_sensitivity.html"><span class="doc">Contrast sensitivity of successive Born corrections</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Contrast sensitivity of successive Born corrections</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Compare a jointly solved sphere pair with the coherent sum of isolated sphere amplitudes. At first order these coincide. Higher orders in the joint solve also include propagation between particles; isolated solves omit it. The spheres do not overlap. This remains a linearized dielectric model."><img alt="" src="../_images/sphx_glr_coupled_spheres_thumb.png" />
+<p><a class="reference internal" href="born_orders/coupled_spheres.html"><span class="doc">Higher-order coupling in a pair of spheres</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Higher-order coupling in a pair of spheres</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Keep one voxelized sphere fixed while changing vacuum wavelength. Compare cumulative orders through fifth order using the same angular cut. The material is nondispersive here: its refractive index is held fixed. A small correction does not assess grid accuracy or the contrast approximation."><img alt="" src="../_images/sphx_glr_wavelength_corrections_thumb.png" />
+<p><a class="reference internal" href="born_orders/wavelength_corrections.html"><span class="doc">Wavelength dependence of higher-order corrections</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Wavelength dependence of higher-order corrections</div>
 </div></div></section>
 <section id="plotting-and-saving-results">
 <h1>Plotting and saving results<a class="headerlink" href="#plotting-and-saving-results" title="Link to this heading">#</a></h1>
 <p>Plot differential scattering and directional phase functions, then save and
 restore unitful results with their calculation settings.</p>
-<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Absorption belongs to the random-medium configuration, so every realization has a reproducible kappa field. Compare total intensity, the intensity of the mean scattered amplitude, and their difference through third Born order."><img alt="" src="../_images/sphx_glr_coherent_diffuse_thumb.png" />
+<p>Six examples cover plotting, archives, coherent and diffuse scattering,
+phase-density normalization, angular cuts versus full directional solves,
+and the distinction between cross sections and box-normalized coefficients.
+The calculations include second-, third-, and fourth-order solves.</p>
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Compare a meridian cut with the matching meridian of a full solve through second order. The cut keeps complex amplitudes but has no integrated scattering coefficient. Full quadrature additionally supplies finite-sample coefficients. Changing observation sampling does not change the internal Born field."><img alt="" src="../_images/sphx_glr_angular_cut_and_full_thumb.png" />
+<p><a class="reference internal" href="results/angular_cut_and_full.html"><span class="doc">Angular cuts and full directional results</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Angular cuts and full directional results</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Absorption belongs to the random-medium configuration, so every realization has a reproducible kappa field. Compare total intensity, the intensity of the mean scattered amplitude, and their difference through third Born order."><img alt="" src="../_images/sphx_glr_coherent_diffuse_thumb.png" />
 <p><a class="reference internal" href="results/coherent_diffuse.html"><span class="doc">Coherent and diffuse scattering in an absorbing ensemble</span></a></p>
   <div class="sphx-glr-thumbnail-title">Coherent and diffuse scattering in an absorbing ensemble</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Pad one fixed physical sphere with background voxels at fixed spacing. The box-normalized scattering coefficient changes with sample volume, while its product with that volume is the scattering cross section. Padding tests representation and normalization, not an infinite-medium transport limit."><img alt="" src="../_images/sphx_glr_cross_section_and_volume_thumb.png" />
+<p><a class="reference internal" href="results/cross_section_and_volume.html"><span class="doc">Cross sections and box-normalized coefficients</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Cross sections and box-normalized coefficients</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="A phase function is a density per steradian. After explicit azimuth averaging, 2pip(theta)*sin(theta) is the polar-angle probability density per radian. Full solid-angle sampling supplies normalization separately at each Born order. An angular cut alone cannot provide this normalization."><img alt="" src="../_images/sphx_glr_phase_normalization_thumb.png" />
+<p><a class="reference internal" href="results/phase_normalization.html"><span class="doc">Phase density and polar-angle probability</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Phase density and polar-angle probability</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="Use plotting methods directly on a result, then call plt.show() to display angular Matplotlib figures. The docs embed interactive Plotly volumes and phase surfaces; drag to rotate and scroll to zoom."><img alt="" src="../_images/sphx_glr_result_plots_thumb.png" />
 <p><a class="reference internal" href="results/result_plots.html"><span class="doc">Result plots and interactive 3D views</span></a></p>
   <div class="sphx-glr-thumbnail-title">Result plots and interactive 3D views</div>
@@ -696,7 +722,7 @@ finite-size effects independently.</p>
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.7.0/docs/source/auto_examples/index.rst">
+    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.8.0/docs/source/auto_examples/index.rst">
       <i class="fa-solid fa-pencil"></i>
       
       

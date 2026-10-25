@@ -8,6 +8,11 @@ Plotting and saving results
 Plot differential scattering and directional phase functions, then save and
 restore unitful results with their calculation settings.
 
+Six examples cover plotting, archives, coherent and diffuse scattering,
+phase-density normalization, angular cuts versus full directional solves,
+and the distinction between cross sections and box-normalized coefficients.
+The calculations include second-, third-, and fourth-order solves.
+
 
 .. raw:: html
 
@@ -19,6 +24,23 @@ restore unitful results with their calculation settings.
     <div class="sphx-glr-thumbnails">
 
 .. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Compare a meridian cut with the matching meridian of a full solve through second order. The cut keeps complex amplitudes but has no integrated scattering coefficient. Full quadrature additionally supplies finite-sample coefficients. Changing observation sampling does not change the internal Born field.">
+
+.. only:: html
+
+  .. image:: /auto_examples/results/images/thumb/sphx_glr_angular_cut_and_full_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/results/angular_cut_and_full`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Angular cuts and full directional results</div>
+    </div>
+
 
 .. raw:: html
 
@@ -34,6 +56,40 @@ restore unitful results with their calculation settings.
 .. raw:: html
 
       <div class="sphx-glr-thumbnail-title">Coherent and diffuse scattering in an absorbing ensemble</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Pad one fixed physical sphere with background voxels at fixed spacing. The box-normalized scattering coefficient changes with sample volume, while its product with that volume is the scattering cross section. Padding tests representation and normalization, not an infinite-medium transport limit.">
+
+.. only:: html
+
+  .. image:: /auto_examples/results/images/thumb/sphx_glr_cross_section_and_volume_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/results/cross_section_and_volume`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Cross sections and box-normalized coefficients</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A phase function is a density per steradian. After explicit azimuth averaging, 2pip(theta)*sin(theta) is the polar-angle probability density per radian. Full solid-angle sampling supplies normalization separately at each Born order. An angular cut alone cannot provide this normalization.">
+
+.. only:: html
+
+  .. image:: /auto_examples/results/images/thumb/sphx_glr_phase_normalization_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/results/phase_normalization`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Phase density and polar-angle probability</div>
     </div>
 
 
@@ -81,7 +137,10 @@ restore unitful results with their calculation settings.
 .. toctree::
    :hidden:
 
+   /auto_examples/results/angular_cut_and_full
    /auto_examples/results/coherent_diffuse
+   /auto_examples/results/cross_section_and_volume
+   /auto_examples/results/phase_normalization
    /auto_examples/results/result_plots
    /auto_examples/results/save_load_results
 
