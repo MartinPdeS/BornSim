@@ -181,8 +181,9 @@ polar Gauss nodes and azimuth. This supplies the solid-angle
 normalization that a single meridian cut cannot determine. Refine both angular
 quadratures to check the numerical normalization.
 
-The phase surface represents probability density per steradian, with incidence
-along +z, rather than spatial medium geometry. It retains both polar angle
+The phase surface represents probability density per steradian in laboratory
+coordinates. This example uses incidence along +z; configurable oblique
+illumination leaves the laboratory axes fixed. It retains both polar angle
 and azimuth, so interference between multiple structures remains visible.
 No azimuth averaging is applied to the 3D view. Increase ``azimuth_samples``
 to resolve finer azimuthal features. One deterministic sample provides no

@@ -102,6 +102,8 @@ What BornSim models
 
 * **Media:** Gaussian, exponential, and Whittle–Matérn random fields, seeded
   random spheres, and composable structured geometry.
+* **Illumination:** arbitrary incident direction and linear, circular, or
+  elliptical polarization, with unpolarized illumination as the default.
 * **Numerics:** vector volume-integral propagation with configurable Born order,
   angular quadrature, grid spacing, and ensemble sampling.
 * **Results:** differential scattering, full directional phase functions,

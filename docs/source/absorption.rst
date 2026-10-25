@@ -43,7 +43,8 @@ refractive index. Existing real-index plots display the real index field;
 Absorbed power is evaluated from the local dissipation integral. At reported
 scattering order M, ``mu_a`` uses the cumulative internal field through order
 M-1, matching the field used to form the scattering source at that order.
-It averages the two incident polarizations and divides by the entire voxel-box
+It averages the configured incident modes (one pure state or two unpolarized
+modes) and divides by the entire voxel-box
 volume, including nonabsorbing voxels. With only the incident field retained,
 a uniform kappa gives ``mu_a = 4*pi*kappa/lambda_vacuum``.
 

@@ -1,12 +1,14 @@
 """Numerical ensemble quadrature and realization sampling uncertainty."""
 
 from typing import Any
+from numpy.typing import ArrayLike
 import numpy as np
 from .medium import Medium
 from .grid import Grid
 from .sampling import AngularSampling
 from .ensemble_sampling import EnsembleSampling
 from .series import BornSeries
+from .polarization import PolarizationState
 from .units import Quantity, _integer, validate_units, ureg
 
 
@@ -17,6 +19,8 @@ def ensemble_scattering(
     grid: Grid,
     sampling: AngularSampling | None = None,
     order: int = 3,
+    incident_direction: ArrayLike = (0.0, 0.0, 1.0),
+    polarization: PolarizationState | ArrayLike | None = None,
     ensemble_sampling: EnsembleSampling | None = None,
 ) -> dict[str, Any]:
     """Run numerical Born ensembles on an explicit Grid.
@@ -71,6 +75,8 @@ def ensemble_scattering(
         grid=grid,
         background_refractive_index=medium.background_refractive_index,
         wavelength=wavelength,
+        incident_direction=incident_direction,
+        polarization=polarization,
         directions=sampling.directions,
         order=order,
     )
@@ -98,7 +104,10 @@ def ensemble_scattering(
 
         result = engine.solve(volume=volume)
 
-        sampled = sampling.summarize(result=result)
+        sampled = sampling.summarize(
+            result=result,
+            incident_direction=engine.incident_direction,
+        )
 
         assert result.mu_a is not None and result.residual_norms is not None
         absorption_samples.append(result.mu_a)
@@ -163,7 +172,7 @@ def ensemble_scattering(
         ),
         "residual_norms": np.asarray(residual_samples),
         "coherent_differential": np.sum(np.abs(amplitude_sum / realizations) ** 2, axis=(-1, -2))
-        / (2 * float(grid.volume.to("meter**3").magnitude)),
+        / (amplitude_sum.shape[-2] * float(grid.volume.to("meter**3").magnitude)),
         "angles": sampling.angles.copy(),
         "azimuths": sampling.azimuths,
         "directional_differential": directional.mean(axis=0),

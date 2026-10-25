@@ -2,7 +2,7 @@
 
 Time convention exp(-i omega t). Relative dielectric contrast is linearized
 as 2 n0 (delta_n + i kappa) at every order. Amplitudes interfere coherently before the
-unpolarized intensity is evaluated.
+incident-mode intensity average is evaluated.
 """
 
 from dataclasses import dataclass, field
@@ -11,6 +11,9 @@ from .green import GreenOperator
 from .grid import Grid
 from .directions import Directions
 from .results import BornResult
+from .source import Source
+from numpy.typing import ArrayLike
+from .polarization import PolarizationState
 from .units import Quantity, _integer, validate_units
 from .volume import Volume
 
@@ -33,6 +36,11 @@ class BornSeries:
     order : int, optional
         Highest cumulative Born order, from 1 to 12; default 3.
 
+    incident_direction : array_like, optional
+        Cartesian unit propagation vector; defaults to positive z.
+    polarization : array_like, optional
+        Complex transverse unit electric-field vector; omit for unpolarized light.
+
     Attributes
     ----------
     operator : bornsim.green.GreenOperator
@@ -40,12 +48,14 @@ class BornSeries:
 
     Notes
     -----
-    The cached incident plane wave travels along +z with x and y polarizations.
+    The cached incident plane wave follows incident_direction. A supplied
+    complex polarization defines one pure mode; otherwise two orthogonal
+    transverse modes are averaged incoherently.
     For each call, ``E[0] = E_inc`` and ``E[m] = K(chi*E[m-1])``, where
     ``chi = 2*n0*delta_refractive_index`` and K integrates the background dyadic Green tensor
     multiplied by ``k0**2``. Order-m far-field amplitude is computed from
-    ``chi*E[m-1]``. Cumulative intensity is ``|sum_m f[m]|**2``, averaged over the two
-    polarizations and divided by the entire voxel-box volume.
+    ``chi*E[m-1]``. Cumulative intensity is ``|sum_m f[m]|**2``, averaged over the incident
+    polarization modes and divided by the entire voxel-box volume.
 
     Geometry, incident field, and the Green tensor are reused; contrast,
     propagated fields, amplitudes, and diagnostics are local to each solve.
@@ -62,6 +72,8 @@ class BornSeries:
     wavelength: Quantity
     directions: Directions
     order: int = 3
+    incident_direction: ArrayLike = (0.0, 0.0, 1.0)
+    polarization: PolarizationState | ArrayLike | None = None
     operator: GreenOperator = field(init=False, repr=False)
     _positions: Quantity = field(init=False, repr=False)
     _incident_field: np.ndarray = field(init=False, repr=False)
@@ -107,9 +119,17 @@ class BornSeries:
 
         positions.magnitude.setflags(write=False)
 
-        phase = np.exp(1j * 2 * np.pi / wavelength * volume.background_refractive_index * positions[..., 2])
+        illumination = Source(
+            wavelength=wavelength,
+            incident_direction=self.incident_direction,
+            polarization=self.polarization,
+        )
 
-        incident = phase.to("dimensionless").magnitude[..., None, None] * np.eye(3)[:2]
+        distance_along_beam = np.sum(positions * illumination.incident_direction, axis=-1)
+
+        phase = np.exp(1j * 2 * np.pi / wavelength * volume.background_refractive_index * distance_along_beam)
+
+        incident = phase.to("dimensionless").magnitude[..., None, None] * illumination.polarization_vectors
 
         incident.setflags(write=False)
 
@@ -127,6 +147,8 @@ class BornSeries:
             ("wavelength", wavelength.copy()),
             ("directions", directions),
             ("order", order),
+            ("incident_direction", illumination.incident_direction),
+            ("polarization", illumination.polarization),
             ("operator", operator),
             ("_positions", positions),
             ("_incident_field", incident),
@@ -145,9 +167,9 @@ class BornSeries:
 
         voxel_spacing_m = float(self.spacing.to("meter").magnitude)
 
-        values = source.reshape(-1, 2, 3)
+        values = source.reshape(-1, self._incident_field.shape[-2], 3)
 
-        amplitude = np.empty((len(self.directions), 2, 3), dtype=complex)
+        amplitude = np.empty((len(self.directions), self._incident_field.shape[-2], 3), dtype=complex)
 
         for start in range(0, len(self.directions), 64):
             direction = self.directions.vectors[start : start + 64]
@@ -245,6 +267,8 @@ class BornSeries:
 
         incident_norm = np.linalg.norm(field)
 
+        polarization_count = field.shape[-2]
+
         contrast = np.asarray(2 * volume.background_refractive_index * volume.delta_refractive_index, dtype=complex)
 
         if np.any(volume.extinction_coefficient):
@@ -259,7 +283,12 @@ class BornSeries:
         for _ in range(self.order):
             # P_abs / (incident intensity * box volume), averaged over polarizations.
             absorption.append(
-                float(k0 * np.mean(volume.extinction_coefficient * np.sum(np.abs(total_field) ** 2, axis=(-1, -2))))
+                float(
+                    2
+                    * k0
+                    / polarization_count
+                    * np.mean(volume.extinction_coefficient * np.sum(np.abs(total_field) ** 2, axis=(-1, -2)))
+                )
             )
             source = contrast[..., None, None] * field
 
@@ -278,10 +307,12 @@ class BornSeries:
         cumulative = np.cumsum(amplitudes, axis=0)
 
         differential = np.sum(np.abs(cumulative) ** 2, axis=(-1, -2)) / (
-            2 * float(volume.volume.to("meter**3").magnitude)
+            polarization_count * float(volume.volume.to("meter**3").magnitude)
         )
 
-        separate = np.sum(np.abs(amplitudes) ** 2, axis=(-1, -2)) / (2 * float(volume.volume.to("meter**3").magnitude))
+        separate = np.sum(np.abs(amplitudes) ** 2, axis=(-1, -2)) / (
+            polarization_count * float(volume.volume.to("meter**3").magnitude)
+        )
 
         warnings = []
 

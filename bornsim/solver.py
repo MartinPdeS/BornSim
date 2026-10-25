@@ -32,7 +32,7 @@ def _provenance(*, order, **settings):
 class Solver:
     """Configure numerical Born scattering from explicit finite samples.
 
-    Source chooses the wavelength. AngularSampling supplies output directions
+    Source chooses wavelength, incident direction, and polarization. AngularSampling supplies output directions
     and integration quadrature; order sets the highest cumulative Born order.
     All orders retain the linearized dielectric contrast and the equal-volume
     Green self cell. Decreasing successive terms do not certify convergence.
@@ -96,7 +96,7 @@ class Solver:
     ) -> Result:
         """Compute an unnormalized angular cut through a fixed Volume.
 
-        Supply polar angles on the x-z meridian or a Directions configuration,
+        Supply laboratory polar angles on the x-z meridian or a Directions configuration,
         but not both. This is a convenience wrapper for ``solve(target=...,
         sampling=Directions(...))``. Explicit angular units are required.
         Default angles span 0 to pi with 121 samples. Cut amplitudes and
@@ -145,6 +145,8 @@ class Solver:
             grid=target.grid,
             background_refractive_index=target.background_refractive_index,
             wavelength=self.source.wavelength,
+            incident_direction=self.source.incident_direction,
+            polarization=self.source.polarization,
             directions=directions,
             order=self.order,
         )
@@ -166,6 +168,7 @@ class Solver:
             warnings=result.warnings,
             provenance=_provenance(
                 order=self.order,
+                source=self.source.metadata,
                 grid={
                     "shape": list(target.delta_refractive_index.shape),
                     "spacing_m": float(target.spacing.to("meter").magnitude),
@@ -197,13 +200,18 @@ class Solver:
             grid=volume.grid,
             background_refractive_index=volume.background_refractive_index,
             wavelength=self.source.wavelength,
+            incident_direction=self.source.incident_direction,
+            polarization=self.source.polarization,
             directions=sampling.directions,
             order=self.order,
         )
 
         born = engine.solve(volume=volume)
 
-        sampled = sampling.summarize(result=born)
+        sampled = sampling.summarize(
+            result=born,
+            incident_direction=self.source.incident_direction,
+        )
 
         integrated = sampled["integrals"]
 
@@ -229,6 +237,7 @@ class Solver:
             warnings=born.warnings,
             provenance=_provenance(
                 order=self.order,
+                source=self.source.metadata,
                 grid={
                     **volume.grid.metadata,
                     "background_refractive_index": volume.background_refractive_index,
@@ -284,6 +293,8 @@ class Solver:
         result = ensemble_scattering(
             medium=medium,
             wavelength=self.source.wavelength,
+            incident_direction=self.source.incident_direction,
+            polarization=self.source.polarization,
             grid=grid,
             sampling=sampling,
             order=self.order,
@@ -312,6 +323,7 @@ class Solver:
             realizations=result["realizations"],
             provenance=_provenance(
                 order=self.order,
+                source=self.source.metadata,
                 medium=medium.metadata,
                 grid=grid.metadata,
                 sampling=sampling.metadata,

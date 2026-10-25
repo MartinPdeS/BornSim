@@ -73,7 +73,7 @@ def test_only_current_archive_schema_is_supported(tmp_path):
 
     metadata = json.loads(str(arrays["metadata"].item()))
 
-    assert metadata["schema_version"] == 2
+    assert metadata["schema_version"] == 3
 
     assert "directional_differential" not in metadata["units"]
 

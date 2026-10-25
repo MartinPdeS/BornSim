@@ -20,8 +20,8 @@ class Directions:
 
     Notes
     -----
-    Coordinates use the global x, y, z axes. The incident wave propagates
-    along positive z. Vector order is preserved in scattered amplitudes.
+    Coordinates use the global x, y, z axes, independently of the source
+    incident direction. Vector order is preserved in scattered amplitudes.
     Use ``vectors`` to access the NumPy array and :meth:`from_angles` to
     construct vectors from explicitly unit-bearing spherical coordinates.
     """

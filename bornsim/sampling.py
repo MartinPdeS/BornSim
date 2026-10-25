@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 from typing import cast
+from numpy.typing import ArrayLike
 import numpy as np
 from .directions import Directions
 from .grid import Grid
@@ -244,11 +245,17 @@ class AngularSampling:
         if realizations * np.prod(grid.shape) * directions * order > 100_000_000:
             raise ValueError("Requested scattering is too large; reduce grid, angles, order, or realizations.")
 
-    def summarize(self, *, result: BornResult) -> dict[str, np.ndarray]:
+    def summarize(
+        self, *, result: BornResult, incident_direction: ArrayLike = (0.0, 0.0, 1.0)
+    ) -> dict[str, np.ndarray]:
         """Reduce numeric Born data while retaining all directional intensities.
 
         Parameters
         ----------
+        incident_direction : array_like, optional
+            Cartesian unit beam direction used for anisotropy and reduced
+            scattering moments. Defaults to positive z; output angles stay
+            in laboratory coordinates.
         result : BornResult
             Numeric Born amplitudes, cumulative differential data, and
             isolated-term differential data for one volume.
@@ -260,7 +267,7 @@ class AngularSampling:
             (order, output angle); ``directional_terms`` and
             ``directional_differential`` have shape (order, output angle,
             azimuth); ``directional_amplitudes`` adds incident polarization
-            and vector-component axes of sizes two and three; ``integrals``
+            and vector-component axes of sizes one or two and three; ``integrals``
             has shape (order, 3), for total, first-moment, and reduced
             coefficients.
 
@@ -285,22 +292,45 @@ class AngularSampling:
 
         terms = directional_terms.mean(axis=-1)
 
-        cosine, weights = np.polynomial.legendre.leggauss(self.polar_samples)
+        _, weights = np.polynomial.legendre.leggauss(self.polar_samples)
 
         quadrature = averaged[:, count:]
 
         mu = 2 * np.pi * np.sum(quadrature * weights, axis=-1)
 
-        moment = 2 * np.pi * np.sum(quadrature * weights * cosine, axis=-1)
+        # Moments use the physical scattering cosine, not the laboratory z axis.
+        direction = Directions(vectors=np.asarray(incident_direction)[None, :]).vectors[0]
 
-        reduced = 2 * np.pi * np.sum(quadrature * weights * (1 - cosine), axis=-1)
+        integration_directions = self.directions.vectors.reshape(-1, self.azimuth_samples, 3)[count:]
+
+        scattering_cosine = np.einsum("ijc,c->ij", integration_directions, direction)
+
+        integrated_differential = directional[:, count:]
+
+        moment = (
+            2
+            * np.pi
+            * np.sum(
+                np.mean(integrated_differential * scattering_cosine, axis=-1) * weights,
+                axis=-1,
+            )
+        )
+
+        reduced = (
+            2
+            * np.pi
+            * np.sum(
+                np.mean(integrated_differential * (1 - scattering_cosine), axis=-1) * weights,
+                axis=-1,
+            )
+        )
 
         return {
             "mean": averaged[:, :count],
             "terms": terms[:, :count],
             "directional_terms": directional_terms[:, :count],
             "directional_differential": directional[:, :count],
-            "directional_amplitudes": result.amplitudes.reshape(*shape, 2, 3)[:, :count],
+            "directional_amplitudes": result.amplitudes.reshape(*shape, result.amplitudes.shape[-2], 3)[:, :count],
             "integrals": np.stack([mu, moment, reduced], axis=-1),
         }
 

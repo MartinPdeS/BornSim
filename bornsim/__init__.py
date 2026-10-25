@@ -7,6 +7,7 @@ from .volume import Volume
 from .geometry import Layer, Sphere, Ellipsoid, Box, Cylinder, StructuredMedium
 from .rotation import Rotation
 from .source import Source
+from .polarization import PolarizationState, LeftCircular, RightCircular
 from .solver import Solver
 from .grid import Grid
 from .directions import Directions
@@ -37,6 +38,9 @@ __all__ = [
     "StructuredMedium",
     "Volume",
     "Source",
+    "PolarizationState",
+    "LeftCircular",
+    "RightCircular",
     "Solver",
     "Grid",
     "AngularSampling",

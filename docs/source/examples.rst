@@ -3,7 +3,7 @@ Examples
 
 Browse runnable examples by topic: random media, structured media, Born orders
 and interference, plotting and saving results, and numerical validation.
-Each topic contains six runnable examples. Input media are shown with
+Each topic contains at least six runnable examples. Input media are shown with
 three-dimensional views or Matplotlib slices, with explicit physical settings.
 The gallery includes Born calculations through orders two to five.
 Ensemble examples show a labelled seeded realization on the calculation grid;
@@ -260,3 +260,12 @@ More higher-order studies
   meridian data and explains why cuts lack integrated coefficients.
 * :doc:`auto_examples/results/cross_section_and_volume` separates physical
   cross sections from box normalization through fourth order.
+
+Arbitrary illumination
+-----------------------
+
+:doc:`auto_examples/structured_media/illumination_polarization` compares
+unpolarized positive-z illumination with oblique linear, circular, and
+elliptical states on the same anisotropic particle through third order.
+Observation angles remain in laboratory coordinates; anisotropy uses the
+angle relative to each incident beam.

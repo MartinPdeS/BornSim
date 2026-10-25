@@ -12,7 +12,7 @@ class AngularData:
     Full angular data have shape (order, polar angle, azimuth). Cuts and
     explicitly averaged curves have shape (order, observation). Directions
     have the same observation axes and a final Cartesian axis of size three.
-    Amplitudes add incident-polarization and vector axes of sizes two and
+    Amplitudes add incident-polarization and vector axes of sizes one or two and
     three. Ensemble amplitudes are absent: intensities, not amplitudes, are
     averaged across realizations. Arrays are copied, unitful and read-only.
     """
@@ -76,7 +76,11 @@ class AngularData:
         if self.directions is not None and self.directions.shape != (*shape[1:], 3):
             raise ValueError("directions must match the observation axes.")
 
-        if self.amplitudes is not None and self.amplitudes.shape != (*shape, 2, 3):
+        valid_amplitudes = self.amplitudes is None or (
+            self.amplitudes.shape[:-2] == shape and self.amplitudes.shape[-2:] in ((1, 3), (2, 3))
+        )
+
+        if not valid_amplitudes:
             raise ValueError("amplitudes must have shape matching the order and observation axes.")
 
         self._validate_values()

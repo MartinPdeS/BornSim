@@ -40,7 +40,7 @@ class Result:
     Full solves retain ``differential`` and ``term_differential`` with shape
     (order, polar angle, azimuth). Cuts and explicitly averaged results use
     (order, observation). ``amplitudes`` always adds polarization and Cartesian
-    axes of sizes two and three to the differential shape. Ensembles retain
+    axes of sizes one or two and three to the differential shape. Ensembles retain
     intensities and standard errors, without coherent amplitudes.
 
     ``angular`` groups read-only coordinates, intensities, amplitudes and phase
@@ -68,7 +68,7 @@ class Result:
     scattering. Arrays and JSON-compatible provenance are copied and validated.
     Use differential and amplitudes for both cuts and full solves.
 
-    Save and load use schema 2 archives; unsupported schemas are rejected.
+    Save and load use schema 3 archives (schema 2 remains readable); unsupported schemas are rejected.
     Numerical cumulative intensities retain coherent amplitude interference.
     Isolated intensities must not be summed to reconstruct cumulative results.
     """
@@ -206,6 +206,9 @@ class Result:
             angular = AngularData(
                 **{name: getattr(state, name) for name in _ANGULAR_FIELDS}, kind=kind, azimuth_averaged=azimuth_averaged
             )
+
+        if angular.amplitudes is not None and angular.amplitudes.shape[-2] != len(source.polarization_vectors):
+            raise ValueError("amplitudes polarization channels must match the source.")
 
         self._validate_state(result=state)
 
@@ -517,7 +520,8 @@ class Result:
 
         metadata = {
             "format": "bornsim-result",
-            "schema_version": 2,
+            "schema_version": 3,
+            "source": self.source.metadata,
             "azimuth_averaged": self.azimuth_averaged,
             "wavelength_m": float(self.source.wavelength.to("meter").magnitude),
             "kind": self.kind,
@@ -567,7 +571,7 @@ class Result:
                 unsupported_schema = (
                     metadata["format"] != "bornsim-result"
                     or type(metadata["schema_version"]) is not int
-                    or metadata["schema_version"] != 2
+                    or metadata["schema_version"] not in (2, 3)
                 )
 
                 if unsupported_schema:
@@ -587,7 +591,11 @@ class Result:
                 arrays = {name: archive[name] * ureg.Unit(unit) for name, unit in units.items()}
 
                 return cls(
-                    source=Source(wavelength=metadata["wavelength_m"] * ureg.meter),
+                    source=(
+                        Source._from_metadata(metadata=metadata["source"])
+                        if metadata["schema_version"] == 3
+                        else Source(wavelength=metadata["wavelength_m"] * ureg.meter)
+                    ),
                     kind=metadata["kind"],
                     azimuth_averaged=metadata.get("azimuth_averaged", False),
                     realizations=metadata["realizations"],
@@ -752,7 +760,7 @@ class Result:
         the ensemble intensity average. Older archives lacking directional
         data must be recomputed for a directional 3D view. Angular and polar
         views select sampled meridians; averaging requires azimuth_average(). A flat phase function produces a spherical
-        surface; forward scattering extends towards +z.
+        surface in laboratory coordinates; forward scattering follows the source direction.
         Samples are sorted by angle for rendering. Error bars for normalized
         ratios are omitted because the required covariance is not stored."""
 
@@ -888,7 +896,7 @@ class Result:
 
         axis.set(
             title=default_title if title is None else title,
-            xlabel="Direction index" if result.angles is None else "Scattering angle (degrees)",
+            xlabel="Direction index" if result.angles is None else "Laboratory polar angle (degrees)",
             ylabel=ylabel,
             yscale="log" if log_y else "linear",
         )
@@ -1085,7 +1093,7 @@ class Result:
                     scene={
                         "xaxis_title": "p ŝx (sr⁻¹)",
                         "yaxis_title": "p ŝy (sr⁻¹)",
-                        "zaxis_title": "p ŝz (sr⁻¹); incidence +z",
+                        "zaxis_title": "p ŝz (sr⁻¹); laboratory z",
                         "aspectmode": "data",
                     },
                 )
@@ -1123,7 +1131,7 @@ class Result:
             axis.set(
                 xlabel="p ŝx (sr⁻¹)",
                 ylabel="p ŝy (sr⁻¹)",
-                zlabel="p ŝz (sr⁻¹); incidence +z",
+                zlabel="p ŝz (sr⁻¹); laboratory z",
             )
 
             axis.set_title(f"{title}\nThrough order {selected + 1} · {surface_label}")
@@ -1180,7 +1188,7 @@ class Result:
             else:
                 axis.set(
                     title=title,
-                    xlabel="Scattering angle θ (degrees)",
+                    xlabel="Laboratory polar angle θ (degrees)",
                     ylabel="Phase function p (sr⁻¹)",
                     yscale="log" if log_y else "linear",
                 )

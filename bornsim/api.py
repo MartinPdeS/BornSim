@@ -4,6 +4,7 @@ Implementations live in source.py, solver.py, and results.py.
 """
 
 from .source import Source
+from .polarization import PolarizationState, LeftCircular, RightCircular
 from .solver import Solver
 from .results import Result
 from .convergence import ConvergenceReport
@@ -20,6 +21,9 @@ __all__ = [
     "Material",
     "EnsembleSampling",
     "Source",
+    "PolarizationState",
+    "LeftCircular",
+    "RightCircular",
     "Solver",
     "Result",
     "Grid",
