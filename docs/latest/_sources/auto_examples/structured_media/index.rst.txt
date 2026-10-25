@@ -12,6 +12,10 @@ geometric motif in a centred finite lattice and inspect coherent interference.
 Use finite dielectric cylinders as rod or antenna-like scatterers, with explicit
 axis and orientation controls.
 
+Oblique illumination examples specify unit propagation and complex transverse
+polarization vectors, comparing linear, circular, and elliptical states on
+one anisotropic particle through third Born order.
+
 
 .. raw:: html
 
@@ -55,6 +59,23 @@ axis and orientation controls.
 .. raw:: html
 
       <div class="sphx-glr-thumbnail-title">A dielectric sphere in a homogeneous background</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Illuminate the same anisotropic dielectric particle with different plane waves. Propagation and electric-field vectors are specified in laboratory coordinates. A PolarizationState supplies a linear angle or complex Jones vector; omitting it selects unpolarized illumination. LeftCircular uses (1, +i)/sqrt(2), matching PyMieSim, with time convention exp(-i omega t).">
+
+.. only:: html
+
+  .. image:: /auto_examples/structured_media/images/thumb/sphx_glr_illumination_polarization_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/structured_media/illumination_polarization`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Oblique illumination and linear, circular, and elliptical polarization</div>
     </div>
 
 
@@ -138,6 +159,7 @@ axis and orientation controls.
 
    /auto_examples/structured_media/antenna_rods
    /auto_examples/structured_media/dielectric_sphere
+   /auto_examples/structured_media/illumination_polarization
    /auto_examples/structured_media/particle_families
    /auto_examples/structured_media/periodic_array
    /auto_examples/structured_media/structured_media

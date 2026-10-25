@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:05.201** total execution time for 6 files **from auto_examples/results**:
+**00:05.070** total execution time for 6 files **from auto_examples/results**:
 
 .. container::
 
@@ -33,20 +33,20 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_auto_examples_results_coherent_diffuse.py` (``coherent_diffuse.py``)
-     - 00:02.120
+     - 00:02.075
      - 0.0
    * - :ref:`sphx_glr_auto_examples_results_cross_section_and_volume.py` (``cross_section_and_volume.py``)
-     - 00:01.355
+     - 00:01.398
      - 0.0
    * - :ref:`sphx_glr_auto_examples_results_result_plots.py` (``result_plots.py``)
-     - 00:00.556
+     - 00:00.495
      - 0.0
    * - :ref:`sphx_glr_auto_examples_results_angular_cut_and_full.py` (``angular_cut_and_full.py``)
-     - 00:00.461
+     - 00:00.448
      - 0.0
    * - :ref:`sphx_glr_auto_examples_results_phase_normalization.py` (``phase_normalization.py``)
-     - 00:00.461
+     - 00:00.441
      - 0.0
    * - :ref:`sphx_glr_auto_examples_results_save_load_results.py` (``save_load_results.py``)
-     - 00:00.247
+     - 00:00.212
      - 0.0

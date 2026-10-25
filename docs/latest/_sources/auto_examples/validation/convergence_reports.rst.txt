@@ -106,11 +106,11 @@ staircase geometry or missing physical effects.
     Observable stability (not a physical-validity certificate):
     Order 1: mu_s=3.72872 m^-1, mu_a=1608.3866197946693, residual=3.604774718193159e-06, stable=False
     Order 2: mu_s=3.71372 m^-1, mu_a=1602.0219596880988, residual=1.1563284751113575e-08, stable=True
-      Changes: {'mu_s': 0.004022791563443326, 'mu_a': 0.003957170513755569, 'g': 4.3278253315792714e-05, 'phase_l1': 6.759171247849403e-05}
+      Changes: {'mu_s': 0.004022791563443326, 'mu_a': 0.003957170513755569, 'g': 4.3278253315841286e-05, 'phase_l1': 6.759171247849403e-05}
     Order 3: mu_s=3.71376 m^-1, mu_a=1602.0363469373933, residual=5.3320129528529805e-11, stable=True
-      Changes: {'mu_s': 9.03701050255426e-06, 'mu_a': 8.98060104690545e-06, 'g': 6.889289468764437e-08, 'phase_l1': 1.1635563432826566e-07}
+      Changes: {'mu_s': 9.03701050255426e-06, 'mu_a': 8.98060104690545e-06, 'g': 6.889289475703331e-08, 'phase_l1': 1.1635563432826566e-07}
     Order 4: mu_s=3.71376 m^-1, mu_a=1602.0363104122728, residual=3.067321596781078e-13, stable=True
-      Changes: {'mu_s': 2.268242453929161e-08, 'mu_a': 2.279918343877665e-08, 'g': 9.268704553866414e-11, 'phase_l1': 2.0384946816435508e-10}
+      Changes: {'mu_s': 2.268242453929161e-08, 'mu_a': 2.279918343877665e-08, 'g': 9.268708023313366e-11, 'phase_l1': 2.0384946816435508e-10}
 
 
 
@@ -152,7 +152,7 @@ Grid refinement at fixed box size
     12 cubed: mu_s=3.71376 m^-1, mu_a=1602.0363104122728, residual=3.067321596781078e-13, stable=False
       Changes: {'mu_s': 0.1068422017815386, 'mu_a': 0.05726956046836893, 'g': 0.0020231708661912415, 'phase_l1': 0.0028749802176079443}
     16 cubed: mu_s=3.29636 m^-1, mu_a=1506.1453668356592, residual=2.5253191594829603e-13, stable=False
-      Changes: {'mu_s': 0.11239269212642004, 'mu_a': 0.05985566179329403, 'g': 0.0017421543475186277, 'phase_l1': 0.0024629458375026946}
+      Changes: {'mu_s': 0.11239269212642004, 'mu_a': 0.05985566179329403, 'g': 0.0017421543475186346, 'phase_l1': 0.0024629458375026946}
 
 
 
@@ -188,9 +188,9 @@ Angular quadrature refinement on a fixed grid
     Observable stability (not a physical-validity certificate):
     16 x 16: mu_s=3.71376 m^-1, mu_a=1602.0363104122728, residual=3.067321596781078e-13, stable=False
     24 x 24: mu_s=3.71376 m^-1, mu_a=1602.0363104122728, residual=3.067321596781078e-13, stable=True
-      Changes: {'mu_s': 7.174771485410794e-16, 'mu_a': 0.0, 'g': 3.469446951953614e-17, 'phase_l1': 7.414988375534874e-16}
+      Changes: {'mu_s': 7.174771485410794e-16, 'mu_a': 0.0, 'g': 4.163336342344337e-17, 'phase_l1': 7.414988375534874e-16}
     32 x 32: mu_s=3.71376 m^-1, mu_a=1602.0363104122728, residual=3.067321596781078e-13, stable=True
-      Changes: {'mu_s': 0.0, 'mu_a': 0.0, 'g': 4.85722573273506e-17, 'phase_l1': 3.011906932774793e-16}
+      Changes: {'mu_s': 0.0, 'mu_a': 0.0, 'g': 8.326672684688674e-17, 'phase_l1': 3.011906932774793e-16}
 
 
 
@@ -236,7 +236,7 @@ stable instead; this illustrates why a generic stability flag needs context.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 5.174 seconds)
+   **Total running time of the script:** (0 minutes 5.120 seconds)
 
 
 .. _sphx_glr_download_auto_examples_validation_convergence_reports.py:

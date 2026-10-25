@@ -180,12 +180,16 @@ BornSim computes **isolated field terms**, followed by cumulative amplitudes:
 .. math::
    :label: born-iteration
 
-   \mathbf E_p^{(0)}=\mathbf e_p e^{ikz},\qquad
+   \mathbf E_p^{(0)}=\mathbf e_p e^{ik\hat{\mathbf s}_{inc}\cdot\mathbf r},\qquad
    \mathbf E_p^{(m)}=\mathcal K(\chi\mathbf E_p^{(m-1)}),\qquad
    \mathbf E_p^{[M]}=\sum_{m=0}^{M}\mathbf E_p^{(m)}.
 
-The incident direction is +z. The transverse x and y polarizations are solved
-separately and their intensities receive equal weights. First-order scattering
+The incident direction is configured by ``Source.incident_direction``. By
+default it is +z with transverse x and y modes of equal incoherent weight.
+A supplied ``PolarizationState`` or complex transverse Cartesian
+``Source.polarization`` instead selects a single pure mode with unit incident
+electric-field norm. Jones states are resolved in the source transverse basis;
+positive-z incidence uses laboratory x and y. First-order scattering
 uses the incident field inside the contrast. Each later amplitude term uses
 one additional internal propagation interaction. ``order=3`` retains the
 first three amplitude terms; it is neither a mesh-refinement level nor three
@@ -260,7 +264,7 @@ Amplitudes have units of metres. The cumulative differential cross section is
    :label: differential-cross-section
 
    \frac{d\sigma^{[M]}}{d\Omega}
-      =\frac12\sum_{p=x,y}
+      =\frac1{N_p}\sum_{p=1}^{N_p}
          \left\lVert\sum_{m=1}^{M}\mathbf f_p^{(m)}\right\rVert^2,
    \qquad
    D^{[M]}=\frac1V\frac{d\sigma^{[M]}}{d\Omega}.
@@ -269,7 +273,8 @@ For two amplitude terms, the cross term is
 :math:`2\operatorname{Re}(\mathbf f^{(1)*}\cdot\mathbf f^{(2)})`.
 It can have either sign. Summing isolated intensities therefore cannot
 reconstruct the coherent cumulative intensity. Interference occurs within each
-incident polarization; the two incident polarizations are averaged incoherently.
+incident polarization. For unpolarized illumination, the two incident modes
+are averaged incoherently; a pure state uses one mode (``N_p=1``).
 
 .. figure:: auto_examples/born_orders/images/sphx_glr_born_interference_001.png
    :width: 95%
@@ -340,14 +345,17 @@ Solid-angle normalization and angular sampling
 
 Directions are :math:`\hat{\mathbf s}=(\sin\theta\cos\phi,
 \sin\theta\sin\phi,\cos\theta)`, with :math:`d\Omega=\sin\theta\,d\theta\,d\phi`.
+Angles use laboratory coordinates. For oblique incidence the physical
+scattering cosine is :math:`\hat{\mathbf s}\cdot\hat{\mathbf s}_{inc}`,
+which reduces to :math:`\cos\theta` for positive-z incidence.
 For each cumulative Born order,
 
 .. math::
    :label: angular-moments
 
    \mu_s=\int_{4\pi}D\,d\Omega,\qquad
-   g=\frac{\int_{4\pi}D\cos\theta\,d\Omega}{\mu_s},\qquad
-   \mu_s'=\int_{4\pi}D(1-\cos\theta)\,d\Omega=\mu_s(1-g).
+   g=\frac{\int_{4\pi}D(\hat{\mathbf s}\cdot\hat{\mathbf s}_{inc})\,d\Omega}{\mu_s},\qquad
+   \mu_s'=\int_{4\pi}D(1-\hat{\mathbf s}\cdot\hat{\mathbf s}_{inc})\,d\Omega=\mu_s(1-g).
 
 When :math:`\mu_s>0`, the phase function is
 :math:`p=D/\mu_s`, with :math:`\int_{4\pi}p\,d\Omega=1`.

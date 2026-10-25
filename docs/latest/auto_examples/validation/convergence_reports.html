@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Explicit refinement studies and equation residuals &#8212; BornSim 0.8.0 documentation</title>
+    <title>Explicit refinement studies and equation residuals &#8212; BornSim 0.9.0 documentation</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=cce5339e"></script>
+    <script src="../../_static/documentation_options.js?v=a82ae3da"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -54,7 +54,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/BornSim/documentation_page/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.8.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.9.0';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
@@ -67,7 +67,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.8.0" />
+  <meta name="docsearch:version" content="0.9.0" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -600,11 +600,11 @@ staircase geometry or missing physical effects.</p>
 <img src="../../_images/sphx_glr_convergence_reports_001.png" srcset="../../_images/sphx_glr_convergence_reports_001.png" alt="convergence reports" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Observable stability (not a physical-validity certificate):
 Order 1: mu_s=3.72872 m^-1, mu_a=1608.3866197946693, residual=3.604774718193159e-06, stable=False
 Order 2: mu_s=3.71372 m^-1, mu_a=1602.0219596880988, residual=1.1563284751113575e-08, stable=True
-  Changes: {'mu_s': 0.004022791563443326, 'mu_a': 0.003957170513755569, 'g': 4.3278253315792714e-05, 'phase_l1': 6.759171247849403e-05}
+  Changes: {'mu_s': 0.004022791563443326, 'mu_a': 0.003957170513755569, 'g': 4.3278253315841286e-05, 'phase_l1': 6.759171247849403e-05}
 Order 3: mu_s=3.71376 m^-1, mu_a=1602.0363469373933, residual=5.3320129528529805e-11, stable=True
-  Changes: {'mu_s': 9.03701050255426e-06, 'mu_a': 8.98060104690545e-06, 'g': 6.889289468764437e-08, 'phase_l1': 1.1635563432826566e-07}
+  Changes: {'mu_s': 9.03701050255426e-06, 'mu_a': 8.98060104690545e-06, 'g': 6.889289475703331e-08, 'phase_l1': 1.1635563432826566e-07}
 Order 4: mu_s=3.71376 m^-1, mu_a=1602.0363104122728, residual=3.067321596781078e-13, stable=True
-  Changes: {'mu_s': 2.268242453929161e-08, 'mu_a': 2.279918343877665e-08, 'g': 9.268704553866414e-11, 'phase_l1': 2.0384946816435508e-10}
+  Changes: {'mu_s': 2.268242453929161e-08, 'mu_a': 2.279918343877665e-08, 'g': 9.268708023313366e-11, 'phase_l1': 2.0384946816435508e-10}
 </pre></div>
 </div>
 </section>
@@ -630,7 +630,7 @@ Order 4: mu_s=3.71376 m^-1, mu_a=1602.0363104122728, residual=3.067321596781078e
 12 cubed: mu_s=3.71376 m^-1, mu_a=1602.0363104122728, residual=3.067321596781078e-13, stable=False
   Changes: {'mu_s': 0.1068422017815386, 'mu_a': 0.05726956046836893, 'g': 0.0020231708661912415, 'phase_l1': 0.0028749802176079443}
 16 cubed: mu_s=3.29636 m^-1, mu_a=1506.1453668356592, residual=2.5253191594829603e-13, stable=False
-  Changes: {'mu_s': 0.11239269212642004, 'mu_a': 0.05985566179329403, 'g': 0.0017421543475186277, 'phase_l1': 0.0024629458375026946}
+  Changes: {'mu_s': 0.11239269212642004, 'mu_a': 0.05985566179329403, 'g': 0.0017421543475186346, 'phase_l1': 0.0024629458375026946}
 </pre></div>
 </div>
 </section>
@@ -650,9 +650,9 @@ Order 4: mu_s=3.71376 m^-1, mu_a=1602.0363104122728, residual=3.067321596781078e
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Observable stability (not a physical-validity certificate):
 16 x 16: mu_s=3.71376 m^-1, mu_a=1602.0363104122728, residual=3.067321596781078e-13, stable=False
 24 x 24: mu_s=3.71376 m^-1, mu_a=1602.0363104122728, residual=3.067321596781078e-13, stable=True
-  Changes: {'mu_s': 7.174771485410794e-16, 'mu_a': 0.0, 'g': 3.469446951953614e-17, 'phase_l1': 7.414988375534874e-16}
+  Changes: {'mu_s': 7.174771485410794e-16, 'mu_a': 0.0, 'g': 4.163336342344337e-17, 'phase_l1': 7.414988375534874e-16}
 32 x 32: mu_s=3.71376 m^-1, mu_a=1602.0363104122728, residual=3.067321596781078e-13, stable=True
-  Changes: {'mu_s': 0.0, 'mu_a': 0.0, 'g': 4.85722573273506e-17, 'phase_l1': 3.011906932774793e-16}
+  Changes: {'mu_s': 0.0, 'mu_a': 0.0, 'g': 8.326672684688674e-17, 'phase_l1': 3.011906932774793e-16}
 </pre></div>
 </div>
 </section>
@@ -678,7 +678,7 @@ stable instead; this illustrates why a generic stability flag needs context.</p>
 Box 16 cubed: scattering area = 0.0064173708348157195 nanometer ** 2, absorption area = 2.768318744392408 nanometer ** 2
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 5.174 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 5.120 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-validation-convergence-reports-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/4d2af60ebc0903a10b467b4ae5beb387/convergence_reports.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">convergence_reports.ipynb</span></code></a></p>
@@ -728,7 +728,7 @@ Box 16 cubed: scattering area = 0.0064173708348157195 nanometer ** 2, absorption
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.8.0/docs/source/auto_examples/validation/convergence_reports.rst">
+    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.9.0/docs/source/auto_examples/validation/convergence_reports.rst">
       <i class="fa-solid fa-pencil"></i>
       
       

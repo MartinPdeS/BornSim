@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:16.524** total execution time for 6 files **from auto_examples/random_media**:
+**00:16.032** total execution time for 6 files **from auto_examples/random_media**:
 
 .. container::
 
@@ -33,20 +33,20 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_auto_examples_random_media_theory_random_fields.py` (``theory_random_fields.py``)
-     - 00:12.084
+     - 00:11.555
      - 0.0
    * - :ref:`sphx_glr_auto_examples_random_media_wavelength_dependence.py` (``wavelength_dependence.py``)
-     - 00:01.499
+     - 00:01.561
      - 0.0
    * - :ref:`sphx_glr_auto_examples_random_media_phase_function.py` (``phase_function.py``)
-     - 00:01.258
+     - 00:01.227
      - 0.0
    * - :ref:`sphx_glr_auto_examples_random_media_covariance_models.py` (``covariance_models.py``)
-     - 00:00.999
+     - 00:01.011
      - 0.0
    * - :ref:`sphx_glr_auto_examples_random_media_random_medium.py` (``random_medium.py``)
-     - 00:00.399
+     - 00:00.401
      - 0.0
    * - :ref:`sphx_glr_auto_examples_random_media_random_spheres.py` (``random_spheres.py``)
-     - 00:00.286
+     - 00:00.276
      - 0.0

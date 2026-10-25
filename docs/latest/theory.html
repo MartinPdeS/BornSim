@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Theory and numerical methods &#8212; BornSim 0.8.0 documentation</title>
+    <title>Theory and numerical methods &#8212; BornSim 0.9.0 documentation</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="_static/documentation_options.js?v=cce5339e"></script>
+    <script src="_static/documentation_options.js?v=a82ae3da"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/sg-tags.js?v=d80f6fa4"></script>
@@ -55,7 +55,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/BornSim/documentation_page/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.8.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v0.9.0';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
@@ -68,7 +68,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.8.0" />
+  <meta name="docsearch:version" content="0.9.0" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -722,11 +722,15 @@ solver.</p>
 <span class="math notranslate nohighlight">\(\mathbf E=\mathbf E_{\rm inc}+\mathcal K(\chi\mathbf E)\)</span>.
 BornSim computes <strong>isolated field terms</strong>, followed by cumulative amplitudes:</p>
 <div class="math notranslate nohighlight" id="equation-born-iteration">
-<span class="eqno">(2)<a class="headerlink" href="#equation-born-iteration" title="Link to this equation">#</a></span>\[\mathbf E_p^{(0)}=\mathbf e_p e^{ikz},\qquad
+<span class="eqno">(2)<a class="headerlink" href="#equation-born-iteration" title="Link to this equation">#</a></span>\[\mathbf E_p^{(0)}=\mathbf e_p e^{ik\hat{\mathbf s}_{inc}\cdot\mathbf r},\qquad
 \mathbf E_p^{(m)}=\mathcal K(\chi\mathbf E_p^{(m-1)}),\qquad
 \mathbf E_p^{[M]}=\sum_{m=0}^{M}\mathbf E_p^{(m)}.\]</div>
-<p>The incident direction is +z. The transverse x and y polarizations are solved
-separately and their intensities receive equal weights. First-order scattering
+<p>The incident direction is configured by <code class="docutils literal notranslate"><span class="pre">Source.incident_direction</span></code>. By
+default it is +z with transverse x and y modes of equal incoherent weight.
+A supplied <code class="docutils literal notranslate"><span class="pre">PolarizationState</span></code> or complex transverse Cartesian
+<code class="docutils literal notranslate"><span class="pre">Source.polarization</span></code> instead selects a single pure mode with unit incident
+electric-field norm. Jones states are resolved in the source transverse basis;
+positive-z incidence uses laboratory x and y. First-order scattering
 uses the incident field inside the contrast. Each later amplitude term uses
 one additional internal propagation interaction. <code class="docutils literal notranslate"><span class="pre">order=3</span></code> retains the
 first three amplitude terms; it is neither a mesh-refinement level nor three
@@ -783,7 +787,7 @@ far-field amplitude of polarization p is</p>
 Amplitudes have units of metres. The cumulative differential cross section is</p>
 <div class="math notranslate nohighlight" id="equation-differential-cross-section">
 <span class="eqno">(5)<a class="headerlink" href="#equation-differential-cross-section" title="Link to this equation">#</a></span>\[\frac{d\sigma^{[M]}}{d\Omega}
-   =\frac12\sum_{p=x,y}
+   =\frac1{N_p}\sum_{p=1}^{N_p}
       \left\lVert\sum_{m=1}^{M}\mathbf f_p^{(m)}\right\rVert^2,
 \qquad
 D^{[M]}=\frac1V\frac{d\sigma^{[M]}}{d\Omega}.\]</div>
@@ -791,7 +795,8 @@ D^{[M]}=\frac1V\frac{d\sigma^{[M]}}{d\Omega}.\]</div>
 <span class="math notranslate nohighlight">\(2\operatorname{Re}(\mathbf f^{(1)*}\cdot\mathbf f^{(2)})\)</span>.
 It can have either sign. Summing isolated intensities therefore cannot
 reconstruct the coherent cumulative intensity. Interference occurs within each
-incident polarization; the two incident polarizations are averaged incoherently.</p>
+incident polarization. For unpolarized illumination, the two incident modes
+are averaged incoherently; a pure state uses one mode (<code class="docutils literal notranslate"><span class="pre">N_p=1</span></code>).</p>
 <figure class="align-default" id="id3">
 <a class="reference internal image-reference" href="_images/sphx_glr_born_interference_001.png"><img alt="Simulated cumulative and isolated Born intensities, with a signed interference contribution." src="_images/sphx_glr_born_interference_001.png" style="width: 95%;" />
 </a>
@@ -849,11 +854,14 @@ in the medium.</p>
 <h2><a class="toc-backref" href="#id16" role="doc-backlink">Solid-angle normalization and angular sampling</a><a class="headerlink" href="#solid-angle-normalization-and-angular-sampling" title="Link to this heading">#</a></h2>
 <p>Directions are <span class="math notranslate nohighlight">\(\hat{\mathbf s}=(\sin\theta\cos\phi,
 \sin\theta\sin\phi,\cos\theta)\)</span>, with <span class="math notranslate nohighlight">\(d\Omega=\sin\theta\,d\theta\,d\phi\)</span>.
+Angles use laboratory coordinates. For oblique incidence the physical
+scattering cosine is <span class="math notranslate nohighlight">\(\hat{\mathbf s}\cdot\hat{\mathbf s}_{inc}\)</span>,
+which reduces to <span class="math notranslate nohighlight">\(\cos\theta\)</span> for positive-z incidence.
 For each cumulative Born order,</p>
 <div class="math notranslate nohighlight" id="equation-angular-moments">
 <span class="eqno">(6)<a class="headerlink" href="#equation-angular-moments" title="Link to this equation">#</a></span>\[\mu_s=\int_{4\pi}D\,d\Omega,\qquad
-g=\frac{\int_{4\pi}D\cos\theta\,d\Omega}{\mu_s},\qquad
-\mu_s'=\int_{4\pi}D(1-\cos\theta)\,d\Omega=\mu_s(1-g).\]</div>
+g=\frac{\int_{4\pi}D(\hat{\mathbf s}\cdot\hat{\mathbf s}_{inc})\,d\Omega}{\mu_s},\qquad
+\mu_s'=\int_{4\pi}D(1-\hat{\mathbf s}\cdot\hat{\mathbf s}_{inc})\,d\Omega=\mu_s(1-g).\]</div>
 <p>When <span class="math notranslate nohighlight">\(\mu_s&gt;0\)</span>, the phase function is
 <span class="math notranslate nohighlight">\(p=D/\mu_s\)</span>, with <span class="math notranslate nohighlight">\(\int_{4\pi}p\,d\Omega=1\)</span>.
 It is a density <strong>per steradian</strong>, not per polar angle. At zero scattering,
@@ -1098,7 +1106,7 @@ simulations and independent numerical tests provide the corresponding checks.</p
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.8.0/docs/source/theory.rst">
+    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.9.0/docs/source/theory.rst">
       <i class="fa-solid fa-pencil"></i>
       
       

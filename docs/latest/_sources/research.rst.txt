@@ -145,15 +145,17 @@ ensemble, and finite-size checks.
 Physical scope and reporting
 ----------------------------
 
-The implemented model uses real scalar refractive indices, an unpolarized plane
-wave along +z, a uniform exterior background, and the linearized dielectric
-contrast ``2 * background_refractive_index * delta_refractive_index``. Higher Born
-orders do not restore the omitted quadratic refractive-index term. Strong
-contrast or more general illumination requires a model beyond
-these assumptions. See :doc:`theory` for the equations and Green-tensor self-cell
+The implemented model uses scalar refractive indices with optional passive
+absorption, plane waves with configurable propagation and polarization, a
+uniform lossless exterior background, and the linearized dielectric contrast
+``2 * background_refractive_index * (delta_refractive_index + 1j * kappa)``.
+Higher Born orders do not restore the omitted quadratic refractive-index term.
+Strong contrast, focused illumination, or tensor-valued material response
+requires a model beyond these assumptions. See :doc:`theory` for the equations and Green-tensor self-cell
 convention.
 
-Report the wavelength, refractive indices, medium statistics or geometry,
+Report the wavelength, incident direction, polarization, refractive indices,
+medium statistics or geometry,
 physical sample size, voxel spacing, angular settings, Born order, seed set,
 and software version. Saved results retain units, amplitudes, and provenance;
 they do not contain the original voxel field. Preserve manually constructed
