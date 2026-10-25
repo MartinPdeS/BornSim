@@ -26,7 +26,6 @@ def release_repo(tmp_path):
 
         shutil.copy2(ROOT / name, destination)
 
-    shutil.copytree(ROOT / "tools", tmp_path / "tools", ignore=shutil.ignore_patterns("__pycache__"))
 
     for args in (
         ("init", "-b", "main"),
@@ -69,7 +68,7 @@ def test_release_aligns_metadata_and_creates_annotated_tag(release_repo):
 
     tag = f"v{version}"
 
-    result = command(release_repo, sys.executable, "tools/release_tag.py", tag)
+    result = command(release_repo, sys.executable, "-m", "martinpdes_maintenance.cli", "tag", tag)
 
     assert result.returncode == 0, result.stderr
 
@@ -77,7 +76,7 @@ def test_release_aligns_metadata_and_creates_annotated_tag(release_repo):
 
     assert command(release_repo, "git", "status", "--porcelain").stdout == ""
 
-    check = command(release_repo, sys.executable, "tools/check_release.py", "--version", tag)
+    check = command(release_repo, sys.executable, "-m", "martinpdes_maintenance.cli", "check", "--version", tag)
 
     assert check.returncode == 0, check.stdout + check.stderr
 
@@ -88,13 +87,13 @@ def test_release_aligns_metadata_and_creates_annotated_tag(release_repo):
         ("minor", f"v{major}.{minor + 1}.0"),
         ("major", f"v{major + 1}.0.0"),
     ]:
-        next_version = command(release_repo, sys.executable, "tools/next_release_version.py", kind)
+        next_version = command(release_repo, sys.executable, "-m", "martinpdes_maintenance.cli", "next", kind)
 
         assert next_version.returncode == 0, next_version.stderr
 
         assert next_version.stdout.strip() == expected
 
-    repeated = command(release_repo, sys.executable, "tools/release_tag.py", tag)
+    repeated = command(release_repo, sys.executable, "-m", "martinpdes_maintenance.cli", "tag", tag)
 
     assert repeated.returncode != 0
 
@@ -113,7 +112,7 @@ def test_first_release_uses_project_version_without_creating_tags(release_repo, 
         "major": f"v{major + 1}.0.0",
     }
 
-    result = command(release_repo, sys.executable, "tools/next_release_version.py", kind)
+    result = command(release_repo, sys.executable, "-m", "martinpdes_maintenance.cli", "next", kind)
 
     assert result.returncode == 0, result.stderr
 
@@ -129,7 +128,7 @@ def test_release_rejects_dirty_tree_and_invalid_tags(release_repo):
 
     (release_repo / "unrelated.txt").write_text("Uncommitted work\n")
 
-    result = command(release_repo, sys.executable, "tools/release_tag.py", "v0.2.0")
+    result = command(release_repo, sys.executable, "-m", "martinpdes_maintenance.cli", "tag", "v0.2.0")
 
     assert result.returncode != 0
 
@@ -137,7 +136,7 @@ def test_release_rejects_dirty_tree_and_invalid_tags(release_repo):
 
     assert (release_repo / "pyproject.toml").read_text() == before
 
-    result = command(release_repo, sys.executable, "tools/release_tag.py", "invalid")
+    result = command(release_repo, sys.executable, "-m", "martinpdes_maintenance.cli", "tag", "invalid")
 
     assert result.returncode != 0
 
@@ -151,7 +150,7 @@ def test_version_mismatch_is_detected(release_repo):
 
     citation.write_text(re.sub(r"^version:.*$", 'version: "9.0.0"', citation.read_text(), flags=re.MULTILINE))
 
-    result = command(release_repo, sys.executable, "tools/check_release.py")
+    result = command(release_repo, sys.executable, "-m", "martinpdes_maintenance.cli", "check")
 
     assert result.returncode != 0
 
