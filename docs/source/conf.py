@@ -5,22 +5,20 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-from bornsim import __version__
 from bornsim.units import ureg
 from martinpdes_docs import configure
 
 project = "BornSim"
-package = "BornSim"
+package = "bornsim"
 repository = "MartinPdeS/BornSim"
 author = "Martin Poinsinet de Sivry-Houle"
-release = __version__
-version = release
 
 
 globals().update(
     configure(
         project=project,
         package=package,
+        version="auto",
         author=author,
         repository=repository,
         logo="_static/logo.png",
