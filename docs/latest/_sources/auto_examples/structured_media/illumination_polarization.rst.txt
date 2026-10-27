@@ -235,7 +235,7 @@ analyzer before squaring to study polarization-resolved detection.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.147 seconds)
+   **Total running time of the script:** (0 minutes 1.644 seconds)
 
 
 .. _sphx_glr_download_auto_examples_structured_media_illumination_polarization.py:
