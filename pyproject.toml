@@ -31,7 +31,7 @@ dependencies = [
     "TypedUnit>=0.2.9",
     "pint>=0.24,<0.26",
     "matplotlib>=3.7,<4",
-    "plotly>=6,<7",
+    "plotly>=6,<8",
 ]
 
 [project.optional-dependencies]
