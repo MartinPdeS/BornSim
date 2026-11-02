@@ -39,7 +39,7 @@ release = ["martinpdes-maintenance==0.2.3"]
 testing = ["martinpdes-maintenance[testing]==0.2.3", "pytest-cov<8"]
 test = ["BornSim[testing]"]
 documentation = [
-    "MartinPdeS-docs>=0.4.0,<0.5",
+    "MartinPdeS-docs>=0.4.0,<0.6",
 ]
 dev = ["martinpdes-maintenance[quality]==0.2.3", "twine>=6,<7", "pre-commit>=4,<5"]
 
