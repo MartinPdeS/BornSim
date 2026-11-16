@@ -14,9 +14,9 @@ Gaussian. The sampled structured volume records its fluctuation statistics and
 seed as provenance.
 """
 
+import sys
 from bornsim.medium.random_medium import WhittleMaternMedium
 
-import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -89,11 +89,9 @@ combined = structure_with_fluctuations.to_volume(
 # Inspect the structured medium in 3D
 # -----------------------------------
 # Inspect the deterministic layers and sphere before adding fluctuations.
-# Drag to rotate and scroll to zoom in the embedded browser volume.
+# Plotly renders interpolated contours with physical spatial axes.
 medium_figure = structured.plot_3d(
-    mode="volume",
     field="refractive_index",
-    opacity_scale="increasing",
 )
 
 if "--no-browser" not in sys.argv:
@@ -102,13 +100,11 @@ if "--no-browser" not in sys.argv:
 # %%
 # Inspect the combined medium in 3D
 # ---------------------------------
-# This interactive volume shows the sampled refractive index used by the solver,
+# This voxel volume shows the sampled refractive index used by the solver,
 # including the same seeded Matérn fluctuations as the scattering curves.
-# Regions with higher refractive index are more opaque; opacity is a display setting.
+# Color represents refractive index; contour geometry interpolates voxel samples.
 medium_figure = combined.plot_3d(
-    mode="volume",
     field="refractive_index",
-    opacity_scale="increasing",
 )
 
 if "--no-browser" not in sys.argv:

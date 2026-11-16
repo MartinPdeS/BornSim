@@ -34,13 +34,12 @@ before interpreting them quantitatively. BornSim uses the linearized
 dielectric contrast ``2 * n0 * delta_n`` at all Born orders, rather than
 ``n_sphere**2 - n0**2``. This weak-contrast example is not an exact Mie solution.
 
-.. GENERATED FROM PYTHON SOURCE LINES 18-26
+.. GENERATED FROM PYTHON SOURCE LINES 18-25
 
 .. code-block:: Python
 
 
     import sys
-
     import matplotlib.pyplot as plt
 
     from bornsim import Material, AngularSampling, Grid, Solver, Source, Sphere, StructuredMedium
@@ -53,7 +52,7 @@ dielectric contrast ``2 * n0 * delta_n`` at all Born orders, rather than
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 27-35
+.. GENERATED FROM PYTHON SOURCE LINES 26-34
 
 Build a spherical refractive index mask
 ---------------------------------------
@@ -64,7 +63,7 @@ The sphere is offset by 40 nm in x and 20 nm in y. Set this vector to zero
 for a centred sphere. Keep abs(centre[a]) + radius below half the box size
 on every axis to avoid clipping. Grid-aligned offsets translate the same mask.
 
-.. GENERATED FROM PYTHON SOURCE LINES 35-82
+.. GENERATED FROM PYTHON SOURCE LINES 34-81
 
 .. code-block:: Python
 
@@ -122,22 +121,20 @@ on every axis to avoid clipping. Grid-aligned offsets translate the same mask.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 83-88
+.. GENERATED FROM PYTHON SOURCE LINES 82-87
 
 Inspect the medium in 3D
 ------------------------
 Inspect the actual finite input sample with physical spatial axes.
-The gallery embeds an interactive volume; drag to rotate and scroll to zoom.
-Level surfaces interpolate the sampled staircase interface.
+The gallery embeds the interactive Plotly medium view.
+Contours interpolate the solver's sampled staircase interface.
 
-.. GENERATED FROM PYTHON SOURCE LINES 88-97
+.. GENERATED FROM PYTHON SOURCE LINES 87-94
 
 .. code-block:: Python
 
     medium_figure = volume.plot_3d(
-        mode="volume",
         field="refractive_index",
-        opacity_scale="increasing",
     )
 
     if "--no-browser" not in sys.argv:
@@ -154,7 +151,7 @@ Level surfaces interpolate the sampled staircase interface.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 98-104
+.. GENERATED FROM PYTHON SOURCE LINES 95-101
 
 Compute coherent scattering through three Born orders
 -----------------------------------------------------
@@ -163,7 +160,7 @@ divided by the entire voxel-box volume. Multiplying by that physical volume
 recovers a differential cross section, which avoids treating the empty
 background portion of the box as part of an intrinsic transport coefficient.
 
-.. GENERATED FROM PYTHON SOURCE LINES 104-116
+.. GENERATED FROM PYTHON SOURCE LINES 101-113
 
 .. code-block:: Python
 
@@ -186,7 +183,7 @@ background portion of the box as part of an intrinsic transport coefficient.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 117-125
+.. GENERATED FROM PYTHON SOURCE LINES 114-122
 
 Three-dimensional phase function
 ---------------------------------
@@ -197,7 +194,7 @@ structures. Its radius is a probability density per steradian, not a spatial
 coordinate. No realization or azimuth averaging is applied to the 3D view.
 Check polar and azimuth quadrature refinement for quantitative calculations.
 
-.. GENERATED FROM PYTHON SOURCE LINES 125-132
+.. GENERATED FROM PYTHON SOURCE LINES 122-129
 
 .. code-block:: Python
 
@@ -219,14 +216,14 @@ Check polar and azimuth quadrature refinement for quantitative calculations.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 133-137
+.. GENERATED FROM PYTHON SOURCE LINES 130-134
 
 Select a physical meridian
 ---------------------------
 Select the sampled phi = 90 degree plane without averaging or interpolation.
 The curve keeps the full solve's solid-angle normalization.
 
-.. GENERATED FROM PYTHON SOURCE LINES 137-142
+.. GENERATED FROM PYTHON SOURCE LINES 134-139
 
 .. code-block:: Python
 
@@ -250,7 +247,7 @@ The curve keeps the full solve's solid-angle normalization.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 4.784 seconds)
+   **Total running time of the script:** (0 minutes 4.306 seconds)
 
 
 .. _sphx_glr_download_auto_examples_structured_media_dielectric_sphere.py:

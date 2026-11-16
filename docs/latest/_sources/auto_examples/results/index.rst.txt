@@ -95,7 +95,7 @@ The calculations include second-, third-, and fourth-order solves.
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Use plotting methods directly on a result, then call plt.show() to display angular Matplotlib figures. The docs embed interactive Plotly volumes and phase surfaces; drag to rotate and scroll to zoom.">
+    <div class="sphx-glr-thumbcontainer" tooltip="Use plotting methods directly on a result, then call plt.show() to display Matplotlib angular figures. The docs embed Plotly medium volumes and directional phase surfaces; all 3D views use Plotly.">
 
 .. only:: html
 

@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Public Python API &#8212; BornSim 0.9.1 documentation</title>
+    <title>Public Python API &#8212; BornSim 0.10.0 documentation</title>
   
   
   
@@ -26,36 +26,36 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=75c7c72ae941e8b558d8" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=c83e6b79" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=6a604523" />
     <link rel="stylesheet" type="text/css" href="_static/default.css" />
     <link rel="stylesheet" type="text/css" href="_static/martinpdes_layout.css?v=a8cc01cd" />
     <link rel="stylesheet" type="text/css" href="_static/layout.css?v=15dcf2f3" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <script defer src="_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="_static/documentation_options.js?v=016a97bc"></script>
+    <script src="_static/documentation_options.js?v=7e54ce6f"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/sg-tags.js?v=d80f6fa4"></script>
-    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script data-sd-tabs-storage-prefix="sphinx-design-tab-id-" src="_static/design-tabs.js?v=fcb327ea"></script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
+        DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/BornSim/documentation_page/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.9.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.10.0';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
@@ -68,7 +68,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.9.1" />
+  <meta name="docsearch:version" content="0.10.0" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -116,7 +116,7 @@
   
     <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
-  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation" aria-expanded="false" aria-controls="pst-primary-sidebar-modal">
     <span class="fa-solid fa-bars"></span>
   </button>
   
@@ -138,11 +138,9 @@
     
     
     
-    <img src="_static/logo.png" class="logo__image only-dark" alt=""/>
-    <img src="_static/logo.png" class="logo__image only-light pst-js-only" alt=""/>
+    <img src="_static/logo-dark.png" class="logo__image only-dark" alt="BornSim 0.10.0 documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-light pst-js-only" alt="BornSim 0.10.0 documentation - Home"/>
   
-  
-    <p class="title logo__title">BornSim</p>
   
 </a></div>
     
@@ -257,14 +255,14 @@
 
 <div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
   <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
-    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
   </button>
   <ul class="dropdown-menu dropdown-menu-end">
-    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
-    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
-    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
   </ul>
 </div></div>
       
@@ -321,7 +319,7 @@
   
 
   
-    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page" aria-expanded="false" aria-controls="pst-secondary-sidebar-modal">
       <span class="fa-solid fa-outdent"></span>
     </button>
   
@@ -335,7 +333,7 @@
       
       
       
-      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <dialog id="pst-primary-sidebar-modal" tabindex="-1"></dialog>
       <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
@@ -433,14 +431,14 @@
 
 <div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
   <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
-    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto" title="System Settings"></i>
   </button>
   <ul class="dropdown-menu dropdown-menu-end">
-    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
-    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
-    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg me-1"></i>Dark</button></li>
   </ul>
 </div></div>
         
@@ -534,7 +532,7 @@
     
     <li class="breadcrumb-item breadcrumb-home">
       <a href="index.html" class="nav-link" aria-label="Home">
-        <i class="fa-solid fa-home"></i>
+        <i class="fa-solid fa-house"></i>
       </a>
     </li>
     <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Public Python API</span></li>
@@ -769,10 +767,17 @@ ensemble uncertainties separately from discretization errors.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.convergence.ConvergenceReport.rows">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rows</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#bornsim.convergence.ConvergenceReport.rows" title="Link to this definition">#</a></dt>
-<dd><p>coefficients in m⁻¹, g and residual dimensionless.</p>
+<dd><p>Return fresh numeric rows for each refinement step.</p>
+<p>Coefficients use inverse metres; anisotropy and residuals are
+dimensionless. Relative changes and phase-curve distances compare each
+row with its predecessor.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Fresh numeric rows</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Independent JSON-compatible row summaries. Mutating them does not
+affect the report.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple of dict</p>
 </dd>
 </dl>
 </dd></dl>
@@ -782,8 +787,11 @@ ensemble uncertainties separately from discretization errors.</p>
 <span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/convergence.html#ConvergenceReport.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.convergence.ConvergenceReport.summary" title="Link to this definition">#</a></dt>
 <dd><p>Return a compact report without claiming physical convergence.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Human-readable coefficients and stability indicators.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
 </dd>
 </dl>
 </dd></dl>
@@ -830,6 +838,15 @@ Both configurations have the same total incident intensity normalization.</p>
 <dt class="sig sig-object py" id="bornsim.source.Source.metadata">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">metadata</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></span><a class="headerlink" href="#bornsim.source.Source.metadata" title="Link to this definition">#</a></dt>
 <dd><p>Return fresh JSON-compatible illumination settings in SI units.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Wavelength in metres and incident direction and polarization
+components as JSON lists.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict of str to object</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -840,7 +857,17 @@ Both configurations have the same total incident intensity normalization.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.source.Source.polarization_vectors">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">polarization_vectors</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#bornsim.source.Source.polarization_vectors" title="Link to this definition">#</a></dt>
-<dd><p>Return unit electric-field modes, mixed incoherently with equal weight.</p>
+<dd><p>Return unit electric-field modes for the incident source.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Complex or real unit polarization vectors with shape <code class="docutils literal notranslate"><span class="pre">(mode,</span> <span class="pre">3)</span></code>.
+An unspecified polarization produces two equally weighted
+incoherent transverse modes.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>numpy.ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -931,17 +958,22 @@ to the medium or volume, rather than the spatial grid.</p>
 <dt class="sig sig-object py" id="bornsim.grid.Grid.from_extent">
 <span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_extent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/grid.html#Grid.from_extent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.grid.Grid.from_extent" title="Link to this definition">#</a></dt>
 <dd><p>Create an isotropic voxel grid from its full physical extent.</p>
-<p><code class="docutils literal notranslate"><span class="pre">extent</span></code> gives the full voxel-box width along x, y, and z. Each
-axis extent must imply the same cubic voxel spacing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>shape</strong> (<em>tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>]</em>)</p></li>
-<li><p><strong>extent</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><em>Quantity</em></a>)</p></li>
+<li><p><strong>shape</strong> (<em>tuple</em><em> of </em><em>int</em>) – Voxel counts along x, y, and z; each must be between 2 and 32.</p></li>
+<li><p><strong>extent</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity"><em>Quantity</em></a>) – Full voxel-box lengths along x, y, and z, with explicit length
+units. All three lengths must imply the same voxel spacing.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="#bornsim.grid.Grid" title="bornsim.grid.Grid"><em>Grid</em></a></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Grid with spacing derived from the first extent component.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#bornsim.grid.Grid" title="bornsim.grid.Grid">Grid</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If shape, units, extent values, or implied spacings are invalid.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -949,13 +981,30 @@ axis extent must imply the same cubic voxel spacing.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.grid.Grid.metadata">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">metadata</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#bornsim.grid.Grid.metadata" title="Link to this definition">#</a></dt>
-<dd><p>Fresh JSON-compatible grid settings in SI units.</p>
+<dd><p>Return fresh JSON-compatible grid settings in SI units.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Voxel shape and spacing in metres.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict of str to object</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.grid.Grid.positions">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">positions</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><span class="pre">Quantity</span></a></span><a class="headerlink" href="#bornsim.grid.Grid.positions" title="Link to this definition">#</a></dt>
-<dd><p>Unit-bearing voxel-centre coordinates, shape <code class="docutils literal notranslate"><span class="pre">(*shape,</span> <span class="pre">3)</span></code>.</p>
+<dd><p>Return unit-bearing voxel-centre coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Cartesian coordinates with shape <code class="docutils literal notranslate"><span class="pre">(*shape,</span> <span class="pre">3)</span></code> and the spacing’s
+length units. The returned array is newly computed.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity">Quantity</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -971,7 +1020,16 @@ axis extent must imply the same cubic voxel spacing.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.grid.Grid.volume">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">volume</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><span class="pre">Quantity</span></a></span><a class="headerlink" href="#bornsim.grid.Grid.volume" title="Link to this definition">#</a></dt>
-<dd><p>Physical voxel-box volume in cubic metres.</p>
+<dd><p>Return the physical voxel-box volume.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Box volume in cubic metres, including one full voxel per grid
+element.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity">Quantity</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1005,12 +1063,19 @@ flattened in row-major order, preserving polar/azimuth grid ordering.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>polar_angles</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><em>Quantity</em></a>)</p></li>
-<li><p><strong>azimuth_angles</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><em>Quantity</em></a>)</p></li>
+<li><p><strong>polar_angles</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity"><em>Quantity</em></a>) – Polar angles in explicit angular units, in the inclusive range
+from zero to pi.</p></li>
+<li><p><strong>azimuth_angles</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity"><em>Quantity</em></a>) – Finite azimuth angles in explicit angular units.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="#bornsim.directions.Directions" title="bornsim.directions.Directions"><em>Directions</em></a></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Cartesian unit vectors in row-major broadcast order.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#bornsim.directions.Directions" title="bornsim.directions.Directions">Directions</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If units or angle values are invalid.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1265,8 +1330,16 @@ the array centre halfway between lattice sites.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.medium.structured.periodic.PeriodicMedium.metadata">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#bornsim.medium.structured.periodic.PeriodicMedium.metadata" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">metadata</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#bornsim.medium.structured.periodic.PeriodicMedium.metadata" title="Link to this definition">#</a></dt>
 <dd><p>Return motif and finite lattice settings in SI units.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Motif geometry, lattice vectors in metres, and repetition counts.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict of str to object</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1288,6 +1361,21 @@ the array centre halfway between lattice sites.</p>
 <dt class="sig sig-object py" id="bornsim.medium.structured.periodic.PeriodicMedium.to_volume">
 <span class="sig-name descname"><span class="pre">to_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/medium/structured/periodic.html#PeriodicMedium.to_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.medium.structured.periodic.PeriodicMedium.to_volume" title="Link to this definition">#</a></dt>
 <dd><p>Voxelize centred copies, clipping geometry to the supplied grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> (<a class="reference internal" href="#bornsim.grid.Grid" title="bornsim.grid.Grid"><em>Grid</em></a>) – Explicit voxel grid.</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>default=0</em>) – Accepted for the common Medium interface; this deterministic
+geometry does not use it.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Voxelized finite lattice and geometry provenance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#bornsim.volume.Volume" title="bornsim.volume.Volume">Volume</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1332,8 +1420,16 @@ the array centre halfway between lattice sites.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.medium.particles.core_shell.CoreShellMedium.metadata">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#bornsim.medium.particles.core_shell.CoreShellMedium.metadata" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">metadata</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#bornsim.medium.particles.core_shell.CoreShellMedium.metadata" title="Link to this definition">#</a></dt>
 <dd><p>Return ordered shell and core geometry in SI units.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Refractive indices, centre, and radii in metres.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict of str to object</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1350,6 +1446,21 @@ the array centre halfway between lattice sites.</p>
 <dt class="sig sig-object py" id="bornsim.medium.particles.core_shell.CoreShellMedium.to_volume">
 <span class="sig-name descname"><span class="pre">to_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/medium/particles/core_shell.html#CoreShellMedium.to_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.medium.particles.core_shell.CoreShellMedium.to_volume" title="Link to this definition">#</a></dt>
 <dd><p>Sample the shell first and replace its interior with the core.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> (<a class="reference internal" href="#bornsim.grid.Grid" title="bornsim.grid.Grid"><em>Grid</em></a>) – Explicit voxel grid.</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>default=0</em>) – Accepted for the common Medium interface; this deterministic
+particle does not use it.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Voxelized core-shell contrast and geometry provenance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#bornsim.volume.Volume" title="bornsim.volume.Volume">Volume</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1383,8 +1494,16 @@ the array centre halfway between lattice sites.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.medium.particles.ellipsoid.EllipsoidMedium.metadata">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#bornsim.medium.particles.ellipsoid.EllipsoidMedium.metadata" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">metadata</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#bornsim.medium.particles.ellipsoid.EllipsoidMedium.metadata" title="Link to this definition">#</a></dt>
 <dd><p>Return particle geometry in SI units.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Refractive indices, orientation, and dimensions in metres.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict of str to object</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1406,6 +1525,21 @@ the array centre halfway between lattice sites.</p>
 <dt class="sig sig-object py" id="bornsim.medium.particles.ellipsoid.EllipsoidMedium.to_volume">
 <span class="sig-name descname"><span class="pre">to_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/medium/particles/ellipsoid.html#EllipsoidMedium.to_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.medium.particles.ellipsoid.EllipsoidMedium.to_volume" title="Link to this definition">#</a></dt>
 <dd><p>Voxelize the oriented particle, clipping it to the supplied grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> (<a class="reference internal" href="#bornsim.grid.Grid" title="bornsim.grid.Grid"><em>Grid</em></a>) – Explicit voxel grid.</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>default=0</em>) – Accepted for the common Medium interface; this deterministic
+particle does not use it.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Voxelized particle contrast and geometry provenance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#bornsim.volume.Volume" title="bornsim.volume.Volume">Volume</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1455,8 +1589,16 @@ include conducting boundary conditions, complex permittivity, or currents.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.medium.particles.cylinder.CylinderMedium.metadata">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#bornsim.medium.particles.cylinder.CylinderMedium.metadata" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">metadata</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#bornsim.medium.particles.cylinder.CylinderMedium.metadata" title="Link to this definition">#</a></dt>
 <dd><p>Return cylinder geometry in SI units.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Refractive indices, axis, centre, radius, and height in metres.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict of str to object</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1478,6 +1620,21 @@ include conducting boundary conditions, complex permittivity, or currents.</p>
 <dt class="sig sig-object py" id="bornsim.medium.particles.cylinder.CylinderMedium.to_volume">
 <span class="sig-name descname"><span class="pre">to_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/medium/particles/cylinder.html#CylinderMedium.to_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.medium.particles.cylinder.CylinderMedium.to_volume" title="Link to this definition">#</a></dt>
 <dd><p>Voxelize the finite cylinder on the supplied grid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> (<a class="reference internal" href="#bornsim.grid.Grid" title="bornsim.grid.Grid"><em>Grid</em></a>) – Explicit voxel grid.</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>default=0</em>) – Accepted for the common Medium interface; this deterministic
+particle does not use it.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Voxelized cylinder contrast and geometry provenance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#bornsim.volume.Volume" title="bornsim.volume.Volume">Volume</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1500,6 +1657,24 @@ propagation retains <code class="docutils literal notranslate"><span class="pre"
 <p>StructuredMedium accepts exactly one of a positive uniform <code class="docutils literal notranslate"><span class="pre">refractive_index</span></code>
 or a RandomFieldMedium supplied as <code class="docutils literal notranslate"><span class="pre">medium</span></code>. Statistical media describe
 homogeneous distributions; use StructuredMedium to compose material.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>refractive_index</strong> (<em>float</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – Plain positive dimensionless background refractive index.</p></li>
+<li><p><strong>medium</strong> (<a class="reference internal" href="#bornsim.medium.random_medium.RandomFieldMedium" title="bornsim.medium.random_medium.RandomFieldMedium"><em>RandomFieldMedium</em></a><em> or </em><em>None</em><em>, </em><em>optional</em>) – Statistical medium that defines the random background.</p></li>
+<li><p><strong>material</strong> (<a class="reference internal" href="#bornsim.material.Material" title="bornsim.material.Material"><em>Material</em></a><em> or </em><em>None</em><em>, </em><em>optional</em>) – Material supplying refractive index and extinction coefficient.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The abstract base does not configure state.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – This abstract interface cannot configure a background.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1508,6 +1683,20 @@ homogeneous distributions; use StructuredMedium to compose material.</p>
 <dd><p>Append positional material shapes to a composable medium in place.</p>
 <p>StructuredMedium supports Layer, Sphere, Ellipsoid, Box, and Cylinder.
 Later structures replace earlier material wherever their masks overlap.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*structures</strong> (<em>Any</em>) – Positional geometry objects to append.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The abstract base does not append structures.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – This abstract interface cannot compose structures.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1519,6 +1708,14 @@ Later structures replace earlier material wherever their masks overlap.</p>
 <dt class="sig sig-object py" id="bornsim.medium.base.Medium.is_random">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">is_random</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#bornsim.medium.base.Medium.is_random" title="Link to this definition">#</a></dt>
 <dd><p>Whether independent generation seeds represent random realizations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>False for deterministic media; random media override this property.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
@@ -1527,6 +1724,14 @@ Later structures replace earlier material wherever their masks overlap.</p>
 <dd><p>Return a fresh JSON-compatible description with numeric SI values.</p>
 <p>Concrete media extend this dictionary with their own statistics or
 geometry. Generation seeds and grids belong to individual volumes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Fresh JSON-compatible metadata for this medium.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict of str to object</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1536,12 +1741,18 @@ geometry. Generation seeds and grids belong to individual volumes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>grid</strong> (<a class="reference internal" href="#bornsim.grid.Grid" title="bornsim.grid.Grid"><em>Grid</em></a>)</p></li>
-<li><p><strong>seed</strong> (<em>int</em>)</p></li>
+<li><p><strong>grid</strong> (<a class="reference internal" href="#bornsim.grid.Grid" title="bornsim.grid.Grid"><em>Grid</em></a>) – Explicit spatial discretization.</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>default=0</em>) – Seed controlling random realization generation.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="#bornsim.volume.Volume" title="bornsim.volume.Volume">Volume</a></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sampled refractive-index contrast and its metadata.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#bornsim.volume.Volume" title="bornsim.volume.Volume">Volume</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – This abstract method must be implemented by concrete media.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1582,7 +1793,15 @@ length units. Each realization records its medium and generation seed.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.medium.random_spheres.RandomSphereMedium.is_random">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">is_random</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#bornsim.medium.random_spheres.RandomSphereMedium.is_random" title="Link to this definition">#</a></dt>
-<dd><p>Whether independent generation seeds represent random realizations.</p>
+<dd><p>Whether this medium generates seeded random placements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Always True for a random sphere collection.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1593,9 +1812,15 @@ length units. Each realization records its medium and generation seed.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.medium.random_spheres.RandomSphereMedium.metadata">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">metadata</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#bornsim.medium.random_spheres.RandomSphereMedium.metadata" title="Link to this definition">#</a></dt>
-<dd><p>Return a fresh JSON-compatible description with numeric SI values.</p>
-<p>Concrete media extend this dictionary with their own statistics or
-geometry. Generation seeds and grids belong to individual volumes.</p>
+<dd><p>Return the sphere placement settings for provenance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Refractive indices, radius in metres, count, and placement policy.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict of str to object</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1606,16 +1831,23 @@ geometry. Generation seeds and grids belong to individual volumes.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="bornsim.medium.random_spheres.RandomSphereMedium.sphere_centers">
 <span class="sig-name descname"><span class="pre">sphere_centers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/medium/particles/spheres.html#RandomSphereMedium.sphere_centers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.medium.random_spheres.RandomSphereMedium.sphere_centers" title="Link to this definition">#</a></dt>
-<dd><p>Return reproducible sphere centres with shape (sphere_count, 3).</p>
+<dd><p>Generate nonoverlapping sphere centres for one seed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>grid</strong> (<a class="reference internal" href="#bornsim.grid.Grid" title="bornsim.grid.Grid"><em>Grid</em></a>)</p></li>
-<li><p><strong>seed</strong> (<em>int</em>)</p></li>
+<li><p><strong>grid</strong> (<a class="reference internal" href="#bornsim.grid.Grid" title="bornsim.grid.Grid"><em>Grid</em></a>) – Finite voxel domain that must contain every sphere.</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>default=0</em>) – Nonnegative 32-bit generation seed.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><em>Quantity</em></a></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sphere centres in the grid’s length units, shape
+<code class="docutils literal notranslate"><span class="pre">(sphere_count,</span> <span class="pre">3)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity">Quantity</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If spheres cannot fit or placement attempts are exhausted.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1637,12 +1869,15 @@ geometry. Generation seeds and grids belong to individual volumes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>grid</strong> (<a class="reference internal" href="#bornsim.grid.Grid" title="bornsim.grid.Grid"><em>Grid</em></a>)</p></li>
-<li><p><strong>seed</strong> (<em>int</em>)</p></li>
+<li><p><strong>grid</strong> (<a class="reference internal" href="#bornsim.grid.Grid" title="bornsim.grid.Grid"><em>Grid</em></a>) – Explicit voxel grid.</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>default=0</em>) – Seed determining the sphere centres.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="#bornsim.volume.Volume" title="bornsim.volume.Volume">Volume</a></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sampled refractive-index contrast with placement provenance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#bornsim.volume.Volume" title="bornsim.volume.Volume">Volume</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1720,7 +1955,15 @@ Individual realizations are never recentered or rescaled.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.medium.random_medium.RandomFieldMedium.correlation">
 <span class="property"><span class="k"><span class="pre">abstract</span></span><span class="w"> </span><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">correlation</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#bornsim.medium.random_medium.RandomFieldMedium.correlation" title="Link to this definition">#</a></dt>
-<dd><p>Spatial covariance family recorded in provenance.</p>
+<dd><p>Return the spatial covariance family.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Covariance-family identifier stored in provenance.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1736,7 +1979,15 @@ Individual realizations are never recentered or rescaled.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.medium.random_medium.RandomFieldMedium.is_random">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">is_random</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#bornsim.medium.random_medium.RandomFieldMedium.is_random" title="Link to this definition">#</a></dt>
-<dd><p>Statistical media support independent seeded realizations.</p>
+<dd><p>Whether independent seeds generate distinct realizations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Always True for statistical random-field media.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
@@ -1745,6 +1996,14 @@ Individual realizations are never recentered or rescaled.</p>
 <dd><p>Return independent SI statistics for result provenance.</p>
 <p>Lengths use the <code class="docutils literal notranslate"><span class="pre">_m</span></code> suffix. This describes ensemble statistics rather
 than a particular seed or a sample’s measured mean and variance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Independent metadata with physical lengths represented in metres.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict of str to object</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1761,10 +2020,17 @@ power spectral density; the synthesis code supplies discrete variance
 normalization. Inputs must be finite and nonnegative.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>q_squared</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><em>Quantity</em></a>)</p>
+<dd class="field-odd"><p><strong>q_squared</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity"><em>Quantity</em></a>) – Nonnegative squared wavenumbers with explicit inverse-square-length
+units.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>ndarray</em></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dimensionless spectral weights with the input shape.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If units or values are invalid.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1782,12 +2048,18 @@ in the generated volume’s provenance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>grid</strong> (<a class="reference internal" href="#bornsim.grid.Grid" title="bornsim.grid.Grid"><em>Grid</em></a>)</p></li>
-<li><p><strong>seed</strong> (<em>int</em>)</p></li>
+<li><p><strong>grid</strong> (<a class="reference internal" href="#bornsim.grid.Grid" title="bornsim.grid.Grid"><em>Grid</em></a>) – Explicit cubic voxel grid.</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>default=0</em>) – Nonnegative 32-bit seed for the random realization.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="#bornsim.volume.Volume" title="bornsim.volume.Volume">Volume</a></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sampled refractive-index contrast and generation metadata.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#bornsim.volume.Volume" title="bornsim.volume.Volume">Volume</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the seed or sampling configuration is invalid.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1854,13 +2126,17 @@ All lengths use SI or compatible quantities; the boundary is closed.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="bornsim.geometry.Box.mask">
 <span class="sig-name descname"><span class="pre">mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">positions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/geometry.html#Box.mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.geometry.Box.mask" title="Link to this definition">#</a></dt>
-<dd><p>Return membership at unit-bearing voxel positions, shape (…, 3).</p>
+<dd><p>Return voxel-centre membership in this shape.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>positions</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><em>Quantity</em></a>)</p>
+<dd class="field-odd"><p><strong>positions</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity"><em>Quantity</em></a>) – Cartesian positions with final axis length three and explicit
+length units.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>ndarray</em></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Membership mask matching the leading position dimensions.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray of bool</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1926,13 +2202,17 @@ lengths or quantities; axis is 0, 1, or 2, default z. Centre has three lengths.<
 <dl class="py method">
 <dt class="sig sig-object py" id="bornsim.geometry.Cylinder.mask">
 <span class="sig-name descname"><span class="pre">mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">positions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/geometry.html#Cylinder.mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.geometry.Cylinder.mask" title="Link to this definition">#</a></dt>
-<dd><p>Return membership at unit-bearing voxel positions, shape (…, 3).</p>
+<dd><p>Return voxel-centre membership in this shape.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>positions</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><em>Quantity</em></a>)</p>
+<dd class="field-odd"><p><strong>positions</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity"><em>Quantity</em></a>) – Cartesian positions with final axis length three and explicit
+length units.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>ndarray</em></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Membership mask matching the leading position dimensions.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray of bool</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1985,13 +2265,17 @@ compatible quantities. rotation maps local semi-axes into global coordinates.</p
 <dl class="py method">
 <dt class="sig sig-object py" id="bornsim.geometry.Ellipsoid.mask">
 <span class="sig-name descname"><span class="pre">mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">positions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/geometry.html#Ellipsoid.mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.geometry.Ellipsoid.mask" title="Link to this definition">#</a></dt>
-<dd><p>Return membership at unit-bearing voxel positions, shape (…, 3).</p>
+<dd><p>Return voxel-centre membership in this shape.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>positions</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><em>Quantity</em></a>)</p>
+<dd class="field-odd"><p><strong>positions</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity"><em>Quantity</em></a>) – Cartesian positions with final axis length three and explicit
+length units.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>ndarray</em></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Membership mask matching the leading position dimensions.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray of bool</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2060,16 +2344,22 @@ full thickness instead of its local lower and upper bounds.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>thickness</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><em>Quantity</em></a>)</p></li>
-<li><p><strong>centre</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><em>Quantity</em></a>)</p></li>
-<li><p><strong>refractive_index</strong> (<em>float</em><em> | </em><em>None</em>)</p></li>
-<li><p><strong>material</strong> (<a class="reference internal" href="#bornsim.material.Material" title="bornsim.material.Material"><em>Material</em></a><em> | </em><em>None</em>)</p></li>
-<li><p><strong>axis</strong> (<em>int</em>)</p></li>
-<li><p><strong>rotation</strong> (<a class="reference internal" href="#bornsim.rotation.Rotation" title="bornsim.rotation.Rotation"><em>Rotation</em></a><em> | </em><em>tuple</em><em>[</em><em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em><em>] </em><em>| </em><em>ndarray</em><em>[</em><em>tuple</em><em>[</em><em>Any</em><em>, </em><em>...</em><em>]</em><em>, </em><em>dtype</em><em>[</em><em>float64</em><em>]</em><em>] </em><em>| </em><em>Sequence</em><em>[</em><em>Sequence</em><em>[</em><em>float</em><em>]</em><em>] </em><em>| </em><a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><em>Quantity</em></a>)</p></li>
+<li><p><strong>thickness</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity"><em>Quantity</em></a>) – Positive full slab thickness with explicit length units.</p></li>
+<li><p><strong>centre</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity"><em>Quantity</em></a>) – Global centre position with shape <code class="docutils literal notranslate"><span class="pre">(3,)</span></code> and length units.</p></li>
+<li><p><strong>refractive_index</strong> (<em>float</em><em> or </em><em>None</em><em>, </em><em>default=None</em>) – Plain positive refractive index, unless <code class="docutils literal notranslate"><span class="pre">material</span></code> is supplied.</p></li>
+<li><p><strong>material</strong> (<a class="reference internal" href="#bornsim.material.Material" title="bornsim.material.Material"><em>Material</em></a><em> or </em><em>None</em><em>, </em><em>default=None</em>) – Material assigned to the slab.</p></li>
+<li><p><strong>axis</strong> (<em>int</em><em>, </em><em>default=2</em>) – Local normal axis, where 0, 1, and 2 denote x, y, and z.</p></li>
+<li><p><strong>rotation</strong> (<a class="reference internal" href="#bornsim.rotation.Rotation" title="bornsim.rotation.Rotation"><em>Rotation</em></a><em>, </em><em>array_like</em><em>, or </em><a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity"><em>Quantity</em></a>) – Optional proper orientation of the local axes.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="#bornsim.geometry.Layer" title="bornsim.geometry.Layer"><em>Layer</em></a></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Slab with bounds at plus and minus half the requested thickness.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#bornsim.geometry.Layer" title="bornsim.geometry.Layer">Layer</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If thickness, centre, axis, material, or rotation is invalid.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2082,13 +2372,17 @@ full thickness instead of its local lower and upper bounds.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="bornsim.geometry.Layer.mask">
 <span class="sig-name descname"><span class="pre">mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">positions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/geometry.html#Layer.mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.geometry.Layer.mask" title="Link to this definition">#</a></dt>
-<dd><p>Return membership at unit-bearing voxel positions, shape (…, 3).</p>
+<dd><p>Return voxel-centre membership in this shape.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>positions</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><em>Quantity</em></a>)</p>
+<dd class="field-odd"><p><strong>positions</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity"><em>Quantity</em></a>) – Cartesian positions with final axis length three and explicit
+length units.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>ndarray</em></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Membership mask matching the leading position dimensions.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray of bool</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2140,13 +2434,17 @@ The closed surface is sampled at voxel centres, giving a staircase boundary.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="bornsim.geometry.Sphere.mask">
 <span class="sig-name descname"><span class="pre">mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">positions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/geometry.html#Sphere.mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.geometry.Sphere.mask" title="Link to this definition">#</a></dt>
-<dd><p>Return membership at unit-bearing voxel positions, shape (…, 3).</p>
+<dd><p>Return voxel-centre membership in this shape.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>positions</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><em>Quantity</em></a>)</p>
+<dd class="field-odd"><p><strong>positions</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity"><em>Quantity</em></a>) – Cartesian positions with final axis length three and explicit
+length units.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>ndarray</em></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Membership mask matching the leading position dimensions.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray of bool</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2194,8 +2492,16 @@ host remains lossless. Wavelength dispersion is not implemented.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.material.Material.metadata">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#bornsim.material.Material.metadata" title="Link to this definition">#</a></dt>
-<dd><p>Fresh JSON-compatible material description.</p>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">metadata</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#bornsim.material.Material.metadata" title="Link to this definition">#</a></dt>
+<dd><p>Return a fresh JSON-compatible material description.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Refractive index and, when nonzero, extinction coefficient.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict of str to float</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -2243,7 +2549,16 @@ matrix as an immutable tuple of tuples. No voxel resampling is performed.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.rotation.Rotation.matrix">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">matrix</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#bornsim.rotation.Rotation.matrix" title="Link to this definition">#</a></dt>
-<dd><p>Return Rodrigues’ active rotation matrix, shape (3, 3).</p>
+<dd><p>Return Rodrigues’ active rotation matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dimensionless matrix of shape <code class="docutils literal notranslate"><span class="pre">(3,</span> <span class="pre">3)</span></code> mapping local column
+coordinates to global coordinates.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>numpy.ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -2359,19 +2674,19 @@ volume has no associated medium.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>backend</strong> (<em>{'matplotlib'</em><em>, </em><em>'plotly'}</em><em>, </em><em>optional</em>) – Default is Plotly for browser interaction. Select ‘matplotlib’
-explicitly for a Matplotlib figure.</p></li>
-<li><p><strong>mode</strong> (<em>str</em><em>, </em><em>optional</em>) – Matplotlib supports ‘voxels’ (default). Plotly supports ‘volume’
-(default) and ‘isosurface’. Uniform Plotly fields are rendered as
+<li><p><strong>backend</strong> (<em>{'plotly'}</em><em>, </em><em>optional</em>) – Plotly is the only supported 3D backend. Default is ‘plotly’.</p></li>
+<li><p><strong>mode</strong> (<em>str</em><em>, </em><em>optional</em>) – Choose ‘volume’ (default) or ‘isosurface’. Uniform fields are rendered as
 volume data; an isosurface cannot be generated from a uniform field.</p></li>
 <li><p><strong>field</strong> (<em>{'delta_refractive_index'</em><em>, </em><em>'refractive_index'</em><em>, </em><em>'permittivity'}</em><em>, </em><em>optional</em>) – Scalar field to display, default refractive index fluctuation. ‘refractive_index’ displays
 n0 + delta_refractive_index; ‘permittivity’ displays the solver’s linearized
 relative permittivity n0**2 + 2*n0*delta_refractive_index, not (n0+delta_refractive_index)**2.</p></li>
 <li><p><strong>length_unit</strong> (<em>str</em><em>, </em><em>optional</em>) – Spatial display unit, default ‘nanometer’. Stored SI data is unchanged.</p></li>
 <li><p><strong>surface_count</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of contours, from 1 to 32; default 8. More surfaces increase
-browser rendering cost. Used only by Plotly volume and isosurface modes.</p></li>
-<li><p><strong>opacity</strong> (<em>float</em><em>, </em><em>optional</em>) – Surface opacity in (0, 1]. Default is 1 for Matplotlib and 0.15
-for Plotly.</p></li>
+browser rendering cost. Used only by Plotly volume and isosurface modes.
+An interactive density slider adjusts this display setting.</p></li>
+<li><p><strong>opacity</strong> (<em>float</em><em>, </em><em>optional</em>) – Initial surface opacity in (0, 1]. Default is 0.12 for volumes
+and 0.5 for isosurfaces. Plotly volumes
+include an opacity slider, with zero available to hide the field.</p></li>
 <li><p><strong>opacity_scale</strong> (<em>{'uniform'</em><em>, </em><em>'increasing'}</em><em>, </em><em>optional</em>) – Default ‘uniform’ gives all contours the same opacity. ‘increasing’
 is available only for Plotly volume mode and scales opacity from
 zero at the lowest displayed contour to <code class="docutils literal notranslate"><span class="pre">opacity</span></code> at the highest.
@@ -2380,22 +2695,18 @@ the magnitude of positive and negative fluctuations.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>figure</strong> – Matplotlib: call pyplot.show() to display or figure.savefig() to
-export. Rotation needs an interactive Matplotlib backend; gallery
-images are static. Plotly: call figure.show() or figure.write_html().
+<dd class="field-even"><p><strong>figure</strong> – Call figure.show() to display or figure.write_html() to export.
 Constructing a figure opens no window or browser.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>matplotlib.figure.Figure or plotly.graph_objects.Figure</p>
+<dd class="field-odd"><p>plotly.graph_objects.Figure</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>ValueError</strong> – If a mode, scalar field, display unit, or rendering setting is invalid.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>Matplotlib voxels preserve staircase interfaces. Dense transparent
-scenes can have depth-ordering limitations in Matplotlib. Plotly
-contours interpolate between voxel centres and are visualization aids,
+<p>Use plot_slice() to inspect sampled cells exactly. Plotly contours interpolate between voxel centres and are visualization aids,
 not exact curved interfaces or a replacement for grid refinement.
 Aspect ratio follows physical dimensions. All voxels are retained, with
 at most 32**3 samples under Volume’s grid limit; browser performance
@@ -2545,14 +2856,25 @@ coefficients are finite-sample cross sections divided by voxel-box volume.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>medium</strong> (<a class="reference internal" href="#bornsim.medium.base.Medium" title="bornsim.medium.base.Medium"><em>Medium</em></a>)</p></li>
-<li><p><strong>grid</strong> (<a class="reference internal" href="#bornsim.grid.Grid" title="bornsim.grid.Grid"><em>Grid</em></a>)</p></li>
-<li><p><strong>sampling</strong> (<a class="reference internal" href="#bornsim.sampling.AngularSampling" title="bornsim.sampling.AngularSampling"><em>AngularSampling</em></a><em> | </em><em>None</em>)</p></li>
-<li><p><strong>ensemble_sampling</strong> (<a class="reference internal" href="#bornsim.ensemble_sampling.EnsembleSampling" title="bornsim.ensemble_sampling.EnsembleSampling"><em>EnsembleSampling</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>medium</strong> (<a class="reference internal" href="#bornsim.medium.base.Medium" title="bornsim.medium.base.Medium"><em>Medium</em></a>) – Medium sampled independently for each realization.</p></li>
+<li><p><strong>grid</strong> (<a class="reference internal" href="#bornsim.grid.Grid" title="bornsim.grid.Grid"><em>Grid</em></a>) – Explicit finite voxel domain.</p></li>
+<li><p><strong>sampling</strong> (<a class="reference internal" href="#bornsim.sampling.AngularSampling" title="bornsim.sampling.AngularSampling"><em>AngularSampling</em></a><em> or </em><em>None</em><em>, </em><em>default=None</em>) – Observation grid and integration quadrature; defaults to the solver’s
+configured sampling.</p></li>
+<li><p><strong>ensemble_sampling</strong> (<a class="reference internal" href="#bornsim.ensemble_sampling.EnsembleSampling" title="bornsim.ensemble_sampling.EnsembleSampling"><em>EnsembleSampling</em></a><em> or </em><em>None</em><em>, </em><em>default=None</em>) – Ordered random seeds and realization count; defaults to four seeds
+beginning at zero.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="#bornsim.results.Result" title="bornsim.results.Result"><em>Result</em></a></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Ensemble mean intensities, uncertainty estimates, and diagnostics.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#bornsim.results.Result" title="bornsim.results.Result">Result</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">medium</span></code> is not a Medium.</p></li>
+<li><p><strong>ValueError</strong> – If grid, sampling, or ensemble settings are invalid.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -2577,12 +2899,19 @@ voxelized Volume; random statistics use ensemble instead.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>target</strong> (<a class="reference internal" href="#bornsim.volume.Volume" title="bornsim.volume.Volume"><em>Volume</em></a>)</p></li>
-<li><p><strong>sampling</strong> (<a class="reference internal" href="#bornsim.sampling.AngularSampling" title="bornsim.sampling.AngularSampling"><em>AngularSampling</em></a><em> | </em><a class="reference internal" href="#bornsim.directions.Directions" title="bornsim.directions.Directions"><em>Directions</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>target</strong> (<a class="reference internal" href="#bornsim.volume.Volume" title="bornsim.volume.Volume"><em>Volume</em></a>) – Voxelized finite scattering sample.</p></li>
+<li><p><strong>sampling</strong> (<a class="reference internal" href="#bornsim.sampling.AngularSampling" title="bornsim.sampling.AngularSampling"><em>AngularSampling</em></a><em>, </em><a class="reference internal" href="#bornsim.directions.Directions" title="bornsim.directions.Directions"><em>Directions</em></a><em>, or </em><em>None</em><em>, </em><em>default=None</em>) – Angular integration grid or explicit Cartesian observation vectors.
+None uses the solver’s configured angular sampling.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="#bornsim.results.Result" title="bornsim.results.Result"><em>Result</em></a></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Numerical Born scattering data and available diagnostics.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#bornsim.results.Result" title="bornsim.results.Result">Result</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – If target is not a Volume.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2601,13 +2930,23 @@ phase functions are unavailable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>target</strong> (<a class="reference internal" href="#bornsim.volume.Volume" title="bornsim.volume.Volume"><em>Volume</em></a>)</p></li>
-<li><p><strong>angles</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><em>Quantity</em></a><em> | </em><em>None</em>)</p></li>
-<li><p><strong>directions</strong> (<a class="reference internal" href="#bornsim.directions.Directions" title="bornsim.directions.Directions"><em>Directions</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>target</strong> (<a class="reference internal" href="#bornsim.volume.Volume" title="bornsim.volume.Volume"><em>Volume</em></a>) – Voxelized finite scattering sample.</p></li>
+<li><p><strong>angles</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity"><em>Quantity</em></a><em> or </em><em>None</em><em>, </em><em>default=None</em>) – Polar angles with explicit angular units; defaults to 121 samples
+spanning zero to pi.</p></li>
+<li><p><strong>directions</strong> (<a class="reference internal" href="#bornsim.directions.Directions" title="bornsim.directions.Directions"><em>Directions</em></a><em> or </em><em>None</em><em>, </em><em>default=None</em>) – Explicit Cartesian observations. Supply instead of <code class="docutils literal notranslate"><span class="pre">angles</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="#bornsim.results.Result" title="bornsim.results.Result"><em>Result</em></a></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Unnormalized scattering data for the requested cut.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#bornsim.results.Result" title="bornsim.results.Result">Result</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> – If target is not a Volume.</p></li>
+<li><p><strong>ValueError</strong> – If both angle and direction configurations are supplied.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -2754,20 +3093,45 @@ Isolated intensities must not be summed to reconstruct cumulative results.</p>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.results.Result.absorption_cross_section">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">absorption_cross_section</span></span><a class="headerlink" href="#bornsim.results.Result.absorption_cross_section" title="Link to this definition">#</a></dt>
-<dd><p>Absorbed power divided by incident irradiance, in area units.</p>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">absorption_cross_section</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><span class="pre">Quantity</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#bornsim.results.Result.absorption_cross_section" title="Link to this definition">#</a></dt>
+<dd><p>Return absorbed-power cross sections for the finite sample.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Absorption cross section in square metres, or None if absorption
+coefficients or sample volume are unavailable.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity">Quantity</a> or None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.results.Result.amplitudes">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">amplitudes</span></span><a class="headerlink" href="#bornsim.results.Result.amplitudes" title="Link to this definition">#</a></dt>
-<dd><p>Read-only angular data owned by angular.</p>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">amplitudes</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><span class="pre">Quantity</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#bornsim.results.Result.amplitudes" title="Link to this definition">#</a></dt>
+<dd><p>Return read-only complex scattering amplitudes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Amplitudes in metres, with polarization and Cartesian vector axes.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity">Quantity</a> or None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.results.Result.angles">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">angles</span></span><a class="headerlink" href="#bornsim.results.Result.angles" title="Link to this definition">#</a></dt>
-<dd><p>Read-only angular data owned by angular.</p>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">angles</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><span class="pre">Quantity</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#bornsim.results.Result.angles" title="Link to this definition">#</a></dt>
+<dd><p>Return read-only polar-angle coordinates in radians.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Polar angles for the observation axis, when available.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity">Quantity</a> or None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -2778,25 +3142,61 @@ Isolated intensities must not be summed to reconstruct cumulative results.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="bornsim.results.Result.azimuth_average">
 <span class="sig-name descname"><span class="pre">azimuth_average</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/results.html#Result.azimuth_average"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.results.Result.azimuth_average" title="Link to this definition">#</a></dt>
-<dd><p>Return explicit averaged intensities with covariance-correct errors.</p>
+<dd><p>Average intensities and their realization-level errors over azimuth.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>New result marked as azimuth-averaged. Coherent amplitudes are not
+averaged; covariance-correct ensemble errors are retained.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#bornsim.results.Result" title="bornsim.results.Result">Result</a></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If the result has no full azimuth grid.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.results.Result.azimuth_averaged">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">azimuth_averaged</span></span><a class="headerlink" href="#bornsim.results.Result.azimuth_averaged" title="Link to this definition">#</a></dt>
-<dd><p>Read-only angular data owned by angular.</p>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">azimuth_averaged</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></span><a class="headerlink" href="#bornsim.results.Result.azimuth_averaged" title="Link to this definition">#</a></dt>
+<dd><p>Whether intensities were explicitly averaged over azimuth.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True for azimuth-averaged angular data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.results.Result.azimuth_stderr">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">azimuth_stderr</span></span><a class="headerlink" href="#bornsim.results.Result.azimuth_stderr" title="Link to this definition">#</a></dt>
-<dd><p>Read-only angular data owned by angular.</p>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">azimuth_stderr</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><span class="pre">Quantity</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#bornsim.results.Result.azimuth_stderr" title="Link to this definition">#</a></dt>
+<dd><p>Return standard errors for azimuth-averaged intensities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Errors in inverse metres per steradian, shaped by order and polar angle.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity">Quantity</a> or None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.results.Result.azimuths">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">azimuths</span></span><a class="headerlink" href="#bornsim.results.Result.azimuths" title="Link to this definition">#</a></dt>
-<dd><p>Read-only angular data owned by angular.</p>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">azimuths</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><span class="pre">Quantity</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#bornsim.results.Result.azimuths" title="Link to this definition">#</a></dt>
+<dd><p>Return read-only sampled azimuth coordinates in radians.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Azimuth coordinates for full angular data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity">Quantity</a> or None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -2806,29 +3206,68 @@ Isolated intensities must not be summed to reconstruct cumulative results.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.results.Result.differential">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">differential</span></span><a class="headerlink" href="#bornsim.results.Result.differential" title="Link to this definition">#</a></dt>
-<dd><p>Read-only angular data owned by angular.</p>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">differential</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><span class="pre">Quantity</span></a></span><a class="headerlink" href="#bornsim.results.Result.differential" title="Link to this definition">#</a></dt>
+<dd><p>Return read-only differential scattering data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Differential intensity in inverse metres per steradian, shaped
+<code class="docutils literal notranslate"><span class="pre">(order,</span> <span class="pre">observation)</span></code> or <code class="docutils literal notranslate"><span class="pre">(order,</span> <span class="pre">polar,</span> <span class="pre">azimuth)</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity">Quantity</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.results.Result.differential_cross_section">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">differential_cross_section</span></span><a class="headerlink" href="#bornsim.results.Result.differential_cross_section" title="Link to this definition">#</a></dt>
-<dd><p>Finite-sample d-sigma/d-Omega in square metres per steradian.</p>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">differential_cross_section</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><span class="pre">Quantity</span></a></span><a class="headerlink" href="#bornsim.results.Result.differential_cross_section" title="Link to this definition">#</a></dt>
+<dd><p>Return finite-sample differential cross sections.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">dσ/dΩ</span></code> in square metres per steradian, with the shape of
+<code class="docutils literal notranslate"><span class="pre">differential</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity">Quantity</a></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If the result does not include a finite sample volume.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.results.Result.diffuse_differential">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">diffuse_differential</span></span><a class="headerlink" href="#bornsim.results.Result.diffuse_differential" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">diffuse_differential</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><span class="pre">Quantity</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#bornsim.results.Result.diffuse_differential" title="Link to this definition">#</a></dt>
 <dd><p>Finite-ensemble mean intensity minus squared mean amplitude (m⁻¹ sr⁻¹).</p>
 <p>The coherent estimate includes the ensemble-mean scattered field, not
 the direct incident beam. With N samples, this uncorrected diffuse
 estimate has factor (N-1)/N finite-sample bias; it is zero for N=1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Nonnegative diffuse differential intensity in inverse metres per
+steradian, or None when the coherent estimate is unavailable.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity">Quantity</a> or None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.results.Result.directions">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">directions</span></span><a class="headerlink" href="#bornsim.results.Result.directions" title="Link to this definition">#</a></dt>
-<dd><p>Explicit cut coordinates; full-grid vectors are angular.directions.</p>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">directions</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><span class="pre">Quantity</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#bornsim.results.Result.directions" title="Link to this definition">#</a></dt>
+<dd><p>Return explicit Cartesian observation directions when stored.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Unit vectors for cut data. Full-grid vectors are available through
+<code class="docutils literal notranslate"><span class="pre">angular.directions</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity">Quantity</a> or None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -2874,7 +3313,24 @@ inconsistent, or result validation fails.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="bornsim.results.Result.meridian">
 <span class="sig-name descname"><span class="pre">meridian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">azimuth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'exact'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/results.html#Result.meridian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.results.Result.meridian" title="Link to this definition">#</a></dt>
-<dd><p>Select a physical azimuth from full data without interpolation.</p>
+<dd><p>Select one sampled azimuth from full data without interpolation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>azimuth</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity"><em>Quantity</em></a>) – Requested scalar azimuth with explicit angular units.</p></li>
+<li><p><strong>method</strong> (<em>{'exact'</em><em>, </em><em>'nearest'}</em><em>, </em><em>default='exact'</em>) – Require a matching sample or select the closest sample.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Selected meridian data, available independently of the Result wrapper.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#bornsim.angular_data.AngularData" title="bornsim.angular_data.AngularData">AngularData</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If angular sampling is incomplete or the requested sample is absent.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -2889,8 +3345,16 @@ inconsistent, or result validation fails.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.results.Result.mu_s">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">mu_s</span></span><a class="headerlink" href="#bornsim.results.Result.mu_s" title="Link to this definition">#</a></dt>
-<dd><p>Read-only angular data owned by angular.</p>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">mu_s</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><span class="pre">Quantity</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#bornsim.results.Result.mu_s" title="Link to this definition">#</a></dt>
+<dd><p>Return integrated scattering coefficients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Finite-sample coefficients in inverse metres, one per Born order.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity">Quantity</a> or None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -2900,11 +3364,22 @@ inconsistent, or result validation fails.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.results.Result.phase_function">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">phase_function</span></span><a class="headerlink" href="#bornsim.results.Result.phase_function" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">phase_function</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><span class="pre">Quantity</span></a></span><a class="headerlink" href="#bornsim.results.Result.phase_function" title="Link to this definition">#</a></dt>
 <dd><p>Return directional phase density per steradian.</p>
 <p>Full solves retain (order, polar angle, azimuth). Explicitly averaged
 results retain (order, polar angle). Cuts have no normalization.
 Every order uses its own full solid-angle scattering coefficient.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Phase density in inverse steradians. Shape matches <code class="docutils literal notranslate"><span class="pre">differential</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity">Quantity</a></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If normalization is unavailable, as for a directional cut.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -3023,8 +3498,9 @@ Analytical distributions are independent of phi.</p></li>
 orders by default; the 3D view shows only the highest order.</p></li>
 <li><p><strong>log_y</strong> (<em>bool</em><em>, </em><em>optional</em>) – Logarithmic vertical scale for angular curves. Default is False;
 only supported with <code class="docutils literal notranslate"><span class="pre">view='angular'</span></code>.</p></li>
-<li><p><strong>backend</strong> (<em>{'plotly'</em><em>, </em><em>'matplotlib'}</em><em>, </em><em>optional</em>) – The 3D view defaults to Plotly. Angular and polar views use
-Matplotlib. Select ‘matplotlib’ explicitly for a static 3D figure.</p></li>
+<li><p><strong>backend</strong> (<em>{'plotly'</em><em>, </em><em>'matplotlib'}</em><em>, </em><em>optional</em>) – 3D views use Plotly exclusively; angular and polar views use
+Matplotlib. Omit backend to select the renderer for the view.</p></li>
+<li><p><strong>azimuth</strong> (<em>int</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -3056,8 +3532,17 @@ ratios are omitted because the required covariance is not stored.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.results.Result.provenance">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">provenance</span></span><a class="headerlink" href="#bornsim.results.Result.provenance" title="Link to this definition">#</a></dt>
-<dd><p>Return a fresh metadata copy; edits cannot change this result.</p>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">provenance</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#bornsim.results.Result.provenance" title="Link to this definition">#</a></dt>
+<dd><p>Return a fresh copy of provenance metadata.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON-compatible provenance. Mutating the returned object does not
+change this result.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict of str to object</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -3072,8 +3557,16 @@ ratios are omitted because the required covariance is not stored.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.results.Result.sample_volume">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sample_volume</span></span><a class="headerlink" href="#bornsim.results.Result.sample_volume" title="Link to this definition">#</a></dt>
-<dd><p>Read-only angular data owned by angular.</p>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">sample_volume</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><span class="pre">Quantity</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#bornsim.results.Result.sample_volume" title="Link to this definition">#</a></dt>
+<dd><p>Return the finite-sample voxel-box volume.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Sample volume in cubic metres.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity">Quantity</a> or None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -3114,14 +3607,30 @@ reproduction depends on the recorded implementation versions.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.results.Result.stderr">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">stderr</span></span><a class="headerlink" href="#bornsim.results.Result.stderr" title="Link to this definition">#</a></dt>
-<dd><p>Read-only angular data owned by angular.</p>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">stderr</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><span class="pre">Quantity</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#bornsim.results.Result.stderr" title="Link to this definition">#</a></dt>
+<dd><p>Return pointwise ensemble standard errors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Standard errors in inverse metres per steradian.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity">Quantity</a> or None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.results.Result.term_differential">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">term_differential</span></span><a class="headerlink" href="#bornsim.results.Result.term_differential" title="Link to this definition">#</a></dt>
-<dd><p>Read-only angular data owned by angular.</p>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">term_differential</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><span class="pre">Quantity</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#bornsim.results.Result.term_differential" title="Link to this definition">#</a></dt>
+<dd><p>Return read-only isolated Born-term intensities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Isolated term intensities in inverse metres per steradian.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity">Quantity</a> or None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -3156,7 +3665,7 @@ averaged across realizations. Arrays are copied, unitful and read-only.</p>
 <li><p><strong>azimuth_stderr</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><em>Quantity</em></a><em> | </em><em>None</em>)</p></li>
 <li><p><strong>mu_s</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><em>Quantity</em></a><em> | </em><em>None</em>)</p></li>
 <li><p><strong>sample_volume</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><em>Quantity</em></a><em> | </em><em>None</em>)</p></li>
-<li><p><strong>kind</strong> (<em>str</em>)</p></li>
+<li><p><strong>kind</strong> (<em>Literal</em><em>[</em><em>'volume'</em><em>, </em><em>'ensemble'</em><em>]</em>)</p></li>
 <li><p><strong>azimuth_averaged</strong> (<em>bool</em>)</p></li>
 <li><p><strong>meridian_azimuth</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><em>Quantity</em></a><em> | </em><em>None</em>)</p></li>
 </ul>
@@ -3175,7 +3684,21 @@ averaged across realizations. Arrays are copied, unitful and read-only.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="bornsim.angular_data.AngularData.azimuth_average">
 <span class="sig-name descname"><span class="pre">azimuth_average</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/angular_data.html#AngularData.azimuth_average"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.angular_data.AngularData.azimuth_average" title="Link to this definition">#</a></dt>
-<dd><p>Average intensities explicitly; never average coherent amplitudes.</p>
+<dd><p>Average intensities over the sampled azimuth axis.</p>
+<p>Coherent amplitudes and directions are omitted because averaging them
+would not represent the intensity average.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>New data with shape <code class="docutils literal notranslate"><span class="pre">(order,</span> <span class="pre">polar</span> <span class="pre">angle)</span></code> and
+<code class="docutils literal notranslate"><span class="pre">azimuth_averaged=True</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#bornsim.angular_data.AngularData" title="bornsim.angular_data.AngularData">AngularData</a></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If this object does not contain a full azimuth grid.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -3200,8 +3723,20 @@ averaged across realizations. Arrays are copied, unitful and read-only.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.angular_data.AngularData.differential_cross_section">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">differential_cross_section</span></span><a class="headerlink" href="#bornsim.angular_data.AngularData.differential_cross_section" title="Link to this definition">#</a></dt>
-<dd><p>Finite-sample differential cross section in square metres per sr.</p>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">differential_cross_section</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><span class="pre">Quantity</span></a></span><a class="headerlink" href="#bornsim.angular_data.AngularData.differential_cross_section" title="Link to this definition">#</a></dt>
+<dd><p>Return the finite-sample differential cross section.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Differential cross section in square metres per steradian, with
+the same shape as <code class="docutils literal notranslate"><span class="pre">differential</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity">Quantity</a></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">sample_volume</span></code> is unavailable.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -3211,17 +3746,35 @@ averaged across realizations. Arrays are copied, unitful and read-only.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="bornsim.angular_data.AngularData.kind">
-<span class="sig-name descname"><span class="pre">kind</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'volume'</span></span><a class="headerlink" href="#bornsim.angular_data.AngularData.kind" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">kind</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'volume'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'ensemble'</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'volume'</span></span><a class="headerlink" href="#bornsim.angular_data.AngularData.kind" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bornsim.angular_data.AngularData.meridian">
 <span class="sig-name descname"><span class="pre">meridian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">azimuth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'exact'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/angular_data.html#AngularData.meridian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.angular_data.AngularData.meridian" title="Link to this definition">#</a></dt>
-<dd><p>Select a sampled meridian using an angle, preserving normalization.</p>
-<p>Azimuth requires explicit angular units and is periodic modulo 2*pi. exact requires
-a sampled azimuth within 1e-10 radians; nearest explicitly selects the
-closest sample. No interpolation or azimuth averaging is performed.
-meridian_azimuth records the actual selected angle.</p>
+<dd><p>Select one sampled meridian while preserving normalization.</p>
+<p>Azimuth is periodic modulo <span class="math notranslate nohighlight">\(2\pi\)</span>. <code class="docutils literal notranslate"><span class="pre">exact</span></code> requires a sample
+within <code class="docutils literal notranslate"><span class="pre">1e-10</span></code> radians; <code class="docutils literal notranslate"><span class="pre">nearest</span></code> selects the closest sample. No
+interpolation or averaging is performed. The selected angle is stored
+in <code class="docutils literal notranslate"><span class="pre">meridian_azimuth</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>azimuth</strong> (<a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity"><em>Quantity</em></a>) – Requested azimuth with explicit angular units; must be scalar and finite.</p></li>
+<li><p><strong>method</strong> (<em>{'exact'</em><em>, </em><em>'nearest'}</em><em>, </em><em>default='exact'</em>) – Whether to require a sampled angle or select its nearest sample.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Data for the selected meridian, with shape <code class="docutils literal notranslate"><span class="pre">(order,</span> <span class="pre">polar</span> <span class="pre">angle)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#bornsim.angular_data.AngularData" title="bornsim.angular_data.AngularData">AngularData</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the data do not have an azimuth grid, the request is invalid,
+or <code class="docutils literal notranslate"><span class="pre">method='exact'</span></code> has no matching sample.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -3236,20 +3789,77 @@ meridian_azimuth records the actual selected angle.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="bornsim.angular_data.AngularData.phase_function">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">phase_function</span></span><a class="headerlink" href="#bornsim.angular_data.AngularData.phase_function" title="Link to this definition">#</a></dt>
-<dd><p>Density per steradian, normalized by the full solid-angle integral.</p>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">phase_function</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#bornsim.units.Quantity" title="pint.registry.Quantity"><span class="pre">Quantity</span></a></span><a class="headerlink" href="#bornsim.angular_data.AngularData.phase_function" title="Link to this definition">#</a></dt>
+<dd><p>Return the differential density normalized over solid angle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Phase function in inverse steradians, with the same shape as
+<code class="docutils literal notranslate"><span class="pre">differential</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#bornsim.units.Quantity" title="bornsim.units.Quantity">Quantity</a></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If positive finite integrated <code class="docutils literal notranslate"><span class="pre">mu_s</span></code> values are unavailable.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bornsim.angular_data.AngularData.plot">
 <span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">terms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">azimuth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/angular_data.html#AngularData.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.angular_data.AngularData.plot" title="Link to this definition">#</a></dt>
-<dd><p>Plot one sampled meridian, or an explicitly averaged curve.</p>
+<dd><p>Plot differential scattering on a meridian or averaged curve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>terms</strong> (<em>bool</em><em>, </em><em>default=False</em>) – Plot isolated Born terms instead of cumulative intensities.</p></li>
+<li><p><strong>log_y</strong> (<em>bool</em><em>, </em><em>default=False</em>) – Use a logarithmic vertical axis.</p></li>
+<li><p><strong>title</strong> (<em>str</em><em> or </em><em>None</em><em>, </em><em>default=None</em>) – Optional custom figure title.</p></li>
+<li><p><strong>azimuth</strong> (<em>int</em><em>, </em><em>default=0</em>) – Sample index used when selecting a meridian from full angular data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Figure containing the requested differential-scattering curves.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.figure.Figure</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the requested meridian cannot be selected.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bornsim.angular_data.AngularData.plot_phase_function">
 <span class="sig-name descname"><span class="pre">plot_phase_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">view</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'angular'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">azimuth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/angular_data.html#AngularData.plot_phase_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.angular_data.AngularData.plot_phase_function" title="Link to this definition">#</a></dt>
-<dd><p>Plot normalized directional densities with the same Result interface.</p>
+<dd><p>Plot normalized directional densities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>view</strong> (<em>{'angular'</em><em>, </em><em>'polar'</em><em>, </em><em>'3d'}</em><em>, </em><em>default='angular'</em>) – Angular curve, polar curve, or directional 3D surface. The 3D view
+uses Plotly; 2D views use Matplotlib.</p></li>
+<li><p><strong>order</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>default=None</em>) – One-based cumulative Born order. <code class="docutils literal notranslate"><span class="pre">None</span></code> plots all angular curves
+or the final available surface.</p></li>
+<li><p><strong>log_y</strong> (<em>bool</em><em>, </em><em>default=False</em>) – Use a logarithmic vertical axis; supported for the angular view.</p></li>
+<li><p><strong>azimuth</strong> (<em>int</em><em>, </em><em>default=0</em>) – Sample index used for angular and polar meridian views.</p></li>
+<li><p><strong>backend</strong> (<em>{'matplotlib'</em><em>, </em><em>'plotly'}</em><em> or </em><em>None</em><em>, </em><em>default=None</em>) – Rendering backend. Plotly is used for 3D; Matplotlib is used for 2D.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Figure containing the selected phase-function view.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.figure.Figure or plotly.graph_objects.Figure</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If normalization is unavailable or the view, order, backend, or
+angular sampling is incompatible.</p></li>
+<li><p><strong>ImportError</strong> – If Plotly is unavailable for the 3D view.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -3468,10 +4078,7 @@ Check spatial, angular, finite-size, and ensemble convergence separately.</p>
 </section>
 <section id="module-bornsim.units">
 <span id="units"></span><h2>Units<a class="headerlink" href="#module-bornsim.units" title="Link to this heading">#</a></h2>
-<p>Shared TypedUnit registry and explicit input validation.</p>
-<p>Validation preserves the supplied units. Dimensional inputs require quantities;
-dimensionless inputs may be bare numbers. Numerical kernels, plotting and
-serialization explicitly select units when they need magnitudes.</p>
+<p>Shared TypedUnit registry and validation API.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bornsim.units.Angle">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Angle</span></span><a class="reference internal" href="_modules/TypedUnit/units.html#Angle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.units.Angle" title="Link to this definition">#</a></dt>
@@ -3494,6 +4101,14 @@ serialization explicitly select units when they need magnitudes.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="bornsim.units.NoUnit">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">NoUnit</span></span><a class="reference internal" href="_modules/TypedUnit/units.html#NoUnit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.units.NoUnit" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Marker requiring bare numeric values without Pint units.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">NoUnit[Scalar,</span> <span class="pre">Float]</span></code> to require a bare floating-point scalar.</p>
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="bornsim.units.Quantity">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Quantity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MagnitudeT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UnitLike</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pint/registry.html#Quantity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.units.Quantity" title="Link to this definition">#</a></dt>
 <dt class="sig sig-object py">
@@ -3512,21 +4127,75 @@ serialization explicitly select units when they need magnitudes.</p>
 <p>Quantity specifically for refractive index units.</p>
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="bornsim.units.Scalar">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Scalar</span></span><a class="reference internal" href="_modules/TypedUnit/shapes.html#Scalar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.units.Scalar" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Marker requiring a scalar quantity with a zero-dimensional magnitude.</p>
+</dd></dl>
+
 <dl class="py function">
-<dt class="sig sig-object py" id="bornsim.units.validate_units">
-<span class="sig-name descname"><span class="pre">validate_units</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bornsim/units.html#validate_units"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.units.validate_units" title="Link to this definition">#</a></dt>
-<dd><p>Check units and shape without converting or stripping the quantity.</p>
+<dt class="sig sig-object py" id="bornsim.units.validate_annotation">
+<span class="sig-name descname"><span class="pre">validate_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TypedUnit/helper.html#validate_annotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.units.validate_annotation" title="Link to this definition">#</a></dt>
+<dd><p>Validate one value directly against a TypedUnit annotation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>value</strong> (<em>object</em>)</p></li>
-<li><p><strong>unit</strong> (<em>str</em>)</p></li>
-<li><p><strong>name</strong> (<em>str</em>)</p></li>
-<li><p><strong>scalar</strong> (<em>bool</em>)</p></li>
+<li><p><strong>value</strong> (<em>Any</em>) – Value to validate.</p></li>
+<li><p><strong>annotation</strong> (<em>Any</em>) – Unit, no-unit, optional, collection, shape, or value-constraint
+annotation supported by <code class="xref py py-func docutils literal notranslate"><span class="pre">unit_validator()</span></code>.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Name used in validation errors.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The value is validated without being modified.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">annotation</span></code> is not supported by TypedUnit.</p></li>
+<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">value</span></code> does not satisfy the annotation.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bornsim.units.validate_quantity">
+<span class="sig-name descname"><span class="pre">validate_quantity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">registry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nonnegative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">finite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TypedUnit/validation.html#validate_quantity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bornsim.units.validate_quantity" title="Link to this definition">#</a></dt>
+<dd><p>Validate a quantity’s registry, dimensions, shape, and magnitudes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>pint.Quantity</em>) – Quantity to validate; it is not changed or replaced.</p></li>
+<li><p><strong>unit</strong> (<em>str</em>) – Unit compatible with the required dimensionality. Magnitudes are
+checked after conversion to this unit.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Parameter name included in error messages.</p></li>
+<li><p><strong>registry</strong> (<em>pint.UnitRegistry</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – If supplied, require a quantity created by this exact registry. None
+accepts quantities from any Pint registry. Default is None.</p></li>
+<li><p><strong>shape</strong> (<em>tuple</em><em> of </em><em>int</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – Required magnitude shape. An empty tuple requires a scalar; None leaves
+the shape unrestricted. Default is None.</p></li>
+<li><p><strong>scalar</strong> (<em>bool</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – Compatibility shorthand for <code class="docutils literal notranslate"><span class="pre">shape=()</span></code> when true. False leaves the
+shape unrestricted. Do not combine with a non-None <code class="docutils literal notranslate"><span class="pre">shape</span></code>.</p></li>
+<li><p><strong>positive</strong> (<em>bool</em><em>, </em><em>optional</em>) – Require every magnitude to be strictly positive. Default is False.</p></li>
+<li><p><strong>nonnegative</strong> (<em>bool</em><em>, </em><em>optional</em>) – Require every magnitude to be nonnegative. Default is False.</p></li>
+<li><p><strong>finite</strong> (<em>bool</em><em>, </em><em>optional</em>) – Require finite magnitudes. Default is True. Set False only when the
+calling API deliberately permits non-finite sentinel values and checks
+them separately.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The supplied quantity is preserved and no converted value is returned.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If value is not a Pint quantity, belongs to a disallowed registry, has
+incompatible units, or violates shape or sign requirements.
+If magnitudes are nonfinite or violate shape or sign requirements.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3578,7 +4247,7 @@ Directions exposes the observation configuration’s immutable Cartesian array.<
             
             
               
-                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <dialog id="pst-secondary-sidebar-modal" tabindex="-1"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
@@ -3928,9 +4597,12 @@ Directions exposes the observation configuration’s immutable Cartesian array.<
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.units.Angle"><code class="docutils literal notranslate"><span class="pre">Angle</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.units.Dimensionless"><code class="docutils literal notranslate"><span class="pre">Dimensionless</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.units.Length"><code class="docutils literal notranslate"><span class="pre">Length</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.units.NoUnit"><code class="docutils literal notranslate"><span class="pre">NoUnit</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.units.Quantity"><code class="docutils literal notranslate"><span class="pre">Quantity</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.units.RefractiveIndex"><code class="docutils literal notranslate"><span class="pre">RefractiveIndex</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.units.validate_units"><code class="docutils literal notranslate"><span class="pre">validate_units()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.units.Scalar"><code class="docutils literal notranslate"><span class="pre">Scalar</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.units.validate_annotation"><code class="docutils literal notranslate"><span class="pre">validate_annotation()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bornsim.units.validate_quantity"><code class="docutils literal notranslate"><span class="pre">validate_quantity()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#archives">Archives</a></li>
@@ -3941,7 +4613,7 @@ Directions exposes the observation configuration’s immutable Cartesian array.<
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.9.1/docs/source/api.rst">
+    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.10.0/docs/source/api.rst">
       <i class="fa-solid fa-pencil"></i>
       
       
@@ -3975,8 +4647,8 @@ Directions exposes the observation configuration’s immutable Cartesian array.<
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">

@@ -7,6 +7,7 @@ interfaces use voxel-centre sampling; refine the grid for quantitative studies.
 The solver retains its linearized dielectric contrast for both particle types.
 """
 
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from bornsim import CoreShellMedium, EllipsoidMedium, Grid, Solver, Source, Rotation
@@ -48,14 +49,15 @@ ellipsoid = EllipsoidMedium(
 core_shell_volume = core_shell.to_volume(grid=grid)
 
 core_shell_figure = core_shell_volume.plot_3d(
-    backend="matplotlib",
-    mode="voxels",
+    backend="plotly",
+    mode="volume",
     field="refractive_index",
 )
 
-core_shell_figure.suptitle("Core–shell sphere: 60 nm core, 120 nm outer radius")
+core_shell_figure.update_layout(title="Core–shell sphere: 60 nm core, 120 nm outer radius")
 
-plt.show()
+if "--no-browser" not in sys.argv:
+    core_shell_figure.show(renderer="browser")
 
 # %%
 # Inspect an oriented ellipsoid
@@ -65,14 +67,15 @@ plt.show()
 ellipsoid_volume = ellipsoid.to_volume(grid=grid)
 
 ellipsoid_figure = ellipsoid_volume.plot_3d(
-    backend="matplotlib",
-    mode="voxels",
+    backend="plotly",
+    mode="volume",
     field="refractive_index",
 )
 
-ellipsoid_figure.suptitle("Ellipsoid: 120 × 80 × 60 nm semi-axes, tilted 35°")
+ellipsoid_figure.update_layout(title="Ellipsoid: 120 × 80 × 60 nm semi-axes, tilted 35°")
 
-plt.show()
+if "--no-browser" not in sys.argv:
+    ellipsoid_figure.show(renderer="browser")
 
 # %%
 # Compare a central slice and scattering

@@ -32,9 +32,9 @@ not an exact solution, and both quadrature axes need checking independently.
 .. code-block:: Python
 
 
+    import sys
     from bornsim.medium.random_medium import GaussianMedium
 
-    import sys
 
     import matplotlib.pyplot as plt
     import numpy as np
@@ -175,10 +175,10 @@ Inspect one ensemble realization in 3D
 --------------------------------------
 This is the first realization (seed 42) on the calculation grid,
 not an ensemble average or an infinite-medium material boundary.
-Drag to rotate and scroll to zoom in the embedded browser view.
-Regions with higher refractive index are more opaque; opacity is not absorption.
+Plotly shows interactive contours of the sampled medium.
+Color represents refractive index; contour geometry interpolates voxel samples.
 
-.. GENERATED FROM PYTHON SOURCE LINES 131-144
+.. GENERATED FROM PYTHON SOURCE LINES 131-142
 
 .. code-block:: Python
 
@@ -188,9 +188,7 @@ Regions with higher refractive index are more opaque; opacity is not absorption.
     )
 
     medium_figure = preview_volume.plot_3d(
-        mode="volume",
         field="refractive_index",
-        opacity_scale="increasing",
     )
 
     if "--no-browser" not in sys.argv:
@@ -209,7 +207,7 @@ Regions with higher refractive index are more opaque; opacity is not absorption.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.687 seconds)
+   **Total running time of the script:** (0 minutes 0.650 seconds)
 
 
 .. _sphx_glr_download_auto_examples_validation_angular_convergence.py:

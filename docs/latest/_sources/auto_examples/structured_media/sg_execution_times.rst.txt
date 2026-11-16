@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:15.298** total execution time for 7 files **from auto_examples/structured_media**:
+**00:11.492** total execution time for 7 files **from auto_examples/structured_media**:
 
 .. container::
 
@@ -32,24 +32,24 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_auto_examples_structured_media_theory_directional_interference.py` (``theory_directional_interference.py``)
-     - 00:05.432
-     - 0.0
    * - :ref:`sphx_glr_auto_examples_structured_media_dielectric_sphere.py` (``dielectric_sphere.py``)
-     - 00:04.784
+     - 00:04.306
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_structured_media_theory_directional_interference.py` (``theory_directional_interference.py``)
+     - 00:03.918
      - 0.0
    * - :ref:`sphx_glr_auto_examples_structured_media_illumination_polarization.py` (``illumination_polarization.py``)
-     - 00:01.644
+     - 00:01.554
      - 0.0
    * - :ref:`sphx_glr_auto_examples_structured_media_particle_families.py` (``particle_families.py``)
-     - 00:01.276
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_structured_media_periodic_array.py` (``periodic_array.py``)
-     - 00:00.937
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_structured_media_antenna_rods.py` (``antenna_rods.py``)
-     - 00:00.806
+     - 00:00.534
      - 0.0
    * - :ref:`sphx_glr_auto_examples_structured_media_structured_media.py` (``structured_media.py``)
-     - 00:00.419
+     - 00:00.422
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_structured_media_periodic_array.py` (``periodic_array.py``)
+     - 00:00.404
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_structured_media_antenna_rods.py` (``antenna_rods.py``)
+     - 00:00.355
      - 0.0

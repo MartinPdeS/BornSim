@@ -3,8 +3,8 @@ Result plots and interactive 3D views
 =====================================
 
 Use plotting methods directly on a result, then call ``plt.show()`` to
-display angular Matplotlib figures. The docs embed interactive Plotly
-volumes and phase surfaces; drag to rotate and scroll to zoom.
+display Matplotlib angular figures. The docs embed Plotly medium volumes
+and directional phase surfaces; all 3D views use Plotly.
 
 The phase surface represents directions on a sphere. Its radius and color
 are probability densities in inverse steradians, not spatial coordinates.
@@ -14,9 +14,9 @@ The 3D surface retains each azimuth direction, showing directional structure
 in the ensemble intensity average.
 """
 
+import sys
 from bornsim.medium.random_medium import GaussianMedium
 
-import sys
 
 import matplotlib.pyplot as plt
 
@@ -109,12 +109,10 @@ plt.show()
 # Inspect the medium in 3D
 # ------------------------
 # Inspect the actual finite input sample with physical spatial axes.
-# Drag to rotate and scroll to zoom in the embedded browser view.
-# Regions with higher refractive index are more opaque; opacity is not absorption.
+# Plotly shows interactive contours of the sampled medium.
+# Color represents refractive index; contour geometry interpolates voxel samples.
 medium_figure = volume.plot_3d(
-    mode="volume",
     field="refractive_index",
-    opacity_scale="increasing",
 )
 
 if "--no-browser" not in sys.argv:

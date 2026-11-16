@@ -32,11 +32,12 @@ Discrete spectral predictions include the finite periodic synthesis box and
 spectral truncation. Continuum covariance curves are reference functions,
 not exact descriptions of the sampled finite grid.
 
-.. GENERATED FROM PYTHON SOURCE LINES 16-69
+.. GENERATED FROM PYTHON SOURCE LINES 16-70
 
 .. code-block:: Python
 
 
+    import sys
     from bornsim.medium.random_medium import GaussianMedium, ExponentialMedium, WhittleMaternMedium
 
     import matplotlib.pyplot as plt
@@ -96,12 +97,12 @@ not exact descriptions of the sampled finite grid.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 70-72
+.. GENERATED FROM PYTHON SOURCE LINES 71-73
 
 Sample fields and estimate covariance
 -------------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 72-170
+.. GENERATED FROM PYTHON SOURCE LINES 73-171
 
 .. code-block:: Python
 
@@ -215,109 +216,109 @@ Sample fields and estimate covariance
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 171-174
+.. GENERATED FROM PYTHON SOURCE LINES 172-175
 
 Gaussian medium in 3D
 ---------------------
 Show one finite input sample with its physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 174-186
+.. GENERATED FROM PYTHON SOURCE LINES 175-188
 
 .. code-block:: Python
 
     preview_volume = preview_volumes["gaussian"]
 
     medium_figure = preview_volume.plot_3d(
-        backend="matplotlib",
-        mode="voxels",
+        backend="plotly",
+        mode="volume",
         field="refractive_index",
     )
 
-    medium_figure.suptitle(f"Gaussian medium · seed {ensemble_sampling.seeds[0]}")
+    medium_figure.update_layout(title=f"Gaussian medium · seed {ensemble_sampling.seeds[0]}")
 
-    plt.show()
-
-
-
-
-.. image-sg:: /auto_examples/random_media/images/sphx_glr_theory_random_fields_002.png
-   :alt: Gaussian medium · seed 42, Refractive index n: voxels
-   :srcset: /auto_examples/random_media/images/sphx_glr_theory_random_fields_002.png
-   :class: sphx-glr-single-img
+    if "--no-browser" not in sys.argv:
+        medium_figure.show(renderer="browser")
 
 
 
 
+.. raw:: html
 
-.. GENERATED FROM PYTHON SOURCE LINES 187-190
+   <iframe src="../../_static/gallery/theory_random_fields-1.html" title="Gaussian medium · seed 42" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 189-192
 
 Exponential medium in 3D
 ------------------------
 Show one finite input sample with its physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 190-202
+.. GENERATED FROM PYTHON SOURCE LINES 192-205
 
 .. code-block:: Python
 
     preview_volume = preview_volumes["exponential"]
 
     medium_figure = preview_volume.plot_3d(
-        backend="matplotlib",
-        mode="voxels",
+        backend="plotly",
+        mode="volume",
         field="refractive_index",
     )
 
-    medium_figure.suptitle(f"Exponential medium · seed {ensemble_sampling.seeds[0]}")
+    medium_figure.update_layout(title=f"Exponential medium · seed {ensemble_sampling.seeds[0]}")
 
-    plt.show()
-
-
-
-
-.. image-sg:: /auto_examples/random_media/images/sphx_glr_theory_random_fields_003.png
-   :alt: Exponential medium · seed 42, Refractive index n: voxels
-   :srcset: /auto_examples/random_media/images/sphx_glr_theory_random_fields_003.png
-   :class: sphx-glr-single-img
+    if "--no-browser" not in sys.argv:
+        medium_figure.show(renderer="browser")
 
 
 
 
+.. raw:: html
 
-.. GENERATED FROM PYTHON SOURCE LINES 203-206
+   <iframe src="../../_static/gallery/theory_random_fields-2.html" title="Exponential medium · seed 42" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 206-209
 
 Whittle–Matérn medium in 3D
 ---------------------------
 Show one finite input sample with its physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 206-218
+.. GENERATED FROM PYTHON SOURCE LINES 209-222
 
 .. code-block:: Python
 
     preview_volume = preview_volumes["matern"]
 
     medium_figure = preview_volume.plot_3d(
-        backend="matplotlib",
-        mode="voxels",
+        backend="plotly",
+        mode="volume",
         field="refractive_index",
     )
 
-    medium_figure.suptitle(f"Whittle–Matérn medium · seed {ensemble_sampling.seeds[0]}")
+    medium_figure.update_layout(title=f"Whittle–Matérn medium · seed {ensemble_sampling.seeds[0]}")
 
-    plt.show()
-
-
-
-
-.. image-sg:: /auto_examples/random_media/images/sphx_glr_theory_random_fields_004.png
-   :alt: Whittle–Matérn medium · seed 42, Refractive index n: voxels
-   :srcset: /auto_examples/random_media/images/sphx_glr_theory_random_fields_004.png
-   :class: sphx-glr-single-img
+    if "--no-browser" not in sys.argv:
+        medium_figure.show(renderer="browser")
 
 
 
 
+.. raw:: html
 
-.. GENERATED FROM PYTHON SOURCE LINES 219-224
+   <iframe src="../../_static/gallery/theory_random_fields-3.html" title="Whittle–Matérn medium · seed 42" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 223-228
 
 Compare sampled and predicted covariances
 -----------------------------------------
@@ -325,7 +326,7 @@ Reuse the ensemble estimates above. Error bars describe realization
 sampling; dashed curves use the discrete synthesis and dotted curves the
 continuum covariance, which need not match on a finite grid.
 
-.. GENERATED FROM PYTHON SOURCE LINES 224-268
+.. GENERATED FROM PYTHON SOURCE LINES 228-272
 
 .. code-block:: Python
 
@@ -376,9 +377,9 @@ continuum covariance, which need not match on a finite grid.
 
 
 
-.. image-sg:: /auto_examples/random_media/images/sphx_glr_theory_random_fields_005.png
+.. image-sg:: /auto_examples/random_media/images/sphx_glr_theory_random_fields_002.png
    :alt: 32 realizations: dashed = discrete synthesis; dotted = continuum
-   :srcset: /auto_examples/random_media/images/sphx_glr_theory_random_fields_005.png
+   :srcset: /auto_examples/random_media/images/sphx_glr_theory_random_fields_002.png
    :class: sphx-glr-single-img
 
 
@@ -388,7 +389,7 @@ continuum covariance, which need not match on a finite grid.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 15.665 seconds)
+   **Total running time of the script:** (0 minutes 1.131 seconds)
 
 
 .. _sphx_glr_download_auto_examples_random_media_theory_random_fields.py:

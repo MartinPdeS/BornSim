@@ -39,9 +39,9 @@ Finite voxel resolution and the cropped synthesis box also affect statistics.
 .. code-block:: Python
 
 
+    import sys
     from bornsim.medium.random_medium import GaussianMedium, ExponentialMedium
 
-    import sys
 
     import matplotlib.pyplot as plt
     import numpy as np
@@ -110,15 +110,14 @@ Finite voxel resolution and the cropped synthesis box also affect statistics.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 77-82
+.. GENERATED FROM PYTHON SOURCE LINES 77-81
 
-Gaussian volume with increasing opacity
----------------------------------------
-View the full Gaussian sample first. The opacity ramp uses this sample's
-refractive index range; equal opacity across different samples need not mean equal refractive index.
-Pass ``--no-browser`` to run without opening tabs, as the docs builder does.
+Gaussian voxel volume
+----------------------
+View the sampled Gaussian field with Plotly. The contour colors represent
+absolute refractive index; opacity does not represent material absorption.
 
-.. GENERATED FROM PYTHON SOURCE LINES 82-94
+.. GENERATED FROM PYTHON SOURCE LINES 81-90
 
 .. code-block:: Python
 
@@ -126,9 +125,6 @@ Pass ``--no-browser`` to run without opening tabs, as the docs builder does.
 
     gaussian_figure = gaussian_volume.plot_3d(
         field="refractive_index",
-        surface_count=16,
-        opacity=0.2,
-        opacity_scale="increasing",
     )
 
     if "--no-browser" not in sys.argv:
@@ -145,14 +141,14 @@ Pass ``--no-browser`` to run without opening tabs, as the docs builder does.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 95-99
+.. GENERATED FROM PYTHON SOURCE LINES 91-95
 
-Exponential volume with increasing opacity
-------------------------------------------
-Compare the exponential sample in its own interactive view with the same
+Exponential voxel volume
+-------------------------
+Compare the exponential sample in its own Plotly view with the same
 rendering settings. Correlation length conventions differ between models.
 
-.. GENERATED FROM PYTHON SOURCE LINES 99-111
+.. GENERATED FROM PYTHON SOURCE LINES 95-104
 
 .. code-block:: Python
 
@@ -160,9 +156,6 @@ rendering settings. Correlation length conventions differ between models.
 
     exponential_figure = exponential_volume.plot_3d(
         field="refractive_index",
-        surface_count=16,
-        opacity=0.2,
-        opacity_scale="increasing",
     )
 
     if "--no-browser" not in sys.argv:
@@ -179,14 +172,14 @@ rendering settings. Correlation length conventions differ between models.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 112-116
+.. GENERATED FROM PYTHON SOURCE LINES 105-109
 
 Secondary checks: central slices and one-point distributions
 ------------------------------------------------------------
 Slices show one sampled plane, while histograms describe the finite field's
 one-point distribution. Neither replaces the complete spatial volume above.
 
-.. GENERATED FROM PYTHON SOURCE LINES 116-160
+.. GENERATED FROM PYTHON SOURCE LINES 109-153
 
 .. code-block:: Python
 
@@ -249,7 +242,7 @@ one-point distribution. Neither replaces the complete spatial volume above.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.639 seconds)
+   **Total running time of the script:** (0 minutes 0.510 seconds)
 
 
 .. _sphx_glr_download_auto_examples_random_media_random_medium.py:

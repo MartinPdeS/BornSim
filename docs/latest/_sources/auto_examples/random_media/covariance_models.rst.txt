@@ -34,11 +34,12 @@ covariance choice describes spatial correlations. The phase functions below
 come from numerical first-order finite-sample ensembles and are normalized
 per steradian, not per degree.
 
-.. GENERATED FROM PYTHON SOURCE LINES 18-57
+.. GENERATED FROM PYTHON SOURCE LINES 18-58
 
 .. code-block:: Python
 
 
+    import sys
     from bornsim.medium.random_medium import GaussianMedium, ExponentialMedium
 
     import matplotlib.pyplot as plt
@@ -84,12 +85,12 @@ per steradian, not per degree.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 58-60
+.. GENERATED FROM PYTHON SOURCE LINES 59-61
 
 Compare numerical scattering
 ----------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 60-128
+.. GENERATED FROM PYTHON SOURCE LINES 61-129
 
 .. code-block:: Python
 
@@ -180,68 +181,68 @@ Compare numerical scattering
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 129-132
+.. GENERATED FROM PYTHON SOURCE LINES 130-133
 
 Gaussian medium in 3D
 ---------------------
 Show one finite input sample with its physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 132-144
+.. GENERATED FROM PYTHON SOURCE LINES 133-146
 
 .. code-block:: Python
 
     preview_volume = preview_volumes["gaussian"]
 
     medium_figure = preview_volume.plot_3d(
-        backend="matplotlib",
-        mode="voxels",
+        backend="plotly",
+        mode="volume",
         field="refractive_index",
     )
 
-    medium_figure.suptitle(f"Gaussian medium · seed {ensemble_sampling.seeds[0]}")
+    medium_figure.update_layout(title=f"Gaussian medium · seed {ensemble_sampling.seeds[0]}")
 
-    plt.show()
-
-
-
-
-.. image-sg:: /auto_examples/random_media/images/sphx_glr_covariance_models_002.png
-   :alt: Gaussian medium · seed 42, Refractive index n: voxels
-   :srcset: /auto_examples/random_media/images/sphx_glr_covariance_models_002.png
-   :class: sphx-glr-single-img
+    if "--no-browser" not in sys.argv:
+        medium_figure.show(renderer="browser")
 
 
 
 
+.. raw:: html
 
-.. GENERATED FROM PYTHON SOURCE LINES 145-148
+   <iframe src="../../_static/gallery/covariance_models-1.html" title="Gaussian medium · seed 42" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 147-150
 
 Exponential medium in 3D
 ------------------------
 Show one finite input sample with its physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 148-159
+.. GENERATED FROM PYTHON SOURCE LINES 150-162
 
 .. code-block:: Python
 
     preview_volume = preview_volumes["exponential"]
 
     medium_figure = preview_volume.plot_3d(
-        backend="matplotlib",
-        mode="voxels",
+        backend="plotly",
+        mode="volume",
         field="refractive_index",
     )
 
-    medium_figure.suptitle(f"Exponential medium · seed {ensemble_sampling.seeds[0]}")
+    medium_figure.update_layout(title=f"Exponential medium · seed {ensemble_sampling.seeds[0]}")
 
-    plt.show()
+    if "--no-browser" not in sys.argv:
+        medium_figure.show(renderer="browser")
 
 
 
-.. image-sg:: /auto_examples/random_media/images/sphx_glr_covariance_models_003.png
-   :alt: Exponential medium · seed 42, Refractive index n: voxels
-   :srcset: /auto_examples/random_media/images/sphx_glr_covariance_models_003.png
-   :class: sphx-glr-single-img
+.. raw:: html
+
+   <iframe src="../../_static/gallery/covariance_models-2.html" title="Exponential medium · seed 42" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
 
 
 
@@ -250,7 +251,7 @@ Show one finite input sample with its physical spatial axes.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.394 seconds)
+   **Total running time of the script:** (0 minutes 0.824 seconds)
 
 
 .. _sphx_glr_download_auto_examples_random_media_covariance_models.py:

@@ -29,11 +29,12 @@ density includes the factor ``2*pi*sin(theta)`` and integrates over radians.
 The medium is three-dimensional. The displayed curves explicitly average the sampled azimuthal directions;
 individual finite samples need not have rotational symmetry.
 
-.. GENERATED FROM PYTHON SOURCE LINES 13-22
+.. GENERATED FROM PYTHON SOURCE LINES 13-23
 
 .. code-block:: Python
 
 
+    import sys
     from bornsim.medium.random_medium import GaussianMedium
 
     import matplotlib.pyplot as plt
@@ -49,14 +50,14 @@ individual finite samples need not have rotational symmetry.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 23-27
+.. GENERATED FROM PYTHON SOURCE LINES 24-28
 
 Compare correlation lengths
 ---------------------------
 Longer covariance lengths can produce more forward-peaked scattering.
 The same result provides the phase function and its mean cosine, ``g``.
 
-.. GENERATED FROM PYTHON SOURCE LINES 27-53
+.. GENERATED FROM PYTHON SOURCE LINES 28-54
 
 .. code-block:: Python
 
@@ -93,12 +94,12 @@ The same result provides the phase function and its mean cosine, ``g``.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 54-56
+.. GENERATED FROM PYTHON SOURCE LINES 55-57
 
 Compare numerical scattering
 ----------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 56-115
+.. GENERATED FROM PYTHON SOURCE LINES 57-116
 
 .. code-block:: Python
 
@@ -173,102 +174,102 @@ Compare numerical scattering
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 116-119
+.. GENERATED FROM PYTHON SOURCE LINES 117-120
 
 30 nm correlation length in 3D
 ------------------------------
 Show one finite input sample with its physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 119-131
+.. GENERATED FROM PYTHON SOURCE LINES 120-133
 
 .. code-block:: Python
 
     preview_volume = preview_volumes[30]
 
     medium_figure = preview_volume.plot_3d(
-        backend="matplotlib",
-        mode="voxels",
+        backend="plotly",
+        mode="volume",
         field="refractive_index",
     )
 
-    medium_figure.suptitle(f"Gaussian medium · correlation length 30 nm · seed {ensemble_sampling.seeds[0]}")
+    medium_figure.update_layout(title=f"Gaussian medium · correlation length 30 nm · seed {ensemble_sampling.seeds[0]}")
 
-    plt.show()
-
-
-
-
-.. image-sg:: /auto_examples/random_media/images/sphx_glr_phase_function_002.png
-   :alt: Gaussian medium · correlation length 30 nm · seed 42, Refractive index n: voxels
-   :srcset: /auto_examples/random_media/images/sphx_glr_phase_function_002.png
-   :class: sphx-glr-single-img
+    if "--no-browser" not in sys.argv:
+        medium_figure.show(renderer="browser")
 
 
 
 
+.. raw:: html
 
-.. GENERATED FROM PYTHON SOURCE LINES 132-135
+   <iframe src="../../_static/gallery/phase_function-1.html" title="Gaussian medium · correlation length 30 nm · seed 42" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 134-137
 
 100 nm correlation length in 3D
 -------------------------------
 Show one finite input sample with its physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 135-147
+.. GENERATED FROM PYTHON SOURCE LINES 137-150
 
 .. code-block:: Python
 
     preview_volume = preview_volumes[100]
 
     medium_figure = preview_volume.plot_3d(
-        backend="matplotlib",
-        mode="voxels",
+        backend="plotly",
+        mode="volume",
         field="refractive_index",
     )
 
-    medium_figure.suptitle(f"Gaussian medium · correlation length 100 nm · seed {ensemble_sampling.seeds[0]}")
+    medium_figure.update_layout(title=f"Gaussian medium · correlation length 100 nm · seed {ensemble_sampling.seeds[0]}")
 
-    plt.show()
-
-
-
-
-.. image-sg:: /auto_examples/random_media/images/sphx_glr_phase_function_003.png
-   :alt: Gaussian medium · correlation length 100 nm · seed 42, Refractive index n: voxels
-   :srcset: /auto_examples/random_media/images/sphx_glr_phase_function_003.png
-   :class: sphx-glr-single-img
+    if "--no-browser" not in sys.argv:
+        medium_figure.show(renderer="browser")
 
 
 
 
+.. raw:: html
 
-.. GENERATED FROM PYTHON SOURCE LINES 148-151
+   <iframe src="../../_static/gallery/phase_function-2.html" title="Gaussian medium · correlation length 100 nm · seed 42" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 151-154
 
 300 nm correlation length in 3D
 -------------------------------
 Show one finite input sample with its physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 151-162
+.. GENERATED FROM PYTHON SOURCE LINES 154-166
 
 .. code-block:: Python
 
     preview_volume = preview_volumes[300]
 
     medium_figure = preview_volume.plot_3d(
-        backend="matplotlib",
-        mode="voxels",
+        backend="plotly",
+        mode="volume",
         field="refractive_index",
     )
 
-    medium_figure.suptitle(f"Gaussian medium · correlation length 300 nm · seed {ensemble_sampling.seeds[0]}")
+    medium_figure.update_layout(title=f"Gaussian medium · correlation length 300 nm · seed {ensemble_sampling.seeds[0]}")
 
-    plt.show()
+    if "--no-browser" not in sys.argv:
+        medium_figure.show(renderer="browser")
 
 
 
-.. image-sg:: /auto_examples/random_media/images/sphx_glr_phase_function_004.png
-   :alt: Gaussian medium · correlation length 300 nm · seed 42, Refractive index n: voxels
-   :srcset: /auto_examples/random_media/images/sphx_glr_phase_function_004.png
-   :class: sphx-glr-single-img
+.. raw:: html
+
+   <iframe src="../../_static/gallery/phase_function-3.html" title="Gaussian medium · correlation length 300 nm · seed 42" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
 
 
 
@@ -277,7 +278,7 @@ Show one finite input sample with its physical spatial axes.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.782 seconds)
+   **Total running time of the script:** (0 minutes 0.745 seconds)
 
 
 .. _sphx_glr_download_auto_examples_random_media_phase_function.py:

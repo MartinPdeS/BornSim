@@ -30,11 +30,12 @@ This example models weak dielectric contrast with the first Born order.
 It is a finite sample with edges and coherent interference, without periodic
 boundary conditions or an effective metamaterial constitutive model.
 
-.. GENERATED FROM PYTHON SOURCE LINES 14-49
+.. GENERATED FROM PYTHON SOURCE LINES 14-50
 
 .. code-block:: Python
 
 
+    import sys
     import matplotlib.pyplot as plt
     import numpy as np
     from bornsim import Grid, PeriodicMedium, Solver, Source, Sphere
@@ -76,71 +77,71 @@ boundary conditions or an effective metamaterial constitutive model.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 50-54
+.. GENERATED FROM PYTHON SOURCE LINES 51-55
 
 Inspect the three-sphere array
 ------------------------------
 Each site receives the same motif, preserving its orientation. Geometry
 outside the voxel box is clipped; these spheres fit completely inside it.
 
-.. GENERATED FROM PYTHON SOURCE LINES 54-64
+.. GENERATED FROM PYTHON SOURCE LINES 55-66
 
 .. code-block:: Python
 
     array_figure = array_volume.plot_3d(
-        backend="matplotlib",
-        mode="voxels",
+        backend="plotly",
+        mode="volume",
         field="refractive_index",
     )
 
-    array_figure.suptitle("Three dielectric spheres, 175 nm centre spacing")
+    array_figure.update_layout(title="Three dielectric spheres, 175 nm centre spacing")
 
-    plt.show()
-
-
-
-
-.. image-sg:: /auto_examples/structured_media/images/sphx_glr_periodic_array_001.png
-   :alt: Three dielectric spheres, 175 nm centre spacing, Refractive index n: voxels
-   :srcset: /auto_examples/structured_media/images/sphx_glr_periodic_array_001.png
-   :class: sphx-glr-single-img
+    if "--no-browser" not in sys.argv:
+        array_figure.show(renderer="browser")
 
 
 
 
+.. raw:: html
 
-.. GENERATED FROM PYTHON SOURCE LINES 65-67
+   <iframe src="../../_static/gallery/periodic_array-1.html" title="Three dielectric spheres, 175 nm centre spacing" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 67-69
 
 Inspect the single-site reference
 ---------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 67-77
+.. GENERATED FROM PYTHON SOURCE LINES 69-80
 
 .. code-block:: Python
 
     single_figure = single_volume.plot_3d(
-        backend="matplotlib",
-        mode="voxels",
+        backend="plotly",
+        mode="volume",
         field="refractive_index",
     )
 
-    single_figure.suptitle("Single sphere on the same voxel grid")
+    single_figure.update_layout(title="Single sphere on the same voxel grid")
 
-    plt.show()
-
-
-
-
-.. image-sg:: /auto_examples/structured_media/images/sphx_glr_periodic_array_002.png
-   :alt: Single sphere on the same voxel grid, Refractive index n: voxels
-   :srcset: /auto_examples/structured_media/images/sphx_glr_periodic_array_002.png
-   :class: sphx-glr-single-img
+    if "--no-browser" not in sys.argv:
+        single_figure.show(renderer="browser")
 
 
 
 
+.. raw:: html
 
-.. GENERATED FROM PYTHON SOURCE LINES 78-86
+   <iframe src="../../_static/gallery/periodic_array-2.html" title="Single sphere on the same voxel grid" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 81-89
 
 Coherent interference along the x-z meridian
 --------------------------------------------
@@ -151,7 +152,7 @@ direction: their first-order amplitudes add, giving nine times the single
 intensity rather than three times. The spacing is an integer voxel count,
 so translated particles have identical discrete masks here.
 
-.. GENERATED FROM PYTHON SOURCE LINES 86-131
+.. GENERATED FROM PYTHON SOURCE LINES 89-134
 
 .. code-block:: Python
 
@@ -203,9 +204,9 @@ so translated particles have identical discrete masks here.
 
 
 
-.. image-sg:: /auto_examples/structured_media/images/sphx_glr_periodic_array_003.png
+.. image-sg:: /auto_examples/structured_media/images/sphx_glr_periodic_array_001.png
    :alt: First Born order
-   :srcset: /auto_examples/structured_media/images/sphx_glr_periodic_array_003.png
+   :srcset: /auto_examples/structured_media/images/sphx_glr_periodic_array_001.png
    :class: sphx-glr-single-img
 
 
@@ -215,7 +216,7 @@ so translated particles have identical discrete masks here.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.937 seconds)
+   **Total running time of the script:** (0 minutes 0.404 seconds)
 
 
 .. _sphx_glr_download_auto_examples_structured_media_periodic_array.py:

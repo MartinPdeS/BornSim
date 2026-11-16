@@ -26,13 +26,12 @@ grid. Its first-order amplitude has an independent closed-form reference,
 so this example isolates voxel midpoint-quadrature error. It does not test
 higher-order Green-tensor discretization or random-field synthesis.
 
-.. GENERATED FROM PYTHON SOURCE LINES 10-87
+.. GENERATED FROM PYTHON SOURCE LINES 10-86
 
 .. code-block:: Python
 
 
     import sys
-
     import matplotlib.pyplot as plt
     import numpy as np
 
@@ -119,24 +118,22 @@ higher-order Green-tensor discretization or random-field synthesis.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 88-95
+.. GENERATED FROM PYTHON SOURCE LINES 87-94
 
 Inspect the medium in 3D
 ------------------------
 Inspect the actual finite input sample with physical spatial axes.
-Drag to rotate and scroll to zoom in the embedded browser view.
-Regions with higher refractive index are more opaque; opacity is not absorption.
+Plotly shows interactive contours of the sampled medium.
+Color represents refractive index; contour geometry interpolates voxel samples.
 This is the finest grid. The refractive index is constant throughout the sample;
 orthogonal slices show the uniform cube and its physical extent.
 
-.. GENERATED FROM PYTHON SOURCE LINES 95-103
+.. GENERATED FROM PYTHON SOURCE LINES 94-100
 
 .. code-block:: Python
 
     medium_figure = volume.plot_3d(
-        mode="volume",
         field="refractive_index",
-        opacity_scale="increasing",
     )
 
     if "--no-browser" not in sys.argv:
@@ -155,7 +152,7 @@ orthogonal slices show the uniform cube and its physical extent.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.271 seconds)
+   **Total running time of the script:** (0 minutes 0.270 seconds)
 
 
 .. _sphx_glr_download_auto_examples_validation_grid_refinement.py:

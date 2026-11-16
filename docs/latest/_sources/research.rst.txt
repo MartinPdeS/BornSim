@@ -119,12 +119,11 @@ ensemble-averaged medium.
    )
 
    medium_figure = preview_volume.plot_3d(
-       backend="matplotlib",
-       mode="voxels",
+       mode="volume",
        field="refractive_index",
    )
 
-   plt.show()
+   medium_figure.show()
 
 Controls for quantitative studies
 ---------------------------------

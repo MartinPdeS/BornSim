@@ -26,11 +26,12 @@ antenna-like geometry studies when a dielectric refractive-index model is
 appropriate. Conducting currents, complex permittivity, and metal boundary
 conditions require a different electromagnetic solver.
 
-.. GENERATED FROM PYTHON SOURCE LINES 10-38
+.. GENERATED FROM PYTHON SOURCE LINES 10-39
 
 .. code-block:: Python
 
 
+    import sys
     import matplotlib.pyplot as plt
     import numpy as np
     from bornsim import CylinderMedium, Grid, Rotation, Solver, Source
@@ -65,45 +66,45 @@ conditions require a different electromagnetic solver.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 39-43
+.. GENERATED FROM PYTHON SOURCE LINES 40-44
 
 Inspect the finite rod
 ----------------------
 The cylinder has a circular cross-section and a finite end face. Rotation
 changes the geometry coordinates before voxel-centre sampling.
 
-.. GENERATED FROM PYTHON SOURCE LINES 43-53
+.. GENERATED FROM PYTHON SOURCE LINES 44-55
 
 .. code-block:: Python
 
     figure = volume.plot_3d(
-        backend="matplotlib",
-        mode="voxels",
+        backend="plotly",
+        mode="volume",
         field="refractive_index",
     )
 
-    figure.suptitle("Tilted finite dielectric rod")
+    figure.update_layout(title="Tilted finite dielectric rod")
 
-    plt.show()
-
-
-
-
-.. image-sg:: /auto_examples/structured_media/images/sphx_glr_antenna_rods_001.png
-   :alt: Tilted finite dielectric rod, Refractive index n: voxels
-   :srcset: /auto_examples/structured_media/images/sphx_glr_antenna_rods_001.png
-   :class: sphx-glr-single-img
+    if "--no-browser" not in sys.argv:
+        figure.show(renderer="browser")
 
 
 
 
+.. raw:: html
 
-.. GENERATED FROM PYTHON SOURCE LINES 54-56
+   <iframe src="../../_static/gallery/antenna_rods-1.html" title="Tilted finite dielectric rod" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 56-58
 
 Inspect the central slice
 -------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 56-73
+.. GENERATED FROM PYTHON SOURCE LINES 58-75
 
 .. code-block:: Python
 
@@ -127,23 +128,23 @@ Inspect the central slice
 
 
 
-.. image-sg:: /auto_examples/structured_media/images/sphx_glr_antenna_rods_002.png
+.. image-sg:: /auto_examples/structured_media/images/sphx_glr_antenna_rods_001.png
    :alt: Central rod cross-section
-   :srcset: /auto_examples/structured_media/images/sphx_glr_antenna_rods_002.png
+   :srcset: /auto_examples/structured_media/images/sphx_glr_antenna_rods_001.png
    :class: sphx-glr-single-img
 
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 74-78
+.. GENERATED FROM PYTHON SOURCE LINES 76-80
 
 Directional scattering
 ----------------------
 This finite rod is solved with the first Born order. The result describes
 dielectric scattering from the voxelized rod, not a conducting antenna.
 
-.. GENERATED FROM PYTHON SOURCE LINES 78-105
+.. GENERATED FROM PYTHON SOURCE LINES 80-107
 
 .. code-block:: Python
 
@@ -177,9 +178,9 @@ dielectric scattering from the voxelized rod, not a conducting antenna.
 
 
 
-.. image-sg:: /auto_examples/structured_media/images/sphx_glr_antenna_rods_003.png
+.. image-sg:: /auto_examples/structured_media/images/sphx_glr_antenna_rods_002.png
    :alt: Finite dielectric rod · first Born order
-   :srcset: /auto_examples/structured_media/images/sphx_glr_antenna_rods_003.png
+   :srcset: /auto_examples/structured_media/images/sphx_glr_antenna_rods_002.png
    :class: sphx-glr-single-img
 
 
@@ -189,7 +190,7 @@ dielectric scattering from the voxelized rod, not a conducting antenna.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.806 seconds)
+   **Total running time of the script:** (0 minutes 0.355 seconds)
 
 
 .. _sphx_glr_download_auto_examples_structured_media_antenna_rods.py:

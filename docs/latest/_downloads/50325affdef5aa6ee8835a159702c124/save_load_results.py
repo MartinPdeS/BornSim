@@ -14,12 +14,12 @@ generated-volume provenance records the medium and seed, with a field hash
 to identify the exact input. Exact regeneration depends on software versions.
 """
 
+import sys
 from bornsim.medium.random_medium import GaussianMedium
 
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -99,12 +99,10 @@ plt.show()
 # Inspect the medium in 3D
 # ------------------------
 # Inspect the actual finite input sample with physical spatial axes.
-# Drag to rotate and scroll to zoom in the embedded browser view.
-# Regions with higher refractive index are more opaque; opacity is not absorption.
+# Plotly shows interactive contours of the sampled medium.
+# Color represents refractive index; contour geometry interpolates voxel samples.
 medium_figure = volume.plot_3d(
-    mode="volume",
     field="refractive_index",
-    opacity_scale="increasing",
 )
 
 if "--no-browser" not in sys.argv:

@@ -14,7 +14,6 @@ A 20 nm voxel grid is illustrative, not a claim of converged sphere geometry.
 """
 
 import sys
-
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -157,14 +156,15 @@ plt.show()
 preview_volume = volumes_by_arrangement["Centred sphere"]
 
 medium_figure = preview_volume.plot_3d(
-    backend="matplotlib",
-    mode="voxels",
+    backend="plotly",
+    mode="volume",
     field="refractive_index",
 )
 
-medium_figure.suptitle("Centred sphere")
+medium_figure.update_layout(title="Centred sphere")
 
-plt.show()
+if "--no-browser" not in sys.argv:
+    medium_figure.show(renderer="browser")
 
 # %%
 # Translated sphere in 3D
@@ -173,14 +173,15 @@ plt.show()
 preview_volume = volumes_by_arrangement["Translated sphere"]
 
 medium_figure = preview_volume.plot_3d(
-    backend="matplotlib",
-    mode="voxels",
+    backend="plotly",
+    mode="volume",
     field="refractive_index",
 )
 
-medium_figure.suptitle("Translated sphere")
+medium_figure.update_layout(title="Translated sphere")
 
-plt.show()
+if "--no-browser" not in sys.argv:
+    medium_figure.show(renderer="browser")
 
 # %%
 # Nonoverlapping sphere pair in 3D
@@ -189,14 +190,15 @@ plt.show()
 preview_volume = volumes_by_arrangement["Nonoverlapping sphere pair"]
 
 medium_figure = preview_volume.plot_3d(
-    backend="matplotlib",
-    mode="voxels",
+    backend="plotly",
+    mode="volume",
     field="refractive_index",
 )
 
-medium_figure.suptitle("Nonoverlapping sphere pair")
+medium_figure.update_layout(title="Nonoverlapping sphere pair")
 
-plt.show()
+if "--no-browser" not in sys.argv:
+    medium_figure.show(renderer="browser")
 
 # %%
 # Three-dimensional directional phase density

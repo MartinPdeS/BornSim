@@ -61,8 +61,9 @@ error. See :doc:`theory` before interpreting higher Born orders.
 Interactive three-dimensional views
 -----------------------------------
 
-Plotly is included with BornSim and is the default for 3D views. Stronger
-refractive-index regions can be made more opaque:
+All 3D views use Plotly, which is included with BornSim. Two-dimensional
+plots use Matplotlib. Stronger
+refractive-index regions can then be made more opaque:
 
 .. code-block:: python
 
@@ -72,13 +73,17 @@ refractive-index regions can be made more opaque:
    )
 
    medium_figure = volume.plot_3d(
+       backend='plotly',
        field='refractive_index',
        opacity_scale='increasing',
    )
 
    medium_figure.show()
 
-   phase_figure = result.plot_phase_function(view='3d')
+   phase_figure = result.plot_phase_function(
+       view='3d',
+       backend='plotly',
+   )
 
    phase_figure.show()
 

@@ -37,9 +37,9 @@ seed as provenance.
 .. code-block:: Python
 
 
+    import sys
     from bornsim.medium.random_medium import WhittleMaternMedium
 
-    import sys
 
     import matplotlib.pyplot as plt
     import numpy as np
@@ -120,16 +120,14 @@ seed as provenance.
 Inspect the structured medium in 3D
 -----------------------------------
 Inspect the deterministic layers and sphere before adding fluctuations.
-Drag to rotate and scroll to zoom in the embedded browser volume.
+Plotly renders interpolated contours with physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 93-102
+.. GENERATED FROM PYTHON SOURCE LINES 93-100
 
 .. code-block:: Python
 
     medium_figure = structured.plot_3d(
-        mode="volume",
         field="refractive_index",
-        opacity_scale="increasing",
     )
 
     if "--no-browser" not in sys.argv:
@@ -146,22 +144,20 @@ Drag to rotate and scroll to zoom in the embedded browser volume.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 103-108
+.. GENERATED FROM PYTHON SOURCE LINES 101-106
 
 Inspect the combined medium in 3D
 ---------------------------------
-This interactive volume shows the sampled refractive index used by the solver,
+This voxel volume shows the sampled refractive index used by the solver,
 including the same seeded Matérn fluctuations as the scattering curves.
-Regions with higher refractive index are more opaque; opacity is a display setting.
+Color represents refractive index; contour geometry interpolates voxel samples.
 
-.. GENERATED FROM PYTHON SOURCE LINES 108-117
+.. GENERATED FROM PYTHON SOURCE LINES 106-113
 
 .. code-block:: Python
 
     medium_figure = combined.plot_3d(
-        mode="volume",
         field="refractive_index",
-        opacity_scale="increasing",
     )
 
     if "--no-browser" not in sys.argv:
@@ -178,13 +174,13 @@ Regions with higher refractive index are more opaque; opacity is a display setti
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 118-121
+.. GENERATED FROM PYTHON SOURCE LINES 114-117
 
 Scattering curves and a diagnostic cross-section
 --------------------------------------------------
 The slice checks exact voxel values after exploring the full volumes above.
 
-.. GENERATED FROM PYTHON SOURCE LINES 121-167
+.. GENERATED FROM PYTHON SOURCE LINES 117-163
 
 .. code-block:: Python
 
@@ -249,7 +245,7 @@ The slice checks exact voxel values after exploring the full volumes above.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.419 seconds)
+   **Total running time of the script:** (0 minutes 0.422 seconds)
 
 
 .. _sphx_glr_download_auto_examples_structured_media_structured_media.py:

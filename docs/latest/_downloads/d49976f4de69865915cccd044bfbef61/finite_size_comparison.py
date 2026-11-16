@@ -8,9 +8,9 @@ volume. Sample size, voxel resolution and realization count describe separate
 sources of uncertainty and must be checked independently.
 """
 
+import sys
 from bornsim.medium.random_medium import GaussianMedium
 
-import sys
 
 import matplotlib.pyplot as plt
 
@@ -86,8 +86,8 @@ plt.show()
 # --------------------------------------
 # This is the first realization (seed 42) on the calculation grid,
 # not an ensemble average or an infinite-medium material boundary.
-# Drag to rotate and scroll to zoom in the embedded browser view.
-# Regions with higher refractive index are more opaque; opacity is not absorption.
+# Plotly shows interactive contours of the sampled medium.
+# Color represents refractive index; contour geometry interpolates voxel samples.
 # Use the largest of the three finite cubes compared above.
 preview_volume = medium.to_volume(
     grid=grid,
@@ -95,9 +95,7 @@ preview_volume = medium.to_volume(
 )
 
 medium_figure = preview_volume.plot_3d(
-    mode="volume",
     field="refractive_index",
-    opacity_scale="increasing",
 )
 
 if "--no-browser" not in sys.argv:

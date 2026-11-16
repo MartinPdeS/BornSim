@@ -14,6 +14,7 @@ spectral truncation. Continuum covariance curves are reference functions,
 not exact descriptions of the sampled finite grid.
 """
 
+import sys
 from bornsim.medium.random_medium import GaussianMedium, ExponentialMedium, WhittleMaternMedium
 
 import matplotlib.pyplot as plt
@@ -174,14 +175,15 @@ plt.show()
 preview_volume = preview_volumes["gaussian"]
 
 medium_figure = preview_volume.plot_3d(
-    backend="matplotlib",
-    mode="voxels",
+    backend="plotly",
+    mode="volume",
     field="refractive_index",
 )
 
-medium_figure.suptitle(f"Gaussian medium · seed {ensemble_sampling.seeds[0]}")
+medium_figure.update_layout(title=f"Gaussian medium · seed {ensemble_sampling.seeds[0]}")
 
-plt.show()
+if "--no-browser" not in sys.argv:
+    medium_figure.show(renderer="browser")
 
 # %%
 # Exponential medium in 3D
@@ -190,14 +192,15 @@ plt.show()
 preview_volume = preview_volumes["exponential"]
 
 medium_figure = preview_volume.plot_3d(
-    backend="matplotlib",
-    mode="voxels",
+    backend="plotly",
+    mode="volume",
     field="refractive_index",
 )
 
-medium_figure.suptitle(f"Exponential medium · seed {ensemble_sampling.seeds[0]}")
+medium_figure.update_layout(title=f"Exponential medium · seed {ensemble_sampling.seeds[0]}")
 
-plt.show()
+if "--no-browser" not in sys.argv:
+    medium_figure.show(renderer="browser")
 
 # %%
 # Whittle–Matérn medium in 3D
@@ -206,14 +209,15 @@ plt.show()
 preview_volume = preview_volumes["matern"]
 
 medium_figure = preview_volume.plot_3d(
-    backend="matplotlib",
-    mode="voxels",
+    backend="plotly",
+    mode="volume",
     field="refractive_index",
 )
 
-medium_figure.suptitle(f"Whittle–Matérn medium · seed {ensemble_sampling.seeds[0]}")
+medium_figure.update_layout(title=f"Whittle–Matérn medium · seed {ensemble_sampling.seeds[0]}")
 
-plt.show()
+if "--no-browser" not in sys.argv:
+    medium_figure.show(renderer="browser")
 
 # %%
 # Compare sampled and predicted covariances

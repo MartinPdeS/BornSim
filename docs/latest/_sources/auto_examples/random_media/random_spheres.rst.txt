@@ -30,14 +30,13 @@ This is sequential placement, rather than an equilibrium hard-sphere model.
 The plotted medium samples material at voxel centres. Choose a spacing fine enough
 to resolve each sphere, and use small refractive index contrast for Born scattering.
 
-.. GENERATED FROM PYTHON SOURCE LINES 14-47
+.. GENERATED FROM PYTHON SOURCE LINES 14-48
 
 
 
-.. image-sg:: /auto_examples/random_media/images/sphx_glr_random_spheres_001.png
-   :alt: Refractive index n: voxels
-   :srcset: /auto_examples/random_media/images/sphx_glr_random_spheres_001.png
-   :class: sphx-glr-single-img
+.. raw:: html
+
+   <iframe src="../../_static/gallery/random_spheres-1.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
 
 
 .. rst-class:: sphx-glr-script-out
@@ -56,7 +55,7 @@ to resolve each sphere, and use small refractive index contrast for Born scatter
 .. code-block:: Python
 
 
-    import matplotlib.pyplot as plt
+    import sys
     from bornsim import Grid
     from bornsim.medium.random_spheres import RandomSphereMedium
     from bornsim.units import ureg
@@ -80,19 +79,20 @@ to resolve each sphere, and use small refractive index contrast for Born scatter
     )
 
     figure = volume.plot_3d(
-        backend="matplotlib",
-        mode="voxels",
+        backend="plotly",
+        mode="volume",
         field="refractive_index",
     )
 
     print(f"Generated {medium.sphere_count} nonoverlapping spheres with radius {medium.radius:~P}.")
 
-    plt.show()
+    if "--no-browser" not in sys.argv:
+        figure.show(renderer="browser")
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.430 seconds)
+   **Total running time of the script:** (0 minutes 0.025 seconds)
 
 
 .. _sphx_glr_download_auto_examples_random_media_random_spheres.py:

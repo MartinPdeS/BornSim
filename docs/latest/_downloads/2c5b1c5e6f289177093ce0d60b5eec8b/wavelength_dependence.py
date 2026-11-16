@@ -13,6 +13,7 @@ not included. The wavelength-to-the-minus-four guide applies in the
 short-correlation limit, not generally at every covariance length.
 """
 
+import sys
 from bornsim.medium.random_medium import GaussianMedium
 
 import matplotlib.pyplot as plt
@@ -123,14 +124,15 @@ plt.show()
 preview_volume = preview_volumes[20]
 
 medium_figure = preview_volume.plot_3d(
-    backend="matplotlib",
-    mode="voxels",
+    backend="plotly",
+    mode="volume",
     field="refractive_index",
 )
 
-medium_figure.suptitle(f"Gaussian medium · correlation length 20 nm · seed {ensemble_sampling.seeds[0]}")
+medium_figure.update_layout(title=f"Gaussian medium · correlation length 20 nm · seed {ensemble_sampling.seeds[0]}")
 
-plt.show()
+if "--no-browser" not in sys.argv:
+    medium_figure.show(renderer="browser")
 
 # %%
 # 150 nm correlation length in 3D
@@ -139,11 +141,12 @@ plt.show()
 preview_volume = preview_volumes[150]
 
 medium_figure = preview_volume.plot_3d(
-    backend="matplotlib",
-    mode="voxels",
+    backend="plotly",
+    mode="volume",
     field="refractive_index",
 )
 
-medium_figure.suptitle(f"Gaussian medium · correlation length 150 nm · seed {ensemble_sampling.seeds[0]}")
+medium_figure.update_layout(title=f"Gaussian medium · correlation length 150 nm · seed {ensemble_sampling.seeds[0]}")
 
-plt.show()
+if "--no-browser" not in sys.argv:
+    medium_figure.show(renderer="browser")

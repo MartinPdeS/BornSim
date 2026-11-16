@@ -16,6 +16,7 @@ come from numerical first-order finite-sample ensembles and are normalized
 per steradian, not per degree.
 """
 
+import sys
 from bornsim.medium.random_medium import GaussianMedium, ExponentialMedium
 
 import matplotlib.pyplot as plt
@@ -132,14 +133,15 @@ plt.show()
 preview_volume = preview_volumes["gaussian"]
 
 medium_figure = preview_volume.plot_3d(
-    backend="matplotlib",
-    mode="voxels",
+    backend="plotly",
+    mode="volume",
     field="refractive_index",
 )
 
-medium_figure.suptitle(f"Gaussian medium · seed {ensemble_sampling.seeds[0]}")
+medium_figure.update_layout(title=f"Gaussian medium · seed {ensemble_sampling.seeds[0]}")
 
-plt.show()
+if "--no-browser" not in sys.argv:
+    medium_figure.show(renderer="browser")
 
 # %%
 # Exponential medium in 3D
@@ -148,11 +150,12 @@ plt.show()
 preview_volume = preview_volumes["exponential"]
 
 medium_figure = preview_volume.plot_3d(
-    backend="matplotlib",
-    mode="voxels",
+    backend="plotly",
+    mode="volume",
     field="refractive_index",
 )
 
-medium_figure.suptitle(f"Exponential medium · seed {ensemble_sampling.seeds[0]}")
+medium_figure.update_layout(title=f"Exponential medium · seed {ensemble_sampling.seeds[0]}")
 
-plt.show()
+if "--no-browser" not in sys.argv:
+    medium_figure.show(renderer="browser")

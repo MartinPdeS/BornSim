@@ -25,11 +25,12 @@ Compare finite particle geometries on the same voxel grid. Refractive-index
 interfaces use voxel-centre sampling; refine the grid for quantitative studies.
 The solver retains its linearized dielectric contrast for both particle types.
 
-.. GENERATED FROM PYTHON SOURCE LINES 9-42
+.. GENERATED FROM PYTHON SOURCE LINES 9-43
 
 .. code-block:: Python
 
 
+    import sys
     import numpy as np
     import matplotlib.pyplot as plt
     from bornsim import CoreShellMedium, EllipsoidMedium, Grid, Solver, Source, Rotation
@@ -69,7 +70,7 @@ The solver retains its linearized dielectric contrast for both particle types.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 43-48
+.. GENERATED FROM PYTHON SOURCE LINES 44-49
 
 Inspect the core and shell
 --------------------------
@@ -77,70 +78,70 @@ The core replaces the shell inside core_radius; both refractive indices
 are absolute values relative to the same uniform exterior. The shell is
 sampled at voxel centres, so its thickness must be resolved by the grid.
 
-.. GENERATED FROM PYTHON SOURCE LINES 48-60
+.. GENERATED FROM PYTHON SOURCE LINES 49-62
 
 .. code-block:: Python
 
     core_shell_volume = core_shell.to_volume(grid=grid)
 
     core_shell_figure = core_shell_volume.plot_3d(
-        backend="matplotlib",
-        mode="voxels",
+        backend="plotly",
+        mode="volume",
         field="refractive_index",
     )
 
-    core_shell_figure.suptitle("Core–shell sphere: 60 nm core, 120 nm outer radius")
+    core_shell_figure.update_layout(title="Core–shell sphere: 60 nm core, 120 nm outer radius")
 
-    plt.show()
-
-
-
-
-.. image-sg:: /auto_examples/structured_media/images/sphx_glr_particle_families_001.png
-   :alt: Core–shell sphere: 60 nm core, 120 nm outer radius, Refractive index n: voxels
-   :srcset: /auto_examples/structured_media/images/sphx_glr_particle_families_001.png
-   :class: sphx-glr-single-img
+    if "--no-browser" not in sys.argv:
+        core_shell_figure.show(renderer="browser")
 
 
 
 
+.. raw:: html
 
-.. GENERATED FROM PYTHON SOURCE LINES 61-65
+   <iframe src="../../_static/gallery/particle_families-1.html" title="Core–shell sphere: 60 nm core, 120 nm outer radius" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 63-67
 
 Inspect an oriented ellipsoid
 -----------------------------
 Rotation maps the local semi-axes to world coordinates. Here the long axis
 is tilted about y; no voxel-array rotation or interpolation is performed.
 
-.. GENERATED FROM PYTHON SOURCE LINES 65-77
+.. GENERATED FROM PYTHON SOURCE LINES 67-80
 
 .. code-block:: Python
 
     ellipsoid_volume = ellipsoid.to_volume(grid=grid)
 
     ellipsoid_figure = ellipsoid_volume.plot_3d(
-        backend="matplotlib",
-        mode="voxels",
+        backend="plotly",
+        mode="volume",
         field="refractive_index",
     )
 
-    ellipsoid_figure.suptitle("Ellipsoid: 120 × 80 × 60 nm semi-axes, tilted 35°")
+    ellipsoid_figure.update_layout(title="Ellipsoid: 120 × 80 × 60 nm semi-axes, tilted 35°")
 
-    plt.show()
-
-
-
-
-.. image-sg:: /auto_examples/structured_media/images/sphx_glr_particle_families_002.png
-   :alt: Ellipsoid: 120 × 80 × 60 nm semi-axes, tilted 35°, Refractive index n: voxels
-   :srcset: /auto_examples/structured_media/images/sphx_glr_particle_families_002.png
-   :class: sphx-glr-single-img
+    if "--no-browser" not in sys.argv:
+        ellipsoid_figure.show(renderer="browser")
 
 
 
 
+.. raw:: html
 
-.. GENERATED FROM PYTHON SOURCE LINES 78-84
+   <iframe src="../../_static/gallery/particle_families-2.html" title="Ellipsoid: 120 × 80 × 60 nm semi-axes, tilted 35°" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 81-87
 
 Compare a central slice and scattering
 --------------------------------------
@@ -149,7 +150,7 @@ The scattering curves use the x-z observation meridian and cumulative first
 Born order. Differences reflect both geometry and material contrast; this
 comparison does not isolate shape alone or validate against an exact solver.
 
-.. GENERATED FROM PYTHON SOURCE LINES 84-124
+.. GENERATED FROM PYTHON SOURCE LINES 87-127
 
 .. code-block:: Python
 
@@ -196,9 +197,9 @@ comparison does not isolate shape alone or validate against an exact solver.
 
 
 
-.. image-sg:: /auto_examples/structured_media/images/sphx_glr_particle_families_003.png
+.. image-sg:: /auto_examples/structured_media/images/sphx_glr_particle_families_001.png
    :alt: Core–shell, Ellipsoid, First Born order
-   :srcset: /auto_examples/structured_media/images/sphx_glr_particle_families_003.png
+   :srcset: /auto_examples/structured_media/images/sphx_glr_particle_families_001.png
    :class: sphx-glr-single-img
 
 
@@ -208,7 +209,7 @@ comparison does not isolate shape alone or validate against an exact solver.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.276 seconds)
+   **Total running time of the script:** (0 minutes 0.534 seconds)
 
 
 .. _sphx_glr_download_auto_examples_structured_media_particle_families.py:

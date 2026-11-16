@@ -31,11 +31,12 @@ refractive index and fluctuation statistics are held constant, so material dispe
 not included. The wavelength-to-the-minus-four guide applies in the
 short-correlation limit, not generally at every covariance length.
 
-.. GENERATED FROM PYTHON SOURCE LINES 15-39
+.. GENERATED FROM PYTHON SOURCE LINES 15-40
 
 .. code-block:: Python
 
 
+    import sys
     from bornsim.medium.random_medium import GaussianMedium
 
     import matplotlib.pyplot as plt
@@ -66,12 +67,12 @@ short-correlation limit, not generally at every covariance length.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 40-42
+.. GENERATED FROM PYTHON SOURCE LINES 41-43
 
 Compare numerical scattering
 ----------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 42-119
+.. GENERATED FROM PYTHON SOURCE LINES 43-120
 
 .. code-block:: Python
 
@@ -164,68 +165,68 @@ Compare numerical scattering
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 120-123
+.. GENERATED FROM PYTHON SOURCE LINES 121-124
 
 20 nm correlation length in 3D
 ------------------------------
 Show one finite input sample with its physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 123-135
+.. GENERATED FROM PYTHON SOURCE LINES 124-137
 
 .. code-block:: Python
 
     preview_volume = preview_volumes[20]
 
     medium_figure = preview_volume.plot_3d(
-        backend="matplotlib",
-        mode="voxels",
+        backend="plotly",
+        mode="volume",
         field="refractive_index",
     )
 
-    medium_figure.suptitle(f"Gaussian medium · correlation length 20 nm · seed {ensemble_sampling.seeds[0]}")
+    medium_figure.update_layout(title=f"Gaussian medium · correlation length 20 nm · seed {ensemble_sampling.seeds[0]}")
 
-    plt.show()
-
-
-
-
-.. image-sg:: /auto_examples/random_media/images/sphx_glr_wavelength_dependence_002.png
-   :alt: Gaussian medium · correlation length 20 nm · seed 42, Refractive index n: voxels
-   :srcset: /auto_examples/random_media/images/sphx_glr_wavelength_dependence_002.png
-   :class: sphx-glr-single-img
+    if "--no-browser" not in sys.argv:
+        medium_figure.show(renderer="browser")
 
 
 
 
+.. raw:: html
 
-.. GENERATED FROM PYTHON SOURCE LINES 136-139
+   <iframe src="../../_static/gallery/wavelength_dependence-1.html" title="Gaussian medium · correlation length 20 nm · seed 42" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 138-141
 
 150 nm correlation length in 3D
 -------------------------------
 Show one finite input sample with its physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 139-150
+.. GENERATED FROM PYTHON SOURCE LINES 141-153
 
 .. code-block:: Python
 
     preview_volume = preview_volumes[150]
 
     medium_figure = preview_volume.plot_3d(
-        backend="matplotlib",
-        mode="voxels",
+        backend="plotly",
+        mode="volume",
         field="refractive_index",
     )
 
-    medium_figure.suptitle(f"Gaussian medium · correlation length 150 nm · seed {ensemble_sampling.seeds[0]}")
+    medium_figure.update_layout(title=f"Gaussian medium · correlation length 150 nm · seed {ensemble_sampling.seeds[0]}")
 
-    plt.show()
+    if "--no-browser" not in sys.argv:
+        medium_figure.show(renderer="browser")
 
 
 
-.. image-sg:: /auto_examples/random_media/images/sphx_glr_wavelength_dependence_003.png
-   :alt: Gaussian medium · correlation length 150 nm · seed 42, Refractive index n: voxels
-   :srcset: /auto_examples/random_media/images/sphx_glr_wavelength_dependence_003.png
-   :class: sphx-glr-single-img
+.. raw:: html
+
+   <iframe src="../../_static/gallery/wavelength_dependence-2.html" title="Gaussian medium · correlation length 150 nm · seed 42" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
 
 
 
@@ -234,7 +235,7 @@ Show one finite input sample with its physical spatial axes.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 2.361 seconds)
+   **Total running time of the script:** (0 minutes 1.675 seconds)
 
 
 .. _sphx_glr_download_auto_examples_random_media_wavelength_dependence.py:
