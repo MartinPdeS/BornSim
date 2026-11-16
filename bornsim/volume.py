@@ -10,6 +10,7 @@ from types import NotImplementedType
 from typing import Any, TYPE_CHECKING, Literal, Self
 from .grid import Grid
 from .medium import Medium
+from .plot_style import DIVERGING_COLORS, DIVERGING_CMAP, GRID, NAVY, SEQUENTIAL_COLORS, SEQUENTIAL_CMAP, TEXT
 from .units import NoUnit, Quantity, Scalar, validate_annotation
 
 if TYPE_CHECKING:
@@ -320,10 +321,8 @@ class Volume:
         Returns
         -------
         figure : matplotlib.figure.Figure
-            Equal-aspect image with voxel-edge extents and a labelled colorbar.
-            Call pyplot.show() to display or figure.savefig() to export.
-            Colors use the full volume's range to compare different planes;
-            fluctuation colors are symmetric about zero.
+            Equal-aspect image of the selected voxel plane. Call pyplot.show()
+            to display or figure.savefig() to export.
 
         Raises
         ------
@@ -369,7 +368,7 @@ class Volume:
             extent=(-half_width, half_width, -half_height, half_height),
             interpolation="nearest",
             aspect="equal",
-            cmap="RdBu_r" if field == "delta_refractive_index" else "viridis",
+            cmap=DIVERGING_CMAP if field == "delta_refractive_index" else SEQUENTIAL_CMAP,
             vmin=color_low,
             vmax=color_high,
         )
@@ -382,7 +381,19 @@ class Volume:
             title=title if title is not None else f"{label} at {normal} = {position:+g} {unit}",
         )
 
-        figure.colorbar(image, ax=axis, label=label)
+        axis.set_facecolor("white")
+        axis.set_axisbelow(True)
+        axis.tick_params(colors=TEXT, labelsize=9)
+        axis.title.set_color(NAVY)
+        axis.title.set_fontweight("semibold")
+        axis.grid(color=GRID, linewidth=0.8)
+
+        for spine in axis.spines.values():
+            spine.set_color("#cbd5df")
+
+        colorbar = figure.colorbar(image, ax=axis, label=label)
+        colorbar.ax.yaxis.label.set_color(NAVY)
+        colorbar.ax.tick_params(colors=TEXT, labelsize=9)
 
         return figure
 
@@ -449,7 +460,7 @@ class Volume:
         """
 
         if backend != "plotly":
-            raise ValueError("3D plots support only backend='plotly'; use plot_slice() for Matplotlib.")
+            raise ValueError("BornSim supports Plotly 3D rendering only.")
 
         if mode is None:
             mode = "volume"
@@ -574,7 +585,14 @@ class Volume:
     ) -> "PlotlyFigure":
         """Render volume or isosurface traces using Plotly."""
 
-        colorbar = {"title": label, **({"tickvals": [low]} if uniform else {})}
+        colorbar = {
+            "title": {"text": label},
+            "thickness": 14,
+            "len": 0.68,
+            "outlinewidth": 0,
+            "tickfont": {"color": TEXT, "size": 10},
+            **({"tickvals": [low]} if uniform else {}),
+        }
 
         hover = (
             f"x=%{{x:.4g}} {length_unit}<br>y=%{{y:.4g}} {length_unit}"
@@ -597,7 +615,7 @@ class Volume:
                 cmax=color_high,
                 surface_count=surface_count,
                 opacity=opacity,
-                colorscale="RdBu_r" if field == "delta_refractive_index" else "Inferno",
+                colorscale=DIVERGING_COLORS if field == "delta_refractive_index" else SEQUENTIAL_COLORS,
                 colorbar=colorbar,
                 caps={"x_show": False, "y_show": False, "z_show": False},
                 hovertemplate=hover,
@@ -612,14 +630,17 @@ class Volume:
         sliders = [
             {
                 "active": density_values.index(surface_count),
-                "currentvalue": {"font": {"size": 12}, "prefix": "Iso-surface density: "},
-                "font": {"size": 9},
+                "currentvalue": {"font": {"size": 12, "color": NAVY}, "prefix": "Iso-surface density: "},
+                "font": {"size": 9, "color": TEXT},
                 "len": 0.38,
                 "minorticklen": 0,
-                "pad": {"t": 12},
+                "pad": {"t": 14},
                 "ticklen": 2,
                 "x": 0.58,
                 "y": 0,
+                "bgcolor": "white",
+                "bordercolor": "#dce5ed",
+                "borderwidth": 0,
                 "steps": [
                     {"label": str(value), "method": "restyle", "args": [{"surface.count": value}, [0]]}
                     for value in density_values
@@ -633,14 +654,17 @@ class Volume:
             sliders.append(
                 {
                     "active": opacity_values.index(opacity),
-                    "currentvalue": {"font": {"size": 12}, "prefix": "Opacity: "},
-                    "font": {"size": 9},
+                    "currentvalue": {"font": {"size": 12, "color": NAVY}, "prefix": "Opacity: "},
+                    "font": {"size": 9, "color": TEXT},
                     "len": 0.38,
                     "minorticklen": 0,
-                    "pad": {"t": 12},
+                    "pad": {"t": 14},
                     "ticklen": 2,
                     "x": 0.08,
                     "y": 0,
+                    "bgcolor": "white",
+                    "bordercolor": "#dce5ed",
+                    "borderwidth": 0,
                     "steps": [
                         {
                             "label": f"{value:.2f}"
@@ -656,14 +680,47 @@ class Volume:
 
         figure.update_layout(
             template="plotly_white",
-            title=f"{label}: {mode}" + (" (uniform field)" if uniform else ""),
-            scene={
-                "xaxis_title": f"x ({length_unit})",
-                "yaxis_title": f"y ({length_unit})",
-                "zaxis_title": f"z ({length_unit})",
-                "aspectmode": "data",
+            paper_bgcolor="white",
+            plot_bgcolor="white",
+            title={
+                "text": f"{label}: {mode}" + (" · uniform field" if uniform else ""),
+                "font": {"color": NAVY, "size": 18},
+                "x": 0.03,
+                "xanchor": "left",
             },
-            margin={"l": 0, "r": 0, "b": 45, "t": 45},
+            scene={
+                "xaxis": {
+                    "title": {"text": f"x ({length_unit})", "font": {"color": NAVY, "size": 12}},
+                    "showbackground": False,
+                    "showgrid": True,
+                    "gridcolor": "#e3eaf0",
+                    "zerolinecolor": "#cbd5df",
+                    "tickfont": {"color": TEXT, "size": 10},
+                },
+                "yaxis": {
+                    "title": {"text": f"y ({length_unit})", "font": {"color": NAVY, "size": 12}},
+                    "showbackground": False,
+                    "showgrid": True,
+                    "gridcolor": "#e3eaf0",
+                    "zerolinecolor": "#cbd5df",
+                    "tickfont": {"color": TEXT, "size": 10},
+                },
+                "zaxis": {
+                    "title": {"text": f"z ({length_unit})", "font": {"color": NAVY, "size": 12}},
+                    "showbackground": False,
+                    "showgrid": True,
+                    "gridcolor": "#e3eaf0",
+                    "zerolinecolor": "#cbd5df",
+                    "tickfont": {"color": TEXT, "size": 10},
+                },
+                "bgcolor": "white",
+                "aspectmode": "data",
+                "camera": {
+                    "eye": {"x": 1.3, "y": 1.3, "z": 1.05},
+                    "projection": {"type": "orthographic"},
+                },
+            },
+            margin={"l": 0, "r": 10, "b": 58, "t": 70},
             sliders=sliders,
             uirevision="bornsim-volume",
         )

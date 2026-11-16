@@ -24,6 +24,10 @@ def test_3d_uniform_phase_is_a_sphere_and_polar_cut_is_closed(backend):
         azimuth_averaged=True,
     )
 
+    default_surface = result.plot_phase_function()
+
+    assert default_surface.data[0].type == "surface"
+
     surface = result.plot_phase_function(
         view="3d",
         backend=backend,
@@ -55,7 +59,7 @@ def test_3d_uniform_phase_is_a_sphere_and_polar_cut_is_closed(backend):
 
     np.testing.assert_allclose(polar.get_ydata(), radius)
 
-    angular = result.plot_phase_function(log_y=True).axes[0].lines[0]
+    angular = result.plot_phase_function(view="angular", log_y=True).axes[0].lines[0]
 
     np.testing.assert_allclose(angular.get_xdata(), [0, 90, 180])
 

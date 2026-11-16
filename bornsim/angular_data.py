@@ -413,7 +413,7 @@ class AngularData:
     def plot_phase_function(
         self,
         *,
-        view: Literal["angular", "polar", "3d"] = "angular",
+        view: Literal["angular", "polar", "3d"] = "3d",
         order: int | None = None,
         log_y: bool = False,
         azimuth: int = 0,
@@ -423,7 +423,7 @@ class AngularData:
 
         Parameters
         ----------
-        view : {'angular', 'polar', '3d'}, default='angular'
+        view : {'angular', 'polar', '3d'}, default='3d'
             Angular curve, polar curve, or directional 3D surface. The 3D view
             uses Plotly; 2D views use Matplotlib.
         order : int or None, default=None

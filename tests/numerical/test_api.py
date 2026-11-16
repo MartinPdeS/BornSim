@@ -172,7 +172,10 @@ def test_ensemble_preserves_seed_uncertainty_and_coefficients(*, realizations, b
 
     np.testing.assert_allclose(phase, expected["directional_differential"] / expected["mu_s"][:, None, None])
 
-    phase_plot = result.plot_phase_function(order=1)
+    phase_plot = result.plot_phase_function(
+        view="angular",
+        order=1,
+    )
 
     assert len(phase_plot.axes[0].lines) == 1
 

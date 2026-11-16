@@ -4,21 +4,22 @@ Medium visualization
 Interactive three-dimensional views
 -----------------------------------
 
-All three-dimensional plots use Plotly. ``Volume.plot_3d()`` returns an
-interactive volume, and ``Result.plot_phase_function(view="3d")`` returns an
-interactive directional surface. Plotly is included with BornSim; no backend
-selection is needed. Matplotlib remains the renderer for two-dimensional
-slices, angular curves, polar cuts, and diagnostic curves.
+BornSim uses Matplotlib for two-dimensional plots, including voxel slices,
+angular scattering curves, and diagnostics. The 3D medium and phase-function
+views use Plotly exclusively. ``Volume.plot_3d()`` returns an interactive
+volume, and ``Result.plot_phase_function()`` defaults to an interactive
+directional surface. Plotly is included with BornSim; no backend selection is
+needed for 3D plots.
 
 Drag to rotate, scroll to zoom, and hover to inspect values. Constructing a
 figure opens no window. Call ``figure.show()`` to display it or
 ``figure.write_html()`` to export an offline interactive view. The gallery
 embeds 3D figures alongside the code that constructs them.
 
-The views follow MomentRT's white Plotly styling. Absolute refractive index,
-permittivity, and phase density use Inferno; signed refractive-index
-fluctuations retain a symmetric diverging scale. BornSim retains its Cartesian
-orientation rather than MomentRT's downward depth axis.
+The views use Plotly's white canvas with BornSim's navy-to-cyan-to-gold
+sequential palette. Signed refractive-index fluctuations use a symmetric
+navy-to-gold diverging scale. BornSim retains its Cartesian orientation rather
+than MomentRT's downward depth axis.
 
 Random-medium volumes
 ---------------------
@@ -144,8 +145,8 @@ Increase angular sampling to resolve directional structure.
        include_plotlyjs=True,
    )
 
-``Result.plot_cross_section()`` uses Matplotlib and restores finite-sample
-area units using the recorded sample volume. Ensemble standard errors use the
+``Result.plot_cross_section()`` uses a Plotly 3D scene and restores
+finite-sample area units using the recorded sample volume. Ensemble standard errors use the
 same conversion. Cumulative curves preserve amplitude interference;
 ``terms=True`` selects isolated terms, which cannot be summed to reconstruct
 cumulative intensities.

@@ -5,14 +5,35 @@ Plotly. Renderers accept Result or AngularData where applicable and leave
 physical arrays and their units unchanged.
 """
 
-from typing import cast
+from typing import Any, cast
 import matplotlib.pyplot as plt
 from matplotlib.projections.polar import PolarAxes
 from matplotlib.ticker import MaxNLocator
 import numpy as np
 import plotly.graph_objects as go
 
+from .plot_style import GRID, NAVY, SEQUENTIAL_COLORS, SERIES_COLORS, TEXT
 from .units import Dimensionless, NoUnit, Quantity, ureg, validate_annotation
+
+
+def _style_axis(*, axis) -> None:
+    """Apply BornSim's navy and cyan style to Matplotlib axes."""
+
+    axis.set_facecolor("white")
+    axis.set_axisbelow(True)
+    axis.tick_params(colors=TEXT, labelsize=9)
+    axis.title.set_color(NAVY)
+    axis.title.set_fontweight("semibold")
+    axis.grid(color=GRID, linewidth=0.8)
+
+    if axis.name == "polar":
+        axis.spines["polar"].set_color("#cbd5df")
+    else:
+        axis.spines["top"].set_visible(False)
+        axis.spines["right"].set_visible(False)
+
+        for spine in axis.spines.values():
+            spine.set_color("#cbd5df")
 
 
 def _select_azimuth(*, result, azimuth):
@@ -97,6 +118,8 @@ def plot_differential(
     figure, axis = plt.subplots(figsize=(8, 5), layout="constrained")
 
     for index, curve in enumerate(values):
+        color = SERIES_COLORS[index % len(SERIES_COLORS)]
+
         errors = None
 
         if not terms and result.stderr is not None:
@@ -110,7 +133,11 @@ def plot_differential(
 
         label = f"{'Term' if terms else 'Through order'} {index + 1}"
 
-        style = {"marker": "o", "linestyle": "none"} if result.angles is None else {"linewidth": 2}
+        style: dict[str, Any] = (
+            {"color": color, "marker": "o", "linestyle": "none", "markersize": 5}
+            if result.angles is None
+            else {"color": color, "linewidth": 2.4}
+        )
 
         if errors is None:
             axis.plot(
@@ -133,9 +160,9 @@ def plot_differential(
         yscale="log" if log_y else "linear",
     )
 
-    axis.grid(alpha=0.25)
+    _style_axis(axis=axis)
 
-    axis.legend(frameon=False)
+    axis.legend(frameon=False, labelcolor=TEXT, fontsize=9)
 
     return figure
 
@@ -231,7 +258,7 @@ def plot_cross_section(
     )
 
 
-def plot_phase_function(*, result, view="angular", order=None, log_y=False, azimuth=0, backend=None):
+def plot_phase_function(*, result, view="3d", order=None, log_y=False, azimuth=0, backend=None):
     """Render normalized densities while retaining directional 3D asymmetry.
 
     Parameters
@@ -349,10 +376,10 @@ def plot_phase_function(*, result, view="angular", order=None, log_y=False, azim
                     z=z,
                     surfacecolor=radius,
                     customdata=radius,
-                    colorscale="Inferno",
+                    colorscale=SEQUENTIAL_COLORS,
                     cmin=0,
                     cmax=float(radius.max()),
-                    colorbar={"title": "p (sr⁻¹)"},
+                    colorbar={"title": {"text": "p (sr⁻¹)"}, "thickness": 14, "outlinewidth": 0},
                     hovertemplate="Phase density p=%{customdata:.5g} sr⁻¹<extra></extra>",
                 )
             ],
@@ -360,12 +387,19 @@ def plot_phase_function(*, result, view="angular", order=None, log_y=False, azim
 
         figure.update_layout(
             template="plotly_white",
-            title=f"{title}<br>Through order {selected + 1} · {surface_label}",
+            title={
+                "text": f"Phase function<br><sup>Through order {selected + 1} · {surface_label}</sup>",
+                "font": {"color": NAVY, "size": 18},
+                "x": 0.03,
+                "xanchor": "left",
+            },
             scene={
-                "xaxis_title": "p ŝx (sr⁻¹)",
-                "yaxis_title": "p ŝy (sr⁻¹)",
-                "zaxis_title": "p ŝz (sr⁻¹); laboratory z",
+                "xaxis": {"title": "p ŝx (sr⁻¹)", "showbackground": False, "gridcolor": "#e3eaf0"},
+                "yaxis": {"title": "p ŝy (sr⁻¹)", "showbackground": False, "gridcolor": "#e3eaf0"},
+                "zaxis": {"title": "p ŝz (sr⁻¹)", "showbackground": False, "gridcolor": "#e3eaf0"},
                 "aspectmode": "data",
+                "bgcolor": "white",
+                "camera": {"eye": {"x": 1.3, "y": 1.3, "z": 1.05}, "projection": {"type": "orthographic"}},
             },
             margin={"l": 0, "r": 0, "b": 0, "t": 65},
             uirevision="bornsim-phase",
@@ -399,6 +433,7 @@ def plot_phase_function(*, result, view="angular", order=None, log_y=False, azim
                     np.concatenate([theta, 2 * np.pi - theta[-2::-1]]),
                     np.concatenate([phase[index], (phase if opposite is None else opposite)[index, -2::-1]]),
                     label=f"Through order {index + 1}",
+                    color=SERIES_COLORS[index % len(SERIES_COLORS)],
                     linewidth=2,
                 )
             else:
@@ -406,6 +441,7 @@ def plot_phase_function(*, result, view="angular", order=None, log_y=False, azim
                     degrees,
                     phase[index],
                     label=f"Through order {index + 1}",
+                    color=SERIES_COLORS[index % len(SERIES_COLORS)],
                     linewidth=2,
                 )
 
@@ -427,9 +463,9 @@ def plot_phase_function(*, result, view="angular", order=None, log_y=False, azim
                 yscale="log" if log_y else "linear",
             )
 
-        axis.grid(alpha=0.25)
+        _style_axis(axis=axis)
 
-        axis.legend(frameon=False)
+        axis.legend(frameon=False, labelcolor=TEXT, fontsize=9)
 
     return figure
 
@@ -474,6 +510,7 @@ def plot_field_norms(*, result, log_y=True):
             np.arange(1, len(curve) + 1),
             curve,
             "o-",
+            color=SERIES_COLORS[index % len(SERIES_COLORS)],
             label=f"Realization {index + 1}",
         )
 
@@ -486,8 +523,8 @@ def plot_field_norms(*, result, log_y=True):
 
     axis.xaxis.set_major_locator(MaxNLocator(integer=True))
 
-    axis.grid(alpha=0.25)
+    _style_axis(axis=axis)
 
-    axis.legend(frameon=False)
+    axis.legend(frameon=False, labelcolor=TEXT, fontsize=9)
 
     return figure

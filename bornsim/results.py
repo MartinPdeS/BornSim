@@ -888,7 +888,7 @@ class Result:
     def plot_phase_function(
         self,
         *,
-        view: Literal["angular", "polar", "3d"] = "angular",
+        view: Literal["angular", "polar", "3d"] = "3d",
         order: int | None = None,
         log_y: bool = False,
         azimuth: int = 0,
@@ -898,7 +898,7 @@ class Result:
 
         Parameters
         ----------
-        view : {'angular', 'polar', '3d'}, optional
+        view : {'angular', 'polar', '3d'}, default='3d'
             Angular curves select a sampled meridian by default. Polar cuts
             use its opposite azimuth for the other half of the plane. The 3D surface uses p(theta, phi), with
             radius and color in sr^-1, retaining directional asymmetry.
