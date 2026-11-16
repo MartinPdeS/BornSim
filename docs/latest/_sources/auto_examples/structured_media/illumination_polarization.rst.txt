@@ -61,17 +61,16 @@ solution. Refine geometry, quadrature, and Born order for quantitative work.
 
     volume = medium.to_volume(grid=grid)
 
-    volume.plot_slice(title="Anisotropic particle: laboratory x-y slice")
-
-    plt.show()
-
-
+    volume_figure = volume.plot_3d(
+        field="refractive_index",
+    )
 
 
-.. image-sg:: /auto_examples/structured_media/images/sphx_glr_illumination_polarization_001.png
-   :alt: Anisotropic particle: laboratory x-y slice
-   :srcset: /auto_examples/structured_media/images/sphx_glr_illumination_polarization_001.png
-   :class: sphx-glr-single-img
+
+
+.. raw:: html
+
+   <iframe src="../../_static/gallery/illumination_polarization-1.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
 
 
 
@@ -196,9 +195,9 @@ For the oblique sources, the forward direction is theta=36.87 degrees.
 
 
 
-.. image-sg:: /auto_examples/structured_media/images/sphx_glr_illumination_polarization_002.png
+.. image-sg:: /auto_examples/structured_media/images/sphx_glr_illumination_polarization_001.png
    :alt: Same particle, third cumulative Born order
-   :srcset: /auto_examples/structured_media/images/sphx_glr_illumination_polarization_002.png
+   :srcset: /auto_examples/structured_media/images/sphx_glr_illumination_polarization_001.png
    :class: sphx-glr-single-img
 
 
@@ -235,7 +234,7 @@ analyzer before squaring to study polarization-resolved detection.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.554 seconds)
+   **Total running time of the script:** (0 minutes 1.372 seconds)
 
 
 .. _sphx_glr_download_auto_examples_structured_media_illumination_polarization.py:

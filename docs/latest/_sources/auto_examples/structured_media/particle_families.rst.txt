@@ -141,16 +141,15 @@ is tilted about y; no voxel-array rotation or interpolation is performed.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 81-87
+.. GENERATED FROM PYTHON SOURCE LINES 81-86
 
-Compare a central slice and scattering
---------------------------------------
-The cross-sections show the absolute refractive index on the sampled grid.
-The scattering curves use the x-z observation meridian and cumulative first
-Born order. Differences reflect both geometry and material contrast; this
+Compare scattering
+------------------
+The curves use the x-z observation meridian and cumulative first Born order.
+Differences reflect both geometry and material contrast; this
 comparison does not isolate shape alone or validate against an exact solver.
 
-.. GENERATED FROM PYTHON SOURCE LINES 87-127
+.. GENERATED FROM PYTHON SOURCE LINES 86-112
 
 .. code-block:: Python
 
@@ -163,23 +162,9 @@ comparison does not isolate shape alone or validate against an exact solver.
 
     angles = np.linspace(0, 180, 121) * ureg.degree
 
-    figure, axes = plt.subplots(1, 3, figsize=(13, 4), layout="constrained")
+    figure, axis = plt.subplots(layout="constrained")
 
-    half_extent = (np.asarray(grid.shape) * grid.spacing / 2).to("nanometer").magnitude
-
-    for panel, (label, volume) in enumerate((("Core–shell", core_shell_volume), ("Ellipsoid", ellipsoid_volume))):
-        image = axes[panel].imshow(
-            volume.refractive_index[:, grid.shape[1] // 2, :].T,
-            origin="lower",
-            extent=(-half_extent[0], half_extent[0], -half_extent[2], half_extent[2]),
-            vmin=1.33,
-            vmax=1.35,
-        )
-
-        axes[panel].set(xlabel="x (nm)", ylabel="z (nm)", title=label)
-
-        figure.colorbar(image, ax=axes[panel], label="Refractive index")
-
+    for label, volume in (("Core–shell", core_shell_volume), ("Ellipsoid", ellipsoid_volume)):
         result = solver.solve_cut(
             target=volume,
             angles=angles,
@@ -187,18 +172,18 @@ comparison does not isolate shape alone or validate against an exact solver.
 
         cross_section = result.differential_cross_section.to("nanometer**2 / steradian")
 
-        axes[2].plot(angles.to("degree").magnitude, cross_section.magnitude[-1], label=label)
+        axis.plot(angles.to("degree").magnitude, cross_section.magnitude[-1], label=label)
 
-    axes[2].set(xlabel="Scattering angle (degrees)", ylabel="dσ/dΩ (nm² sr⁻¹)", title="First Born order")
+    axis.set(xlabel="Scattering angle (degrees)", ylabel="dσ/dΩ (nm² sr⁻¹)", title="First Born order")
 
-    axes[2].legend(frameon=False)
+    axis.legend(frameon=False)
 
     plt.show()
 
 
 
 .. image-sg:: /auto_examples/structured_media/images/sphx_glr_particle_families_001.png
-   :alt: Core–shell, Ellipsoid, First Born order
+   :alt: First Born order
    :srcset: /auto_examples/structured_media/images/sphx_glr_particle_families_001.png
    :class: sphx-glr-single-img
 
@@ -209,7 +194,7 @@ comparison does not isolate shape alone or validate against an exact solver.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.534 seconds)
+   **Total running time of the script:** (0 minutes 0.303 seconds)
 
 
 .. _sphx_glr_download_auto_examples_structured_media_particle_families.py:

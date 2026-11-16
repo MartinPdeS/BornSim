@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bornsim.volume &#8212; BornSim 0.10.0 documentation</title>
+    <title>bornsim.volume &#8212; BornSim 0.11.1 documentation</title>
   
   
   
@@ -44,7 +44,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="../../_static/documentation_options.js?v=7e54ce6f"></script>
+    <script src="../../_static/documentation_options.js?v=b3db6a4d"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -53,7 +53,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/BornSim/documentation_page/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.10.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.11.1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
@@ -64,7 +64,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.10.0" />
+  <meta name="docsearch:version" content="0.11.1" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -134,8 +134,8 @@
     
     
     
-    <img src="../../_static/logo-dark.png" class="logo__image only-dark" alt="BornSim 0.10.0 documentation - Home"/>
-    <img src="../../_static/logo.png" class="logo__image only-light pst-js-only" alt="BornSim 0.10.0 documentation - Home"/>
+    <img src="../../_static/logo-dark.png" class="logo__image only-dark" alt="BornSim 0.11.1 documentation - Home"/>
+    <img src="../../_static/logo.png" class="logo__image only-light pst-js-only" alt="BornSim 0.11.1 documentation - Home"/>
   
   
 </a></div>
@@ -545,6 +545,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Self</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.grid</span><span class="w"> </span><span class="kn">import</span> <span class="n">Grid</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.medium</span><span class="w"> </span><span class="kn">import</span> <span class="n">Medium</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.plot_style</span><span class="w"> </span><span class="kn">import</span> <span class="n">DIVERGING_COLORS</span><span class="p">,</span> <span class="n">DIVERGING_CMAP</span><span class="p">,</span> <span class="n">GRID</span><span class="p">,</span> <span class="n">NAVY</span><span class="p">,</span> <span class="n">SEQUENTIAL_COLORS</span><span class="p">,</span> <span class="n">SEQUENTIAL_CMAP</span><span class="p">,</span> <span class="n">TEXT</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">NoUnit</span><span class="p">,</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">Scalar</span><span class="p">,</span> <span class="n">validate_annotation</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
@@ -834,8 +835,6 @@
             <span class="n">grid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">,</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="Volume.plot_slice">
-<a class="viewcode-back" href="../../api.html#bornsim.volume.Volume.plot_slice">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_slice</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -865,10 +864,8 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        figure : matplotlib.figure.Figure</span>
-<span class="sd">            Equal-aspect image with voxel-edge extents and a labelled colorbar.</span>
-<span class="sd">            Call pyplot.show() to display or figure.savefig() to export.</span>
-<span class="sd">            Colors use the full volume's range to compare different planes;</span>
-<span class="sd">            fluctuation colors are symmetric about zero.</span>
+<span class="sd">            Equal-aspect image of the selected voxel plane. Call pyplot.show()</span>
+<span class="sd">            to display or figure.savefig() to export.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -914,7 +911,7 @@
             <span class="n">extent</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">half_width</span><span class="p">,</span> <span class="n">half_width</span><span class="p">,</span> <span class="o">-</span><span class="n">half_height</span><span class="p">,</span> <span class="n">half_height</span><span class="p">),</span>
             <span class="n">interpolation</span><span class="o">=</span><span class="s2">"nearest"</span><span class="p">,</span>
             <span class="n">aspect</span><span class="o">=</span><span class="s2">"equal"</span><span class="p">,</span>
-            <span class="n">cmap</span><span class="o">=</span><span class="s2">"RdBu_r"</span> <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="s2">"delta_refractive_index"</span> <span class="k">else</span> <span class="s2">"viridis"</span><span class="p">,</span>
+            <span class="n">cmap</span><span class="o">=</span><span class="n">DIVERGING_CMAP</span> <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="s2">"delta_refractive_index"</span> <span class="k">else</span> <span class="n">SEQUENTIAL_CMAP</span><span class="p">,</span>
             <span class="n">vmin</span><span class="o">=</span><span class="n">color_low</span><span class="p">,</span>
             <span class="n">vmax</span><span class="o">=</span><span class="n">color_high</span><span class="p">,</span>
         <span class="p">)</span>
@@ -927,10 +924,21 @@
             <span class="n">title</span><span class="o">=</span><span class="n">title</span> <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="n">normal</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">position</span><span class="si">:</span><span class="s2">+g</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">figure</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s2">"white"</span><span class="p">)</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">set_axisbelow</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">colors</span><span class="o">=</span><span class="n">TEXT</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="n">NAVY</span><span class="p">)</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">set_fontweight</span><span class="p">(</span><span class="s2">"semibold"</span><span class="p">)</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">GRID</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">figure</span></div>
+        <span class="k">for</span> <span class="n">spine</span> <span class="ow">in</span> <span class="n">axis</span><span class="o">.</span><span class="n">spines</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">spine</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="s2">"#cbd5df"</span><span class="p">)</span>
 
+        <span class="n">colorbar</span> <span class="o">=</span> <span class="n">figure</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+        <span class="n">colorbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="n">NAVY</span><span class="p">)</span>
+        <span class="n">colorbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">colors</span><span class="o">=</span><span class="n">TEXT</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">figure</span>
 
 <div class="viewcode-block" id="Volume.plot_3d">
 <a class="viewcode-back" href="../../api.html#bornsim.volume.Volume.plot_3d">[docs]</a>
@@ -988,8 +996,8 @@
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
-<span class="sd">        Use plot_slice() to inspect sampled cells exactly. Plotly contours interpolate between voxel centres and are visualization aids,</span>
-<span class="sd">        not exact curved interfaces or a replacement for grid refinement.</span>
+<span class="sd">        Plotly contours interpolate between voxel centres and are visualization</span>
+<span class="sd">        aids, not exact curved interfaces or a replacement for grid refinement.</span>
 <span class="sd">        Aspect ratio follows physical dimensions. All voxels are retained, with</span>
 <span class="sd">        at most 32**3 samples under Volume's grid limit; browser performance</span>
 <span class="sd">        also depends on surface count and graphics support. This plots the</span>
@@ -997,7 +1005,7 @@
 <span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">backend</span> <span class="o">!=</span> <span class="s2">"plotly"</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"3D plots support only backend='plotly'; use plot_slice() for Matplotlib."</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"BornSim supports Plotly 3D rendering only."</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">mode</span> <span class="o">=</span> <span class="s2">"volume"</span>
@@ -1123,7 +1131,14 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"PlotlyFigure"</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Render volume or isosurface traces using Plotly."""</span>
 
-        <span class="n">colorbar</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"title"</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="p">({</span><span class="s2">"tickvals"</span><span class="p">:</span> <span class="p">[</span><span class="n">low</span><span class="p">]}</span> <span class="k">if</span> <span class="n">uniform</span> <span class="k">else</span> <span class="p">{})}</span>
+        <span class="n">colorbar</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"title"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"text"</span><span class="p">:</span> <span class="n">label</span><span class="p">},</span>
+            <span class="s2">"thickness"</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+            <span class="s2">"len"</span><span class="p">:</span> <span class="mf">0.68</span><span class="p">,</span>
+            <span class="s2">"outlinewidth"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">"tickfont"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"color"</span><span class="p">:</span> <span class="n">TEXT</span><span class="p">,</span> <span class="s2">"size"</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span>
+            <span class="o">**</span><span class="p">({</span><span class="s2">"tickvals"</span><span class="p">:</span> <span class="p">[</span><span class="n">low</span><span class="p">]}</span> <span class="k">if</span> <span class="n">uniform</span> <span class="k">else</span> <span class="p">{}),</span>
+        <span class="p">}</span>
 
         <span class="n">hover</span> <span class="o">=</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">"x=%</span><span class="se">{{</span><span class="s2">x:.4g</span><span class="se">}}</span><span class="s2"> </span><span class="si">{</span><span class="n">length_unit</span><span class="si">}</span><span class="s2">&lt;br&gt;y=%</span><span class="se">{{</span><span class="s2">y:.4g</span><span class="se">}}</span><span class="s2"> </span><span class="si">{</span><span class="n">length_unit</span><span class="si">}</span><span class="s2">"</span>
@@ -1146,7 +1161,7 @@
                 <span class="n">cmax</span><span class="o">=</span><span class="n">color_high</span><span class="p">,</span>
                 <span class="n">surface_count</span><span class="o">=</span><span class="n">surface_count</span><span class="p">,</span>
                 <span class="n">opacity</span><span class="o">=</span><span class="n">opacity</span><span class="p">,</span>
-                <span class="n">colorscale</span><span class="o">=</span><span class="s2">"RdBu_r"</span> <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="s2">"delta_refractive_index"</span> <span class="k">else</span> <span class="s2">"Inferno"</span><span class="p">,</span>
+                <span class="n">colorscale</span><span class="o">=</span><span class="n">DIVERGING_COLORS</span> <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="s2">"delta_refractive_index"</span> <span class="k">else</span> <span class="n">SEQUENTIAL_COLORS</span><span class="p">,</span>
                 <span class="n">colorbar</span><span class="o">=</span><span class="n">colorbar</span><span class="p">,</span>
                 <span class="n">caps</span><span class="o">=</span><span class="p">{</span><span class="s2">"x_show"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"y_show"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"z_show"</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
                 <span class="n">hovertemplate</span><span class="o">=</span><span class="n">hover</span><span class="p">,</span>
@@ -1161,14 +1176,17 @@
         <span class="n">sliders</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">{</span>
                 <span class="s2">"active"</span><span class="p">:</span> <span class="n">density_values</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">surface_count</span><span class="p">),</span>
-                <span class="s2">"currentvalue"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"font"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"size"</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span> <span class="s2">"prefix"</span><span class="p">:</span> <span class="s2">"Iso-surface density: "</span><span class="p">},</span>
-                <span class="s2">"font"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"size"</span><span class="p">:</span> <span class="mi">9</span><span class="p">},</span>
+                <span class="s2">"currentvalue"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"font"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"size"</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">"color"</span><span class="p">:</span> <span class="n">NAVY</span><span class="p">},</span> <span class="s2">"prefix"</span><span class="p">:</span> <span class="s2">"Iso-surface density: "</span><span class="p">},</span>
+                <span class="s2">"font"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"size"</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span> <span class="s2">"color"</span><span class="p">:</span> <span class="n">TEXT</span><span class="p">},</span>
                 <span class="s2">"len"</span><span class="p">:</span> <span class="mf">0.38</span><span class="p">,</span>
                 <span class="s2">"minorticklen"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-                <span class="s2">"pad"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"t"</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
+                <span class="s2">"pad"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"t"</span><span class="p">:</span> <span class="mi">14</span><span class="p">},</span>
                 <span class="s2">"ticklen"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
                 <span class="s2">"x"</span><span class="p">:</span> <span class="mf">0.58</span><span class="p">,</span>
                 <span class="s2">"y"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s2">"bgcolor"</span><span class="p">:</span> <span class="s2">"white"</span><span class="p">,</span>
+                <span class="s2">"bordercolor"</span><span class="p">:</span> <span class="s2">"#dce5ed"</span><span class="p">,</span>
+                <span class="s2">"borderwidth"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
                 <span class="s2">"steps"</span><span class="p">:</span> <span class="p">[</span>
                     <span class="p">{</span><span class="s2">"label"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="s2">"method"</span><span class="p">:</span> <span class="s2">"restyle"</span><span class="p">,</span> <span class="s2">"args"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"surface.count"</span><span class="p">:</span> <span class="n">value</span><span class="p">},</span> <span class="p">[</span><span class="mi">0</span><span class="p">]]}</span>
                     <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">density_values</span>
@@ -1182,14 +1200,17 @@
             <span class="n">sliders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="p">{</span>
                     <span class="s2">"active"</span><span class="p">:</span> <span class="n">opacity_values</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">opacity</span><span class="p">),</span>
-                    <span class="s2">"currentvalue"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"font"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"size"</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span> <span class="s2">"prefix"</span><span class="p">:</span> <span class="s2">"Opacity: "</span><span class="p">},</span>
-                    <span class="s2">"font"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"size"</span><span class="p">:</span> <span class="mi">9</span><span class="p">},</span>
+                    <span class="s2">"currentvalue"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"font"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"size"</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">"color"</span><span class="p">:</span> <span class="n">NAVY</span><span class="p">},</span> <span class="s2">"prefix"</span><span class="p">:</span> <span class="s2">"Opacity: "</span><span class="p">},</span>
+                    <span class="s2">"font"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"size"</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span> <span class="s2">"color"</span><span class="p">:</span> <span class="n">TEXT</span><span class="p">},</span>
                     <span class="s2">"len"</span><span class="p">:</span> <span class="mf">0.38</span><span class="p">,</span>
                     <span class="s2">"minorticklen"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-                    <span class="s2">"pad"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"t"</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
+                    <span class="s2">"pad"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"t"</span><span class="p">:</span> <span class="mi">14</span><span class="p">},</span>
                     <span class="s2">"ticklen"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
                     <span class="s2">"x"</span><span class="p">:</span> <span class="mf">0.08</span><span class="p">,</span>
                     <span class="s2">"y"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s2">"bgcolor"</span><span class="p">:</span> <span class="s2">"white"</span><span class="p">,</span>
+                    <span class="s2">"bordercolor"</span><span class="p">:</span> <span class="s2">"#dce5ed"</span><span class="p">,</span>
+                    <span class="s2">"borderwidth"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
                     <span class="s2">"steps"</span><span class="p">:</span> <span class="p">[</span>
                         <span class="p">{</span>
                             <span class="s2">"label"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span>
@@ -1205,14 +1226,47 @@
 
         <span class="n">figure</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
             <span class="n">template</span><span class="o">=</span><span class="s2">"plotly_white"</span><span class="p">,</span>
-            <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">"</span> <span class="o">+</span> <span class="p">(</span><span class="s2">" (uniform field)"</span> <span class="k">if</span> <span class="n">uniform</span> <span class="k">else</span> <span class="s2">""</span><span class="p">),</span>
-            <span class="n">scene</span><span class="o">=</span><span class="p">{</span>
-                <span class="s2">"xaxis_title"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"x (</span><span class="si">{</span><span class="n">length_unit</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span>
-                <span class="s2">"yaxis_title"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"y (</span><span class="si">{</span><span class="n">length_unit</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span>
-                <span class="s2">"zaxis_title"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"z (</span><span class="si">{</span><span class="n">length_unit</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span>
-                <span class="s2">"aspectmode"</span><span class="p">:</span> <span class="s2">"data"</span><span class="p">,</span>
+            <span class="n">paper_bgcolor</span><span class="o">=</span><span class="s2">"white"</span><span class="p">,</span>
+            <span class="n">plot_bgcolor</span><span class="o">=</span><span class="s2">"white"</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">"text"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">"</span> <span class="o">+</span> <span class="p">(</span><span class="s2">" · uniform field"</span> <span class="k">if</span> <span class="n">uniform</span> <span class="k">else</span> <span class="s2">""</span><span class="p">),</span>
+                <span class="s2">"font"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"color"</span><span class="p">:</span> <span class="n">NAVY</span><span class="p">,</span> <span class="s2">"size"</span><span class="p">:</span> <span class="mi">18</span><span class="p">},</span>
+                <span class="s2">"x"</span><span class="p">:</span> <span class="mf">0.03</span><span class="p">,</span>
+                <span class="s2">"xanchor"</span><span class="p">:</span> <span class="s2">"left"</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="n">margin</span><span class="o">=</span><span class="p">{</span><span class="s2">"l"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">:</span> <span class="mi">45</span><span class="p">,</span> <span class="s2">"t"</span><span class="p">:</span> <span class="mi">45</span><span class="p">},</span>
+            <span class="n">scene</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">"xaxis"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"title"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"text"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"x (</span><span class="si">{</span><span class="n">length_unit</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span> <span class="s2">"font"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"color"</span><span class="p">:</span> <span class="n">NAVY</span><span class="p">,</span> <span class="s2">"size"</span><span class="p">:</span> <span class="mi">12</span><span class="p">}},</span>
+                    <span class="s2">"showbackground"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                    <span class="s2">"showgrid"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="s2">"gridcolor"</span><span class="p">:</span> <span class="s2">"#e3eaf0"</span><span class="p">,</span>
+                    <span class="s2">"zerolinecolor"</span><span class="p">:</span> <span class="s2">"#cbd5df"</span><span class="p">,</span>
+                    <span class="s2">"tickfont"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"color"</span><span class="p">:</span> <span class="n">TEXT</span><span class="p">,</span> <span class="s2">"size"</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span>
+                <span class="p">},</span>
+                <span class="s2">"yaxis"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"title"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"text"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"y (</span><span class="si">{</span><span class="n">length_unit</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span> <span class="s2">"font"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"color"</span><span class="p">:</span> <span class="n">NAVY</span><span class="p">,</span> <span class="s2">"size"</span><span class="p">:</span> <span class="mi">12</span><span class="p">}},</span>
+                    <span class="s2">"showbackground"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                    <span class="s2">"showgrid"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="s2">"gridcolor"</span><span class="p">:</span> <span class="s2">"#e3eaf0"</span><span class="p">,</span>
+                    <span class="s2">"zerolinecolor"</span><span class="p">:</span> <span class="s2">"#cbd5df"</span><span class="p">,</span>
+                    <span class="s2">"tickfont"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"color"</span><span class="p">:</span> <span class="n">TEXT</span><span class="p">,</span> <span class="s2">"size"</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span>
+                <span class="p">},</span>
+                <span class="s2">"zaxis"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"title"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"text"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"z (</span><span class="si">{</span><span class="n">length_unit</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span> <span class="s2">"font"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"color"</span><span class="p">:</span> <span class="n">NAVY</span><span class="p">,</span> <span class="s2">"size"</span><span class="p">:</span> <span class="mi">12</span><span class="p">}},</span>
+                    <span class="s2">"showbackground"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                    <span class="s2">"showgrid"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="s2">"gridcolor"</span><span class="p">:</span> <span class="s2">"#e3eaf0"</span><span class="p">,</span>
+                    <span class="s2">"zerolinecolor"</span><span class="p">:</span> <span class="s2">"#cbd5df"</span><span class="p">,</span>
+                    <span class="s2">"tickfont"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"color"</span><span class="p">:</span> <span class="n">TEXT</span><span class="p">,</span> <span class="s2">"size"</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span>
+                <span class="p">},</span>
+                <span class="s2">"bgcolor"</span><span class="p">:</span> <span class="s2">"white"</span><span class="p">,</span>
+                <span class="s2">"aspectmode"</span><span class="p">:</span> <span class="s2">"data"</span><span class="p">,</span>
+                <span class="s2">"camera"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"eye"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="mf">1.3</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="mf">1.3</span><span class="p">,</span> <span class="s2">"z"</span><span class="p">:</span> <span class="mf">1.05</span><span class="p">},</span>
+                    <span class="s2">"projection"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"orthographic"</span><span class="p">},</span>
+                <span class="p">},</span>
+            <span class="p">},</span>
+            <span class="n">margin</span><span class="o">=</span><span class="p">{</span><span class="s2">"l"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">:</span> <span class="mi">58</span><span class="p">,</span> <span class="s2">"t"</span><span class="p">:</span> <span class="mi">70</span><span class="p">},</span>
             <span class="n">sliders</span><span class="o">=</span><span class="n">sliders</span><span class="p">,</span>
             <span class="n">uirevision</span><span class="o">=</span><span class="s2">"bornsim-volume"</span><span class="p">,</span>
         <span class="p">)</span>

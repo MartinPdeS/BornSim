@@ -5,8 +5,9 @@ Example gallery
 
 Choose a topic below. Each runnable script includes its calculation settings,
 explanations, and figures alongside the code that produces them. Medium
-volumes and 3D phase surfaces use Plotly exclusively. Angular curves,
-polar cuts, slices, and diagnostics use Matplotlib.
+volumes and 3D phase surfaces use Plotly exclusively. Matplotlib is used for
+angular curves and numerical diagnostics; spatial samples are never rendered
+as 2D images.
 Inputs use SI-compatible quantities. Analytical examples describe
 infinite-medium first-order scattering; numerical Born-series examples describe
 finite samples.
@@ -95,7 +96,7 @@ Seeded random fields, numerical ensembles, phase functions, and wavelength depen
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Explore the full three-dimensional sample for each spatial covariance model. Drag to rotate, scroll to zoom, and hover to inspect the refractive index. Regions with lower refractive index are transparent; regions with higher refractive index are more opaque. Opacity is a display setting, not absorption. Histograms and central slices follow as secondary checks of the same seeded fields.">
+    <div class="sphx-glr-thumbcontainer" tooltip="Explore the full three-dimensional sample for each spatial covariance model. Drag to rotate, scroll to zoom, and hover to inspect the refractive index. Regions with lower refractive index are transparent; regions with higher refractive index are more opaque. Opacity is a display setting, not absorption. Histograms follow as statistical checks of the same seeded fields; spatial structure is shown only in 3D.">
 
 .. only:: html
 

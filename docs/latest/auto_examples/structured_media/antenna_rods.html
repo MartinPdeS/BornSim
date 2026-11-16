@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Finite dielectric rods for antenna-like scatterers &#8212; BornSim 0.10.0 documentation</title>
+    <title>Finite dielectric rods for antenna-like scatterers &#8212; BornSim 0.11.1 documentation</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="../../_static/documentation_options.js?v=7e54ce6f"></script>
+    <script src="../../_static/documentation_options.js?v=b3db6a4d"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -54,7 +54,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/BornSim/documentation_page/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.10.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.11.1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
@@ -67,7 +67,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.10.0" />
+  <meta name="docsearch:version" content="0.11.1" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -137,8 +137,8 @@
     
     
     
-    <img src="../../_static/logo-dark.png" class="logo__image only-dark" alt="BornSim 0.10.0 documentation - Home"/>
-    <img src="../../_static/logo.png" class="logo__image only-light pst-js-only" alt="BornSim 0.10.0 documentation - Home"/>
+    <img src="../../_static/logo-dark.png" class="logo__image only-dark" alt="BornSim 0.11.1 documentation - Home"/>
+    <img src="../../_static/logo.png" class="logo__image only-light pst-js-only" alt="BornSim 0.11.1 documentation - Home"/>
   
   
 </a></div>
@@ -623,30 +623,10 @@ changes the geometry coordinates before voxel-centre sampling.</p>
 </span><span class="k">if</span> <span class="s2">&quot;</span><span class="s2">--no-browser</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">:</span><span class="w">
 </span>    <span class="n">figure</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">renderer</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">browser</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<iframe src="../../_static/gallery/antenna_rods-1.html" title="Tilted finite dielectric rod" width="100%" height="560" loading="lazy" style="border:0;"></iframe></section>
-<section id="inspect-the-central-slice">
-<h2>Inspect the central slice<a class="headerlink" href="#inspect-the-central-slice" title="Link to this heading">#</a></h2>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">slice_figure</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">constrained</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
-</span><span class="w">
-</span><span class="n">image</span> <span class="o">=</span> <span class="n">axis</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="w">
-</span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-property reference internal" href="../../api.html#bornsim.volume.Volume.refractive_index" title="bornsim.Volume.refractive_index"><span class="n">volume</span><span class="o">.</span><span class="n">refractive_index</span></a><span class="p">[</span><span class="p">:</span><span class="p">,</span> <span class="p">:</span><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span><span class="o">/</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="w">
-</span>    <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">lower</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>    <span class="n">extent</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="o">-</span><span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span><span class="p">,</span><span class="w">
-</span>    <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">viridis</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>    <span class="n">vmin</span><span class="o">=</span><span class="mf">1.33</span><span class="p">,</span><span class="w">
-</span>    <span class="n">vmax</span><span class="o">=</span><span class="mf">1.50</span><span class="p">,</span><span class="w">
-</span><span class="p">)</span><span class="w">
-</span><span class="w">
-</span><span class="n">axis</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">x (nm)</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">y (nm)</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Central rod cross-section</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
-</span><span class="w">
-</span><span class="n">slice_figure</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Refractive index</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
-</span><span class="w">
-</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
-</span></pre></div></div>
-<img src="../../_images/sphx_glr_antenna_rods_001.png" srcset="../../_images/sphx_glr_antenna_rods_001.png" alt="Central rod cross-section" class = "sphx-glr-single-img"/></section>
-<section id="directional-scattering">
-<h2>Directional scattering<a class="headerlink" href="#directional-scattering" title="Link to this heading">#</a></h2>
-<p>This finite rod is solved with the first Born order. The result describes
+<iframe src="../../_static/gallery/antenna_rods-1.html" title="Tilted finite dielectric rod" width="100%" height="560" loading="lazy" style="border:0;"></iframe><p>%%
+Directional scattering
+———————-
+This finite rod is solved with the first Born order. The result describes
 dielectric scattering from the voxelized rod, not a conducting antenna.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">source</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class reference internal" href="../../api.html#bornsim.source.Source" title="bornsim.Source"><span class="n">Source</span></a><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mi">633</span> <span class="o">*</span> <span class="n">ureg</span><span class="o">.</span><span class="n">nanometer</span><span class="p">)</span><span class="w">
 </span><span class="w">
@@ -676,7 +656,7 @@ dielectric scattering from the voxelized rod, not a conducting antenna.</p>
 </span><span class="w">
 </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<img src="../../_images/sphx_glr_antenna_rods_002.png" srcset="../../_images/sphx_glr_antenna_rods_002.png" alt="Finite dielectric rod · first Born order" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.355 seconds)</p>
+<img src="../../_images/sphx_glr_antenna_rods_001.png" srcset="../../_images/sphx_glr_antenna_rods_001.png" alt="Finite dielectric rod · first Born order" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.217 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-structured-media-antenna-rods-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/2fbb81d51fecd305ce685d97b9640913/antenna_rods.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">antenna_rods.ipynb</span></code></a></p>
@@ -740,8 +720,6 @@ dielectric scattering from the voxelized rod, not a conducting antenna.</p>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inspect-the-finite-rod">Inspect the finite rod</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inspect-the-central-slice">Inspect the central slice</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#directional-scattering">Directional scattering</a></li>
 </ul>
   </nav></div>
 
@@ -749,7 +727,7 @@ dielectric scattering from the voxelized rod, not a conducting antenna.</p>
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.10.0/docs/source/auto_examples/structured_media/antenna_rods.rst">
+    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.11.1/docs/source/auto_examples/structured_media/antenna_rods.rst">
       <i class="fa-solid fa-pencil"></i>
       
       

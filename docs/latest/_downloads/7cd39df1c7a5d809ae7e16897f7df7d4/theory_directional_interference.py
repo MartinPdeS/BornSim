@@ -96,22 +96,11 @@ np.testing.assert_allclose(
 
 
 # %%
-# Compare spatial slices and directional scattering
+# Compare directional scattering
 # -------------------------------------------------
-figure, axes = plt.subplots(1, 3, figsize=(15, 4.5), layout="constrained")
+figure, axes = plt.subplots(1, 2, figsize=(12, 4.5), layout="constrained")
 
-image = axes[0].imshow(
-    (volume.background_refractive_index + volume.delta_refractive_index[:, :, grid.shape[2] // 2]).T,
-    origin="lower",
-    extent=(-240, 240, -240, 240),
-    cmap="viridis",
-)
-
-axes[0].set(xlabel="x (nm)", ylabel="y (nm)", title="Two spheres: spatial refractive index slice")
-
-figure.colorbar(image, ax=axes[0], label="Refractive index n", shrink=0.8)
-
-heatmap = axes[1].pcolormesh(
+heatmap = axes[0].pcolormesh(
     pair_result.azimuths.to("degree").magnitude,
     pair_result.angles.to("degree").magnitude,
     pair_result.phase_function.magnitude[0],
@@ -119,11 +108,11 @@ heatmap = axes[1].pcolormesh(
     cmap="viridis",
 )
 
-axes[1].set(
+axes[0].set(
     xlabel="Azimuth φ (degrees)", ylabel="Polar angle θ (degrees)", title="Pair: full directional phase density"
 )
 
-figure.colorbar(heatmap, ax=axes[1], label="p(θ, φ) (sr⁻¹)", shrink=0.8)
+figure.colorbar(heatmap, ax=axes[0], label="p(θ, φ) (sr⁻¹)", shrink=0.8)
 
 for result, azimuth, label, style in (
     (centred_result, 0, "Single sphere", "-"),
@@ -133,18 +122,18 @@ for result, azimuth, label, style in (
 ):
     meridian = result.meridian(azimuth=azimuth * ureg.degree)
 
-    axes[2].plot(
+    axes[1].plot(
         meridian.angles.to("degree").magnitude,
         meridian.phase_function.magnitude[0],
         linestyle=style,
         label=label,
     )
 
-axes[2].set(xlabel="Polar angle θ (degrees)", ylabel="p(θ, φ) (sr⁻¹)", title="Selected meridians")
+axes[1].set(xlabel="Polar angle θ (degrees)", ylabel="p(θ, φ) (sr⁻¹)", title="Selected meridians")
 
-axes[2].legend(frameon=False)
+axes[1].legend(frameon=False)
 
-axes[2].grid(alpha=0.25)
+axes[1].grid(alpha=0.25)
 
 plt.show()
 
@@ -204,7 +193,7 @@ if "--no-browser" not in sys.argv:
 # Three-dimensional directional phase density
 # -------------------------------------------
 # Inspect the pair's direction-space surface separately from the spatial
-# slice and meridian comparisons above, without azimuth averaging.
+# angular comparisons above, without azimuth averaging.
 phase_figure = pair_result.plot_phase_function(
     view="3d",
 )

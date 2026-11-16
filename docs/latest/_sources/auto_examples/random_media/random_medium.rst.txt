@@ -25,8 +25,8 @@ Explore the full three-dimensional sample for each spatial covariance model.
 Drag to rotate, scroll to zoom, and hover to inspect the refractive index.
 Regions with lower refractive index are transparent; regions with higher
 refractive index are more opaque.
-Opacity is a display setting, not absorption. Histograms and central slices
-follow as secondary checks of the same seeded fields.
+Opacity is a display setting, not absorption. Histograms follow as statistical
+checks of the same seeded fields; spatial structure is shown only in 3D.
 
 Both models have Gaussian one-point probability distributions. Correlated
 voxels in one finite sample are not independent observations, so a voxel
@@ -34,7 +34,7 @@ histogram need not match the ensemble Gaussian density closely. BornSim
 does not recenter or rescale each realization to impose its mean or variance.
 Finite voxel resolution and the cropped synthesis box also affect statistics.
 
-.. GENERATED FROM PYTHON SOURCE LINES 18-76
+.. GENERATED FROM PYTHON SOURCE LINES 18-72
 
 .. code-block:: Python
 
@@ -59,10 +59,6 @@ Finite voxel resolution and the cropped synthesis box also affect statistics.
     )
 
     refractive_index_std = 0.01
-
-    half_sample_width_nm = grid_shape[0] * voxel_spacing.to("nanometer").magnitude / 2
-
-    slice_extent_nm = (-half_sample_width_nm, half_sample_width_nm, -half_sample_width_nm, half_sample_width_nm)
 
     # Evaluate the ensemble probability density at these refractive-index fluctuations.
     refractive_index_fluctuations = np.linspace(-4 * refractive_index_std, 4 * refractive_index_std, 301)
@@ -110,14 +106,14 @@ Finite voxel resolution and the cropped synthesis box also affect statistics.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 77-81
+.. GENERATED FROM PYTHON SOURCE LINES 73-77
 
 Gaussian voxel volume
 ----------------------
 View the sampled Gaussian field with Plotly. The contour colors represent
 absolute refractive index; opacity does not represent material absorption.
 
-.. GENERATED FROM PYTHON SOURCE LINES 81-90
+.. GENERATED FROM PYTHON SOURCE LINES 77-86
 
 .. code-block:: Python
 
@@ -141,14 +137,14 @@ absolute refractive index; opacity does not represent material absorption.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 91-95
+.. GENERATED FROM PYTHON SOURCE LINES 87-91
 
 Exponential voxel volume
 -------------------------
 Compare the exponential sample in its own Plotly view with the same
 rendering settings. Correlation length conventions differ between models.
 
-.. GENERATED FROM PYTHON SOURCE LINES 95-104
+.. GENERATED FROM PYTHON SOURCE LINES 91-100
 
 .. code-block:: Python
 
@@ -172,40 +168,21 @@ rendering settings. Correlation length conventions differ between models.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 105-109
+.. GENERATED FROM PYTHON SOURCE LINES 101-103
 
-Secondary checks: central slices and one-point distributions
-------------------------------------------------------------
-Slices show one sampled plane, while histograms describe the finite field's
-one-point distribution. Neither replaces the complete spatial volume above.
+Check one-point distributions
+-----------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 109-153
+.. GENERATED FROM PYTHON SOURCE LINES 103-128
 
 .. code-block:: Python
 
-    slice_figure, slice_and_histogram_axes = plt.subplots(2, 2, figsize=(10, 8), layout="constrained")
+    histogram_figure, histogram_axes = plt.subplots(1, 2, figsize=(10, 4), layout="constrained")
 
-    for covariance_row, covariance_model in enumerate(("gaussian", "exponential")):
+    for covariance_column, covariance_model in enumerate(("gaussian", "exponential")):
         sampled_volume = volumes_by_covariance[covariance_model]
 
-        slice_axis, histogram_axis = slice_and_histogram_axes[covariance_row]
-
-        slice_image = slice_axis.imshow(
-            sampled_volume.delta_refractive_index[:, :, grid_shape[2] // 2].T,
-            origin="lower",
-            extent=slice_extent_nm,
-            cmap="RdBu_r",
-            vmin=-3 * refractive_index_std,
-            vmax=3 * refractive_index_std,
-        )
-
-        slice_z_nm = sampled_volume.positions[0, 0, grid_shape[2] // 2, 2].to("nanometer").magnitude
-
-        slice_axis.set(
-            xlabel="x (nm)", ylabel="y (nm)", title=f"{covariance_model.capitalize()} covariance; z = {slice_z_nm:g} nm"
-        )
-
-        slice_figure.colorbar(slice_image, ax=slice_axis, label="Refractive-index fluctuation δn", extend="both")
+        histogram_axis = histogram_axes[covariance_column]
 
         histogram_axis.hist(
             sampled_volume.delta_refractive_index.ravel(), bins=30, density=True, alpha=0.6, label="One finite volume"
@@ -224,14 +201,12 @@ one-point distribution. Neither replaces the complete spatial volume above.
 
         histogram_axis.legend(frameon=False, loc="upper right", fontsize=9)
 
-    slice_figure.suptitle("Seed 42; shared color scale; ensemble σn = 0.01")
-
     plt.show()
 
 
 
 .. image-sg:: /auto_examples/random_media/images/sphx_glr_random_medium_001.png
-   :alt: Seed 42; shared color scale; ensemble σn = 0.01, Gaussian covariance; z = 12.5 nm, One-point distribution, Exponential covariance; z = 12.5 nm, One-point distribution
+   :alt: One-point distribution, One-point distribution
    :srcset: /auto_examples/random_media/images/sphx_glr_random_medium_001.png
    :class: sphx-glr-single-img
 
@@ -242,7 +217,7 @@ one-point distribution. Neither replaces the complete spatial volume above.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.510 seconds)
+   **Total running time of the script:** (0 minutes 0.272 seconds)
 
 
 .. _sphx_glr_download_auto_examples_random_media_random_medium.py:

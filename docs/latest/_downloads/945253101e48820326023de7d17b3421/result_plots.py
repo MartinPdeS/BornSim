@@ -66,7 +66,7 @@ plt.show()
 # -------------------------
 # Dividing by the integrated coefficient gives a density per steradian.
 # The normalization is over solid angle, including the ``sin(theta)`` measure.
-result.plot_phase_function(log_y=True)
+result.plot_phase_function(view="angular", log_y=True)
 
 plt.show()
 

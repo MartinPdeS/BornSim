@@ -55,17 +55,16 @@ An angular cut alone cannot provide this normalization.
 
     volume = medium.to_volume(grid=grid)
 
-    volume.plot_slice(title="Input sphere: central refractive index slice")
-
-    plt.show()
-
-
+    volume_figure = volume.plot_3d(
+        field="refractive_index",
+    )
 
 
-.. image-sg:: /auto_examples/results/images/sphx_glr_phase_normalization_001.png
-   :alt: Input sphere: central refractive index slice
-   :srcset: /auto_examples/results/images/sphx_glr_phase_normalization_001.png
-   :class: sphx-glr-single-img
+
+
+.. raw:: html
+
+   <iframe src="../../_static/gallery/phase_normalization-1.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
 
 
 
@@ -112,9 +111,9 @@ An angular cut alone cannot provide this normalization.
 
 
 
-.. image-sg:: /auto_examples/results/images/sphx_glr_phase_normalization_002.png
+.. image-sg:: /auto_examples/results/images/sphx_glr_phase_normalization_001.png
    :alt: phase normalization
-   :srcset: /auto_examples/results/images/sphx_glr_phase_normalization_002.png
+   :srcset: /auto_examples/results/images/sphx_glr_phase_normalization_001.png
    :class: sphx-glr-single-img
 
 
@@ -124,7 +123,7 @@ An angular cut alone cannot provide this normalization.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.638 seconds)
+   **Total running time of the script:** (0 minutes 0.494 seconds)
 
 
 .. _sphx_glr_download_auto_examples_results_phase_normalization.py:

@@ -174,28 +174,16 @@ Color represents refractive index; contour geometry interpolates voxel samples.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 114-117
+.. GENERATED FROM PYTHON SOURCE LINES 114-116
 
-Scattering curves and a diagnostic cross-section
---------------------------------------------------
-The slice checks exact voxel values after exploring the full volumes above.
+Scattering curves
+------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 117-163
+.. GENERATED FROM PYTHON SOURCE LINES 116-151
 
 .. code-block:: Python
 
-    figure, axes = plt.subplots(1, 2, figsize=(10, 4), layout="constrained")
-
-    image = axes[0].imshow(
-        combined.refractive_index[:, grid.shape[1] // 2, :].T,
-        origin="lower",
-        extent=(-200, 200, -200, 200),
-        cmap="viridis",
-    )
-
-    axes[0].set(xlabel="x (nm)", ylabel="z (nm)", title="Layers, sphere and Matérn fluctuations")
-
-    figure.colorbar(image, ax=axes[0], label="Refractive index")
+    figure, axis = plt.subplots(layout="constrained")
 
     source_configuration_1 = Source(wavelength=633 * ureg.nanometer)
 
@@ -219,22 +207,22 @@ The slice checks exact voxel values after exploring the full volumes above.
     cross_section = result.differential_cross_section.to("nanometer**2 / steradian")
 
     for order, curve in enumerate(cross_section.magnitude, start=1):
-        axes[1].plot(
+        axis.plot(
             angles.to("degree").magnitude,
             curve,
             label=f"Through order {order}",
         )
 
-    axes[1].set(xlabel="Scattering angle (degrees)", ylabel="dσ/dΩ (nm² sr⁻¹)")
+    axis.set(xlabel="Scattering angle (degrees)", ylabel="dσ/dΩ (nm² sr⁻¹)")
 
-    axes[1].legend(frameon=False)
+    axis.legend(frameon=False)
 
     plt.show()
 
 
 
 .. image-sg:: /auto_examples/structured_media/images/sphx_glr_structured_media_001.png
-   :alt: Layers, sphere and Matérn fluctuations
+   :alt: structured media
    :srcset: /auto_examples/structured_media/images/sphx_glr_structured_media_001.png
    :class: sphx-glr-single-img
 
@@ -245,7 +233,7 @@ The slice checks exact voxel values after exploring the full volumes above.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.422 seconds)
+   **Total running time of the script:** (0 minutes 0.283 seconds)
 
 
 .. _sphx_glr_download_auto_examples_structured_media_structured_media.py:

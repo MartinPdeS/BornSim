@@ -118,17 +118,16 @@ higher-order Green-tensor discretization or random-field synthesis.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 87-94
+.. GENERATED FROM PYTHON SOURCE LINES 87-93
 
 Inspect the medium in 3D
 ------------------------
 Inspect the actual finite input sample with physical spatial axes.
 Plotly shows interactive contours of the sampled medium.
 Color represents refractive index; contour geometry interpolates voxel samples.
-This is the finest grid. The refractive index is constant throughout the sample;
-orthogonal slices show the uniform cube and its physical extent.
+This is the finest grid. The refractive index is constant throughout the sample.
 
-.. GENERATED FROM PYTHON SOURCE LINES 94-100
+.. GENERATED FROM PYTHON SOURCE LINES 93-99
 
 .. code-block:: Python
 
@@ -143,7 +142,7 @@ orthogonal slices show the uniform cube and its physical extent.
 
 .. raw:: html
 
-   <iframe src="../../_static/gallery/grid_refinement-1.html" title="Refractive index n: volume (uniform field)" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
+   <iframe src="../../_static/gallery/grid_refinement-1.html" title="Refractive index n: volume · uniform field" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
 
 
 
@@ -152,7 +151,7 @@ orthogonal slices show the uniform cube and its physical extent.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.270 seconds)
+   **Total running time of the script:** (0 minutes 0.269 seconds)
 
 
 .. _sphx_glr_download_auto_examples_validation_grid_refinement.py:

@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Theory figure: covariance and simulated random fields &#8212; BornSim 0.10.0 documentation</title>
+    <title>Theory figure: covariance and simulated random fields &#8212; BornSim 0.11.1 documentation</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="../../_static/documentation_options.js?v=7e54ce6f"></script>
+    <script src="../../_static/documentation_options.js?v=b3db6a4d"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -54,7 +54,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/BornSim/documentation_page/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.10.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.11.1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
@@ -67,7 +67,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.10.0" />
+  <meta name="docsearch:version" content="0.11.1" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -137,8 +137,8 @@
     
     
     
-    <img src="../../_static/logo-dark.png" class="logo__image only-dark" alt="BornSim 0.10.0 documentation - Home"/>
-    <img src="../../_static/logo.png" class="logo__image only-light pst-js-only" alt="BornSim 0.10.0 documentation - Home"/>
+    <img src="../../_static/logo-dark.png" class="logo__image only-dark" alt="BornSim 0.11.1 documentation - Home"/>
+    <img src="../../_static/logo.png" class="logo__image only-light pst-js-only" alt="BornSim 0.11.1 documentation - Home"/>
   
   
 </a></div>
@@ -639,9 +639,7 @@ not exact descriptions of the sampled finite grid.</p>
 </span></pre></div></div>
 <section id="sample-fields-and-estimate-covariance">
 <h2>Sample fields and estimate covariance<a class="headerlink" href="#sample-fields-and-estimate-covariance" title="Link to this heading">#</a></h2>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">slice_figure</span><span class="p">,</span> <span class="n">slice_axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">constrained</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
-</span><span class="w">
-</span><span class="n">covariance_comparisons</span> <span class="o">=</span> <span class="p">[</span><span class="p">]</span><span class="w">
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">covariance_comparisons</span> <span class="o">=</span> <span class="p">[</span><span class="p">]</span><span class="w">
 </span><span class="w">
 </span><span class="c1"># Each offset is a voxel count along x; the corresponding distance carries units.</span><span class="w">
 </span><span class="n">voxel_offsets_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span><span class="w">
@@ -661,7 +659,7 @@ not exact descriptions of the sampled finite grid.</p>
 </span>    <span class="nb">sum</span><span class="p">(</span><span class="n">component</span><span class="o">*</span><span class="o">*</span><span class="mi">2</span> <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="o">*</span><span class="n">axis_wavenumbers_per_meter</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">ij</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">)</span> <span class="o">/</span> <span class="n">ureg</span><span class="o">.</span><span class="n">meter</span><span class="o">*</span><span class="o">*</span><span class="mi">2</span><span class="w">
 </span><span class="p">)</span><span class="w">
 </span><span class="w">
-</span><span class="k">for</span> <span class="n">slice_axis</span><span class="p">,</span> <span class="p">(</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_medium.WhittleMaternMedium" title="bornsim.WhittleMaternMedium"><span class="n">random_medium</span></a><span class="p">,</span> <span class="n">covariance_label</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">slice_axes</span><span class="p">,</span> <span class="n">covariance_models</span><span class="p">)</span><span class="p">:</span><span class="w">
+</span><span class="k">for</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_medium.WhittleMaternMedium" title="bornsim.WhittleMaternMedium"><span class="n">random_medium</span></a><span class="p">,</span> <span class="n">covariance_label</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">covariance_models</span><span class="p">:</span><span class="w">
 </span>    <span class="n">covariance_model</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_medium.WhittleMaternMedium" title="bornsim.WhittleMaternMedium"><span class="n">random_medium</span></a><span class="o">.</span><span class="n">correlation</span><span class="w">
 </span><span class="w">
 </span>    <span class="n">covariance_estimates_by_realization</span> <span class="o">=</span> <span class="p">[</span><span class="p">]</span><span class="w">
@@ -687,19 +685,6 @@ not exact descriptions of the sampled finite grid.</p>
 </span><span class="w">
 </span>        <span class="k">if</span> <span class="n">realization_seed</span> <span class="o">==</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.ensemble_sampling.EnsembleSampling" title="bornsim.EnsembleSampling"><span class="n">ensemble_sampling</span></a><span class="o">.</span><span class="n">seeds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">:</span><span class="w">
 </span>            <span class="n">preview_volumes</span><span class="p">[</span><span class="n">covariance_model</span><span class="p">]</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">sampled_volume</span></a><span class="w">
-</span><span class="w">
-</span>            <span class="n">sample_width_nm</span> <span class="o">=</span> <span class="p">(</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">voxel_spacing</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">nanometer</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="w">
-</span><span class="w">
-</span>            <span class="n">slice_image</span> <span class="o">=</span> <span class="n">slice_axis</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="w">
-</span>                <span class="n">refractive_index_fluctuations</span><span class="p">[</span><span class="p">:</span><span class="p">,</span> <span class="p">:</span><span class="p">,</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span><span class="o">/</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="w">
-</span>                <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">lower</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>                <span class="n">extent</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">sample_width_nm</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sample_width_nm</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="n">sample_width_nm</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sample_width_nm</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span><span class="p">,</span><span class="w">
-</span>                <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">RdBu_r</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>                <span class="n">vmin</span><span class="o">=</span><span class="o">-</span><span class="mi">3</span> <span class="o">*</span> <span class="n">refractive_index_std</span><span class="p">,</span><span class="w">
-</span>                <span class="n">vmax</span><span class="o">=</span><span class="mi">3</span> <span class="o">*</span> <span class="n">refractive_index_std</span><span class="p">,</span><span class="w">
-</span>            <span class="p">)</span><span class="w">
-</span><span class="w">
-</span>    <span class="n">slice_axis</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">covariance_label</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">x (nm)</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">y (nm)</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span><span class="w">
 </span>    <span class="n">spectral_weights</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.medium.random_medium.WhittleMaternMedium" title="bornsim.WhittleMaternMedium"><span class="n">random_medium</span></a><span class="o">.</span><span class="n">spectral_weight</span><span class="p">(</span><span class="n">q_squared</span><span class="o">=</span><span class="n">squared_wavenumbers</span><span class="p">)</span><span class="w">
 </span><span class="w">
@@ -729,14 +714,8 @@ not exact descriptions of the sampled finite grid.</p>
 </span>            <span class="n">normalized_continuum_covariance</span><span class="p">,</span><span class="w">
 </span>        <span class="p">)</span><span class="w">
 </span>    <span class="p">)</span><span class="w">
-</span><span class="w">
-</span><span class="n">slice_figure</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">slice_image</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">slice_axes</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Refractive-index fluctuation δn</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">shrink</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span><span class="w">
-</span><span class="w">
-</span><span class="n">slice_figure</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">Seed 42 · same σn = 0.01 and ℓ = 60 nm · 20 nm voxels</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
-</span><span class="w">
-</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<img src="../../_images/sphx_glr_theory_random_fields_001.png" srcset="../../_images/sphx_glr_theory_random_fields_001.png" alt="Seed 42 · same σn = 0.01 and ℓ = 60 nm · 20 nm voxels, Gaussian, Exponential, Matérn, ν = 3/2" class = "sphx-glr-single-img"/></section>
+</section>
 <section id="gaussian-medium-in-3d">
 <h2>Gaussian medium in 3D<a class="headerlink" href="#gaussian-medium-in-3d" title="Link to this heading">#</a></h2>
 <p>Show one finite input sample with its physical spatial axes.</p>
@@ -838,7 +817,7 @@ continuum covariance, which need not match on a finite grid.</p>
 </span><span class="w">
 </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<img src="../../_images/sphx_glr_theory_random_fields_002.png" srcset="../../_images/sphx_glr_theory_random_fields_002.png" alt="32 realizations: dashed = discrete synthesis; dotted = continuum" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.131 seconds)</p>
+<img src="../../_images/sphx_glr_theory_random_fields_001.png" srcset="../../_images/sphx_glr_theory_random_fields_001.png" alt="32 realizations: dashed = discrete synthesis; dotted = continuum" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.765 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-random-media-theory-random-fields-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/57f26ab03be96d78bad4bb80c938d81b/theory_random_fields.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">theory_random_fields.ipynb</span></code></a></p>
@@ -913,7 +892,7 @@ continuum covariance, which need not match on a finite grid.</p>
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.10.0/docs/source/auto_examples/random_media/theory_random_fields.rst">
+    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.11.1/docs/source/auto_examples/random_media/theory_random_fields.rst">
       <i class="fa-solid fa-pencil"></i>
       
       

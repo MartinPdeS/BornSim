@@ -54,17 +54,16 @@ representation and normalization, not an infinite-medium transport limit.
 
     volume = medium.to_volume(grid=grid)
 
-    volume.plot_slice(title="Input sphere: central refractive index slice")
-
-    plt.show()
-
-
+    volume_figure = volume.plot_3d(
+        field="refractive_index",
+    )
 
 
-.. image-sg:: /auto_examples/results/images/sphx_glr_cross_section_and_volume_001.png
-   :alt: Input sphere: central refractive index slice
-   :srcset: /auto_examples/results/images/sphx_glr_cross_section_and_volume_001.png
-   :class: sphx-glr-single-img
+
+
+.. raw:: html
+
+   <iframe src="../../_static/gallery/cross_section_and_volume-1.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
 
 
 
@@ -114,9 +113,9 @@ representation and normalization, not an infinite-medium transport limit.
 
 
 
-.. image-sg:: /auto_examples/results/images/sphx_glr_cross_section_and_volume_002.png
+.. image-sg:: /auto_examples/results/images/sphx_glr_cross_section_and_volume_001.png
    :alt: cross section and volume
-   :srcset: /auto_examples/results/images/sphx_glr_cross_section_and_volume_002.png
+   :srcset: /auto_examples/results/images/sphx_glr_cross_section_and_volume_001.png
    :class: sphx-glr-single-img
 
 
@@ -134,7 +133,7 @@ representation and normalization, not an infinite-medium transport limit.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.977 seconds)
+   **Total running time of the script:** (0 minutes 1.714 seconds)
 
 
 .. _sphx_glr_download_auto_examples_results_cross_section_and_volume.py:

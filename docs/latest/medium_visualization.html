@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Medium visualization &#8212; BornSim 0.10.0 documentation</title>
+    <title>Medium visualization &#8212; BornSim 0.11.1 documentation</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="_static/documentation_options.js?v=7e54ce6f"></script>
+    <script src="_static/documentation_options.js?v=b3db6a4d"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/sg-tags.js?v=d80f6fa4"></script>
@@ -55,7 +55,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/BornSim/documentation_page/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.10.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.11.1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
@@ -68,7 +68,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.10.0" />
+  <meta name="docsearch:version" content="0.11.1" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -138,8 +138,8 @@
     
     
     
-    <img src="_static/logo-dark.png" class="logo__image only-dark" alt="BornSim 0.10.0 documentation - Home"/>
-    <img src="_static/logo.png" class="logo__image only-light pst-js-only" alt="BornSim 0.10.0 documentation - Home"/>
+    <img src="_static/logo-dark.png" class="logo__image only-dark" alt="BornSim 0.11.1 documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-light pst-js-only" alt="BornSim 0.11.1 documentation - Home"/>
   
   
 </a></div>
@@ -568,19 +568,19 @@
 <h1>Medium visualization<a class="headerlink" href="#medium-visualization" title="Link to this heading">#</a></h1>
 <section id="interactive-three-dimensional-views">
 <h2>Interactive three-dimensional views<a class="headerlink" href="#interactive-three-dimensional-views" title="Link to this heading">#</a></h2>
-<p>All three-dimensional plots use Plotly. <code class="docutils literal notranslate"><span class="pre">Volume.plot_3d()</span></code> returns an
-interactive volume, and <code class="docutils literal notranslate"><span class="pre">Result.plot_phase_function(view=&quot;3d&quot;)</span></code> returns an
-interactive directional surface. Plotly is included with BornSim; no backend
-selection is needed. Matplotlib remains the renderer for two-dimensional
-slices, angular curves, polar cuts, and diagnostic curves.</p>
+<p>BornSim uses Plotly exclusively for spatial views of three-dimensional media
+and for directional phase functions. <code class="docutils literal notranslate"><span class="pre">Volume.plot_3d()</span></code> returns an interactive
+volume, and <code class="docutils literal notranslate"><span class="pre">Result.plot_phase_function()</span></code> defaults to an interactive
+directional surface. Plotly is included with BornSim; no backend selection is
+needed for 3D plots.</p>
 <p>Drag to rotate, scroll to zoom, and hover to inspect values. Constructing a
 figure opens no window. Call <code class="docutils literal notranslate"><span class="pre">figure.show()</span></code> to display it or
 <code class="docutils literal notranslate"><span class="pre">figure.write_html()</span></code> to export an offline interactive view. The gallery
 embeds 3D figures alongside the code that constructs them.</p>
-<p>The views follow MomentRT’s white Plotly styling. Absolute refractive index,
-permittivity, and phase density use Inferno; signed refractive-index
-fluctuations retain a symmetric diverging scale. BornSim retains its Cartesian
-orientation rather than MomentRT’s downward depth axis.</p>
+<p>The views use Plotly’s white canvas with BornSim’s navy-to-cyan-to-gold
+sequential palette. Signed refractive-index fluctuations use a symmetric
+navy-to-gold diverging scale. BornSim retains its Cartesian orientation rather
+than MomentRT’s downward depth axis.</p>
 </section>
 <section id="random-medium-volumes">
 <h2>Random-medium volumes<a class="headerlink" href="#random-medium-volumes" title="Link to this heading">#</a></h2>
@@ -637,29 +637,12 @@ The ramp uses each sample’s displayed range, so equal opacity across samples
 need not represent the same refractive index. Opacity does not represent
 material absorption. Uniform fields support volume rendering; an isosurface
 requires a nonuniform field.</p>
+<p>Plotly contours interpolate between voxel centres. Inspect spatial structure
+in the 3D view; smooth contours do not replace checks of grid refinement. The
+3D spatial aspect follows physical dimensions. All samples are retained, up
+to the grid limit of 32 voxels per axis. Rendering cost also depends on
+surface count and browser graphics support.</p>
 </section>
-</section>
-<section id="exact-voxel-cross-sections">
-<h2>Exact voxel cross-sections<a class="headerlink" href="#exact-voxel-cross-sections" title="Link to this heading">#</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">Volume.plot_slice()</span></code> uses Matplotlib to display exact sampled values with
-physical axis labels, equal spatial aspect, and a shared color scale. Use
-<code class="docutils literal notranslate"><span class="pre">normal=&quot;x&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;y&quot;</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;z&quot;</span></code> to choose orientation, and <code class="docutils literal notranslate"><span class="pre">index</span></code> to
-select a voxel plane. The default is the middle z voxel; on an even grid its
-centre is at positive half-spacing, rather than zero.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">slice_figure</span> <span class="o">=</span> <span class="n">volume</span><span class="o">.</span><span class="n">plot_slice</span><span class="p">(</span>
-    <span class="n">normal</span><span class="o">=</span><span class="s2">"z"</span><span class="p">,</span>
-    <span class="n">field</span><span class="o">=</span><span class="s2">"refractive_index"</span><span class="p">,</span>
-    <span class="n">length_unit</span><span class="o">=</span><span class="s2">"nanometer"</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">slice_figure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">"medium-slice.png"</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Plotly contours interpolate between voxel centres. Use slices to inspect
-staircase boundaries and exact voxel values; smooth contours do not replace
-checks of grid refinement. The 3D spatial aspect follows physical dimensions.
-All samples are retained, up to the grid limit of 32 voxels per axis.
-Rendering cost also depends on surface count and browser graphics support.</p>
 </section>
 <section id="directional-phase-surfaces-and-cross-sections">
 <h2>Directional phase surfaces and cross sections<a class="headerlink" href="#directional-phase-surfaces-and-cross-sections" title="Link to this heading">#</a></h2>
@@ -688,8 +671,8 @@ Increase angular sampling to resolve directional structure.</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">Result.plot_cross_section()</span></code> uses Matplotlib and restores finite-sample
-area units using the recorded sample volume. Ensemble standard errors use the
+<p><code class="docutils literal notranslate"><span class="pre">Result.plot_cross_section()</span></code> uses a Plotly 3D scene and restores
+finite-sample area units using the recorded sample volume. Ensemble standard errors use the
 same conversion. Cumulative curves preserve amplitude interference;
 <code class="docutils literal notranslate"><span class="pre">terms=True</span></code> selects isolated terms, which cannot be summed to reconstruct
 cumulative intensities.</p>
@@ -755,7 +738,6 @@ box volume, rather than intrinsic infinite-medium transport coefficients.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exponential-covariance">Exponential covariance</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exact-voxel-cross-sections">Exact voxel cross-sections</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#directional-phase-surfaces-and-cross-sections">Directional phase surfaces and cross sections</a></li>
 </ul>
   </nav></div>
@@ -764,7 +746,7 @@ box volume, rather than intrinsic infinite-medium transport coefficients.</p>
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.10.0/docs/source/medium_visualization.rst">
+    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.11.1/docs/source/medium_visualization.rst">
       <i class="fa-solid fa-pencil"></i>
       
       

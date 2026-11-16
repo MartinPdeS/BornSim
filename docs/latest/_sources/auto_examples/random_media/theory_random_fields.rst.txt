@@ -102,11 +102,9 @@ not exact descriptions of the sampled finite grid.
 Sample fields and estimate covariance
 -------------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 73-171
+.. GENERATED FROM PYTHON SOURCE LINES 73-149
 
 .. code-block:: Python
-
-    slice_figure, slice_axes = plt.subplots(1, 3, figsize=(12, 4), layout="constrained")
 
     covariance_comparisons = []
 
@@ -128,7 +126,7 @@ Sample fields and estimate covariance
         sum(component**2 for component in np.meshgrid(*axis_wavenumbers_per_meter, indexing="ij")) / ureg.meter**2
     )
 
-    for slice_axis, (random_medium, covariance_label, color) in zip(slice_axes, covariance_models):
+    for random_medium, covariance_label, color in covariance_models:
         covariance_model = random_medium.correlation
 
         covariance_estimates_by_realization = []
@@ -154,19 +152,6 @@ Sample fields and estimate covariance
 
             if realization_seed == ensemble_sampling.seeds[0]:
                 preview_volumes[covariance_model] = sampled_volume
-
-                sample_width_nm = (grid.shape[0] * voxel_spacing).to("nanometer").magnitude
-
-                slice_image = slice_axis.imshow(
-                    refractive_index_fluctuations[:, :, grid.shape[2] // 2].T,
-                    origin="lower",
-                    extent=(-sample_width_nm / 2, sample_width_nm / 2, -sample_width_nm / 2, sample_width_nm / 2),
-                    cmap="RdBu_r",
-                    vmin=-3 * refractive_index_std,
-                    vmax=3 * refractive_index_std,
-                )
-
-        slice_axis.set(title=covariance_label, xlabel="x (nm)", ylabel="y (nm)")
 
         spectral_weights = random_medium.spectral_weight(q_squared=squared_wavenumbers)
 
@@ -197,32 +182,20 @@ Sample fields and estimate covariance
             )
         )
 
-    slice_figure.colorbar(slice_image, ax=slice_axes, label="Refractive-index fluctuation δn", shrink=0.8)
-
-    slice_figure.suptitle("Seed 42 · same σn = 0.01 and ℓ = 60 nm · 20 nm voxels")
-
-    plt.show()
 
 
 
 
 
-.. image-sg:: /auto_examples/random_media/images/sphx_glr_theory_random_fields_001.png
-   :alt: Seed 42 · same σn = 0.01 and ℓ = 60 nm · 20 nm voxels, Gaussian, Exponential, Matérn, ν = 3/2
-   :srcset: /auto_examples/random_media/images/sphx_glr_theory_random_fields_001.png
-   :class: sphx-glr-single-img
 
 
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 172-175
+.. GENERATED FROM PYTHON SOURCE LINES 150-153
 
 Gaussian medium in 3D
 ---------------------
 Show one finite input sample with its physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 175-188
+.. GENERATED FROM PYTHON SOURCE LINES 153-166
 
 .. code-block:: Python
 
@@ -250,13 +223,13 @@ Show one finite input sample with its physical spatial axes.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 189-192
+.. GENERATED FROM PYTHON SOURCE LINES 167-170
 
 Exponential medium in 3D
 ------------------------
 Show one finite input sample with its physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 192-205
+.. GENERATED FROM PYTHON SOURCE LINES 170-183
 
 .. code-block:: Python
 
@@ -284,13 +257,13 @@ Show one finite input sample with its physical spatial axes.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 206-209
+.. GENERATED FROM PYTHON SOURCE LINES 184-187
 
 Whittle–Matérn medium in 3D
 ---------------------------
 Show one finite input sample with its physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 209-222
+.. GENERATED FROM PYTHON SOURCE LINES 187-200
 
 .. code-block:: Python
 
@@ -318,7 +291,7 @@ Show one finite input sample with its physical spatial axes.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 223-228
+.. GENERATED FROM PYTHON SOURCE LINES 201-206
 
 Compare sampled and predicted covariances
 -----------------------------------------
@@ -326,7 +299,7 @@ Reuse the ensemble estimates above. Error bars describe realization
 sampling; dashed curves use the discrete synthesis and dotted curves the
 continuum covariance, which need not match on a finite grid.
 
-.. GENERATED FROM PYTHON SOURCE LINES 228-272
+.. GENERATED FROM PYTHON SOURCE LINES 206-250
 
 .. code-block:: Python
 
@@ -377,9 +350,9 @@ continuum covariance, which need not match on a finite grid.
 
 
 
-.. image-sg:: /auto_examples/random_media/images/sphx_glr_theory_random_fields_002.png
+.. image-sg:: /auto_examples/random_media/images/sphx_glr_theory_random_fields_001.png
    :alt: 32 realizations: dashed = discrete synthesis; dotted = continuum
-   :srcset: /auto_examples/random_media/images/sphx_glr_theory_random_fields_002.png
+   :srcset: /auto_examples/random_media/images/sphx_glr_theory_random_fields_001.png
    :class: sphx-glr-single-img
 
 
@@ -389,7 +362,7 @@ continuum covariance, which need not match on a finite grid.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.131 seconds)
+   **Total running time of the script:** (0 minutes 0.765 seconds)
 
 
 .. _sphx_glr_download_auto_examples_random_media_theory_random_fields.py:

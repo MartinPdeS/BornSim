@@ -133,6 +133,6 @@ if "--no-browser" not in sys.argv:
 # The curve keeps the full solve's solid-angle normalization.
 meridian = result.meridian(azimuth=90 * ureg.degree)
 
-meridian.plot_phase_function()
+meridian.plot_phase_function(view="angular")
 
 plt.show()

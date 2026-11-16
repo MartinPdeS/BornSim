@@ -89,8 +89,7 @@ plt.show()
 # Inspect the actual finite input sample with physical spatial axes.
 # Plotly shows interactive contours of the sampled medium.
 # Color represents refractive index; contour geometry interpolates voxel samples.
-# This is the finest grid. The refractive index is constant throughout the sample;
-# orthogonal slices show the uniform cube and its physical extent.
+# This is the finest grid. The refractive index is constant throughout the sample.
 medium_figure = volume.plot_3d(
     field="refractive_index",
 )

@@ -53,25 +53,6 @@ if "--no-browser" not in sys.argv:
     figure.show(renderer="browser")
 
 # %%
-# Inspect the central slice
-# -------------------------
-slice_figure, axis = plt.subplots(figsize=(6, 4), layout="constrained")
-
-image = axis.imshow(
-    volume.refractive_index[:, :, grid.shape[2] // 2].T,
-    origin="lower",
-    extent=(-200, 200, -200, 200),
-    cmap="viridis",
-    vmin=1.33,
-    vmax=1.50,
-)
-
-axis.set(xlabel="x (nm)", ylabel="y (nm)", title="Central rod cross-section")
-
-slice_figure.colorbar(image, ax=axis, label="Refractive index")
-
-plt.show()
-
 # %%
 # Directional scattering
 # ----------------------

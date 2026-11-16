@@ -70,8 +70,6 @@ preview_volumes = {}
 # %%
 # Sample fields and estimate covariance
 # -------------------------------------
-slice_figure, slice_axes = plt.subplots(1, 3, figsize=(12, 4), layout="constrained")
-
 covariance_comparisons = []
 
 # Each offset is a voxel count along x; the corresponding distance carries units.
@@ -92,7 +90,7 @@ squared_wavenumbers = (
     sum(component**2 for component in np.meshgrid(*axis_wavenumbers_per_meter, indexing="ij")) / ureg.meter**2
 )
 
-for slice_axis, (random_medium, covariance_label, color) in zip(slice_axes, covariance_models):
+for random_medium, covariance_label, color in covariance_models:
     covariance_model = random_medium.correlation
 
     covariance_estimates_by_realization = []
@@ -118,19 +116,6 @@ for slice_axis, (random_medium, covariance_label, color) in zip(slice_axes, cova
 
         if realization_seed == ensemble_sampling.seeds[0]:
             preview_volumes[covariance_model] = sampled_volume
-
-            sample_width_nm = (grid.shape[0] * voxel_spacing).to("nanometer").magnitude
-
-            slice_image = slice_axis.imshow(
-                refractive_index_fluctuations[:, :, grid.shape[2] // 2].T,
-                origin="lower",
-                extent=(-sample_width_nm / 2, sample_width_nm / 2, -sample_width_nm / 2, sample_width_nm / 2),
-                cmap="RdBu_r",
-                vmin=-3 * refractive_index_std,
-                vmax=3 * refractive_index_std,
-            )
-
-    slice_axis.set(title=covariance_label, xlabel="x (nm)", ylabel="y (nm)")
 
     spectral_weights = random_medium.spectral_weight(q_squared=squared_wavenumbers)
 
@@ -160,13 +145,6 @@ for slice_axis, (random_medium, covariance_label, color) in zip(slice_axes, cova
             normalized_continuum_covariance,
         )
     )
-
-slice_figure.colorbar(slice_image, ax=slice_axes, label="Refractive-index fluctuation δn", shrink=0.8)
-
-slice_figure.suptitle("Seed 42 · same σn = 0.01 and ℓ = 60 nm · 20 nm voxels")
-
-plt.show()
-
 
 # %%
 # Gaussian medium in 3D

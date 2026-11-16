@@ -1,0 +1,167 @@
+
+
+.. _sphx_glr_auto_examples_structured_media:
+
+Structured media
+================
+
+Build spheres, finite layers, and combined structured and random samples.
+Explore how geometry and relative positions affect directional scattering.
+Create concentric core–shell spheres and oriented ellipsoids, or repeat a
+geometric motif in a centred finite lattice and inspect coherent interference.
+Use finite dielectric cylinders as rod or antenna-like scatterers, with explicit
+axis and orientation controls.
+
+Oblique illumination examples specify unit propagation and complex transverse
+polarization vectors, comparing linear, circular, and elliptical states on
+one anisotropic particle through third Born order.
+
+
+.. raw:: html
+
+  <div id='sg-tag-list' class='sphx-glr-tag-list'></div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Use CylinderMedium to voxelize a finite dielectric rod. This is useful for antenna-like geometry studies when a dielectric refractive-index model is appropriate. Conducting currents, complex permittivity, and metal boundary conditions require a different electromagnetic solver.">
+
+.. only:: html
+
+  .. image:: /auto_examples/structured_media/images/thumb/sphx_glr_antenna_rods_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/structured_media/antenna_rods`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Finite dielectric rods for antenna-like scatterers</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Define a finite three-dimensional refractive index field directly rather than drawing it from homogeneous random statistics. The sphere has a constant refractive index inside and is surrounded by a uniform background. The fluctuation array stores n(r) - background_refractive_index: zero outside the sphere, a constant contrast inside. The scattering problem&#x27;s background extends beyond the voxel box; the box is not an additional material boundary.">
+
+.. only:: html
+
+  .. image:: /auto_examples/structured_media/images/thumb/sphx_glr_dielectric_sphere_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/structured_media/dielectric_sphere`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">A dielectric sphere in a homogeneous background</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Illuminate the same anisotropic dielectric particle with different plane waves. Propagation and electric-field vectors are specified in laboratory coordinates. A PolarizationState supplies a linear angle or complex Jones vector; omitting it selects unpolarized illumination. LeftCircular uses (1, +i)/sqrt(2), matching PyMieSim, with time convention exp(-i omega t).">
+
+.. only:: html
+
+  .. image:: /auto_examples/structured_media/images/thumb/sphx_glr_illumination_polarization_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/structured_media/illumination_polarization`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Oblique illumination and linear, circular, and elliptical polarization</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Compare finite particle geometries on the same voxel grid. Refractive-index interfaces use voxel-centre sampling; refine the grid for quantitative studies. The solver retains its linearized dielectric contrast for both particle types.">
+
+.. only:: html
+
+  .. image:: /auto_examples/structured_media/images/thumb/sphx_glr_particle_families_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/structured_media/particle_families`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Core–shell and ellipsoidal particles</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Repeat an existing geometric motif on a finite lattice. The lattice vectors are rows of a length-bearing matrix; repetition counts select the number of sites along each row. The complete array is centred on the origin, including half-site offsets for even repetition counts.">
+
+.. only:: html
+
+  .. image:: /auto_examples/structured_media/images/thumb/sphx_glr_periodic_array_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/structured_media/periodic_array`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Finite periodic arrays of dielectric spheres</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Compose finite slabs and shaped inclusions using absolute refractive indices. Later regions replace earlier ones where they overlap. Add a seeded Whittle–Matérn fluctuation field over the complete structure, then solve numerically. The background outside the voxel box stays homogeneous. This is a finite sample with edges, not an infinite planar stack calculation.">
+
+.. only:: html
+
+  .. image:: /auto_examples/structured_media/images/thumb/sphx_glr_structured_media_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/structured_media/structured_media`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Layers and scatterers with numerical random fluctuations</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="At first Born order, translating a complete scatterer multiplies its far-field amplitude by a unit-modulus phase. Its intensity is unchanged. Adding a second scatterer changes relative phases and generally introduces azimuth-dependent interference. This figure compares these two effects on fixed voxel masks using the numerical solver, without realization averaging.">
+
+.. only:: html
+
+  .. image:: /auto_examples/structured_media/images/thumb/sphx_glr_theory_directional_interference_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/structured_media/theory_directional_interference`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Theory figure: translation and directional interference</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/structured_media/antenna_rods
+   /auto_examples/structured_media/dielectric_sphere
+   /auto_examples/structured_media/illumination_polarization
+   /auto_examples/structured_media/particle_families
+   /auto_examples/structured_media/periodic_array
+   /auto_examples/structured_media/structured_media
+   /auto_examples/structured_media/theory_directional_interference
+

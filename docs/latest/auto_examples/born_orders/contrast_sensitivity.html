@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Contrast sensitivity of successive Born corrections &#8212; BornSim 0.10.0 documentation</title>
+    <title>Contrast sensitivity of successive Born corrections &#8212; BornSim 0.11.1 documentation</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="../../_static/documentation_options.js?v=7e54ce6f"></script>
+    <script src="../../_static/documentation_options.js?v=b3db6a4d"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -54,7 +54,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/BornSim/documentation_page/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.10.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.11.1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
@@ -67,7 +67,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.10.0" />
+  <meta name="docsearch:version" content="0.11.1" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -137,8 +137,8 @@
     
     
     
-    <img src="../../_static/logo-dark.png" class="logo__image only-dark" alt="BornSim 0.10.0 documentation - Home"/>
-    <img src="../../_static/logo.png" class="logo__image only-light pst-js-only" alt="BornSim 0.10.0 documentation - Home"/>
+    <img src="../../_static/logo-dark.png" class="logo__image only-dark" alt="BornSim 0.11.1 documentation - Home"/>
+    <img src="../../_static/logo.png" class="logo__image only-light pst-js-only" alt="BornSim 0.11.1 documentation - Home"/>
   
   
 </a></div>
@@ -613,9 +613,11 @@ These small examples illustrate corrections, not a universal convergence bound.<
 </span><span class="w">
 </span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">volume</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.medium.base.Medium.to_volume" title="bornsim.Medium.to_volume"><span class="n">medium</span><span class="o">.</span><span class="n">to_volume</span></a><span class="p">(</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.grid.Grid" title="bornsim.Grid"><span class="n">grid</span></a><span class="p">)</span><span class="w">
 </span><span class="w">
-</span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.volume.Volume.plot_slice" title="bornsim.Volume.plot_slice"><span class="n">volume</span><span class="o">.</span><span class="n">plot_slice</span></a><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Refractive index offset </span><span class="si">{</span><span class="n">delta_refractive_index</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span>    <span class="n">volume_figure</span> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.volume.Volume.plot_3d" title="bornsim.Volume.plot_3d"><span class="n">volume</span><span class="o">.</span><span class="n">plot_3d</span></a><span class="p">(</span><span class="w">
+</span>        <span class="n">field</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">refractive_index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="p">)</span><span class="w">
 </span><span class="w">
-</span>    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span>    <span class="n">volume_figure</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Refractive index offset </span><span class="si">{</span><span class="n">delta_refractive_index</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span><span class="w">
 </span>    <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.results.Result" title="bornsim.Result"><span class="n">result</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-method reference internal" href="../../api.html#bornsim.solver.Solver.solve" title="bornsim.Solver.solve"><span class="n">solver</span><span class="o">.</span><span class="n">solve</span></a><span class="p">(</span><span class="n">target</span><span class="o">=</span><a class="sphx-glr-backref-module-bornsim sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../api.html#bornsim.volume.Volume" title="bornsim.Volume"><span class="n">volume</span></a><span class="p">)</span><span class="w">
 </span><span class="w">
@@ -623,13 +625,7 @@ These small examples illustrate corrections, not a universal convergence bound.<
 </span><span class="w">
 </span>    <span class="n">scattering_areas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scattering_area</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<ul class="sphx-glr-horizontal">
-<li><img src="../../_images/sphx_glr_contrast_sensitivity_001.png" srcset="../../_images/sphx_glr_contrast_sensitivity_001.png" alt="Refractive index offset -0.04" class = "sphx-glr-multi-img"/></li>
-<li><img src="../../_images/sphx_glr_contrast_sensitivity_002.png" srcset="../../_images/sphx_glr_contrast_sensitivity_002.png" alt="Refractive index offset -0.02" class = "sphx-glr-multi-img"/></li>
-<li><img src="../../_images/sphx_glr_contrast_sensitivity_003.png" srcset="../../_images/sphx_glr_contrast_sensitivity_003.png" alt="Refractive index offset +0.02" class = "sphx-glr-multi-img"/></li>
-<li><img src="../../_images/sphx_glr_contrast_sensitivity_004.png" srcset="../../_images/sphx_glr_contrast_sensitivity_004.png" alt="Refractive index offset +0.04" class = "sphx-glr-multi-img"/></li>
-</ul>
-<p>Compare cumulative cross sections on the same scale.</p>
+<iframe src="../../_static/gallery/contrast_sensitivity-1.html" title="Refractive index offset +0.04" width="100%" height="560" loading="lazy" style="border:0;"></iframe><p>Compare cumulative cross sections on the same scale.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">figure</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">layout</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">constrained</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
 </span><span class="w">
 </span><span class="k">for</span> <span class="n">delta_refractive_index</span><span class="p">,</span> <span class="n">scattering_area</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="p">(</span><span class="o">-</span><span class="mf">0.04</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">)</span><span class="p">,</span> <span class="n">scattering_areas</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="p">:</span><span class="w">
@@ -641,7 +637,7 @@ These small examples illustrate corrections, not a universal convergence bound.<
 </span><span class="w">
 </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<img src="../../_images/sphx_glr_contrast_sensitivity_005.png" srcset="../../_images/sphx_glr_contrast_sensitivity_005.png" alt="contrast sensitivity" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 2.393 seconds)</p>
+<img src="../../_images/sphx_glr_contrast_sensitivity_001.png" srcset="../../_images/sphx_glr_contrast_sensitivity_001.png" alt="contrast sensitivity" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.846 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-born-orders-contrast-sensitivity-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/fb364f4196f43466e8850d48efb776c3/contrast_sensitivity.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">contrast_sensitivity.ipynb</span></code></a></p>
@@ -699,7 +695,7 @@ These small examples illustrate corrections, not a universal convergence bound.<
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.10.0/docs/source/auto_examples/born_orders/contrast_sensitivity.rst">
+    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.11.1/docs/source/auto_examples/born_orders/contrast_sensitivity.rst">
       <i class="fa-solid fa-pencil"></i>
       
       

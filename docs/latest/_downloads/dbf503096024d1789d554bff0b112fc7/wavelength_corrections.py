@@ -32,9 +32,9 @@ medium.add_structures(sphere)
 
 volume = medium.to_volume(grid=grid)
 
-volume.plot_slice(title="Input sphere: central refractive index slice")
-
-plt.show()
+volume_figure = volume.plot_3d(
+    field="refractive_index",
+)
 
 # %%
 angles = np.linspace(0, 180, 91) * ureg.degree

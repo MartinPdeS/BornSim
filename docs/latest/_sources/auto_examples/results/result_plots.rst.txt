@@ -120,7 +120,7 @@ The normalization is over solid angle, including the ``sin(theta)`` measure.
 
 .. code-block:: Python
 
-    result.plot_phase_function(log_y=True)
+    result.plot_phase_function(view="angular", log_y=True)
 
     plt.show()
 
@@ -183,7 +183,7 @@ Here four realizations contribute to the ensemble intensity average.
 
 .. raw:: html
 
-   <iframe src="../../_static/gallery/result_plots-1.html" title="Directional finite-sample phase function&lt;br&gt;Through order 3 · full azimuthal distribution" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
+   <iframe src="../../_static/gallery/result_plots-1.html" title="Phase function&lt;br&gt;&lt;sup&gt;Through order 3 · full azimuthal distribution&lt;/sup&gt;" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
 
 
 
@@ -256,7 +256,7 @@ Color represents refractive index; contour geometry interpolates voxel samples.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.754 seconds)
+   **Total running time of the script:** (0 minutes 0.743 seconds)
 
 
 .. _sphx_glr_download_auto_examples_results_result_plots.py:

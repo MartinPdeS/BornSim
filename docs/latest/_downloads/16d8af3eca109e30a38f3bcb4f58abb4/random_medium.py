@@ -6,8 +6,8 @@ Explore the full three-dimensional sample for each spatial covariance model.
 Drag to rotate, scroll to zoom, and hover to inspect the refractive index.
 Regions with lower refractive index are transparent; regions with higher
 refractive index are more opaque.
-Opacity is a display setting, not absorption. Histograms and central slices
-follow as secondary checks of the same seeded fields.
+Opacity is a display setting, not absorption. Histograms follow as statistical
+checks of the same seeded fields; spatial structure is shown only in 3D.
 
 Both models have Gaussian one-point probability distributions. Correlated
 voxels in one finite sample are not independent observations, so a voxel
@@ -36,10 +36,6 @@ grid = Grid(
 )
 
 refractive_index_std = 0.01
-
-half_sample_width_nm = grid_shape[0] * voxel_spacing.to("nanometer").magnitude / 2
-
-slice_extent_nm = (-half_sample_width_nm, half_sample_width_nm, -half_sample_width_nm, half_sample_width_nm)
 
 # Evaluate the ensemble probability density at these refractive-index fluctuations.
 refractive_index_fluctuations = np.linspace(-4 * refractive_index_std, 4 * refractive_index_std, 301)
@@ -102,33 +98,14 @@ if "--no-browser" not in sys.argv:
     exponential_figure.show(renderer="browser")
 
 # %%
-# Secondary checks: central slices and one-point distributions
-# ------------------------------------------------------------
-# Slices show one sampled plane, while histograms describe the finite field's
-# one-point distribution. Neither replaces the complete spatial volume above.
-slice_figure, slice_and_histogram_axes = plt.subplots(2, 2, figsize=(10, 8), layout="constrained")
+# Check one-point distributions
+# -----------------------------
+histogram_figure, histogram_axes = plt.subplots(1, 2, figsize=(10, 4), layout="constrained")
 
-for covariance_row, covariance_model in enumerate(("gaussian", "exponential")):
+for covariance_column, covariance_model in enumerate(("gaussian", "exponential")):
     sampled_volume = volumes_by_covariance[covariance_model]
 
-    slice_axis, histogram_axis = slice_and_histogram_axes[covariance_row]
-
-    slice_image = slice_axis.imshow(
-        sampled_volume.delta_refractive_index[:, :, grid_shape[2] // 2].T,
-        origin="lower",
-        extent=slice_extent_nm,
-        cmap="RdBu_r",
-        vmin=-3 * refractive_index_std,
-        vmax=3 * refractive_index_std,
-    )
-
-    slice_z_nm = sampled_volume.positions[0, 0, grid_shape[2] // 2, 2].to("nanometer").magnitude
-
-    slice_axis.set(
-        xlabel="x (nm)", ylabel="y (nm)", title=f"{covariance_model.capitalize()} covariance; z = {slice_z_nm:g} nm"
-    )
-
-    slice_figure.colorbar(slice_image, ax=slice_axis, label="Refractive-index fluctuation δn", extend="both")
+    histogram_axis = histogram_axes[covariance_column]
 
     histogram_axis.hist(
         sampled_volume.delta_refractive_index.ravel(), bins=30, density=True, alpha=0.6, label="One finite volume"
@@ -146,7 +123,5 @@ for covariance_row, covariance_model in enumerate(("gaussian", "exponential")):
     )
 
     histogram_axis.legend(frameon=False, loc="upper right", fontsize=9)
-
-slice_figure.suptitle("Seed 42; shared color scale; ensemble σn = 0.01")
 
 plt.show()

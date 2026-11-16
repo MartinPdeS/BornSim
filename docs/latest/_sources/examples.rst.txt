@@ -4,7 +4,7 @@ Examples
 Browse runnable examples by topic: random media, structured media, Born orders
 and interference, plotting and saving results, and numerical validation.
 Each topic contains at least six runnable examples. Input media are shown with
-three-dimensional views or Matplotlib slices, with explicit physical settings.
+three-dimensional Plotly views, with explicit physical settings.
 The gallery includes Born calculations through orders two to five.
 Ensemble examples show a labelled seeded realization on the calculation grid;
 that view is one finite sample, rather than the ensemble average. Comparisons
@@ -58,7 +58,7 @@ fields and choose spatial views.
       :link: medium_visualization
       :link-type: doc
 
-      Interactive 3D volumes, opacity, slices, and voxel geometry.
+      Interactive 3D volumes, opacity, and voxel geometry.
 
 Random media
 ------------
@@ -76,8 +76,8 @@ profiles and their numerical ensemble phase functions. These length parameters h
 different definitions; equal values do not describe identical statistics.
 
 :doc:`auto_examples/random_media/random_medium` leads with interactive Plotly volumes of Gaussian
-and exponential random samples. Central
-slices and voxel histograms follow as diagnostic checks. It distinguishes the
+and exponential random samples. Voxel histograms follow as a statistical
+diagnostic. It distinguishes the
 Gaussian one-point probability distribution from the choice of spatial
 covariance, and explains why a finite correlated sample need not have
 exactly the ensemble mean or variance.
@@ -102,7 +102,7 @@ a sphere, and additive seeded random fluctuations in a custom voxel field.
 
 :doc:`auto_examples/structured_media/particle_families` constructs a
 ``CoreShellMedium`` and a rotated ``EllipsoidMedium``, shows their voxelized
-geometries and central slices, and compares first-order scattering along one
+geometries in 3D, and compares first-order scattering along one
 observation meridian. Radii, positions, and rotation angles carry explicit units.
 
 :doc:`auto_examples/structured_media/periodic_array` repeats a sphere motif

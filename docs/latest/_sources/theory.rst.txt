@@ -447,14 +447,6 @@ mode is retained. The expected discrete normalized covariance is
 :math:`\operatorname{IFFT}(w/\overline w)`. Spectral truncation and finite box
 size change its relationship to the continuum covariance.
 
-.. figure:: auto_examples/random_media/images/sphx_glr_theory_random_fields_001.png
-   :width: 95%
-   :alt: Seeded refractive index slices from Gaussian, exponential and Matérn covariance fields with a shared color scale.
-
-   Seeded numerical refractive index slices at equal standard deviation and length
-   parameter. Covariance changes spatial texture, not the Gaussian probability
-   law. :doc:`Simulation code <auto_examples/random_media/theory_random_fields>`.
-
 .. figure:: auto_examples/random_media/images/sphx_glr_theory_random_fields_002.png
    :width: 85%
    :alt: Empirical covariance with standard-error bars from 32 independent fields, compared with discrete synthesis and continuum predictions.

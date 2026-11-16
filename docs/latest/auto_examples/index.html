@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Example gallery &#8212; BornSim 0.10.0 documentation</title>
+    <title>Example gallery &#8212; BornSim 0.11.1 documentation</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="../_static/documentation_options.js?v=7e54ce6f"></script>
+    <script src="../_static/documentation_options.js?v=b3db6a4d"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -54,7 +54,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/BornSim/documentation_page/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.10.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.11.1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
@@ -67,7 +67,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.10.0" />
+  <meta name="docsearch:version" content="0.11.1" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -137,8 +137,8 @@
     
     
     
-    <img src="../_static/logo-dark.png" class="logo__image only-dark" alt="BornSim 0.10.0 documentation - Home"/>
-    <img src="../_static/logo.png" class="logo__image only-light pst-js-only" alt="BornSim 0.10.0 documentation - Home"/>
+    <img src="../_static/logo-dark.png" class="logo__image only-dark" alt="BornSim 0.11.1 documentation - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-light pst-js-only" alt="BornSim 0.11.1 documentation - Home"/>
   
   
 </a></div>
@@ -567,8 +567,9 @@
 <h1>Example gallery<a class="headerlink" href="#example-gallery" title="Link to this heading">#</a></h1>
 <p>Choose a topic below. Each runnable script includes its calculation settings,
 explanations, and figures alongside the code that produces them. Medium
-volumes and 3D phase surfaces use Plotly exclusively. Angular curves,
-polar cuts, slices, and diagnostics use Matplotlib.
+volumes and 3D phase surfaces use Plotly exclusively. Matplotlib is used for
+angular curves and numerical diagnostics; spatial samples are never rendered
+as 2D images.
 Inputs use SI-compatible quantities. Analytical examples describe
 infinite-medium first-order scattering; numerical Born-series examples describe
 finite samples.</p>
@@ -593,7 +594,7 @@ numerical resolution.</p>
 </div><div class="sphx-glr-thumbcontainer" tooltip="Compare finite-sample ensemble phase functions for three Gaussian covariance lengths at a vacuum wavelength of 633 nm. The phase function is a probability density per steradian, normalized over solid angle. The corresponding polar-angle density includes the factor 2pisin(theta) and integrates over radians."><img alt="" src="../_images/sphx_glr_phase_function_thumb.png" />
 <p><a class="reference internal" href="random_media/phase_function.html"><span class="doc">Normalized phase function</span></a></p>
   <div class="sphx-glr-thumbnail-title">Normalized phase function</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="Explore the full three-dimensional sample for each spatial covariance model. Drag to rotate, scroll to zoom, and hover to inspect the refractive index. Regions with lower refractive index are transparent; regions with higher refractive index are more opaque. Opacity is a display setting, not absorption. Histograms and central slices follow as secondary checks of the same seeded fields."><img alt="" src="../_images/sphx_glr_random_medium_thumb.png" />
+</div><div class="sphx-glr-thumbcontainer" tooltip="Explore the full three-dimensional sample for each spatial covariance model. Drag to rotate, scroll to zoom, and hover to inspect the refractive index. Regions with lower refractive index are transparent; regions with higher refractive index are more opaque. Opacity is a display setting, not absorption. Histograms follow as statistical checks of the same seeded fields; spatial structure is shown only in 3D."><img alt="" src="../_images/sphx_glr_random_medium_thumb.png" />
 <p><a class="reference internal" href="random_media/random_medium.html"><span class="doc">Visualize seeded three-dimensional random media</span></a></p>
   <div class="sphx-glr-thumbnail-title">Visualize seeded three-dimensional random media</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="Generate a reproducible collection of identical spheres in a uniform background. Sphere centres are proposed uniformly within the part of the box that keeps each sphere fully inside. Overlapping proposals are rejected; the generator raises an error if it cannot place every requested sphere within its attempt limit. This is sequential placement, rather than an equilibrium hard-sphere model."><img alt="" src="../_images/sphx_glr_random_spheres_thumb.png" />
@@ -781,7 +782,7 @@ finite-size effects independently.</p>
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.10.0/docs/source/auto_examples/index.rst">
+    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.11.1/docs/source/auto_examples/index.rst">
       <i class="fa-solid fa-pencil"></i>
       
       

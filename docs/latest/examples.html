@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Examples &#8212; BornSim 0.10.0 documentation</title>
+    <title>Examples &#8212; BornSim 0.11.1 documentation</title>
   
   
   
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="_static/documentation_options.js?v=7e54ce6f"></script>
+    <script src="_static/documentation_options.js?v=b3db6a4d"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/sg-tags.js?v=d80f6fa4"></script>
@@ -55,7 +55,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/BornSim/documentation_page/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.10.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.11.1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
@@ -68,7 +68,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.10.0" />
+  <meta name="docsearch:version" content="0.11.1" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -138,8 +138,8 @@
     
     
     
-    <img src="_static/logo-dark.png" class="logo__image only-dark" alt="BornSim 0.10.0 documentation - Home"/>
-    <img src="_static/logo.png" class="logo__image only-light pst-js-only" alt="BornSim 0.10.0 documentation - Home"/>
+    <img src="_static/logo-dark.png" class="logo__image only-dark" alt="BornSim 0.11.1 documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-light pst-js-only" alt="BornSim 0.11.1 documentation - Home"/>
   
   
 </a></div>
@@ -566,7 +566,7 @@
 <p>Browse runnable examples by topic: random media, structured media, Born orders
 and interference, plotting and saving results, and numerical validation.
 Each topic contains at least six runnable examples. Input media are shown with
-three-dimensional views or Matplotlib slices, with explicit physical settings.
+three-dimensional Plotly views, with explicit physical settings.
 The gallery includes Born calculations through orders two to five.
 Ensemble examples show a labelled seeded realization on the calculation grid;
 that view is one finite sample, rather than the ensemble average. Comparisons
@@ -629,7 +629,7 @@ Validation</div>
 <div class="sd-card-body docutils">
 <div class="sd-card-title sd-font-weight-bold docutils">
 Medium visualization</div>
-<p class="sd-card-text">Interactive 3D volumes, opacity, slices, and voxel geometry.</p>
+<p class="sd-card-text">Interactive 3D volumes, opacity, and voxel geometry.</p>
 </div>
 <a class="sd-stretched-link sd-hide-link-text reference internal" href="medium_visualization.html"><span class="doc">Medium visualization</span></a></div>
 </div>
@@ -647,8 +647,8 @@ spatial covariance at the same length parameter, showing both covariance
 profiles and their numerical ensemble phase functions. These length parameters have
 different definitions; equal values do not describe identical statistics.</p>
 <p><a class="reference internal" href="auto_examples/random_media/random_medium.html"><span class="doc">Visualize seeded three-dimensional random media</span></a> leads with interactive Plotly volumes of Gaussian
-and exponential random samples. Central
-slices and voxel histograms follow as diagnostic checks. It distinguishes the
+and exponential random samples. Voxel histograms follow as a statistical
+diagnostic. It distinguishes the
 Gaussian one-point probability distribution from the choice of spatial
 covariance, and explains why a finite correlated sample need not have
 exactly the ensemble mean or variance.</p>
@@ -669,7 +669,7 @@ the example does not replace an exact Mie calculation.</p>
 a sphere, and additive seeded random fluctuations in a custom voxel field.</p>
 <p><a class="reference internal" href="auto_examples/structured_media/particle_families.html"><span class="doc">Core–shell and ellipsoidal particles</span></a> constructs a
 <code class="docutils literal notranslate"><span class="pre">CoreShellMedium</span></code> and a rotated <code class="docutils literal notranslate"><span class="pre">EllipsoidMedium</span></code>, shows their voxelized
-geometries and central slices, and compares first-order scattering along one
+geometries in 3D, and compares first-order scattering along one
 observation meridian. Radii, positions, and rotation angles carry explicit units.</p>
 <p><a class="reference internal" href="auto_examples/structured_media/periodic_array.html"><span class="doc">Finite periodic arrays of dielectric spheres</span></a> repeats a sphere motif
 using <code class="docutils literal notranslate"><span class="pre">PeriodicMedium</span></code>. It compares coherent array scattering with an
@@ -885,7 +885,7 @@ angle relative to each incident beam.</p>
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.10.0/docs/source/examples.rst">
+    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.11.1/docs/source/examples.rst">
       <i class="fa-solid fa-pencil"></i>
       
       

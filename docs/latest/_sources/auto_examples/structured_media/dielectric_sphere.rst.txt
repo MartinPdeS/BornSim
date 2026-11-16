@@ -210,7 +210,7 @@ Check polar and azimuth quadrature refinement for quantitative calculations.
 
 .. raw:: html
 
-   <iframe src="../../_static/gallery/dielectric_sphere-2.html" title="Directional finite-sample phase function&lt;br&gt;Through order 3 · full azimuthal distribution" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
+   <iframe src="../../_static/gallery/dielectric_sphere-2.html" title="Phase function&lt;br&gt;&lt;sup&gt;Through order 3 · full azimuthal distribution&lt;/sup&gt;" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
 
 
 
@@ -229,7 +229,7 @@ The curve keeps the full solve's solid-angle normalization.
 
     meridian = result.meridian(azimuth=90 * ureg.degree)
 
-    meridian.plot_phase_function()
+    meridian.plot_phase_function(view="angular")
 
     plt.show()
 
@@ -247,7 +247,7 @@ The curve keeps the full solve's solid-angle normalization.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 4.306 seconds)
+   **Total running time of the script:** (0 minutes 4.061 seconds)
 
 
 .. _sphx_glr_download_auto_examples_structured_media_dielectric_sphere.py:

@@ -55,17 +55,16 @@ A small correction does not assess grid accuracy or the contrast approximation.
 
     volume = medium.to_volume(grid=grid)
 
-    volume.plot_slice(title="Input sphere: central refractive index slice")
-
-    plt.show()
-
-
+    volume_figure = volume.plot_3d(
+        field="refractive_index",
+    )
 
 
-.. image-sg:: /auto_examples/born_orders/images/sphx_glr_wavelength_corrections_001.png
-   :alt: Input sphere: central refractive index slice
-   :srcset: /auto_examples/born_orders/images/sphx_glr_wavelength_corrections_001.png
-   :class: sphx-glr-single-img
+
+
+.. raw:: html
+
+   <iframe src="../../_static/gallery/wavelength_corrections-1.html" title="Refractive index n: volume" width="100%" height="560" loading="lazy" style="border:0;"></iframe>
 
 
 
@@ -109,9 +108,9 @@ A small correction does not assess grid accuracy or the contrast approximation.
 
 
 
-.. image-sg:: /auto_examples/born_orders/images/sphx_glr_wavelength_corrections_002.png
+.. image-sg:: /auto_examples/born_orders/images/sphx_glr_wavelength_corrections_001.png
    :alt: Vacuum wavelength 450 nm, Vacuum wavelength 633 nm, Vacuum wavelength 850 nm
-   :srcset: /auto_examples/born_orders/images/sphx_glr_wavelength_corrections_002.png
+   :srcset: /auto_examples/born_orders/images/sphx_glr_wavelength_corrections_001.png
    :class: sphx-glr-single-img
 
 
@@ -121,7 +120,7 @@ A small correction does not assess grid accuracy or the contrast approximation.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.653 seconds)
+   **Total running time of the script:** (0 minutes 0.478 seconds)
 
 
 .. _sphx_glr_download_auto_examples_born_orders_wavelength_corrections.py:
