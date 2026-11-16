@@ -15,6 +15,8 @@ contrast and spherical Green self cell; it is not a general strong-scattering
 solution. Refine geometry, quadrature, and Born order for quantitative work.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/illumination_polarization.png"
+
 import matplotlib.pyplot as plt
 
 from bornsim import AngularSampling, Ellipsoid, Grid, LeftCircular, PolarizationState, Solver, Source, StructuredMedium

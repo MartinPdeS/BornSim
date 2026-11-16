@@ -12,6 +12,8 @@ fixed volumes, or an ensemble of generated volumes. Integrated coefficients
 describe finite-sample cross sections divided by volume. Infinite-medium
 analytical formulas are test references, not public solvers.
 
+.. _illumination-configuration:
+
 Incident direction and polarization
 ------------------------------------
 

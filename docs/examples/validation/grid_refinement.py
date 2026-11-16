@@ -8,6 +8,8 @@ so this example isolates voxel midpoint-quadrature error. It does not test
 higher-order Green-tensor discretization or random-field synthesis.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/grid_refinement.png"
+
 import sys
 import matplotlib.pyplot as plt
 import numpy as np

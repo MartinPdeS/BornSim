@@ -16,6 +16,8 @@ come from numerical first-order finite-sample ensembles and are normalized
 per steradian, not per degree.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/covariance_models.png"
+
 import sys
 from bornsim.medium.random_medium import GaussianMedium, ExponentialMedium
 

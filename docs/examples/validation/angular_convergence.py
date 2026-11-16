@@ -9,6 +9,8 @@ not refine the integral. The finest calculation is a numerical reference,
 not an exact solution, and both quadrature axes need checking independently.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/angular_convergence.png"
+
 import sys
 from bornsim.medium.random_medium import GaussianMedium
 

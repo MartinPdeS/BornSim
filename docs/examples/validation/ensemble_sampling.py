@@ -8,6 +8,8 @@ One realization has unknown error, represented by NaN. Standard errors
 measure sampling uncertainty, not voxel, quadrature, or finite-size error.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/ensemble_sampling.png"
+
 import sys
 from bornsim.medium.random_medium import GaussianMedium
 

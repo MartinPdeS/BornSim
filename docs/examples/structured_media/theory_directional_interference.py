@@ -13,6 +13,8 @@ background; all calculations retain the linearized dielectric contrast.
 A 20 nm voxel grid is illustrative, not a claim of converged sphere geometry.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/theory_directional_interference.png"
+
 import sys
 import matplotlib.pyplot as plt
 import numpy as np

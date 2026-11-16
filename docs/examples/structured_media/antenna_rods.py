@@ -8,6 +8,8 @@ appropriate. Conducting currents, complex permittivity, and metal boundary
 conditions require a different electromagnetic solver.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/antenna_rods.png"
+
 import sys
 import matplotlib.pyplot as plt
 import numpy as np

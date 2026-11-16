@@ -1,3 +1,5 @@
+:orphan:
+
 Development and releases
 ========================
 
@@ -28,6 +30,27 @@ through a manual workflow; channel upload is not configured. See
 
 Code readability
 ----------------
+
+Gallery thumbnails
+~~~~~~~~~~~~~~~~~~
+
+Examples with a 3D medium view select a saved Plotly export through
+``sphinx_gallery_thumbnail_path``. The preview shows the first medium view,
+even when a Matplotlib curve appears earlier in the example. Examples without
+a medium view keep Sphinx-Gallery's default thumbnail selection.
+
+After changing an example's geometry or rendering, regenerate previews with
+Kaleido installed (the current exports use Kaleido 0.2.1)::
+
+    BORNSIM_UPDATE_THUMBNAILS=1 make docs PYTHON=.venv/bin/python
+
+Sphinx-Gallery only executes changed examples. To regenerate every preview,
+remove the generated ``docs/source/auto_examples`` directory first. Commit
+the images in ``docs/source/_static/gallery_thumbnails`` with the examples;
+ordinary documentation builds use these images without Kaleido.
+
+Python conventions
+~~~~~~~~~~~~~~~~~~
 
 Spell out ``refractive_index`` in names for the optical quantity, including
 ``background_refractive_index``, ``refractive_index_std`` and

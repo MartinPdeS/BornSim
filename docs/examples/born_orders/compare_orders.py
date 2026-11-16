@@ -9,6 +9,8 @@ medium. Error bars describe realization sampling, not discretization error.
 Field-term diagnostics alone do not certify convergence.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/compare_orders.png"
+
 import sys
 from bornsim.medium.random_medium import GaussianMedium
 

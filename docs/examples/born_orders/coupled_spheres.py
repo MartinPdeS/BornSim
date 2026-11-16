@@ -8,6 +8,8 @@ solve also include propagation between particles; isolated solves omit it.
 The spheres do not overlap. This remains a linearized dielectric model.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/coupled_spheres.png"
+
 import matplotlib.pyplot as plt
 import numpy as np
 

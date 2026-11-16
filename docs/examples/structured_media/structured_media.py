@@ -14,6 +14,8 @@ Gaussian. The sampled structured volume records its fluctuation statistics and
 seed as provenance.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/structured_media.png"
+
 import sys
 from bornsim.medium.random_medium import WhittleMaternMedium
 

@@ -47,7 +47,11 @@ globals().update(
 
 # The wordmark and project identity are already visible in the header; keep
 # the generated Sphinx/theme credit lines out of the documentation footer.
+html_theme_options = globals()["html_theme_options"]
 html_theme_options["footer_end"] = []
+html_theme_options["footer_start"] = ["copyright", "project-links"]
+html_theme_options["header_links_before_dropdown"] = 5
+templates_path = ["_templates"]
 html_theme_options["logo"] = {
     "image_light": "_static/logo.png",
     "image_dark": "_static/logo-dark.png",

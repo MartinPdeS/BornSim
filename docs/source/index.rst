@@ -9,50 +9,42 @@ refractive-index media.
 .. grid:: 1 2 3 3
    :gutter: 2
 
-   .. grid-item-card:: Start
+   .. grid-item-card:: Getting started
       :link: getting_started
       :link-type: doc
 
-      Install BornSim and run a seeded scattering calculation.
+      Install BornSim and run your first scattering calculation.
 
-   .. grid-item-card:: Guide
+   .. grid-item-card:: User guide
       :link: guide
       :link-type: doc
 
-      Understand the Born equations, units, and model limits.
+      Configure media, illumination, solvers, visualization, and saved results.
 
    .. grid-item-card:: Examples
       :link: examples
       :link-type: doc
 
-      Explore random media, structures, and interactive 3D views.
+      Explore runnable studies and interactive 3D medium views.
 
-   .. grid-item-card:: API
+   .. grid-item-card:: Theory & validation
+      :link: theory_validation
+      :link-type: doc
+
+      Understand the equations, assumptions, convergence, and benchmarks.
+
+   .. grid-item-card:: API reference
       :link: api
       :link-type: doc
 
-      Find sources, media, solver settings, and result methods.
-
-   .. grid-item-card:: Research
-      :link: research
-      :link-type: doc
-
-      Design reproducible studies and assess physical and numerical limits.
-
-   .. grid-item-card:: Resources
-      :link: resources
-      :link-type: doc
-
-      Check numerical validation, reproducibility, and releases.
+      Look up classes, methods, parameters, and physical units.
 
 .. toctree::
    :maxdepth: 2
    :hidden:
 
-   Start <getting_started>
-   Guide <guide>
+   Getting started <getting_started>
+   User guide <guide>
    Examples <examples>
-   API <api>
-   Absorption <absorption>
-   Reliability <reliability>
-   Resources <resources>
+   Theory & validation <theory_validation>
+   API reference <api>
