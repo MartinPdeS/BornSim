@@ -31,9 +31,10 @@ The two spheres are nonoverlapping. Their material refractive index is 1.34 in a
 background; all calculations retain the linearized dielectric contrast.
 A 20 nm voxel grid is illustrative, not a claim of converged sphere geometry.
 
-.. GENERATED FROM PYTHON SOURCE LINES 15-98
+.. GENERATED FROM PYTHON SOURCE LINES 15-99
 
 .. code-block:: Python
+
 
 
     import sys
@@ -131,12 +132,12 @@ A 20 nm voxel grid is illustrative, not a claim of converged sphere geometry.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 99-101
+.. GENERATED FROM PYTHON SOURCE LINES 101-103
 
 Compare directional scattering
 -------------------------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 101-141
+.. GENERATED FROM PYTHON SOURCE LINES 103-143
 
 .. code-block:: Python
 
@@ -192,13 +193,13 @@ Compare directional scattering
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 142-145
+.. GENERATED FROM PYTHON SOURCE LINES 144-147
 
 Centred sphere in 3D
 --------------------
 Show one finite input sample with its physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 145-158
+.. GENERATED FROM PYTHON SOURCE LINES 147-160
 
 .. code-block:: Python
 
@@ -226,13 +227,13 @@ Show one finite input sample with its physical spatial axes.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 159-162
+.. GENERATED FROM PYTHON SOURCE LINES 161-164
 
 Translated sphere in 3D
 -----------------------
 Show one finite input sample with its physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 162-175
+.. GENERATED FROM PYTHON SOURCE LINES 164-177
 
 .. code-block:: Python
 
@@ -260,13 +261,13 @@ Show one finite input sample with its physical spatial axes.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 176-179
+.. GENERATED FROM PYTHON SOURCE LINES 178-181
 
 Nonoverlapping sphere pair in 3D
 --------------------------------
 Show one finite input sample with its physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 179-192
+.. GENERATED FROM PYTHON SOURCE LINES 181-194
 
 .. code-block:: Python
 
@@ -294,14 +295,14 @@ Show one finite input sample with its physical spatial axes.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 193-197
+.. GENERATED FROM PYTHON SOURCE LINES 195-199
 
 Three-dimensional directional phase density
 -------------------------------------------
 Inspect the pair's direction-space surface separately from the spatial
 angular comparisons above, without azimuth averaging.
 
-.. GENERATED FROM PYTHON SOURCE LINES 197-205
+.. GENERATED FROM PYTHON SOURCE LINES 199-207
 
 .. code-block:: Python
 
@@ -327,7 +328,7 @@ angular comparisons above, without azimuth averaging.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 3.574 seconds)
+   **Total running time of the script:** (0 minutes 4.997 seconds)
 
 
 .. _sphx_glr_download_auto_examples_structured_media_theory_directional_interference.py:

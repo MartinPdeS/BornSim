@@ -8,6 +8,8 @@ volume. Sample size, voxel resolution and realization count describe separate
 sources of uncertainty and must be checked independently.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/finite_size_comparison.png"
+
 import sys
 from bornsim.medium.random_medium import GaussianMedium
 

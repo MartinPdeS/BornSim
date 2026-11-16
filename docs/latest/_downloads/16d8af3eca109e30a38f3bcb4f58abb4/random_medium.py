@@ -16,6 +16,8 @@ does not recenter or rescale each realization to impose its mean or variance.
 Finite voxel resolution and the cropped synthesis box also affect statistics.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/random_medium.png"
+
 import sys
 from bornsim.medium.random_medium import GaussianMedium, ExponentialMedium
 

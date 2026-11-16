@@ -18,7 +18,6 @@ fields and choose spatial views.
    :maxdepth: 2
    :hidden:
 
-   medium_visualization
    auto_examples/index
 
 .. grid:: 1 2 3 3

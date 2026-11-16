@@ -14,6 +14,8 @@ The 3D surface retains each azimuth direction, showing directional structure
 in the ensemble intensity average.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/result_plots.png"
+
 import sys
 from bornsim.medium.random_medium import GaussianMedium
 

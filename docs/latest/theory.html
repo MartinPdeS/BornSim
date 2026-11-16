@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Theory and numerical methods &#8212; BornSim 0.11.1 documentation</title>
+    <title>Theory and numerical methods &#8212; BornSim 0.11.2 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=6a604523" />
     <link rel="stylesheet" type="text/css" href="_static/default.css" />
     <link rel="stylesheet" type="text/css" href="_static/martinpdes_layout.css?v=a8cc01cd" />
-    <link rel="stylesheet" type="text/css" href="_static/layout.css?v=15dcf2f3" />
+    <link rel="stylesheet" type="text/css" href="_static/layout.css?v=2e40c3ce" />
   
   <!-- So that users can add custom icons -->
   <script defer src="_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="_static/documentation_options.js?v=b3db6a4d"></script>
+    <script src="_static/documentation_options.js?v=936af0a6"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/sg-tags.js?v=d80f6fa4"></script>
@@ -55,7 +55,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/BornSim/documentation_page/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.11.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.11.2';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
@@ -63,12 +63,12 @@
     <link rel="icon" href="_static/favicon.png"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Overview" href="overview.html" />
-    <link rel="prev" title="Guide" href="guide.html" />
+    <link rel="next" title="Reliability and statistical interpretation" href="reliability.html" />
+    <link rel="prev" title="Theory &amp; validation" href="theory_validation.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.11.1" />
+  <meta name="docsearch:version" content="0.11.2" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -138,8 +138,8 @@
     
     
     
-    <img src="_static/logo-dark.png" class="logo__image only-dark" alt="BornSim 0.11.1 documentation - Home"/>
-    <img src="_static/logo.png" class="logo__image only-light pst-js-only" alt="BornSim 0.11.1 documentation - Home"/>
+    <img src="_static/logo-dark.png" class="logo__image only-dark" alt="BornSim 0.11.2 documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-light pst-js-only" alt="BornSim 0.11.2 documentation - Home"/>
   
   
 </a></div>
@@ -156,14 +156,14 @@
     
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="getting_started.html">
-    Start
+    Getting started
   </a>
 </li>
 
 
-<li class="nav-item current active">
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="guide.html">
-    Guide
+    User guide
   </a>
 </li>
 
@@ -175,43 +175,19 @@
 </li>
 
 
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="theory_validation.html">
+    Theory & validation
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="api.html">
-    API
+    API reference
   </a>
 </li>
 
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="absorption.html">
-    Absorption
-  </a>
-</li>
-
-            <li class="nav-item dropdown">
-                <button class="btn dropdown-toggle nav-item" type="button"
-                data-bs-toggle="dropdown" aria-expanded="false"
-                aria-controls="pst-nav-more-links">
-                    More
-                </button>
-                <ul id="pst-nav-more-links" class="dropdown-menu">
-                    
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="reliability.html">
-    Reliability
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="resources.html">
-    Resources
-  </a>
-</li>
-
-                </ul>
-            </li>
-            
   </ul>
 </nav></div>
       
@@ -351,14 +327,14 @@
     
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="getting_started.html">
-    Start
+    Getting started
   </a>
 </li>
 
 
-<li class="nav-item current active">
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="guide.html">
-    Guide
+    User guide
   </a>
 </li>
 
@@ -370,30 +346,16 @@
 </li>
 
 
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="theory_validation.html">
+    Theory & validation
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="api.html">
-    API
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="absorption.html">
-    Absorption
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="reliability.html">
-    Reliability
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="resources.html">
-    Resources
+    API reference
   </a>
 </li>
 
@@ -498,7 +460,8 @@
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">Theory and numerical methods</a></li>
-<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">Reliability and statistical interpretation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="research.html">Research uses</a></li>
 </ul>
 </div>
 </nav></div>
@@ -540,7 +503,7 @@
       </a>
     </li>
     
-    <li class="breadcrumb-item"><a href="guide.html" class="nav-link">Guide</a></li>
+    <li class="breadcrumb-item"><a href="theory_validation.html" class="nav-link">Theory &amp; validation</a></li>
     
     <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Theory and numerical methods</span></li>
   </ul>
@@ -1090,20 +1053,20 @@ simulations and independent numerical tests provide the corresponding checks.</p
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="guide.html"
+       href="theory_validation.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Guide</p>
+        <p class="prev-next-title">Theory &amp; validation</p>
       </div>
     </a>
     <a class="right-next"
-       href="overview.html"
+       href="reliability.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Overview</p>
+        <p class="prev-next-title">Reliability and statistical interpretation</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1149,7 +1112,7 @@ simulations and independent numerical tests provide the corresponding checks.</p
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.11.1/docs/source/theory.rst">
+    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.11.2/docs/source/theory.rst">
       <i class="fa-solid fa-pencil"></i>
       
       
@@ -1200,6 +1163,13 @@ simulations and independent numerical tests provide the corresponding checks.</p
     
   </p>
 </div>
+      
+        <div class="footer-item"><nav class="bornsim-footer-links" aria-label="Project resources">
+  <a href="development.html">Development</a>
+  <a href="https://github.com/MartinPdeS/BornSim/releases">Releases</a>
+  <a href="https://github.com/MartinPdeS/BornSim/blob/master/CITATION.cff">Citation</a>
+  <a href="https://github.com/MartinPdeS/BornSim">Repository</a>
+</nav></div>
       
     </div>
   

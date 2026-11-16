@@ -34,9 +34,10 @@ before interpreting them quantitatively. BornSim uses the linearized
 dielectric contrast ``2 * n0 * delta_n`` at all Born orders, rather than
 ``n_sphere**2 - n0**2``. This weak-contrast example is not an exact Mie solution.
 
-.. GENERATED FROM PYTHON SOURCE LINES 18-25
+.. GENERATED FROM PYTHON SOURCE LINES 18-26
 
 .. code-block:: Python
+
 
 
     import sys
@@ -52,7 +53,7 @@ dielectric contrast ``2 * n0 * delta_n`` at all Born orders, rather than
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 26-34
+.. GENERATED FROM PYTHON SOURCE LINES 28-36
 
 Build a spherical refractive index mask
 ---------------------------------------
@@ -63,7 +64,7 @@ The sphere is offset by 40 nm in x and 20 nm in y. Set this vector to zero
 for a centred sphere. Keep abs(centre[a]) + radius below half the box size
 on every axis to avoid clipping. Grid-aligned offsets translate the same mask.
 
-.. GENERATED FROM PYTHON SOURCE LINES 34-81
+.. GENERATED FROM PYTHON SOURCE LINES 36-83
 
 .. code-block:: Python
 
@@ -121,7 +122,7 @@ on every axis to avoid clipping. Grid-aligned offsets translate the same mask.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 82-87
+.. GENERATED FROM PYTHON SOURCE LINES 84-89
 
 Inspect the medium in 3D
 ------------------------
@@ -129,7 +130,7 @@ Inspect the actual finite input sample with physical spatial axes.
 The gallery embeds the interactive Plotly medium view.
 Contours interpolate the solver's sampled staircase interface.
 
-.. GENERATED FROM PYTHON SOURCE LINES 87-94
+.. GENERATED FROM PYTHON SOURCE LINES 89-96
 
 .. code-block:: Python
 
@@ -151,7 +152,7 @@ Contours interpolate the solver's sampled staircase interface.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 95-101
+.. GENERATED FROM PYTHON SOURCE LINES 97-103
 
 Compute coherent scattering through three Born orders
 -----------------------------------------------------
@@ -160,7 +161,7 @@ divided by the entire voxel-box volume. Multiplying by that physical volume
 recovers a differential cross section, which avoids treating the empty
 background portion of the box as part of an intrinsic transport coefficient.
 
-.. GENERATED FROM PYTHON SOURCE LINES 101-113
+.. GENERATED FROM PYTHON SOURCE LINES 103-115
 
 .. code-block:: Python
 
@@ -183,7 +184,7 @@ background portion of the box as part of an intrinsic transport coefficient.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 114-122
+.. GENERATED FROM PYTHON SOURCE LINES 116-124
 
 Three-dimensional phase function
 ---------------------------------
@@ -194,7 +195,7 @@ structures. Its radius is a probability density per steradian, not a spatial
 coordinate. No realization or azimuth averaging is applied to the 3D view.
 Check polar and azimuth quadrature refinement for quantitative calculations.
 
-.. GENERATED FROM PYTHON SOURCE LINES 122-129
+.. GENERATED FROM PYTHON SOURCE LINES 124-131
 
 .. code-block:: Python
 
@@ -216,14 +217,14 @@ Check polar and azimuth quadrature refinement for quantitative calculations.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 130-134
+.. GENERATED FROM PYTHON SOURCE LINES 132-136
 
 Select a physical meridian
 ---------------------------
 Select the sampled phi = 90 degree plane without averaging or interpolation.
 The curve keeps the full solve's solid-angle normalization.
 
-.. GENERATED FROM PYTHON SOURCE LINES 134-139
+.. GENERATED FROM PYTHON SOURCE LINES 136-141
 
 .. code-block:: Python
 
@@ -247,7 +248,7 @@ The curve keeps the full solve's solid-angle normalization.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 4.061 seconds)
+   **Total running time of the script:** (0 minutes 5.774 seconds)
 
 
 .. _sphx_glr_download_auto_examples_structured_media_dielectric_sphere.py:

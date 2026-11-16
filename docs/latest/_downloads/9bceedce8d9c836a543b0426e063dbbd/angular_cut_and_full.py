@@ -8,6 +8,8 @@ coefficient. Full quadrature additionally supplies finite-sample coefficients.
 Changing observation sampling does not change the internal Born field.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/angular_cut_and_full.png"
+
 import matplotlib.pyplot as plt
 import numpy as np
 

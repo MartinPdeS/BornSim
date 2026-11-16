@@ -11,6 +11,8 @@ The medium is three-dimensional. The displayed curves explicitly average the sam
 individual finite samples need not have rotational symmetry.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/phase_function.png"
+
 import sys
 from bornsim.medium.random_medium import GaussianMedium
 

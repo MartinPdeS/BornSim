@@ -30,9 +30,10 @@ This example models weak dielectric contrast with the first Born order.
 It is a finite sample with edges and coherent interference, without periodic
 boundary conditions or an effective metamaterial constitutive model.
 
-.. GENERATED FROM PYTHON SOURCE LINES 14-50
+.. GENERATED FROM PYTHON SOURCE LINES 14-51
 
 .. code-block:: Python
+
 
 
     import sys
@@ -77,14 +78,14 @@ boundary conditions or an effective metamaterial constitutive model.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 51-55
+.. GENERATED FROM PYTHON SOURCE LINES 53-57
 
 Inspect the three-sphere array
 ------------------------------
 Each site receives the same motif, preserving its orientation. Geometry
 outside the voxel box is clipped; these spheres fit completely inside it.
 
-.. GENERATED FROM PYTHON SOURCE LINES 55-66
+.. GENERATED FROM PYTHON SOURCE LINES 57-68
 
 .. code-block:: Python
 
@@ -110,12 +111,12 @@ outside the voxel box is clipped; these spheres fit completely inside it.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 67-69
+.. GENERATED FROM PYTHON SOURCE LINES 69-71
 
 Inspect the single-site reference
 ---------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 69-80
+.. GENERATED FROM PYTHON SOURCE LINES 71-82
 
 .. code-block:: Python
 
@@ -141,7 +142,7 @@ Inspect the single-site reference
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 81-89
+.. GENERATED FROM PYTHON SOURCE LINES 83-91
 
 Coherent interference along the x-z meridian
 --------------------------------------------
@@ -152,7 +153,7 @@ direction: their first-order amplitudes add, giving nine times the single
 intensity rather than three times. The spacing is an integer voxel count,
 so translated particles have identical discrete masks here.
 
-.. GENERATED FROM PYTHON SOURCE LINES 89-134
+.. GENERATED FROM PYTHON SOURCE LINES 91-136
 
 .. code-block:: Python
 
@@ -216,7 +217,7 @@ so translated particles have identical discrete masks here.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.378 seconds)
+   **Total running time of the script:** (0 minutes 0.507 seconds)
 
 
 .. _sphx_glr_download_auto_examples_structured_media_periodic_array.py:

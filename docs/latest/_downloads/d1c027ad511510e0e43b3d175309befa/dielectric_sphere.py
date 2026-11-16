@@ -16,6 +16,8 @@ dielectric contrast ``2 * n0 * delta_n`` at all Born orders, rather than
 ``n_sphere**2 - n0**2``. This weak-contrast example is not an exact Mie solution.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/dielectric_sphere.png"
+
 import sys
 import matplotlib.pyplot as plt
 

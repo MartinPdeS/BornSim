@@ -29,9 +29,10 @@ density includes the factor ``2*pi*sin(theta)`` and integrates over radians.
 The medium is three-dimensional. The displayed curves explicitly average the sampled azimuthal directions;
 individual finite samples need not have rotational symmetry.
 
-.. GENERATED FROM PYTHON SOURCE LINES 13-23
+.. GENERATED FROM PYTHON SOURCE LINES 13-24
 
 .. code-block:: Python
+
 
 
     import sys
@@ -50,14 +51,14 @@ individual finite samples need not have rotational symmetry.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 24-28
+.. GENERATED FROM PYTHON SOURCE LINES 26-30
 
 Compare correlation lengths
 ---------------------------
 Longer covariance lengths can produce more forward-peaked scattering.
 The same result provides the phase function and its mean cosine, ``g``.
 
-.. GENERATED FROM PYTHON SOURCE LINES 28-54
+.. GENERATED FROM PYTHON SOURCE LINES 30-56
 
 .. code-block:: Python
 
@@ -94,12 +95,12 @@ The same result provides the phase function and its mean cosine, ``g``.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 55-57
+.. GENERATED FROM PYTHON SOURCE LINES 57-59
 
 Compare numerical scattering
 ----------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 57-116
+.. GENERATED FROM PYTHON SOURCE LINES 59-118
 
 .. code-block:: Python
 
@@ -174,13 +175,13 @@ Compare numerical scattering
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 117-120
+.. GENERATED FROM PYTHON SOURCE LINES 119-122
 
 30 nm correlation length in 3D
 ------------------------------
 Show one finite input sample with its physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 120-133
+.. GENERATED FROM PYTHON SOURCE LINES 122-135
 
 .. code-block:: Python
 
@@ -208,13 +209,13 @@ Show one finite input sample with its physical spatial axes.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 134-137
+.. GENERATED FROM PYTHON SOURCE LINES 136-139
 
 100 nm correlation length in 3D
 -------------------------------
 Show one finite input sample with its physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 137-150
+.. GENERATED FROM PYTHON SOURCE LINES 139-152
 
 .. code-block:: Python
 
@@ -242,13 +243,13 @@ Show one finite input sample with its physical spatial axes.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 151-154
+.. GENERATED FROM PYTHON SOURCE LINES 153-156
 
 300 nm correlation length in 3D
 -------------------------------
 Show one finite input sample with its physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 154-166
+.. GENERATED FROM PYTHON SOURCE LINES 156-168
 
 .. code-block:: Python
 
@@ -278,7 +279,7 @@ Show one finite input sample with its physical spatial axes.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.753 seconds)
+   **Total running time of the script:** (0 minutes 1.023 seconds)
 
 
 .. _sphx_glr_download_auto_examples_random_media_phase_function.py:

@@ -32,9 +32,10 @@ smoothness convention is ``x=sqrt(2*nu)*r/ell``; probability statistics remain
 Gaussian. The sampled structured volume records its fluctuation statistics and
 seed as provenance.
 
-.. GENERATED FROM PYTHON SOURCE LINES 16-88
+.. GENERATED FROM PYTHON SOURCE LINES 16-89
 
 .. code-block:: Python
+
 
 
     import sys
@@ -115,14 +116,14 @@ seed as provenance.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 89-93
+.. GENERATED FROM PYTHON SOURCE LINES 91-95
 
 Inspect the structured medium in 3D
 -----------------------------------
 Inspect the deterministic layers and sphere before adding fluctuations.
 Plotly renders interpolated contours with physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 93-100
+.. GENERATED FROM PYTHON SOURCE LINES 95-102
 
 .. code-block:: Python
 
@@ -144,7 +145,7 @@ Plotly renders interpolated contours with physical spatial axes.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 101-106
+.. GENERATED FROM PYTHON SOURCE LINES 103-108
 
 Inspect the combined medium in 3D
 ---------------------------------
@@ -152,7 +153,7 @@ This voxel volume shows the sampled refractive index used by the solver,
 including the same seeded Matérn fluctuations as the scattering curves.
 Color represents refractive index; contour geometry interpolates voxel samples.
 
-.. GENERATED FROM PYTHON SOURCE LINES 106-113
+.. GENERATED FROM PYTHON SOURCE LINES 108-115
 
 .. code-block:: Python
 
@@ -174,12 +175,12 @@ Color represents refractive index; contour geometry interpolates voxel samples.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 114-116
+.. GENERATED FROM PYTHON SOURCE LINES 116-118
 
 Scattering curves
 ------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 116-151
+.. GENERATED FROM PYTHON SOURCE LINES 118-153
 
 .. code-block:: Python
 
@@ -233,7 +234,7 @@ Scattering curves
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.283 seconds)
+   **Total running time of the script:** (0 minutes 0.390 seconds)
 
 
 .. _sphx_glr_download_auto_examples_structured_media_structured_media.py:

@@ -26,9 +26,10 @@ second order. The cut keeps complex amplitudes but has no integrated scattering
 coefficient. Full quadrature additionally supplies finite-sample coefficients.
 Changing observation sampling does not change the internal Born field.
 
-.. GENERATED FROM PYTHON SOURCE LINES 10-39
+.. GENERATED FROM PYTHON SOURCE LINES 10-40
 
 .. code-block:: Python
+
 
 
     import matplotlib.pyplot as plt
@@ -70,7 +71,7 @@ Changing observation sampling does not change the internal Born field.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 40-76
+.. GENERATED FROM PYTHON SOURCE LINES 42-78
 
 .. code-block:: Python
 
@@ -132,7 +133,7 @@ Changing observation sampling does not change the internal Born field.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.477 seconds)
+   **Total running time of the script:** (0 minutes 0.647 seconds)
 
 
 .. _sphx_glr_download_auto_examples_results_angular_cut_and_full.py:

@@ -33,9 +33,10 @@ to each incident beam. This third-order example retains the linearized
 contrast and spherical Green self cell; it is not a general strong-scattering
 solution. Refine geometry, quadrature, and Born order for quantitative work.
 
-.. GENERATED FROM PYTHON SOURCE LINES 17-45
+.. GENERATED FROM PYTHON SOURCE LINES 17-46
 
 .. code-block:: Python
+
 
 
     import matplotlib.pyplot as plt
@@ -76,7 +77,7 @@ solution. Refine geometry, quadrature, and Born order for quantitative work.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 46-53
+.. GENERATED FROM PYTHON SOURCE LINES 48-55
 
 Define Jones states for an oblique incident beam
 -------------------------------------------------
@@ -86,7 +87,7 @@ equal magnitudes and a pi/2 relative phase; elliptical uses unequal magnitudes.
 Jones vectors are normalized by PolarizationState; no manual square roots
 or Cartesian projections are needed.
 
-.. GENERATED FROM PYTHON SOURCE LINES 53-107
+.. GENERATED FROM PYTHON SOURCE LINES 55-109
 
 .. code-block:: Python
 
@@ -159,19 +160,19 @@ or Cartesian projections are needed.
     Circular, oblique: third-order cross section = 0.8675661587157821 nanometer ** 2
     Circular, oblique: third-order anisotropy relative to its beam = 0.131010764143171 dimensionless
     Elliptical, oblique: third-order cross section = 0.8768306193576978 nanometer ** 2
-    Elliptical, oblique: third-order anisotropy relative to its beam = 0.13034631665706156 dimensionless
+    Elliptical, oblique: third-order anisotropy relative to its beam = 0.13034631665706153 dimensionless
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 108-112
+.. GENERATED FROM PYTHON SOURCE LINES 110-114
 
 Compare one physical laboratory meridian
 -----------------------------------------
 This meridian is phi=0 for every source. It is not an azimuth average.
 For the oblique sources, the forward direction is theta=36.87 degrees.
 
-.. GENERATED FROM PYTHON SOURCE LINES 112-129
+.. GENERATED FROM PYTHON SOURCE LINES 114-131
 
 .. code-block:: Python
 
@@ -204,7 +205,7 @@ For the oblique sources, the forward direction is theta=36.87 degrees.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 130-136
+.. GENERATED FROM PYTHON SOURCE LINES 132-138
 
 Outgoing amplitudes for a pure polarization state
 ---------------------------------------------------
@@ -213,7 +214,7 @@ modes. The final axis holds laboratory x, y, z field components in metres.
 These complex amplitudes can be projected onto an outgoing transverse
 analyzer before squaring to study polarization-resolved detection.
 
-.. GENERATED FROM PYTHON SOURCE LINES 136-137
+.. GENERATED FROM PYTHON SOURCE LINES 138-139
 
 .. code-block:: Python
 
@@ -234,7 +235,7 @@ analyzer before squaring to study polarization-resolved detection.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.372 seconds)
+   **Total running time of the script:** (0 minutes 1.795 seconds)
 
 
 .. _sphx_glr_download_auto_examples_structured_media_illumination_polarization.py:

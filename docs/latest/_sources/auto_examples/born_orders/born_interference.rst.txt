@@ -32,9 +32,10 @@ the linearized dielectric contrast ``2 * n0 * delta_n`` and the equal-volume
 spherical Green self cell with its longitudinal contact term. A small
 correction or decreasing field norms does not certify Born convergence.
 
-.. GENERATED FROM PYTHON SOURCE LINES 16-112
+.. GENERATED FROM PYTHON SOURCE LINES 16-113
 
 .. code-block:: Python
+
 
 
     import sys
@@ -144,7 +145,7 @@ correction or decreasing field norms does not certify Born convergence.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 113-118
+.. GENERATED FROM PYTHON SOURCE LINES 115-120
 
 Inspect the medium in 3D
 ------------------------
@@ -152,7 +153,7 @@ Inspect the actual finite input sample with physical spatial axes.
 Plotly shows interactive contours of the sampled medium.
 Color represents refractive index; contour geometry interpolates voxel samples.
 
-.. GENERATED FROM PYTHON SOURCE LINES 118-124
+.. GENERATED FROM PYTHON SOURCE LINES 120-126
 
 .. code-block:: Python
 
@@ -176,7 +177,7 @@ Color represents refractive index; contour geometry interpolates voxel samples.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.226 seconds)
+   **Total running time of the script:** (0 minutes 0.324 seconds)
 
 
 .. _sphx_glr_download_auto_examples_born_orders_born_interference.py:

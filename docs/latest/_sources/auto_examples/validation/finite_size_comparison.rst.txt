@@ -26,9 +26,10 @@ fixed voxel spacing. The coefficients are cross sections divided by sample
 volume. Sample size, voxel resolution and realization count describe separate
 sources of uncertainty and must be checked independently.
 
-.. GENERATED FROM PYTHON SOURCE LINES 10-84
+.. GENERATED FROM PYTHON SOURCE LINES 10-85
 
 .. code-block:: Python
+
 
 
     import sys
@@ -117,14 +118,14 @@ sources of uncertainty and must be checked independently.
 
  .. code-block:: none
 
-    120 nm cube: μs = 0.7954126902831687 / meter, g = 0.013367158313236557 dimensionless
-    240 nm cube: μs = 3.3644309746075405 / meter, g = 0.20743249757359927 dimensionless
-    360 nm cube: μs = 5.027407224500179 / meter, g = 0.0780324357834068 dimensionless
+    120 nm cube: μs = 0.7954126902831687 / meter, g = 0.013367158313236564 dimensionless
+    240 nm cube: μs = 3.36443097460754 / meter, g = 0.20743249757359933 dimensionless
+    360 nm cube: μs = 5.027407224500179 / meter, g = 0.07803243578340677 dimensionless
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 85-92
+.. GENERATED FROM PYTHON SOURCE LINES 87-94
 
 Inspect one ensemble realization in 3D
 --------------------------------------
@@ -134,7 +135,7 @@ Plotly shows interactive contours of the sampled medium.
 Color represents refractive index; contour geometry interpolates voxel samples.
 Use the largest of the three finite cubes compared above.
 
-.. GENERATED FROM PYTHON SOURCE LINES 92-103
+.. GENERATED FROM PYTHON SOURCE LINES 94-105
 
 .. code-block:: Python
 
@@ -163,7 +164,7 @@ Use the largest of the three finite cubes compared above.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.663 seconds)
+   **Total running time of the script:** (0 minutes 0.923 seconds)
 
 
 .. _sphx_glr_download_auto_examples_validation_finite_size_comparison.py:

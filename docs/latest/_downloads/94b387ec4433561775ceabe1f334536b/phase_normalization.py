@@ -8,6 +8,8 @@ Full solid-angle sampling supplies normalization separately at each Born order.
 An angular cut alone cannot provide this normalization.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/phase_normalization.png"
+
 import matplotlib.pyplot as plt
 import numpy as np
 

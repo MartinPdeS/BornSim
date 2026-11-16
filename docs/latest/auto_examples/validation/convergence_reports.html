@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Explicit refinement studies and equation residuals &#8212; BornSim 0.11.1 documentation</title>
+    <title>Explicit refinement studies and equation residuals &#8212; BornSim 0.11.2 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=6a604523" />
     <link rel="stylesheet" type="text/css" href="../../_static/default.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/martinpdes_layout.css?v=a8cc01cd" />
-    <link rel="stylesheet" type="text/css" href="../../_static/layout.css?v=15dcf2f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/layout.css?v=2e40c3ce" />
   
   <!-- So that users can add custom icons -->
   <script defer src="../../_static/scripts/fontawesome.js?digest=75c7c72ae941e8b558d8"></script>
@@ -45,7 +45,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="../../_static/documentation_options.js?v=b3db6a4d"></script>
+    <script src="../../_static/documentation_options.js?v=936af0a6"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -54,7 +54,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/BornSim/documentation_page/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.11.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.11.2';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
@@ -67,7 +67,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.11.1" />
+  <meta name="docsearch:version" content="0.11.2" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -137,8 +137,8 @@
     
     
     
-    <img src="../../_static/logo-dark.png" class="logo__image only-dark" alt="BornSim 0.11.1 documentation - Home"/>
-    <img src="../../_static/logo.png" class="logo__image only-light pst-js-only" alt="BornSim 0.11.1 documentation - Home"/>
+    <img src="../../_static/logo-dark.png" class="logo__image only-dark" alt="BornSim 0.11.2 documentation - Home"/>
+    <img src="../../_static/logo.png" class="logo__image only-light pst-js-only" alt="BornSim 0.11.2 documentation - Home"/>
   
   
 </a></div>
@@ -155,14 +155,14 @@
     
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../getting_started.html">
-    Start
+    Getting started
   </a>
 </li>
 
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../guide.html">
-    Guide
+    User guide
   </a>
 </li>
 
@@ -175,42 +175,18 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../api.html">
-    API
+  <a class="nav-link nav-internal" href="../../theory_validation.html">
+    Theory & validation
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../absorption.html">
-    Absorption
+  <a class="nav-link nav-internal" href="../../api.html">
+    API reference
   </a>
 </li>
 
-            <li class="nav-item dropdown">
-                <button class="btn dropdown-toggle nav-item" type="button"
-                data-bs-toggle="dropdown" aria-expanded="false"
-                aria-controls="pst-nav-more-links">
-                    More
-                </button>
-                <ul id="pst-nav-more-links" class="dropdown-menu">
-                    
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../reliability.html">
-    Reliability
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../resources.html">
-    Resources
-  </a>
-</li>
-
-                </ul>
-            </li>
-            
   </ul>
 </nav></div>
       
@@ -350,14 +326,14 @@
     
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../getting_started.html">
-    Start
+    Getting started
   </a>
 </li>
 
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../guide.html">
-    Guide
+    User guide
   </a>
 </li>
 
@@ -370,29 +346,15 @@
 
 
 <li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory_validation.html">
+    Theory & validation
+  </a>
+</li>
+
+
+<li class="nav-item ">
   <a class="nav-link nav-internal" href="../../api.html">
-    API
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../absorption.html">
-    Absorption
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../reliability.html">
-    Reliability
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../resources.html">
-    Resources
+    API reference
   </a>
 </li>
 
@@ -496,7 +458,6 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../medium_visualization.html">Medium visualization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Example gallery</a></li>
 
 
@@ -632,7 +593,7 @@ Order 2: mu_s=3.71372 m^-1, mu_a=1602.0219596880988, residual=1.1563284751113575
 Order 3: mu_s=3.71376 m^-1, mu_a=1602.0363469373933, residual=5.3320129528529805e-11, stable=True
   Changes: {'mu_s': 9.03701050255426e-06, 'mu_a': 8.98060104690545e-06, 'g': 6.889289475703331e-08, 'phase_l1': 1.1635563432826566e-07}
 Order 4: mu_s=3.71376 m^-1, mu_a=1602.0363104122728, residual=3.067321596781078e-13, stable=True
-  Changes: {'mu_s': 2.268242453929161e-08, 'mu_a': 2.279918343877665e-08, 'g': 9.268708023313366e-11, 'phase_l1': 2.0384946816435508e-10}
+  Changes: {'mu_s': 2.268242453929161e-08, 'mu_a': 2.279918343877665e-08, 'g': 9.268708717202756e-11, 'phase_l1': 2.0384946816435508e-10}
 </pre></div>
 </div>
 </section>
@@ -656,9 +617,9 @@ Order 4: mu_s=3.71376 m^-1, mu_a=1602.0363104122728, residual=3.067321596781078e
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Observable stability (not a physical-validity certificate):
 8 cubed: mu_s=4.15801 m^-1, mu_a=1699.357783767117, residual=3.592210578621519e-13, stable=False
 12 cubed: mu_s=3.71376 m^-1, mu_a=1602.0363104122728, residual=3.067321596781078e-13, stable=False
-  Changes: {'mu_s': 0.1068422017815386, 'mu_a': 0.05726956046836893, 'g': 0.0020231708661912415, 'phase_l1': 0.0028749802176079443}
+  Changes: {'mu_s': 0.1068422017815386, 'mu_a': 0.05726956046836893, 'g': 0.0020231708661912276, 'phase_l1': 0.0028749802176079443}
 16 cubed: mu_s=3.29636 m^-1, mu_a=1506.1453668356592, residual=2.5253191594829603e-13, stable=False
-  Changes: {'mu_s': 0.11239269212642004, 'mu_a': 0.05985566179329403, 'g': 0.0017421543475186346, 'phase_l1': 0.0024629458375026946}
+  Changes: {'mu_s': 0.11239269212642004, 'mu_a': 0.05985566179329403, 'g': 0.0017421543475186485, 'phase_l1': 0.0024629458375026946}
 </pre></div>
 </div>
 </section>
@@ -678,9 +639,9 @@ Order 4: mu_s=3.71376 m^-1, mu_a=1602.0363104122728, residual=3.067321596781078e
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Observable stability (not a physical-validity certificate):
 16 x 16: mu_s=3.71376 m^-1, mu_a=1602.0363104122728, residual=3.067321596781078e-13, stable=False
 24 x 24: mu_s=3.71376 m^-1, mu_a=1602.0363104122728, residual=3.067321596781078e-13, stable=True
-  Changes: {'mu_s': 7.174771485410794e-16, 'mu_a': 0.0, 'g': 4.163336342344337e-17, 'phase_l1': 7.414988375534874e-16}
+  Changes: {'mu_s': 7.174771485410794e-16, 'mu_a': 0.0, 'g': 3.469446951953614e-17, 'phase_l1': 7.414988375534874e-16}
 32 x 32: mu_s=3.71376 m^-1, mu_a=1602.0363104122728, residual=3.067321596781078e-13, stable=True
-  Changes: {'mu_s': 0.0, 'mu_a': 0.0, 'g': 8.326672684688674e-17, 'phase_l1': 3.011906932774793e-16}
+  Changes: {'mu_s': 0.0, 'mu_a': 0.0, 'g': 9.71445146547012e-17, 'phase_l1': 3.011906932774793e-16}
 </pre></div>
 </div>
 </section>
@@ -706,7 +667,7 @@ stable instead; this illustrates why a generic stability flag needs context.</p>
 Box 16 cubed: scattering area = 0.0064173708348157195 nanometer ** 2, absorption area = 2.768318744392408 nanometer ** 2
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 6.530 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 8.566 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-validation-convergence-reports-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/4d2af60ebc0903a10b467b4ae5beb387/convergence_reports.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">convergence_reports.ipynb</span></code></a></p>
@@ -780,7 +741,7 @@ Box 16 cubed: scattering area = 0.0064173708348157195 nanometer ** 2, absorption
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.11.1/docs/source/auto_examples/validation/convergence_reports.rst">
+    <a href="https://github.com/MartinPdeS/BornSim/edit/v0.11.2/docs/source/auto_examples/validation/convergence_reports.rst">
       <i class="fa-solid fa-pencil"></i>
       
       
@@ -831,6 +792,13 @@ Box 16 cubed: scattering area = 0.0064173708348157195 nanometer ** 2, absorption
     
   </p>
 </div>
+      
+        <div class="footer-item"><nav class="bornsim-footer-links" aria-label="Project resources">
+  <a href="../../development.html">Development</a>
+  <a href="https://github.com/MartinPdeS/BornSim/releases">Releases</a>
+  <a href="https://github.com/MartinPdeS/BornSim/blob/master/CITATION.cff">Citation</a>
+  <a href="https://github.com/MartinPdeS/BornSim">Repository</a>
+</nav></div>
       
     </div>
   

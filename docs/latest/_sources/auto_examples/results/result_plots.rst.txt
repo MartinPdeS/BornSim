@@ -32,9 +32,10 @@ Use result.azimuth_average() to request an averaged curve explicitly.
 The 3D surface retains each azimuth direction, showing directional structure
 in the ensemble intensity average.
 
-.. GENERATED FROM PYTHON SOURCE LINES 16-55
+.. GENERATED FROM PYTHON SOURCE LINES 16-56
 
 .. code-block:: Python
+
 
 
     import sys
@@ -82,14 +83,14 @@ in the ensemble intensity average.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 56-60
+.. GENERATED FROM PYTHON SOURCE LINES 58-62
 
 Differential scattering
 -----------------------
 Differential scattering retains its physical units of inverse metres per
 steradian. Ensemble results also show standard errors on this plot.
 
-.. GENERATED FROM PYTHON SOURCE LINES 60-64
+.. GENERATED FROM PYTHON SOURCE LINES 62-66
 
 .. code-block:: Python
 
@@ -109,14 +110,14 @@ steradian. Ensemble results also show standard errors on this plot.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 65-69
+.. GENERATED FROM PYTHON SOURCE LINES 67-71
 
 Normalized phase function
 -------------------------
 Dividing by the integrated coefficient gives a density per steradian.
 The normalization is over solid angle, including the ``sin(theta)`` measure.
 
-.. GENERATED FROM PYTHON SOURCE LINES 69-73
+.. GENERATED FROM PYTHON SOURCE LINES 71-75
 
 .. code-block:: Python
 
@@ -136,13 +137,13 @@ The normalization is over solid angle, including the ``sin(theta)`` measure.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 74-77
+.. GENERATED FROM PYTHON SOURCE LINES 76-79
 
 Polar meridian cut
 ------------------
 The incident beam points towards 0 degrees, at the top of the plot.
 
-.. GENERATED FROM PYTHON SOURCE LINES 77-81
+.. GENERATED FROM PYTHON SOURCE LINES 79-83
 
 .. code-block:: Python
 
@@ -162,14 +163,14 @@ The incident beam points towards 0 degrees, at the top of the plot.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 82-86
+.. GENERATED FROM PYTHON SOURCE LINES 84-88
 
 Three-dimensional directional surface
 -------------------------------------
 Plot the sampled polar and azimuth directions without azimuth averaging.
 Here four realizations contribute to the ensemble intensity average.
 
-.. GENERATED FROM PYTHON SOURCE LINES 86-91
+.. GENERATED FROM PYTHON SOURCE LINES 88-93
 
 .. code-block:: Python
 
@@ -189,7 +190,7 @@ Here four realizations contribute to the ensemble intensity average.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 92-97
+.. GENERATED FROM PYTHON SOURCE LINES 94-99
 
 Numerical field terms
 ---------------------
@@ -197,7 +198,7 @@ A fixed random volume need not be axisymmetric. Its field norms can be
 inspected without inferring a normalized phase function from one cut.
 Decreasing terms do not certify Born convergence.
 
-.. GENERATED FROM PYTHON SOURCE LINES 97-108
+.. GENERATED FROM PYTHON SOURCE LINES 99-110
 
 .. code-block:: Python
 
@@ -224,7 +225,7 @@ Decreasing terms do not certify Born convergence.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 109-114
+.. GENERATED FROM PYTHON SOURCE LINES 111-116
 
 Inspect the medium in 3D
 ------------------------
@@ -232,7 +233,7 @@ Inspect the actual finite input sample with physical spatial axes.
 Plotly shows interactive contours of the sampled medium.
 Color represents refractive index; contour geometry interpolates voxel samples.
 
-.. GENERATED FROM PYTHON SOURCE LINES 114-120
+.. GENERATED FROM PYTHON SOURCE LINES 116-122
 
 .. code-block:: Python
 
@@ -256,7 +257,7 @@ Color represents refractive index; contour geometry interpolates voxel samples.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.743 seconds)
+   **Total running time of the script:** (0 minutes 0.968 seconds)
 
 
 .. _sphx_glr_download_auto_examples_results_result_plots.py:

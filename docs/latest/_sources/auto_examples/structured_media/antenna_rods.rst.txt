@@ -26,9 +26,10 @@ antenna-like geometry studies when a dielectric refractive-index model is
 appropriate. Conducting currents, complex permittivity, and metal boundary
 conditions require a different electromagnetic solver.
 
-.. GENERATED FROM PYTHON SOURCE LINES 10-39
+.. GENERATED FROM PYTHON SOURCE LINES 10-40
 
 .. code-block:: Python
+
 
 
     import sys
@@ -66,14 +67,14 @@ conditions require a different electromagnetic solver.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 40-44
+.. GENERATED FROM PYTHON SOURCE LINES 42-46
 
 Inspect the finite rod
 ----------------------
 The cylinder has a circular cross-section and a finite end face. Rotation
 changes the geometry coordinates before voxel-centre sampling.
 
-.. GENERATED FROM PYTHON SOURCE LINES 44-55
+.. GENERATED FROM PYTHON SOURCE LINES 46-57
 
 .. code-block:: Python
 
@@ -99,7 +100,7 @@ changes the geometry coordinates before voxel-centre sampling.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 56-61
+.. GENERATED FROM PYTHON SOURCE LINES 58-63
 
 %%
 Directional scattering
@@ -107,7 +108,7 @@ Directional scattering
 This finite rod is solved with the first Born order. The result describes
 dielectric scattering from the voxelized rod, not a conducting antenna.
 
-.. GENERATED FROM PYTHON SOURCE LINES 61-88
+.. GENERATED FROM PYTHON SOURCE LINES 63-90
 
 .. code-block:: Python
 
@@ -153,7 +154,7 @@ dielectric scattering from the voxelized rod, not a conducting antenna.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.217 seconds)
+   **Total running time of the script:** (0 minutes 0.296 seconds)
 
 
 .. _sphx_glr_download_auto_examples_structured_media_antenna_rods.py:

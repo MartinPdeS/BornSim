@@ -26,9 +26,10 @@ The box-normalized scattering coefficient changes with sample volume, while
 its product with that volume is the scattering cross section. Padding tests
 representation and normalization, not an infinite-medium transport limit.
 
-.. GENERATED FROM PYTHON SOURCE LINES 10-38
+.. GENERATED FROM PYTHON SOURCE LINES 10-39
 
 .. code-block:: Python
+
 
 
     import matplotlib.pyplot as plt
@@ -69,7 +70,7 @@ representation and normalization, not an infinite-medium transport limit.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 39-76
+.. GENERATED FROM PYTHON SOURCE LINES 41-78
 
 .. code-block:: Python
 
@@ -133,7 +134,7 @@ representation and normalization, not an infinite-medium transport limit.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.714 seconds)
+   **Total running time of the script:** (0 minutes 2.385 seconds)
 
 
 .. _sphx_glr_download_auto_examples_results_cross_section_and_volume.py:

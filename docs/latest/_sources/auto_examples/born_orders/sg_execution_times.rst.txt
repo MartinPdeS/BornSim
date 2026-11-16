@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:04.101** total execution time for 6 files **from auto_examples/born_orders**:
+**00:05.687** total execution time for 6 files **from auto_examples/born_orders**:
 
 .. container::
 
@@ -33,20 +33,20 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_auto_examples_born_orders_contrast_sensitivity.py` (``contrast_sensitivity.py``)
-     - 00:01.846
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_born_orders_compare_orders.py` (``compare_orders.py``)
-     - 00:00.606
+     - 00:02.517
      - 0.0
    * - :ref:`sphx_glr_auto_examples_born_orders_absorbing_random_medium.py` (``absorbing_random_medium.py``)
-     - 00:00.570
+     - 00:00.822
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_born_orders_compare_orders.py` (``compare_orders.py``)
+     - 00:00.817
      - 0.0
    * - :ref:`sphx_glr_auto_examples_born_orders_wavelength_corrections.py` (``wavelength_corrections.py``)
-     - 00:00.478
+     - 00:00.680
      - 0.0
    * - :ref:`sphx_glr_auto_examples_born_orders_coupled_spheres.py` (``coupled_spheres.py``)
-     - 00:00.375
+     - 00:00.526
      - 0.0
    * - :ref:`sphx_glr_auto_examples_born_orders_born_interference.py` (``born_interference.py``)
-     - 00:00.226
+     - 00:00.324
      - 0.0

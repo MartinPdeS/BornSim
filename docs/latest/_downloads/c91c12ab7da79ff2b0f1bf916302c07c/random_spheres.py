@@ -12,6 +12,8 @@ The plotted medium samples material at voxel centres. Choose a spacing fine enou
 to resolve each sphere, and use small refractive index contrast for Born scattering.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/random_spheres.png"
+
 import sys
 from bornsim import Grid
 from bornsim.medium.random_spheres import RandomSphereMedium

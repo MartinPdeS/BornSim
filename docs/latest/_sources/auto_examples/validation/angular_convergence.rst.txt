@@ -27,9 +27,10 @@ independent of the integration nodes: adding points to an angular plot does
 not refine the integral. The finest calculation is a numerical reference,
 not an exact solution, and both quadrature axes need checking independently.
 
-.. GENERATED FROM PYTHON SOURCE LINES 11-56
+.. GENERATED FROM PYTHON SOURCE LINES 11-57
 
 .. code-block:: Python
+
 
 
     import sys
@@ -83,14 +84,14 @@ not an exact solution, and both quadrature axes need checking independently.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 57-61
+.. GENERATED FROM PYTHON SOURCE LINES 59-63
 
 Refine one angular axis at a time
 ---------------------------------
 Identical consecutive seeds give the same volumes in every calculation.
 Voxel and finite-sample errors remain fixed throughout this comparison.
 
-.. GENERATED FROM PYTHON SOURCE LINES 61-124
+.. GENERATED FROM PYTHON SOURCE LINES 63-126
 
 .. code-block:: Python
 
@@ -169,7 +170,7 @@ Voxel and finite-sample errors remain fixed throughout this comparison.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 125-131
+.. GENERATED FROM PYTHON SOURCE LINES 127-133
 
 Inspect one ensemble realization in 3D
 --------------------------------------
@@ -178,7 +179,7 @@ not an ensemble average or an infinite-medium material boundary.
 Plotly shows interactive contours of the sampled medium.
 Color represents refractive index; contour geometry interpolates voxel samples.
 
-.. GENERATED FROM PYTHON SOURCE LINES 131-142
+.. GENERATED FROM PYTHON SOURCE LINES 133-144
 
 .. code-block:: Python
 
@@ -207,7 +208,7 @@ Color represents refractive index; contour geometry interpolates voxel samples.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.619 seconds)
+   **Total running time of the script:** (0 minutes 1.070 seconds)
 
 
 .. _sphx_glr_download_auto_examples_validation_angular_convergence.py:

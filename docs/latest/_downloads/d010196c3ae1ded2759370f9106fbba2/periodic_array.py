@@ -12,6 +12,8 @@ It is a finite sample with edges and coherent interference, without periodic
 boundary conditions or an effective metamaterial constitutive model.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/periodic_array.png"
+
 import sys
 import matplotlib.pyplot as plt
 import numpy as np

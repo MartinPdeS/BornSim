@@ -31,9 +31,10 @@ refractive index and fluctuation statistics are held constant, so material dispe
 not included. The wavelength-to-the-minus-four guide applies in the
 short-correlation limit, not generally at every covariance length.
 
-.. GENERATED FROM PYTHON SOURCE LINES 15-40
+.. GENERATED FROM PYTHON SOURCE LINES 15-41
 
 .. code-block:: Python
+
 
 
     import sys
@@ -67,12 +68,12 @@ short-correlation limit, not generally at every covariance length.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 41-43
+.. GENERATED FROM PYTHON SOURCE LINES 43-45
 
 Compare numerical scattering
 ----------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 43-120
+.. GENERATED FROM PYTHON SOURCE LINES 45-122
 
 .. code-block:: Python
 
@@ -165,13 +166,13 @@ Compare numerical scattering
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 121-124
+.. GENERATED FROM PYTHON SOURCE LINES 123-126
 
 20 nm correlation length in 3D
 ------------------------------
 Show one finite input sample with its physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 124-137
+.. GENERATED FROM PYTHON SOURCE LINES 126-139
 
 .. code-block:: Python
 
@@ -199,13 +200,13 @@ Show one finite input sample with its physical spatial axes.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 138-141
+.. GENERATED FROM PYTHON SOURCE LINES 140-143
 
 150 nm correlation length in 3D
 -------------------------------
 Show one finite input sample with its physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 141-153
+.. GENERATED FROM PYTHON SOURCE LINES 143-155
 
 .. code-block:: Python
 
@@ -235,7 +236,7 @@ Show one finite input sample with its physical spatial axes.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.530 seconds)
+   **Total running time of the script:** (0 minutes 2.188 seconds)
 
 
 .. _sphx_glr_download_auto_examples_random_media_wavelength_dependence.py:

@@ -27,9 +27,10 @@ Integrated coefficients describe finite samples rather than an infinite
 medium. Error bars describe realization sampling, not discretization error.
 Field-term diagnostics alone do not certify convergence.
 
-.. GENERATED FROM PYTHON SOURCE LINES 11-57
+.. GENERATED FROM PYTHON SOURCE LINES 11-58
 
 .. code-block:: Python
+
 
 
     import sys
@@ -97,14 +98,14 @@ Field-term diagnostics alone do not certify convergence.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 58-62
+.. GENERATED FROM PYTHON SOURCE LINES 60-64
 
 Field-term diagnostics
 ----------------------
 Compare field terms separately from the scattering curves. Decreasing
 terms alone do not certify convergence of the Born series.
 
-.. GENERATED FROM PYTHON SOURCE LINES 62-66
+.. GENERATED FROM PYTHON SOURCE LINES 64-68
 
 .. code-block:: Python
 
@@ -124,7 +125,7 @@ terms alone do not certify convergence of the Born series.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 67-73
+.. GENERATED FROM PYTHON SOURCE LINES 69-75
 
 Inspect one ensemble realization in 3D
 --------------------------------------
@@ -133,7 +134,7 @@ not an ensemble average or an infinite-medium material boundary.
 Plotly shows interactive contours of the sampled medium.
 Color represents refractive index; contour geometry interpolates voxel samples.
 
-.. GENERATED FROM PYTHON SOURCE LINES 73-84
+.. GENERATED FROM PYTHON SOURCE LINES 75-86
 
 .. code-block:: Python
 
@@ -162,7 +163,7 @@ Color represents refractive index; contour geometry interpolates voxel samples.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.606 seconds)
+   **Total running time of the script:** (0 minutes 0.817 seconds)
 
 
 .. _sphx_glr_download_auto_examples_born_orders_compare_orders.py:

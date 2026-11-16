@@ -7,6 +7,8 @@ interfaces use voxel-centre sampling; refine the grid for quantitative studies.
 The solver retains its linearized dielectric contrast for both particle types.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/particle_families.png"
+
 import sys
 import numpy as np
 import matplotlib.pyplot as plt

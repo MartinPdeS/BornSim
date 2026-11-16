@@ -14,6 +14,8 @@ generated-volume provenance records the medium and seed, with a field hash
 to identify the exact input. Exact regeneration depends on software versions.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/save_load_results.png"
+
 import sys
 from bornsim.medium.random_medium import GaussianMedium
 

@@ -34,9 +34,10 @@ histogram need not match the ensemble Gaussian density closely. BornSim
 does not recenter or rescale each realization to impose its mean or variance.
 Finite voxel resolution and the cropped synthesis box also affect statistics.
 
-.. GENERATED FROM PYTHON SOURCE LINES 18-72
+.. GENERATED FROM PYTHON SOURCE LINES 18-73
 
 .. code-block:: Python
+
 
 
     import sys
@@ -106,14 +107,14 @@ Finite voxel resolution and the cropped synthesis box also affect statistics.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 73-77
+.. GENERATED FROM PYTHON SOURCE LINES 75-79
 
 Gaussian voxel volume
 ----------------------
 View the sampled Gaussian field with Plotly. The contour colors represent
 absolute refractive index; opacity does not represent material absorption.
 
-.. GENERATED FROM PYTHON SOURCE LINES 77-86
+.. GENERATED FROM PYTHON SOURCE LINES 79-88
 
 .. code-block:: Python
 
@@ -137,14 +138,14 @@ absolute refractive index; opacity does not represent material absorption.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 87-91
+.. GENERATED FROM PYTHON SOURCE LINES 89-93
 
 Exponential voxel volume
 -------------------------
 Compare the exponential sample in its own Plotly view with the same
 rendering settings. Correlation length conventions differ between models.
 
-.. GENERATED FROM PYTHON SOURCE LINES 91-100
+.. GENERATED FROM PYTHON SOURCE LINES 93-102
 
 .. code-block:: Python
 
@@ -168,12 +169,12 @@ rendering settings. Correlation length conventions differ between models.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 101-103
+.. GENERATED FROM PYTHON SOURCE LINES 103-105
 
 Check one-point distributions
 -----------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 103-128
+.. GENERATED FROM PYTHON SOURCE LINES 105-130
 
 .. code-block:: Python
 
@@ -217,7 +218,7 @@ Check one-point distributions
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.272 seconds)
+   **Total running time of the script:** (0 minutes 0.390 seconds)
 
 
 .. _sphx_glr_download_auto_examples_random_media_random_medium.py:

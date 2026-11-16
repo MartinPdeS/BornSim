@@ -14,6 +14,8 @@ spherical Green self cell with its longitudinal contact term. A small
 correction or decreasing field norms does not certify Born convergence.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/born_interference.png"
+
 import sys
 from bornsim.medium.random_medium import GaussianMedium
 

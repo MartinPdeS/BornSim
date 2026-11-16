@@ -8,6 +8,8 @@ The material is nondispersive here: its refractive index is held fixed.
 A small correction does not assess grid accuracy or the contrast approximation.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/wavelength_corrections.png"
+
 import matplotlib.pyplot as plt
 import numpy as np
 

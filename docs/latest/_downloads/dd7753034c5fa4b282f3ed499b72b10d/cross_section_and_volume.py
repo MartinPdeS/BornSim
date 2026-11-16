@@ -8,6 +8,8 @@ its product with that volume is the scattering cross section. Padding tests
 representation and normalization, not an infinite-medium transport limit.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/cross_section_and_volume.png"
+
 import matplotlib.pyplot as plt
 
 from bornsim import Grid, Solver, Source, Sphere, StructuredMedium

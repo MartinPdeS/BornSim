@@ -26,9 +26,10 @@ Born order. Curves show the estimated mean with one-standard-error bars.
 One realization has unknown error, represented by NaN. Standard errors
 measure sampling uncertainty, not voxel, quadrature, or finite-size error.
 
-.. GENERATED FROM PYTHON SOURCE LINES 10-92
+.. GENERATED FROM PYTHON SOURCE LINES 10-93
 
 .. code-block:: Python
+
 
 
     import sys
@@ -124,7 +125,7 @@ measure sampling uncertainty, not voxel, quadrature, or finite-size error.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 93-98
+.. GENERATED FROM PYTHON SOURCE LINES 95-100
 
 Sampling error at a fixed direction
 -----------------------------------
@@ -132,7 +133,7 @@ These are nested ensembles, using the first N consecutive seeds. Their
 estimates are correlated across N. A realized error need not decrease
 monotonically; the N**(-1/2) guide describes independent-sample scaling.
 
-.. GENERATED FROM PYTHON SOURCE LINES 98-114
+.. GENERATED FROM PYTHON SOURCE LINES 100-116
 
 .. code-block:: Python
 
@@ -164,7 +165,7 @@ monotonically; the N**(-1/2) guide describes independent-sample scaling.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 115-121
+.. GENERATED FROM PYTHON SOURCE LINES 117-123
 
 Inspect one ensemble realization in 3D
 --------------------------------------
@@ -173,7 +174,7 @@ not an ensemble average or an infinite-medium material boundary.
 Plotly shows interactive contours of the sampled medium.
 Color represents refractive index; contour geometry interpolates voxel samples.
 
-.. GENERATED FROM PYTHON SOURCE LINES 121-132
+.. GENERATED FROM PYTHON SOURCE LINES 123-134
 
 .. code-block:: Python
 
@@ -202,7 +203,7 @@ Color represents refractive index; contour geometry interpolates voxel samples.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.568 seconds)
+   **Total running time of the script:** (0 minutes 0.808 seconds)
 
 
 .. _sphx_glr_download_auto_examples_validation_ensemble_sampling.py:

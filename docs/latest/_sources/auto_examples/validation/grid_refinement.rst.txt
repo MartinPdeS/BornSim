@@ -26,9 +26,10 @@ grid. Its first-order amplitude has an independent closed-form reference,
 so this example isolates voxel midpoint-quadrature error. It does not test
 higher-order Green-tensor discretization or random-field synthesis.
 
-.. GENERATED FROM PYTHON SOURCE LINES 10-86
+.. GENERATED FROM PYTHON SOURCE LINES 10-87
 
 .. code-block:: Python
+
 
 
     import sys
@@ -118,7 +119,7 @@ higher-order Green-tensor discretization or random-field synthesis.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 87-93
+.. GENERATED FROM PYTHON SOURCE LINES 89-95
 
 Inspect the medium in 3D
 ------------------------
@@ -127,7 +128,7 @@ Plotly shows interactive contours of the sampled medium.
 Color represents refractive index; contour geometry interpolates voxel samples.
 This is the finest grid. The refractive index is constant throughout the sample.
 
-.. GENERATED FROM PYTHON SOURCE LINES 93-99
+.. GENERATED FROM PYTHON SOURCE LINES 95-101
 
 .. code-block:: Python
 
@@ -151,7 +152,7 @@ This is the finest grid. The refractive index is constant throughout the sample.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.269 seconds)
+   **Total running time of the script:** (0 minutes 0.342 seconds)
 
 
 .. _sphx_glr_download_auto_examples_validation_grid_refinement.py:

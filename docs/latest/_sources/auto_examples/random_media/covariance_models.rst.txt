@@ -34,9 +34,10 @@ covariance choice describes spatial correlations. The phase functions below
 come from numerical first-order finite-sample ensembles and are normalized
 per steradian, not per degree.
 
-.. GENERATED FROM PYTHON SOURCE LINES 18-58
+.. GENERATED FROM PYTHON SOURCE LINES 18-59
 
 .. code-block:: Python
+
 
 
     import sys
@@ -85,12 +86,12 @@ per steradian, not per degree.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 59-61
+.. GENERATED FROM PYTHON SOURCE LINES 61-63
 
 Compare numerical scattering
 ----------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 61-129
+.. GENERATED FROM PYTHON SOURCE LINES 63-131
 
 .. code-block:: Python
 
@@ -181,13 +182,13 @@ Compare numerical scattering
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 130-133
+.. GENERATED FROM PYTHON SOURCE LINES 132-135
 
 Gaussian medium in 3D
 ---------------------
 Show one finite input sample with its physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 133-146
+.. GENERATED FROM PYTHON SOURCE LINES 135-148
 
 .. code-block:: Python
 
@@ -215,13 +216,13 @@ Show one finite input sample with its physical spatial axes.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 147-150
+.. GENERATED FROM PYTHON SOURCE LINES 149-152
 
 Exponential medium in 3D
 ------------------------
 Show one finite input sample with its physical spatial axes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 150-162
+.. GENERATED FROM PYTHON SOURCE LINES 152-164
 
 .. code-block:: Python
 
@@ -251,7 +252,7 @@ Show one finite input sample with its physical spatial axes.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.813 seconds)
+   **Total running time of the script:** (0 minutes 1.014 seconds)
 
 
 .. _sphx_glr_download_auto_examples_random_media_covariance_models.py:

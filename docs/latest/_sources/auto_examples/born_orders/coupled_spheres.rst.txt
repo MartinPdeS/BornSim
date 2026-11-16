@@ -26,9 +26,10 @@ sphere amplitudes. At first order these coincide. Higher orders in the joint
 solve also include propagation between particles; isolated solves omit it.
 The spheres do not overlap. This remains a linearized dielectric model.
 
-.. GENERATED FROM PYTHON SOURCE LINES 10-65
+.. GENERATED FROM PYTHON SOURCE LINES 10-66
 
 .. code-block:: Python
+
 
 
     import matplotlib.pyplot as plt
@@ -96,11 +97,11 @@ The spheres do not overlap. This remains a linearized dielectric model.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 66-67
+.. GENERATED FROM PYTHON SOURCE LINES 68-69
 
 Compare amplitudes before squaring; average incident polarizations afterward.
 
-.. GENERATED FROM PYTHON SOURCE LINES 67-85
+.. GENERATED FROM PYTHON SOURCE LINES 69-87
 
 .. code-block:: Python
 
@@ -137,7 +138,7 @@ Compare amplitudes before squaring; average incident polarizations afterward.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.375 seconds)
+   **Total running time of the script:** (0 minutes 0.526 seconds)
 
 
 .. _sphx_glr_download_auto_examples_born_orders_coupled_spheres.py:

@@ -8,6 +8,8 @@ All orders use linearized dielectric contrast and the spherical Green self cell.
 These small examples illustrate corrections, not a universal convergence bound.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/contrast_sensitivity.png"
+
 import matplotlib.pyplot as plt
 
 from bornsim import Grid, Solver, Source, Sphere, StructuredMedium

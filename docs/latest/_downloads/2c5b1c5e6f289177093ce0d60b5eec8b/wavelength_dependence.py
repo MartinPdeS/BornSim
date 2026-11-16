@@ -13,6 +13,8 @@ not included. The wavelength-to-the-minus-four guide applies in the
 short-correlation limit, not generally at every covariance length.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/wavelength_dependence.png"
+
 import sys
 from bornsim.medium.random_medium import GaussianMedium
 

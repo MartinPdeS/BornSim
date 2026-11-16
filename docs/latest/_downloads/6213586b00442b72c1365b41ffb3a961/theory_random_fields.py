@@ -14,6 +14,8 @@ spectral truncation. Continuum covariance curves are reference functions,
 not exact descriptions of the sampled finite grid.
 """
 
+# sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/theory_random_fields.png"
+
 import sys
 from bornsim.medium.random_medium import GaussianMedium, ExponentialMedium, WhittleMaternMedium
 
