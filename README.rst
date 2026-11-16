@@ -8,7 +8,22 @@ BornSim
 
 **Simulate how light scatters through three-dimensional refractive media.**
 
-|python| |release| |license| |tests| |docs|
+.. list-table:: BornSim status
+   :widths: 50 50
+   :width: 100%
+   :header-rows: 0
+   :class: badge-table
+
+   * - Python
+     - |python|
+   * - Release
+     - |release|
+   * - License
+     - |license|
+   * - Tests
+     - |tests|
+   * - Documentation
+     - |docs|
 
 BornSim is a Python toolkit for finite-volume, vector Born-series calculations.
 Build random or structured samples, calculate their scattering response, and
