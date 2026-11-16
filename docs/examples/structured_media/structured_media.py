@@ -111,21 +111,9 @@ if "--no-browser" not in sys.argv:
     medium_figure.show(renderer="browser")
 
 # %%
-# Scattering curves and a diagnostic cross-section
-# --------------------------------------------------
-# The slice checks exact voxel values after exploring the full volumes above.
-figure, axes = plt.subplots(1, 2, figsize=(10, 4), layout="constrained")
-
-image = axes[0].imshow(
-    combined.refractive_index[:, grid.shape[1] // 2, :].T,
-    origin="lower",
-    extent=(-200, 200, -200, 200),
-    cmap="viridis",
-)
-
-axes[0].set(xlabel="x (nm)", ylabel="z (nm)", title="Layers, sphere and Matérn fluctuations")
-
-figure.colorbar(image, ax=axes[0], label="Refractive index")
+# Scattering curves
+# ------------------
+figure, axis = plt.subplots(layout="constrained")
 
 source_configuration_1 = Source(wavelength=633 * ureg.nanometer)
 
@@ -149,14 +137,14 @@ result = solver.solve(
 cross_section = result.differential_cross_section.to("nanometer**2 / steradian")
 
 for order, curve in enumerate(cross_section.magnitude, start=1):
-    axes[1].plot(
+    axis.plot(
         angles.to("degree").magnitude,
         curve,
         label=f"Through order {order}",
     )
 
-axes[1].set(xlabel="Scattering angle (degrees)", ylabel="dσ/dΩ (nm² sr⁻¹)")
+axis.set(xlabel="Scattering angle (degrees)", ylabel="dσ/dΩ (nm² sr⁻¹)")
 
-axes[1].legend(frameon=False)
+axis.legend(frameon=False)
 
 plt.show()

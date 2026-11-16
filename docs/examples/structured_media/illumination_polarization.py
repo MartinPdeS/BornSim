@@ -38,9 +38,9 @@ grid = Grid(
 
 volume = medium.to_volume(grid=grid)
 
-volume.plot_slice(title="Anisotropic particle: laboratory x-y slice")
-
-plt.show()
+volume_figure = volume.plot_3d(
+    field="refractive_index",
+)
 
 # %%
 # Define Jones states for an oblique incident beam

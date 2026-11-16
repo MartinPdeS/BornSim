@@ -42,9 +42,11 @@ for delta_refractive_index in (-0.04, -0.02, 0.02, 0.04):
 
     volume = medium.to_volume(grid=grid)
 
-    volume.plot_slice(title=f"Refractive index offset {delta_refractive_index:+.2f}")
+    volume_figure = volume.plot_3d(
+        field="refractive_index",
+    )
 
-    plt.show()
+    volume_figure.update_layout(title=f"Refractive index offset {delta_refractive_index:+.2f}")
 
     result = solver.solve(target=volume)
 

@@ -78,11 +78,10 @@ if "--no-browser" not in sys.argv:
     ellipsoid_figure.show(renderer="browser")
 
 # %%
-# Compare a central slice and scattering
-# --------------------------------------
-# The cross-sections show the absolute refractive index on the sampled grid.
-# The scattering curves use the x-z observation meridian and cumulative first
-# Born order. Differences reflect both geometry and material contrast; this
+# Compare scattering
+# ------------------
+# The curves use the x-z observation meridian and cumulative first Born order.
+# Differences reflect both geometry and material contrast; this
 # comparison does not isolate shape alone or validate against an exact solver.
 source = Source(wavelength=633 * ureg.nanometer)
 
@@ -93,23 +92,9 @@ solver = Solver(
 
 angles = np.linspace(0, 180, 121) * ureg.degree
 
-figure, axes = plt.subplots(1, 3, figsize=(13, 4), layout="constrained")
+figure, axis = plt.subplots(layout="constrained")
 
-half_extent = (np.asarray(grid.shape) * grid.spacing / 2).to("nanometer").magnitude
-
-for panel, (label, volume) in enumerate((("Core–shell", core_shell_volume), ("Ellipsoid", ellipsoid_volume))):
-    image = axes[panel].imshow(
-        volume.refractive_index[:, grid.shape[1] // 2, :].T,
-        origin="lower",
-        extent=(-half_extent[0], half_extent[0], -half_extent[2], half_extent[2]),
-        vmin=1.33,
-        vmax=1.35,
-    )
-
-    axes[panel].set(xlabel="x (nm)", ylabel="z (nm)", title=label)
-
-    figure.colorbar(image, ax=axes[panel], label="Refractive index")
-
+for label, volume in (("Core–shell", core_shell_volume), ("Ellipsoid", ellipsoid_volume)):
     result = solver.solve_cut(
         target=volume,
         angles=angles,
@@ -117,10 +102,10 @@ for panel, (label, volume) in enumerate((("Core–shell", core_shell_volume), ("
 
     cross_section = result.differential_cross_section.to("nanometer**2 / steradian")
 
-    axes[2].plot(angles.to("degree").magnitude, cross_section.magnitude[-1], label=label)
+    axis.plot(angles.to("degree").magnitude, cross_section.magnitude[-1], label=label)
 
-axes[2].set(xlabel="Scattering angle (degrees)", ylabel="dσ/dΩ (nm² sr⁻¹)", title="First Born order")
+axis.set(xlabel="Scattering angle (degrees)", ylabel="dσ/dΩ (nm² sr⁻¹)", title="First Born order")
 
-axes[2].legend(frameon=False)
+axis.legend(frameon=False)
 
 plt.show()

@@ -3,8 +3,9 @@ Example gallery
 
 Choose a topic below. Each runnable script includes its calculation settings,
 explanations, and figures alongside the code that produces them. Medium
-volumes and 3D phase surfaces use Plotly exclusively. Angular curves,
-polar cuts, slices, and diagnostics use Matplotlib.
+volumes and 3D phase surfaces use Plotly exclusively. Matplotlib is used for
+angular curves and numerical diagnostics; spatial samples are never rendered
+as 2D images.
 Inputs use SI-compatible quantities. Analytical examples describe
 infinite-medium first-order scattering; numerical Born-series examples describe
 finite samples.

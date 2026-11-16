@@ -270,6 +270,7 @@ inputs to immutable :class:`bornsim.rotation.RotationMatrix` tuples;
 
 .. automodule:: bornsim.volume
    :members:
+   :exclude-members: plot_slice
 
 Solver and results
 ------------------

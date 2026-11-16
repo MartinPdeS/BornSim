@@ -4,9 +4,8 @@ Medium visualization
 Interactive three-dimensional views
 -----------------------------------
 
-BornSim uses Matplotlib for two-dimensional plots, including voxel slices,
-angular scattering curves, and diagnostics. The 3D medium and phase-function
-views use Plotly exclusively. ``Volume.plot_3d()`` returns an interactive
+BornSim uses Plotly exclusively for spatial views of three-dimensional media
+and for directional phase functions. ``Volume.plot_3d()`` returns an interactive
 volume, and ``Result.plot_phase_function()`` defaults to an interactive
 directional surface. Plotly is included with BornSim; no backend selection is
 needed for 3D plots.
@@ -90,30 +89,11 @@ need not represent the same refractive index. Opacity does not represent
 material absorption. Uniform fields support volume rendering; an isosurface
 requires a nonuniform field.
 
-Exact voxel cross-sections
----------------------------
-
-``Volume.plot_slice()`` uses Matplotlib to display exact sampled values with
-physical axis labels, equal spatial aspect, and a shared color scale. Use
-``normal="x"``, ``"y"``, or ``"z"`` to choose orientation, and ``index`` to
-select a voxel plane. The default is the middle z voxel; on an even grid its
-centre is at positive half-spacing, rather than zero.
-
-.. code-block:: python
-
-   slice_figure = volume.plot_slice(
-       normal="z",
-       field="refractive_index",
-       length_unit="nanometer",
-   )
-
-   slice_figure.savefig("medium-slice.png")
-
-Plotly contours interpolate between voxel centres. Use slices to inspect
-staircase boundaries and exact voxel values; smooth contours do not replace
-checks of grid refinement. The 3D spatial aspect follows physical dimensions.
-All samples are retained, up to the grid limit of 32 voxels per axis.
-Rendering cost also depends on surface count and browser graphics support.
+Plotly contours interpolate between voxel centres. Inspect spatial structure
+in the 3D view; smooth contours do not replace checks of grid refinement. The
+3D spatial aspect follows physical dimensions. All samples are retained, up
+to the grid limit of 32 voxels per axis. Rendering cost also depends on
+surface count and browser graphics support.
 
 Directional phase surfaces and cross sections
 ---------------------------------------------

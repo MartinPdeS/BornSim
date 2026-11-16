@@ -451,8 +451,8 @@ class Volume:
 
         Notes
         -----
-        Use plot_slice() to inspect sampled cells exactly. Plotly contours interpolate between voxel centres and are visualization aids,
-        not exact curved interfaces or a replacement for grid refinement.
+        Plotly contours interpolate between voxel centres and are visualization
+        aids, not exact curved interfaces or a replacement for grid refinement.
         Aspect ratio follows physical dimensions. All voxels are retained, with
         at most 32**3 samples under Volume's grid limit; browser performance
         also depends on surface count and graphics support. This plots the

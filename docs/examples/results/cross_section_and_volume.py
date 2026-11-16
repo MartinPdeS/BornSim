@@ -31,9 +31,9 @@ medium.add_structures(sphere)
 
 volume = medium.to_volume(grid=grid)
 
-volume.plot_slice(title="Input sphere: central refractive index slice")
-
-plt.show()
+volume_figure = volume.plot_3d(
+    field="refractive_index",
+)
 
 # %%
 source = Source(wavelength=633 * ureg.nanometer)

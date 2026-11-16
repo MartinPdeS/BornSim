@@ -121,10 +121,11 @@ volume to ``solver.solve``.
 Plotting
 --------
 
-BornSim uses Matplotlib for 2D curves and voxel slices. Three-dimensional
-views use Plotly exclusively; phase functions default to a directional 3D
-surface. Rotate, zoom, and hover to inspect values. Plotly figures open no
-window during construction and can be saved as self-contained HTML:
+BornSim uses Plotly exclusively to render three-dimensional media and
+directional phase functions. Rotate, zoom, and hover to inspect values. 2D
+plots are reserved for curves and diagnostics, never spatial views of a 3D
+sample. Plotly figures open no window during construction and can be saved as
+self-contained HTML:
 
 .. code-block:: python
 
@@ -136,9 +137,8 @@ window during construction and can be saved as self-contained HTML:
 Use ``result.plot()`` for a Matplotlib curve of differential scattering, or
 ``result.plot_phase_function()`` for its default directional 3D phase surface.
 Choose ``view="angular"`` or ``view="polar"`` for 2D Matplotlib phase views.
-Use ``volume.plot_slice()`` to inspect exact voxel values in a 2D Matplotlib
-slice. The 3D volume rendering interpolates between voxel centres, so use
-slices and grid refinement when examining interfaces.
+Spatial media are always shown as Plotly 3D figures; inspect voxelization
+effects through 3D views and grid refinement.
 
 Model and interpretation
 ------------------------

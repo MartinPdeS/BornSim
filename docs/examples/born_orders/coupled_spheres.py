@@ -51,9 +51,9 @@ for structures in ((left_sphere,), (right_sphere,), (left_sphere, right_sphere))
 
     volume = medium.to_volume(grid=grid)
 
-    volume.plot_slice()
-
-    plt.show()
+    volume_figure = volume.plot_3d(
+        field="refractive_index",
+    )
 
     result = solver.solve_cut(
         target=volume,
