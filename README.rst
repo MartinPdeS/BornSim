@@ -60,42 +60,67 @@ Quick start
    from bornsim.medium.random_medium import GaussianMedium
    from bornsim.units import ureg
 
-   grid = Grid(shape=(16, 16, 16), spacing=50 * ureg.nanometer)
+   grid = Grid(
+       shape=(16, 16, 16),
+       spacing=50 * ureg.nanometer,
+   )
+
    medium = GaussianMedium(
        background_refractive_index=1.33,
        refractive_index_std=0.01,
        correlation_length=100 * ureg.nanometer,
    )
 
+   source = Source(wavelength=633 * ureg.nanometer)
+
    solver = Solver(
-       source=Source(wavelength=633 * ureg.nanometer),
+       source=source,
        order=3,
+   )
+
+   ensemble_sampling = EnsembleSampling(
+       realizations=4,
+       seed=42,
    )
 
    result = solver.ensemble(
        medium=medium,
        grid=grid,
-       ensemble_sampling=EnsembleSampling(realizations=4, seed=42),
+       ensemble_sampling=ensemble_sampling,
    )
 
-   print(result.mu_s.to("1 / millimeter"))
-   print(result.g)
-   print(result.mu_s_prime.to("1 / millimeter"))
+   print(f"mu_s = {result.mu_s.to('1 / millimeter')}")
+
+   print(f"g = {result.g}")
+
+   print(f"mu_s_prime = {result.mu_s_prime.to('1 / millimeter')}")
+
    result.plot()
 
 For one fixed structured sample, use ``solver.solve(target=volume)``. The
-result can also be visualized directly:
+result can also be visualized directly with Plotly:
 
 .. code-block:: python
 
-   volume = medium.to_volume(grid=grid, seed=42)
+   volume = medium.to_volume(
+       grid=grid,
+       seed=42,
+   )
+
    medium_figure = volume.plot_3d(
        field="refractive_index",
-       opacity_scale="increasing",
    )
-   phase_figure = solver.solve(target=volume).plot_phase_function(view="3d")
-   medium_figure.write_html("medium.html", include_plotlyjs=True)
-   phase_figure.write_html("phase_function.html", include_plotlyjs=True)
+
+   result = solver.solve(target=volume)
+
+   phase_figure = result.plot_phase_function(view="3d")
+
+   medium_figure.show()
+
+   phase_figure.show()
+
+All 3D views use Plotly exclusively. Two-dimensional plots use Matplotlib.
+Plotly figures support ``figure.show()`` and offline ``figure.write_html()`` exports.
 
 What BornSim models
 -------------------

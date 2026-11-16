@@ -7,7 +7,7 @@ import numpy as np
 from .directions import Directions
 from .grid import Grid
 from .results import BornResult
-from .units import Quantity, _integer, validate_units, ureg
+from .units import Quantity, validate_quantity, ureg
 
 
 @dataclass(frozen=True, kw_only=True, init=False)
@@ -92,7 +92,7 @@ class AngularSampling:
         else:
             start = 0 * ureg.radian if start is None else start
 
-            validate_units(
+            validate_quantity(
                 start,
                 unit="radian",
                 name="start",
@@ -101,7 +101,7 @@ class AngularSampling:
 
             end = np.pi * ureg.radian if end is None else end
 
-            validate_units(
+            validate_quantity(
                 end,
                 unit="radian",
                 name="end",
@@ -118,11 +118,16 @@ class AngularSampling:
             if invalid_endpoints:
                 raise ValueError("start and end must be finite angles between 0 and pi.")
 
-            count = _integer(value=121 if n_points is None else n_points, name="n_points", low=1, high=181)
+            count = 121 if n_points is None else n_points
+
+            if isinstance(count, bool) or not isinstance(count, (int, np.integer)) or not 1 <= count <= 181:
+                raise ValueError("n_points must be an integer between 1 and 181.")
+
+            count = int(count)
 
             angles = cast(Quantity, np.linspace(start, end, count))
 
-        validate_units(
+        validate_quantity(
             angles,
             unit="radian",
             name="angles",
@@ -148,7 +153,10 @@ class AngularSampling:
             ("polar_samples", polar_samples, 16, 128),
             ("azimuth_samples", azimuth_samples, 4, 32),
         ):
-            object.__setattr__(self, name, _integer(value=value, name=name, low=low, high=high))
+            if isinstance(value, bool) or not isinstance(value, (int, np.integer)) or not low <= value <= high:
+                raise ValueError(f"{name} must be an integer between {low} and {high}.")
+
+            object.__setattr__(self, name, int(value))
 
     def __repr__(self) -> str:
         """Return a compact summary of the angle range and quadrature sizes.

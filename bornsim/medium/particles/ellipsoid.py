@@ -1,8 +1,13 @@
 """Finite oriented ellipsoidal particles."""
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 from ..base import Medium
+from ...grid import Grid
 from ...units import Quantity
+
+if TYPE_CHECKING:
+    from ...volume import Volume
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -50,12 +55,32 @@ class EllipsoidMedium(Medium):
         return medium
 
     @property
-    def metadata(self):
-        """Return particle geometry in SI units."""
+    def metadata(self) -> dict[str, object]:
+        """Return particle geometry in SI units.
+
+        Returns
+        -------
+        dict of str to object
+            Refractive indices, orientation, and dimensions in metres.
+        """
         return {**self._composite().metadata, "model": "ellipsoid"}
 
-    def to_volume(self, *, grid, seed=0):
-        """Voxelize the oriented particle, clipping it to the supplied grid."""
+    def to_volume(self, *, grid: Grid, seed: int = 0) -> "Volume":
+        """Voxelize the oriented particle, clipping it to the supplied grid.
+
+        Parameters
+        ----------
+        grid : Grid
+            Explicit voxel grid.
+        seed : int, default=0
+            Accepted for the common Medium interface; this deterministic
+            particle does not use it.
+
+        Returns
+        -------
+        Volume
+            Voxelized particle contrast and geometry provenance.
+        """
         from ...volume import Volume
 
         medium = self._composite()

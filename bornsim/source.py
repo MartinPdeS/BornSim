@@ -3,29 +3,8 @@
 from dataclasses import dataclass
 import numpy as np
 from numpy.typing import ArrayLike
-from .units import Quantity, validate_units
+from .units import Quantity, validate_quantity
 from .polarization import PolarizationState
-
-
-def _transverse_basis(*, incident_direction: np.ndarray) -> np.ndarray:
-    """Build a right-handed basis with projected laboratory x as reference."""
-
-    direction = incident_direction / np.linalg.norm(incident_direction)
-
-    reference = np.array([1.0, 0.0, 0.0])
-
-    first = reference - np.dot(reference, direction) * direction
-
-    if np.linalg.norm(first) < 1e-10:
-        reference = np.array([0.0, 1.0, 0.0])
-
-        first = reference - np.dot(reference, direction) * direction
-
-    first /= np.linalg.norm(first)
-
-    second = np.cross(direction, first)
-
-    return np.stack([first, second]).astype(complex)
 
 
 @dataclass(frozen=True, kw_only=True, eq=False)
@@ -60,7 +39,7 @@ class Source:
     polarization: PolarizationState | ArrayLike | None = None
 
     def __post_init__(self) -> None:
-        validate_units(
+        validate_quantity(
             self.wavelength,
             unit="meter",
             name="wavelength",
@@ -77,7 +56,7 @@ class Source:
                 continue
 
             if name == "polarization" and isinstance(value, PolarizationState):
-                basis = _transverse_basis(incident_direction=np.asarray(self.incident_direction))
+                basis = self._transverse_basis(incident_direction=np.asarray(self.incident_direction))
 
                 value = value.jones_vector @ basis
 
@@ -109,18 +88,53 @@ class Source:
         ):
             raise ValueError("polarization must be transverse to incident_direction.")
 
+    def _transverse_basis(self, *, incident_direction: np.ndarray) -> np.ndarray:
+        """Build a right-handed basis with projected laboratory x as reference."""
+
+        direction = incident_direction / np.linalg.norm(incident_direction)
+
+        reference = np.array([1.0, 0.0, 0.0])
+
+        first = reference - np.dot(reference, direction) * direction
+
+        if np.linalg.norm(first) < 1e-10:
+            reference = np.array([0.0, 1.0, 0.0])
+
+            first = reference - np.dot(reference, direction) * direction
+
+        first /= np.linalg.norm(first)
+
+        second = np.cross(direction, first)
+
+        return np.stack([first, second]).astype(complex)
+
     @property
     def polarization_vectors(self) -> np.ndarray:
-        """Return unit electric-field modes, mixed incoherently with equal weight."""
+        """Return unit electric-field modes for the incident source.
+
+        Returns
+        -------
+        numpy.ndarray
+            Complex or real unit polarization vectors with shape ``(mode, 3)``.
+            An unspecified polarization produces two equally weighted
+            incoherent transverse modes.
+        """
 
         if self.polarization is not None:
             return np.asarray(self.polarization)[None, :].copy()
 
-        return _transverse_basis(incident_direction=np.asarray(self.incident_direction))
+        return self._transverse_basis(incident_direction=np.asarray(self.incident_direction))
 
     @property
     def metadata(self) -> dict:
-        """Return fresh JSON-compatible illumination settings in SI units."""
+        """Return fresh JSON-compatible illumination settings in SI units.
+
+        Returns
+        -------
+        dict of str to object
+            Wavelength in metres and incident direction and polarization
+            components as JSON lists.
+        """
 
         polarization = None if self.polarization is None else np.asarray(self.polarization)
 

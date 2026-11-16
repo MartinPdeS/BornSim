@@ -17,7 +17,6 @@ dielectric contrast ``2 * n0 * delta_n`` at all Born orders, rather than
 """
 
 import sys
-
 import matplotlib.pyplot as plt
 
 from bornsim import Material, AngularSampling, Grid, Solver, Source, Sphere, StructuredMedium
@@ -83,12 +82,10 @@ volume = structure.to_volume(
 # Inspect the medium in 3D
 # ------------------------
 # Inspect the actual finite input sample with physical spatial axes.
-# The gallery embeds an interactive volume; drag to rotate and scroll to zoom.
-# Level surfaces interpolate the sampled staircase interface.
+# The gallery embeds the interactive Plotly medium view.
+# Contours interpolate the solver's sampled staircase interface.
 medium_figure = volume.plot_3d(
-    mode="volume",
     field="refractive_index",
-    opacity_scale="increasing",
 )
 
 if "--no-browser" not in sys.argv:

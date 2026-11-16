@@ -3,8 +3,8 @@ Example gallery
 
 Choose a topic below. Each runnable script includes its calculation settings,
 explanations, and figures alongside the code that produces them. Medium
-volumes and 3D phase surfaces are interactive: drag to rotate, scroll to zoom,
-and hover to inspect values. Angular curves and diagnostic plots use Matplotlib.
+volumes and 3D phase surfaces use Plotly exclusively. Angular curves,
+polar cuts, slices, and diagnostics use Matplotlib.
 Inputs use SI-compatible quantities. Analytical examples describe
 infinite-medium first-order scattering; numerical Born-series examples describe
 finite samples.
@@ -15,8 +15,9 @@ creating the next figure. Multiple axes comparing related data may share a
 single figure. This keeps each gallery image beside its plotting code and
 displays figures one at a time when running the scripts locally.
 
-Assign each Plotly figure to a named variable so the gallery can embed it.
-When running a script, call ``figure.show(renderer="browser")`` unless
-``--no-browser`` is supplied. The documentation builder uses that argument
-and exports the figures with a shared local Plotly library, so the downloaded
-documentation works offline. Keep static slices as secondary diagnostic views.
+All 3D calls return Plotly figures. Assign each figure to a named variable;
+the gallery embeds it automatically. When running scripts locally, call
+``figure.show(renderer="browser")`` unless ``--no-browser`` is supplied.
+The documentation builder supplies that argument and exports interactive
+figures with a local Plotly library. Controls affect display only, not
+numerical resolution.

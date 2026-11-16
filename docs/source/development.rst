@@ -40,8 +40,9 @@ Validation, rendering and archives
 -----------------------------------
 
 Keep Volume and Result responsible for physical data, units, validation,
-plotting and archive serialization. Rendering methods import their backends
-only when called. Result archives use an explicit SI schema and safe loading
+and archive serialization. Result and AngularData delegate rendering to
+``bornsim.plotting``. Rendering functions import their backends only when
+called. All 3D views use Plotly exclusively; 2D views use Matplotlib. Result archives use an explicit SI schema and safe loading
 without pickle. Results are immutable and validated at construction; loading
 validates the archive.
 

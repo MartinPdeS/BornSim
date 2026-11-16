@@ -1,8 +1,10 @@
 """Consistent unitful directional scattering data for solves and cuts."""
 
 from dataclasses import dataclass
+from typing import Any, Literal
 import numpy as np
-from .units import Quantity, validate_units, ureg
+from . import plotting
+from .units import Quantity, validate_quantity, ureg
 
 
 @dataclass(frozen=True, kw_only=True, repr=False)
@@ -27,11 +29,18 @@ class AngularData:
     azimuth_stderr: Quantity | None = None
     mu_s: Quantity | None = None
     sample_volume: Quantity | None = None
-    kind: str = "volume"
+    kind: Literal["volume", "ensemble"] = "volume"
     azimuth_averaged: bool = False
     meridian_azimuth: Quantity | None = None
 
     def __post_init__(self) -> None:
+        """Validate, copy, and freeze all supplied data.
+
+        Raises
+        ------
+        ValueError
+            If units, numeric values, axis lengths, or data relationships are invalid.
+        """
         units = {
             "differential": "1 / meter / steradian",
             "directions": "dimensionless",
@@ -53,10 +62,11 @@ class AngularData:
                 if unit == "dimensionless" and not isinstance(value, Quantity):
                     value = np.array(value, copy=True) * ureg.dimensionless
 
-                validate_units(
+                validate_quantity(
                     value,
                     unit=unit,
                     name=name,
+                    finite=False,
                 )
 
                 if not np.issubdtype(np.asarray(value.magnitude).dtype, np.number):
@@ -101,7 +111,14 @@ class AngularData:
 
             object.__setattr__(self, "directions", quantity)
 
-    def _validate_values(self):
+    def _validate_values(self) -> None:
+        """Validate array shapes, value ranges, and cross-field constraints.
+
+        Raises
+        ------
+        ValueError
+            If any stored quantity is inconsistent with the data contract.
+        """
         shape = self.differential.shape
 
         shapes = {
@@ -212,8 +229,20 @@ class AngularData:
             raise ValueError("stderr and azimuth_stderr are only available for an ensemble.")
 
     @property
-    def phase_function(self):
-        """Density per steradian, normalized by the full solid-angle integral."""
+    def phase_function(self) -> Quantity:
+        """Return the differential density normalized over solid angle.
+
+        Returns
+        -------
+        Quantity
+            Phase function in inverse steradians, with the same shape as
+            ``differential``.
+
+        Raises
+        ------
+        ValueError
+            If positive finite integrated ``mu_s`` values are unavailable.
+        """
 
         if self.mu_s is None or np.any(~np.isfinite(self.mu_s.magnitude)) or np.any(self.mu_s.magnitude <= 0):
             raise ValueError("Phase normalization requires positive, finite integrated mu_s.")
@@ -223,16 +252,43 @@ class AngularData:
         return (self.differential / self.mu_s.reshape(axes)).to("1 / steradian")
 
     @property
-    def differential_cross_section(self):
-        """Finite-sample differential cross section in square metres per sr."""
+    def differential_cross_section(self) -> Quantity:
+        """Return the finite-sample differential cross section.
+
+        Returns
+        -------
+        Quantity
+            Differential cross section in square metres per steradian, with
+            the same shape as ``differential``.
+
+        Raises
+        ------
+        ValueError
+            If ``sample_volume`` is unavailable.
+        """
 
         if self.sample_volume is None:
             raise ValueError("sample_volume is unavailable for this angular data.")
 
         return (self.differential * self.sample_volume).to("meter**2 / steradian")
 
-    def azimuth_average(self):
-        """Average intensities explicitly; never average coherent amplitudes."""
+    def azimuth_average(self) -> "AngularData":
+        """Average intensities over the sampled azimuth axis.
+
+        Coherent amplitudes and directions are omitted because averaging them
+        would not represent the intensity average.
+
+        Returns
+        -------
+        AngularData
+            New data with shape ``(order, polar angle)`` and
+            ``azimuth_averaged=True``.
+
+        Raises
+        ------
+        ValueError
+            If this object does not contain a full azimuth grid.
+        """
 
         if self.azimuths is None:
             raise ValueError("Azimuth averaging requires a full angular grid.")
@@ -248,22 +304,39 @@ class AngularData:
             azimuth_averaged=True,
         )
 
-    def meridian(self, *, azimuth, method="exact"):
-        """Select a sampled meridian using an angle, preserving normalization.
+    def meridian(self, *, azimuth: Quantity, method: Literal["exact", "nearest"] = "exact") -> "AngularData":
+        """Select one sampled meridian while preserving normalization.
 
-        Azimuth requires explicit angular units and is periodic modulo 2*pi. exact requires
-        a sampled azimuth within 1e-10 radians; nearest explicitly selects the
-        closest sample. No interpolation or azimuth averaging is performed.
-        meridian_azimuth records the actual selected angle.
+        Azimuth is periodic modulo :math:`2\\pi`. ``exact`` requires a sample
+        within ``1e-10`` radians; ``nearest`` selects the closest sample. No
+        interpolation or averaging is performed. The selected angle is stored
+        in ``meridian_azimuth``.
+
+        Parameters
+        ----------
+        azimuth : Quantity
+            Requested azimuth with explicit angular units; must be scalar and finite.
+        method : {'exact', 'nearest'}, default='exact'
+            Whether to require a sampled angle or select its nearest sample.
+
+        Returns
+        -------
+        AngularData
+            Data for the selected meridian, with shape ``(order, polar angle)``.
+
+        Raises
+        ------
+        ValueError
+            If the data do not have an azimuth grid, the request is invalid,
+            or ``method='exact'`` has no matching sample.
         """
-
         if self.azimuths is None:
             raise ValueError("Meridian selection requires a full angular grid.")
 
         if method not in ("exact", "nearest"):
             raise ValueError("method must be exact or nearest.")
 
-        validate_units(
+        validate_quantity(
             azimuth,
             unit="radian",
             name="azimuth",
@@ -297,12 +370,39 @@ class AngularData:
             meridian_azimuth=phi[index] * ureg.radian,
         )
 
-    def plot(self, *, terms=False, log_y=False, title=None, azimuth=0):
-        """Plot one sampled meridian, or an explicitly averaged curve."""
+    def plot(
+        self,
+        *,
+        terms: bool = False,
+        log_y: bool = False,
+        title: str | None = None,
+        azimuth: int = 0,
+    ) -> Any:
+        """Plot differential scattering on a meridian or averaged curve.
 
-        from .results import Result
+        Parameters
+        ----------
+        terms : bool, default=False
+            Plot isolated Born terms instead of cumulative intensities.
+        log_y : bool, default=False
+            Use a logarithmic vertical axis.
+        title : str or None, default=None
+            Optional custom figure title.
+        azimuth : int, default=0
+            Sample index used when selecting a meridian from full angular data.
 
-        return Result._plot_differential(
+        Returns
+        -------
+        matplotlib.figure.Figure
+            Figure containing the requested differential-scattering curves.
+
+        Raises
+        ------
+        ValueError
+            If the requested meridian cannot be selected.
+        """
+
+        return plotting.plot_differential(
             result=self,
             terms=terms,
             log_y=log_y,
@@ -310,12 +410,47 @@ class AngularData:
             azimuth=azimuth,
         )
 
-    def plot_phase_function(self, *, view="angular", order=None, log_y=False, azimuth=0, backend=None):
-        """Plot normalized directional densities with the same Result interface."""
+    def plot_phase_function(
+        self,
+        *,
+        view: Literal["angular", "polar", "3d"] = "angular",
+        order: int | None = None,
+        log_y: bool = False,
+        azimuth: int = 0,
+        backend: Literal["matplotlib", "plotly"] | None = None,
+    ) -> Any:
+        """Plot normalized directional densities.
 
-        from .results import Result
+        Parameters
+        ----------
+        view : {'angular', 'polar', '3d'}, default='angular'
+            Angular curve, polar curve, or directional 3D surface. The 3D view
+            uses Plotly; 2D views use Matplotlib.
+        order : int or None, default=None
+            One-based cumulative Born order. ``None`` plots all angular curves
+            or the final available surface.
+        log_y : bool, default=False
+            Use a logarithmic vertical axis; supported for the angular view.
+        azimuth : int, default=0
+            Sample index used for angular and polar meridian views.
+        backend : {'matplotlib', 'plotly'} or None, default=None
+            Rendering backend. Plotly is used for 3D; Matplotlib is used for 2D.
 
-        return Result._plot_phase_function(
+        Returns
+        -------
+        matplotlib.figure.Figure or plotly.graph_objects.Figure
+            Figure containing the selected phase-function view.
+
+        Raises
+        ------
+        ValueError
+            If normalization is unavailable or the view, order, backend, or
+            angular sampling is incompatible.
+        ImportError
+            If Plotly is unavailable for the 3D view.
+        """
+
+        return plotting.plot_phase_function(
             result=self,
             view=view,
             order=order,
@@ -324,7 +459,8 @@ class AngularData:
             backend=backend,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
+        """Return a concise summary of the stored angular data."""
         return (
             f"AngularData(shape={self.differential.shape}, intensity_unit=m^-1 sr^-1, "
             f"amplitudes={'available' if self.amplitudes is not None else 'absent'}, "

@@ -4,7 +4,7 @@ from abc import abstractmethod
 from dataclasses import dataclass
 import numpy as np
 from ..base import Medium
-from ...units import _integer, _refractive_index_values, Quantity, validate_units, ureg
+from ...units import NoUnit, Quantity, Scalar, validate_annotation, validate_quantity, ureg
 from ...grid import Grid
 from typing import TYPE_CHECKING
 
@@ -29,12 +29,18 @@ class RandomFieldMedium(Medium):
     @property
     @abstractmethod
     def correlation(self) -> str:
-        """Spatial covariance family recorded in provenance."""
+        """Return the spatial covariance family.
+
+        Returns
+        -------
+        str
+            Covariance-family identifier stored in provenance.
+        """
 
         raise NotImplementedError
 
     def __post_init__(self) -> None:
-        validate_units(
+        validate_quantity(
             self.correlation_length,
             unit="meter",
             name="correlation_length",
@@ -45,11 +51,15 @@ class RandomFieldMedium(Medium):
             raise ValueError("correlation_length must be finite and positive.")
 
         for name in ("background_refractive_index", "refractive_index_std", "extinction_coefficient"):
-            value = _refractive_index_values(
-                value=getattr(self, name),
+            value = getattr(self, name)
+
+            validate_annotation(
+                value,
+                annotation=NoUnit[Scalar],
                 name=name,
-                scalar=True,
             )
+
+            value = float(value)
 
             if not np.isfinite(value) or value < 0 or (name == "background_refractive_index" and value == 0):
                 raise ValueError(
@@ -58,7 +68,13 @@ class RandomFieldMedium(Medium):
 
     @property
     def is_random(self) -> bool:
-        """Statistical media support independent seeded realizations."""
+        """Whether independent seeds generate distinct realizations.
+
+        Returns
+        -------
+        bool
+            Always True for statistical random-field media.
+        """
 
         return True
 
@@ -68,6 +84,11 @@ class RandomFieldMedium(Medium):
 
         Lengths use the ``_m`` suffix. This describes ensemble statistics rather
         than a particular seed or a sample's measured mean and variance.
+
+        Returns
+        -------
+        dict of str to object
+            Independent metadata with physical lengths represented in metres.
         """
 
         return {
@@ -85,9 +106,25 @@ class RandomFieldMedium(Medium):
         The zero-wavenumber weight is one. This is not the normalized continuum
         power spectral density; the synthesis code supplies discrete variance
         normalization. Inputs must be finite and nonnegative.
+
+        Parameters
+        ----------
+        q_squared : Quantity
+            Nonnegative squared wavenumbers with explicit inverse-square-length
+            units.
+
+        Returns
+        -------
+        numpy.ndarray
+            Dimensionless spectral weights with the input shape.
+
+        Raises
+        ------
+        ValueError
+            If units or values are invalid.
         """
 
-        validate_units(
+        validate_quantity(
             q_squared,
             unit="1 / meter**2",
             name="q_squared",
@@ -112,7 +149,25 @@ class RandomFieldMedium(Medium):
         its first half. Expected point variance is normalized; individual samples
         are never recentered or rescaled. Grid resolution and synthesis-box size
         can alter sampled covariance. The seed defaults to zero and remains explicit
-        in the generated volume's provenance."""
+        in the generated volume's provenance.
+
+        Parameters
+        ----------
+        grid : Grid
+            Explicit cubic voxel grid.
+        seed : int, default=0
+            Nonnegative 32-bit seed for the random realization.
+
+        Returns
+        -------
+        Volume
+            Sampled refractive-index contrast and generation metadata.
+
+        Raises
+        ------
+        ValueError
+            If the seed or sampling configuration is invalid.
+        """
 
         from ...volume import Volume
 
@@ -123,12 +178,10 @@ class RandomFieldMedium(Medium):
 
         voxel_spacing_m = float(grid.spacing.to("meter").magnitude)
 
-        seed = _integer(
-            value=seed,
-            name="seed",
-            low=0,
-            high=2**32 - 1,
-        )
+        if isinstance(seed, bool) or not isinstance(seed, (int, np.integer)) or not 0 <= seed <= 2**32 - 1:
+            raise ValueError("seed must be an integer between 0 and 4294967295.")
+
+        seed = int(seed)
 
         synthesis_grid_shape = tuple(2 * voxel_count for voxel_count in sample_grid_shape)
 

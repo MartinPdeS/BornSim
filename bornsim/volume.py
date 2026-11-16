@@ -2,13 +2,15 @@
 
 from copy import deepcopy
 from dataclasses import dataclass, field
+import matplotlib.pyplot as plt
 import numpy as np
+import plotly.graph_objects as go
 from numpy.typing import ArrayLike
 from types import NotImplementedType
-from typing import TYPE_CHECKING, Literal, Self
+from typing import Any, TYPE_CHECKING, Literal, Self
 from .grid import Grid
 from .medium import Medium
-from .units import _integer, _refractive_index_values, Quantity
+from .units import NoUnit, Quantity, Scalar, validate_annotation
 
 if TYPE_CHECKING:
     from matplotlib.figure import Figure as MatplotlibFigure
@@ -45,13 +47,13 @@ class Volume:
     _medium_metadata: dict[str, object] | None = field(init=False, default=None, repr=False, compare=False)
 
     def __post_init__(self) -> None:
-        data = np.array(
-            _refractive_index_values(
-                value=self.delta_refractive_index,
-                name="delta_refractive_index",
-            ),
-            copy=True,
+        validate_annotation(
+            self.delta_refractive_index,
+            annotation=NoUnit,
+            name="delta_refractive_index",
         )
+
+        data = np.array(self.delta_refractive_index, dtype=float, copy=True)
 
         if data.ndim != 3 or any(n < 2 or n > 32 for n in data.shape) or not np.all(np.isfinite(data)):
             raise ValueError("delta_refractive_index must be a finite 3D array with 2–32 cells per axis.")
@@ -65,15 +67,13 @@ class Volume:
 
         object.__setattr__(self, "spacing", grid.spacing)
 
-        object.__setattr__(
-            self,
-            "background_refractive_index",
-            _refractive_index_values(
-                value=self.background_refractive_index,
-                name="background_refractive_index",
-                scalar=True,
-            ),
+        validate_annotation(
+            self.background_refractive_index,
+            annotation=NoUnit[Scalar],
+            name="background_refractive_index",
         )
+
+        object.__setattr__(self, "background_refractive_index", float(self.background_refractive_index))
 
         if not np.isfinite(self.background_refractive_index) or self.background_refractive_index <= 0:
             raise ValueError("background_refractive_index must be finite and positive.")
@@ -91,15 +91,17 @@ class Volume:
             if self.medium.background_refractive_index != self.background_refractive_index:
                 raise ValueError("medium background_refractive_index must match the volume.")
 
+            if (
+                isinstance(self.seed, bool)
+                or not isinstance(self.seed, (int, np.integer))
+                or not 0 <= self.seed <= 2**32 - 1
+            ):
+                raise ValueError("seed must be an integer between 0 and 4294967295.")
+
             object.__setattr__(
                 self,
                 "seed",
-                _integer(
-                    value=self.seed,
-                    name="seed",
-                    low=0,
-                    high=2**32 - 1,
-                ),
+                int(self.seed),
             )
 
         object.__setattr__(
@@ -112,10 +114,13 @@ class Volume:
 
         object.__setattr__(self, "delta_refractive_index", data)
 
-        absorption = np.array(
-            _refractive_index_values(value=self.extinction_coefficient, name="extinction_coefficient"),
-            copy=True,
+        validate_annotation(
+            self.extinction_coefficient,
+            annotation=NoUnit,
+            name="extinction_coefficient",
         )
+
+        absorption = np.array(self.extinction_coefficient, dtype=float, copy=True)
         if absorption.ndim == 0:
             absorption = np.full(grid.shape, float(absorption))
         if absorption.shape != grid.shape or not np.all(np.isfinite(absorption)) or np.any(absorption < 0):
@@ -123,7 +128,7 @@ class Volume:
         absorption.setflags(write=False)
         object.__setattr__(self, "extinction_coefficient", absorption)
 
-    def with_absorption(self, *, extinction_coefficient) -> Self:
+    def with_absorption(self, *, extinction_coefficient: Any) -> Self:
         """Return a sample with passive absorption in a real, lossless host.
 
         Parameters
@@ -183,16 +188,21 @@ class Volume:
             If ``medium`` is not a Medium instance.
         """
 
-        absolute_refractive_index = _refractive_index_values(
-            value=refractive_index,
+        validate_annotation(
+            refractive_index,
+            annotation=NoUnit,
             name="refractive_index",
         )
 
-        background = _refractive_index_values(
-            value=background_refractive_index,
+        absolute_refractive_index = np.asarray(refractive_index, dtype=float)
+
+        validate_annotation(
+            background_refractive_index,
+            annotation=NoUnit[Scalar],
             name="background_refractive_index",
-            scalar=True,
         )
+
+        background = float(background_refractive_index)
 
         return cls(
             delta_refractive_index=absolute_refractive_index - background,
@@ -321,8 +331,6 @@ class Volume:
             If the plane, index, field, or length unit is invalid.
         """
 
-        import matplotlib.pyplot as plt
-
         if normal not in ("x", "y", "z"):
             raise ValueError("normal must be x, y, or z.")
 
@@ -330,12 +338,12 @@ class Volume:
 
         count = self.delta_refractive_index.shape[axis_index]
 
-        selected = _integer(
-            value=count // 2 if index is None else index,
-            name="index",
-            low=0,
-            high=count - 1,
-        )
+        selected = count // 2 if index is None else index
+
+        if isinstance(selected, bool) or not isinstance(selected, (int, np.integer)) or not 0 <= selected < count:
+            raise ValueError(f"index must be an integer between 0 and {count - 1}.")
+
+        selected = int(selected)
 
         values, label = self._plot_field(field=field)
 
@@ -381,24 +389,22 @@ class Volume:
     def plot_3d(
         self,
         *,
-        backend: Literal["matplotlib", "plotly"] = "plotly",
-        mode: Literal["voxels", "volume", "isosurface"] | None = None,
+        backend: Literal["plotly"] = "plotly",
+        mode: Literal["volume", "isosurface"] | None = None,
         field: Literal["delta_refractive_index", "refractive_index", "permittivity"] = "delta_refractive_index",
         length_unit: str = "nanometer",
         surface_count: int = 8,
         opacity: float | int | None = None,
         opacity_scale: Literal["uniform", "increasing"] = "uniform",
-    ) -> "MatplotlibFigure | PlotlyFigure":
+    ) -> "PlotlyFigure":
         """Build a three-dimensional figure of the finite voxel medium.
 
         Parameters
         ----------
-        backend : {'matplotlib', 'plotly'}, optional
-            Default is Plotly for browser interaction. Select 'matplotlib'
-            explicitly for a Matplotlib figure.
+        backend : {'plotly'}, optional
+            Plotly is the only supported 3D backend. Default is 'plotly'.
         mode : str, optional
-            Matplotlib supports 'voxels' (default). Plotly supports 'volume'
-            (default) and 'isosurface'. Uniform Plotly fields are rendered as
+            Choose 'volume' (default) or 'isosurface'. Uniform fields are rendered as
             volume data; an isosurface cannot be generated from a uniform field.
         field : {'delta_refractive_index', 'refractive_index', 'permittivity'}, optional
             Scalar field to display, default refractive index fluctuation. 'refractive_index' displays
@@ -409,9 +415,11 @@ class Volume:
         surface_count : int, optional
             Number of contours, from 1 to 32; default 8. More surfaces increase
             browser rendering cost. Used only by Plotly volume and isosurface modes.
+            An interactive density slider adjusts this display setting.
         opacity : float, optional
-            Surface opacity in (0, 1]. Default is 1 for Matplotlib and 0.15
-            for Plotly.
+            Initial surface opacity in (0, 1]. Default is 0.12 for volumes
+            and 0.5 for isosurfaces. Plotly volumes
+            include an opacity slider, with zero available to hide the field.
         opacity_scale : {'uniform', 'increasing'}, optional
             Default 'uniform' gives all contours the same opacity. 'increasing'
             is available only for Plotly volume mode and scales opacity from
@@ -421,10 +429,8 @@ class Volume:
 
         Returns
         -------
-        figure : matplotlib.figure.Figure or plotly.graph_objects.Figure
-            Matplotlib: call pyplot.show() to display or figure.savefig() to
-            export. Rotation needs an interactive Matplotlib backend; gallery
-            images are static. Plotly: call figure.show() or figure.write_html().
+        figure : plotly.graph_objects.Figure
+            Call figure.show() to display or figure.write_html() to export.
             Constructing a figure opens no window or browser.
 
         Raises
@@ -434,9 +440,7 @@ class Volume:
 
         Notes
         -----
-        Matplotlib voxels preserve staircase interfaces. Dense transparent
-        scenes can have depth-ordering limitations in Matplotlib. Plotly
-        contours interpolate between voxel centres and are visualization aids,
+        Use plot_slice() to inspect sampled cells exactly. Plotly contours interpolate between voxel centres and are visualization aids,
         not exact curved interfaces or a replacement for grid refinement.
         Aspect ratio follows physical dimensions. All voxels are retained, with
         at most 32**3 samples under Volume's grid limit; browser performance
@@ -444,35 +448,34 @@ class Volume:
         input material, not an electromagnetic field.
         """
 
-        if backend not in ("matplotlib", "plotly"):
-            raise ValueError("backend must be matplotlib or plotly.")
+        if backend != "plotly":
+            raise ValueError("3D plots support only backend='plotly'; use plot_slice() for Matplotlib.")
 
         if mode is None:
-            mode = "voxels" if backend == "matplotlib" else "volume"
+            mode = "volume"
 
-        if backend == "matplotlib" and mode != "voxels":
-            raise ValueError("matplotlib mode must be voxels.")
-
-        if backend == "plotly" and mode not in ("volume", "isosurface"):
-            raise ValueError("plotly mode must be volume or isosurface.")
+        if mode not in ("volume", "isosurface"):
+            raise ValueError("mode must be volume or isosurface.")
 
         if opacity_scale not in ("uniform", "increasing"):
             raise ValueError("opacity_scale must be uniform or increasing.")
 
-        if opacity_scale != "uniform" and (backend != "plotly" or mode != "volume"):
+        if opacity_scale != "uniform" and mode != "volume":
             raise ValueError("increasing opacity_scale is only supported for Plotly volume mode.")
 
         values, label = self._plot_field(field=field)
 
-        count = _integer(
-            value=surface_count,
-            name="surface_count",
-            low=1,
-            high=32,
-        )
+        if (
+            isinstance(surface_count, bool)
+            or not isinstance(surface_count, (int, np.integer))
+            or not 1 <= surface_count <= 32
+        ):
+            raise ValueError("surface_count must be an integer between 1 and 32.")
+
+        count = int(surface_count)
 
         if opacity is None:
-            opacity = 1.0 if backend == "matplotlib" else 0.15
+            opacity = 0.12 if mode == "volume" else 0.5
 
         if isinstance(opacity, (bool, np.bool_)) or not isinstance(opacity, (int, float, np.integer, np.floating)):
             raise ValueError("opacity must be finite and in (0, 1].")
@@ -490,21 +493,8 @@ class Volume:
 
         color_low, color_high, uniform = self._plot_color_limits(values=values, field=field)
 
-        if uniform and backend == "plotly" and mode == "isosurface":
+        if uniform and mode == "isosurface":
             raise ValueError("An isosurface cannot be generated from a uniform field; use mode='volume'.")
-
-        if backend == "matplotlib":
-            return self._plot_3d_matplotlib(
-                values=values,
-                label=label,
-                positions=positions,
-                length_unit=length_unit,
-                color_low=color_low,
-                color_high=color_high,
-                colormap="RdBu_r" if field == "delta_refractive_index" else "viridis",
-                opacity=alpha,
-                uniform=uniform,
-            )
 
         if mode == "volume":
             plotly_mode: Literal["volume", "isosurface"] = "volume"
@@ -584,8 +574,6 @@ class Volume:
     ) -> "PlotlyFigure":
         """Render volume or isosurface traces using Plotly."""
 
-        import plotly.graph_objects as go
-
         colorbar = {"title": label, **({"tickvals": [low]} if uniform else {})}
 
         hover = (
@@ -603,13 +591,13 @@ class Volume:
                 y=positions[..., 1].ravel(),
                 z=positions[..., 2].ravel(),
                 value=values.ravel(),
-                isomin=color_low if uniform else low + (high - low) * 0.05,
-                isomax=color_high if uniform else high - (high - low) * 0.05,
+                isomin=color_low if uniform else low,
+                isomax=color_high if uniform else high,
                 cmin=color_low,
                 cmax=color_high,
                 surface_count=surface_count,
                 opacity=opacity,
-                colorscale="RdBu_r" if field == "delta_refractive_index" else "Viridis",
+                colorscale="RdBu_r" if field == "delta_refractive_index" else "Inferno",
                 colorbar=colorbar,
                 caps={"x_show": False, "y_show": False, "z_show": False},
                 hovertemplate=hover,
@@ -619,7 +607,55 @@ class Volume:
 
         figure = go.Figure(data=traces)
 
+        density_values = sorted({1, 2, 4, 6, 8, 12, 16, 24, 32, surface_count})
+
+        sliders = [
+            {
+                "active": density_values.index(surface_count),
+                "currentvalue": {"font": {"size": 12}, "prefix": "Iso-surface density: "},
+                "font": {"size": 9},
+                "len": 0.38,
+                "minorticklen": 0,
+                "pad": {"t": 12},
+                "ticklen": 2,
+                "x": 0.58,
+                "y": 0,
+                "steps": [
+                    {"label": str(value), "method": "restyle", "args": [{"surface.count": value}, [0]]}
+                    for value in density_values
+                ],
+            }
+        ]
+
+        if mode == "volume":
+            opacity_values = sorted({step / 20 for step in range(21)} | {opacity})
+
+            sliders.append(
+                {
+                    "active": opacity_values.index(opacity),
+                    "currentvalue": {"font": {"size": 12}, "prefix": "Opacity: "},
+                    "font": {"size": 9},
+                    "len": 0.38,
+                    "minorticklen": 0,
+                    "pad": {"t": 12},
+                    "ticklen": 2,
+                    "x": 0.08,
+                    "y": 0,
+                    "steps": [
+                        {
+                            "label": f"{value:.2f}"
+                            if value == opacity or np.isclose(value * 4, round(value * 4))
+                            else "",
+                            "method": "restyle",
+                            "args": [{"opacity": value}, [0]],
+                        }
+                        for value in opacity_values
+                    ],
+                }
+            )
+
         figure.update_layout(
+            template="plotly_white",
             title=f"{label}: {mode}" + (" (uniform field)" if uniform else ""),
             scene={
                 "xaxis_title": f"x ({length_unit})",
@@ -627,7 +663,9 @@ class Volume:
                 "zaxis_title": f"z ({length_unit})",
                 "aspectmode": "data",
             },
-            margin={"l": 0, "r": 0, "b": 0, "t": 45},
+            margin={"l": 0, "r": 0, "b": 45, "t": 45},
+            sliders=sliders,
+            uirevision="bornsim-volume",
         )
 
         return figure
@@ -653,74 +691,3 @@ class Volume:
             raise ValueError("field must be delta_refractive_index, refractive_index, or permittivity.")
 
         return fields[field]
-
-    def _plot_3d_matplotlib(
-        self,
-        *,
-        values: np.ndarray,
-        label: str,
-        positions: np.ndarray,
-        length_unit: str,
-        color_low: float,
-        color_high: float,
-        colormap: str,
-        opacity: float,
-        uniform: bool,
-    ) -> "MatplotlibFigure":
-        """Render sampled cells with physical extents and a shared color scale."""
-
-        import matplotlib.pyplot as plt
-        from matplotlib.cm import ScalarMappable
-        from matplotlib.colors import Normalize
-
-        shape = self.delta_refractive_index.shape
-
-        width = positions[1, 0, 0, 0] - positions[0, 0, 0, 0]
-
-        edges = [(np.arange(n + 1) - n / 2) * width for n in shape]
-
-        norm = Normalize(vmin=color_low, vmax=color_high)
-
-        cmap = plt.get_cmap(colormap)
-
-        figure = plt.figure(figsize=(8, 6), layout="constrained")
-
-        axis = figure.add_subplot(projection="3d")
-
-        filled = self.delta_refractive_index != 0
-
-        if not np.any(filled):
-            filled = np.ones(shape, dtype=bool)
-
-        voxel_coordinates = np.meshgrid(*edges, indexing="ij")
-
-        axis.voxels(
-            *voxel_coordinates,
-            filled=filled,
-            facecolors=cmap(norm(values)),
-            edgecolors=(0.1, 0.1, 0.1, 0.25),
-            linewidth=0.3,
-            shade=False,
-            alpha=opacity,
-        )
-
-        axis.set(
-            xlabel=f"x ({length_unit})",
-            ylabel=f"y ({length_unit})",
-            zlabel=f"z ({length_unit})",
-            xlim=(edges[0][0], edges[0][-1]),
-            ylim=(edges[1][0], edges[1][-1]),
-            zlim=(edges[2][0], edges[2][-1]),
-            title=f"{label}: voxels" + (" (uniform field)" if uniform else ""),
-        )
-
-        axis.set_box_aspect(shape)
-
-        mappable = ScalarMappable(norm=norm, cmap=cmap)
-
-        colorbar = figure.colorbar(mappable, ax=axis, label=label, shrink=0.65, pad=0.1)
-
-        if uniform:
-            colorbar.set_ticks([float(values.flat[0])])
-
-        return figure

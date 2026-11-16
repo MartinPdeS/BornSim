@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 import numpy as np
 from numpy.typing import ArrayLike
-from .units import Quantity, validate_units
+from .units import Quantity, validate_quantity
 
 
 @dataclass(frozen=True, kw_only=True, init=False, eq=False)
@@ -40,7 +40,7 @@ class PolarizationState:
             raise ValueError("Supply exactly one of angle or jones_vector.")
 
         if angle is not None:
-            validate_units(
+            validate_quantity(
                 angle,
                 unit="radian",
                 name="angle",

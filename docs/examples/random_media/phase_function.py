@@ -11,6 +11,7 @@ The medium is three-dimensional. The displayed curves explicitly average the sam
 individual finite samples need not have rotational symmetry.
 """
 
+import sys
 from bornsim.medium.random_medium import GaussianMedium
 
 import matplotlib.pyplot as plt
@@ -119,14 +120,15 @@ plt.show()
 preview_volume = preview_volumes[30]
 
 medium_figure = preview_volume.plot_3d(
-    backend="matplotlib",
-    mode="voxels",
+    backend="plotly",
+    mode="volume",
     field="refractive_index",
 )
 
-medium_figure.suptitle(f"Gaussian medium · correlation length 30 nm · seed {ensemble_sampling.seeds[0]}")
+medium_figure.update_layout(title=f"Gaussian medium · correlation length 30 nm · seed {ensemble_sampling.seeds[0]}")
 
-plt.show()
+if "--no-browser" not in sys.argv:
+    medium_figure.show(renderer="browser")
 
 # %%
 # 100 nm correlation length in 3D
@@ -135,14 +137,15 @@ plt.show()
 preview_volume = preview_volumes[100]
 
 medium_figure = preview_volume.plot_3d(
-    backend="matplotlib",
-    mode="voxels",
+    backend="plotly",
+    mode="volume",
     field="refractive_index",
 )
 
-medium_figure.suptitle(f"Gaussian medium · correlation length 100 nm · seed {ensemble_sampling.seeds[0]}")
+medium_figure.update_layout(title=f"Gaussian medium · correlation length 100 nm · seed {ensemble_sampling.seeds[0]}")
 
-plt.show()
+if "--no-browser" not in sys.argv:
+    medium_figure.show(renderer="browser")
 
 # %%
 # 300 nm correlation length in 3D
@@ -151,11 +154,12 @@ plt.show()
 preview_volume = preview_volumes[300]
 
 medium_figure = preview_volume.plot_3d(
-    backend="matplotlib",
-    mode="voxels",
+    backend="plotly",
+    mode="volume",
     field="refractive_index",
 )
 
-medium_figure.suptitle(f"Gaussian medium · correlation length 300 nm · seed {ensemble_sampling.seeds[0]}")
+medium_figure.update_layout(title=f"Gaussian medium · correlation length 300 nm · seed {ensemble_sampling.seeds[0]}")
 
-plt.show()
+if "--no-browser" not in sys.argv:
+    medium_figure.show(renderer="browser")

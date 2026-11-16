@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 from ..base import Medium
 from ...grid import Grid
-from ...units import Quantity, _integer, validate_units, _refractive_index_values
+from ...units import NoUnit, Quantity, Scalar, validate_annotation, validate_quantity
 
 if TYPE_CHECKING:
     from ...volume import Volume
@@ -34,7 +34,7 @@ class RandomSphereMedium(Medium):
     max_placement_attempts: int = 10000
 
     def __post_init__(self) -> None:
-        validate_units(
+        validate_quantity(
             self.radius,
             unit="meter",
             name="radius",
@@ -45,11 +45,15 @@ class RandomSphereMedium(Medium):
             raise ValueError("radius must be finite and positive.")
 
         for name in ("background_refractive_index", "sphere_refractive_index"):
-            refractive_index = _refractive_index_values(
-                value=getattr(self, name),
+            refractive_index = getattr(self, name)
+
+            validate_annotation(
+                refractive_index,
+                annotation=NoUnit[Scalar],
                 name=name,
-                scalar=True,
             )
+
+            refractive_index = float(refractive_index)
 
             if not np.isfinite(refractive_index) or refractive_index <= 0:
                 raise ValueError(f"{name} must be finite and positive.")
@@ -57,26 +61,40 @@ class RandomSphereMedium(Medium):
         if 2 * self.sphere_refractive_index <= self.background_refractive_index:
             raise ValueError("sphere_refractive_index gives nonpositive linearized permittivity.")
 
-        _integer(
-            value=self.sphere_count,
-            name="sphere_count",
-            low=1,
-            high=2**31 - 1,
-        )
+        if (
+            isinstance(self.sphere_count, bool)
+            or not isinstance(self.sphere_count, (int, np.integer))
+            or not 1 <= self.sphere_count <= 2**31 - 1
+        ):
+            raise ValueError("sphere_count must be an integer between 1 and 2147483647.")
 
-        _integer(
-            value=self.max_placement_attempts,
-            name="max_placement_attempts",
-            low=self.sphere_count,
-            high=2**31 - 1,
-        )
+        if (
+            isinstance(self.max_placement_attempts, bool)
+            or not isinstance(self.max_placement_attempts, (int, np.integer))
+            or not self.sphere_count <= self.max_placement_attempts <= 2**31 - 1
+        ):
+            raise ValueError("max_placement_attempts must be an integer between sphere_count and 2147483647.")
 
     @property
     def is_random(self) -> bool:
+        """Whether this medium generates seeded random placements.
+
+        Returns
+        -------
+        bool
+            Always True for a random sphere collection.
+        """
         return True
 
     @property
     def metadata(self) -> dict[str, object]:
+        """Return the sphere placement settings for provenance.
+
+        Returns
+        -------
+        dict of str to object
+            Refractive indices, radius in metres, count, and placement policy.
+        """
         return {
             **super().metadata,
             "model": "random_spheres",
@@ -88,16 +106,33 @@ class RandomSphereMedium(Medium):
         }
 
     def sphere_centers(self, *, grid: Grid, seed: int = 0) -> Quantity:
-        """Return reproducible sphere centres with shape (sphere_count, 3)."""
+        """Generate nonoverlapping sphere centres for one seed.
+
+        Parameters
+        ----------
+        grid : Grid
+            Finite voxel domain that must contain every sphere.
+        seed : int, default=0
+            Nonnegative 32-bit generation seed.
+
+        Returns
+        -------
+        Quantity
+            Sphere centres in the grid's length units, shape
+            ``(sphere_count, 3)``.
+
+        Raises
+        ------
+        ValueError
+            If spheres cannot fit or placement attempts are exhausted.
+        """
 
         grid = Grid._resolve(grid=grid)
 
-        seed = _integer(
-            value=seed,
-            name="seed",
-            low=0,
-            high=2**32 - 1,
-        )
+        if isinstance(seed, bool) or not isinstance(seed, (int, np.integer)) or not 0 <= seed <= 2**32 - 1:
+            raise ValueError("seed must be an integer between 0 and 4294967295.")
+
+        seed = int(seed)
 
         available_half_width = np.asarray(grid.shape) * grid.spacing / 2 - self.radius
 
@@ -137,7 +172,20 @@ class RandomSphereMedium(Medium):
         )
 
     def to_volume(self, *, grid: Grid, seed: int = 0) -> "Volume":
-        """Sample the sphere material at voxel centres on an explicit grid."""
+        """Sample the sphere material at voxel centres on an explicit grid.
+
+        Parameters
+        ----------
+        grid : Grid
+            Explicit voxel grid.
+        seed : int, default=0
+            Seed determining the sphere centres.
+
+        Returns
+        -------
+        Volume
+            Sampled refractive-index contrast with placement provenance.
+        """
 
         from ...volume import Volume
 

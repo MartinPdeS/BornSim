@@ -416,7 +416,7 @@ def test_angles_require_angular_units_and_dimensionless_statistics_accept_number
 @pytest.mark.parametrize("unit", ["dimensionless", "refractive_index_units", "percent"])
 @pytest.mark.parametrize("parameter", ["background_refractive_index", "refractive_index_std"])
 def test_refractive_index_statistics_reject_all_quantities(unit, parameter):
-    with pytest.raises(ValueError, match=parameter + ".*without units"):
+    with pytest.raises(ValueError, match=parameter + ".*must not have units"):
         GaussianMedium(
             **{
                 "background_refractive_index": 1.33,
@@ -451,7 +451,7 @@ def test_refractive_index_statistics_reject_all_quantities(unit, parameter):
     ],
 )
 def test_refractive_index_quantities_are_rejected_at_geometry_field_and_kernel_boundaries(operation):
-    with pytest.raises(ValueError, match="refractive_index.*without units"):
+    with pytest.raises(ValueError, match="refractive_index.*must not have units"):
         operation()
 
 

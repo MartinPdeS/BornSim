@@ -1,9 +1,14 @@
 """Finite concentric core–shell spheres."""
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 from ..base import Medium
+from ...grid import Grid
 from ...geometry import Sphere
 from ...units import Quantity
+
+if TYPE_CHECKING:
+    from ...volume import Volume
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -57,12 +62,32 @@ class CoreShellMedium(Medium):
         return medium
 
     @property
-    def metadata(self):
-        """Return ordered shell and core geometry in SI units."""
+    def metadata(self) -> dict[str, object]:
+        """Return ordered shell and core geometry in SI units.
+
+        Returns
+        -------
+        dict of str to object
+            Refractive indices, centre, and radii in metres.
+        """
         return {**self._composite().metadata, "model": "core_shell"}
 
-    def to_volume(self, *, grid, seed=0):
-        """Sample the shell first and replace its interior with the core."""
+    def to_volume(self, *, grid: Grid, seed: int = 0) -> "Volume":
+        """Sample the shell first and replace its interior with the core.
+
+        Parameters
+        ----------
+        grid : Grid
+            Explicit voxel grid.
+        seed : int, default=0
+            Accepted for the common Medium interface; this deterministic
+            particle does not use it.
+
+        Returns
+        -------
+        Volume
+            Voxelized core-shell contrast and geometry provenance.
+        """
         from ...volume import Volume
 
         medium = self._composite()

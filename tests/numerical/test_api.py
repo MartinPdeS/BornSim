@@ -85,7 +85,6 @@ def test_volume_preserves_amplitudes_and_interference():
     with pytest.raises(ValueError, match="integrated mu_s"):
         meridian.plot_phase_function(
             view="3d",
-            backend="matplotlib",
         )
 
     norms = result.plot_field_norms(log_y=False)
@@ -98,7 +97,8 @@ def test_volume_preserves_amplitudes_and_interference():
 
 
 @pytest.mark.parametrize("realizations", [1, 3])
-def test_ensemble_preserves_seed_uncertainty_and_coefficients(realizations):
+@pytest.mark.parametrize("backend", [None, "plotly"])
+def test_ensemble_preserves_seed_uncertainty_and_coefficients(*, realizations, backend):
     medium = GaussianMedium(
         background_refractive_index=1.33,
         refractive_index_std=0.01,
@@ -182,30 +182,30 @@ def test_ensemble_preserves_seed_uncertainty_and_coefficients(realizations):
 
     surface = result.plot_phase_function(
         view="3d",
-        backend="matplotlib",
     )
 
-    assert surface.axes[0].name == "3d"
+    assert surface.data[0].type == "surface"
 
-    assert "Through order 2" in surface.axes[0].get_title()
+    assert "Through order 2" in surface.layout.title.text
 
-    interactive = result.plot_phase_function(view="3d")
+    if backend == "plotly":
+        interactive = result.plot_phase_function(view="3d", backend="plotly")
 
-    trace = interactive.data[0]
+        trace = interactive.data[0]
 
-    expected_surface = np.concatenate([phase[-1], phase[-1, :, :1]], axis=-1)
+        expected_surface = np.concatenate([phase[-1], phase[-1, :, :1]], axis=-1)
 
-    np.testing.assert_allclose(trace.surfacecolor, expected_surface)
+        np.testing.assert_allclose(trace.surfacecolor, expected_surface)
 
-    np.testing.assert_allclose(np.sqrt(trace.x**2 + trace.y**2 + trace.z**2), expected_surface)
+        np.testing.assert_allclose(np.sqrt(trace.x**2 + trace.y**2 + trace.z**2), expected_surface)
 
-    assert trace.type == "surface"
+        assert trace.type == "surface"
 
-    assert "Through order 2" in interactive.layout.title.text
+        assert "Through order 2" in interactive.layout.title.text
 
-    angular_surface = result.angular.plot_phase_function(view="3d")
+        angular_surface = result.angular.plot_phase_function(view="3d", backend="plotly")
 
-    np.testing.assert_allclose(angular_surface.data[0].surfacecolor, expected_surface)
+        np.testing.assert_allclose(angular_surface.data[0].surfacecolor, expected_surface)
 
     norms = result.plot_field_norms()
 

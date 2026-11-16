@@ -2,10 +2,15 @@
 
 from dataclasses import dataclass, replace
 from itertools import product
+from typing import TYPE_CHECKING
 import numpy as np
 from .composite import StructuredMedium
 from ..base import Medium
-from ...units import Quantity, validate_units, _integer
+from ...grid import Grid
+from ...units import Quantity, validate_quantity
+
+if TYPE_CHECKING:
+    from ...volume import Volume
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -39,7 +44,7 @@ class PeriodicMedium(Medium):
     overlap: str = "replace"
 
     def __post_init__(self):
-        validate_units(self.lattice_vectors, unit="meter", name="lattice_vectors")
+        validate_quantity(self.lattice_vectors, unit="meter", name="lattice_vectors")
 
         vectors = np.asarray(self.lattice_vectors.to("meter").magnitude)
 
@@ -49,9 +54,21 @@ class PeriodicMedium(Medium):
         if len(self.repetitions) != 3:
             raise ValueError("repetitions must contain three counts.")
 
-        counts = tuple(_integer(value=n, name="repetitions", low=1, high=10000) for n in self.repetitions)
+        counts = []
 
-        object.__setattr__(self, "repetitions", counts)
+        for repetitions in self.repetitions:
+            if (
+                isinstance(repetitions, bool)
+                or not isinstance(repetitions, (int, np.integer))
+                or not 1 <= repetitions <= 10000
+            ):
+                raise ValueError("repetitions must be an integer between 1 and 10000.")
+
+            counts.append(int(repetitions))
+
+        normalized_counts = (counts[0], counts[1], counts[2])
+
+        object.__setattr__(self, "repetitions", normalized_counts)
 
         object.__setattr__(self, "motif", tuple(self.motif))
 
@@ -65,8 +82,14 @@ class PeriodicMedium(Medium):
         )
 
     @property
-    def metadata(self):
-        """Return motif and finite lattice settings in SI units."""
+    def metadata(self) -> dict[str, object]:
+        """Return motif and finite lattice settings in SI units.
+
+        Returns
+        -------
+        dict of str to object
+            Motif geometry, lattice vectors in metres, and repetition counts.
+        """
         return {
             **self._motif_medium().metadata,
             "model": "periodic",
@@ -74,8 +97,22 @@ class PeriodicMedium(Medium):
             "repetitions": list(self.repetitions),
         }
 
-    def to_volume(self, *, grid, seed=0):
-        """Voxelize centred copies, clipping geometry to the supplied grid."""
+    def to_volume(self, *, grid: Grid, seed: int = 0) -> "Volume":
+        """Voxelize centred copies, clipping geometry to the supplied grid.
+
+        Parameters
+        ----------
+        grid : Grid
+            Explicit voxel grid.
+        seed : int, default=0
+            Accepted for the common Medium interface; this deterministic
+            geometry does not use it.
+
+        Returns
+        -------
+        Volume
+            Voxelized finite lattice and geometry provenance.
+        """
         from ...volume import Volume
 
         regions = []

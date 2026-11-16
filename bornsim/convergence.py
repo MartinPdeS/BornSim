@@ -49,7 +49,18 @@ class ConvergenceReport:
 
     @property
     def rows(self) -> tuple[dict, ...]:
-        """Fresh numeric rows: coefficients in m⁻¹, g and residual dimensionless."""
+        """Return fresh numeric rows for each refinement step.
+
+        Coefficients use inverse metres; anisotropy and residuals are
+        dimensionless. Relative changes and phase-curve distances compare each
+        row with its predecessor.
+
+        Returns
+        -------
+        tuple of dict
+            Independent JSON-compatible row summaries. Mutating them does not
+            affect the report.
+        """
         rows = []
         previous: dict[str, Any] | None = None
         previous_result = None
@@ -88,7 +99,7 @@ class ConvergenceReport:
         """Compare full-polar-range azimuth-averaged phase curves on shared cos(theta)."""
         curves = []
         for result in (previous, current):
-            if result.angles is None or result.mu_s.magnitude[-1] == 0:
+            if result.angles is None or result.mu_s is None or result.mu_s.magnitude[-1] == 0:
                 return None
             theta = result.angles.to("radian").magnitude
             if len(theta) < 2 or not np.isclose(theta.min(), 0) or not np.isclose(theta.max(), np.pi):
@@ -104,7 +115,13 @@ class ConvergenceReport:
         return float(2 * np.pi * np.sum((difference[1:] + difference[:-1]) / 2 * np.diff(nodes)))
 
     def summary(self) -> str:
-        """Return a compact report without claiming physical convergence."""
+        """Return a compact report without claiming physical convergence.
+
+        Returns
+        -------
+        str
+            Human-readable coefficients and stability indicators.
+        """
         lines = ["Observable stability (not a physical-validity certificate):"]
         for row in self.rows:
             lines.append(

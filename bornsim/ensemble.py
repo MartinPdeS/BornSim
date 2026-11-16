@@ -9,7 +9,7 @@ from .sampling import AngularSampling
 from .ensemble_sampling import EnsembleSampling
 from .series import BornSeries
 from .polarization import PolarizationState
-from .units import Quantity, _integer, validate_units, ureg
+from .units import Quantity, validate_quantity, ureg
 
 
 def ensemble_scattering(
@@ -43,7 +43,7 @@ def ensemble_scattering(
     if not medium.is_random:
         raise ValueError("Ensembles require a random medium or background; use Solver.solve for a fixed volume.")
 
-    validate_units(
+    validate_quantity(
         wavelength,
         unit="meter",
         name="wavelength",
@@ -60,7 +60,10 @@ def ensemble_scattering(
 
     realizations = ensemble_sampling.realizations
 
-    order = _integer(value=order, name="order", low=1, high=12)
+    if isinstance(order, bool) or not isinstance(order, (int, np.integer)) or not 1 <= order <= 12:
+        raise ValueError("order must be an integer between 1 and 12.")
+
+    order = int(order)
 
     sampling.check_work(
         grid=grid,

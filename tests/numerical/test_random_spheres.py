@@ -99,8 +99,8 @@ def test_impossible_packing_and_exhausted_attempts_raise():
         ({"sphere_count": 1.5}, "sphere_count"),
         ({"sphere_count": True}, "sphere_count"),
         ({"max_placement_attempts": 1}, "max_placement_attempts"),
-        ({"sphere_refractive_index": 1.35 * ureg.dimensionless}, "unitless"),
-        ({"background_refractive_index": 1.33 * ureg.dimensionless}, "unitless"),
+        ({"sphere_refractive_index": 1.35 * ureg.dimensionless}, "must not have units"),
+        ({"background_refractive_index": 1.33 * ureg.dimensionless}, "must not have units"),
         ({"sphere_refractive_index": 0.1}, "linearized"),
     ],
 )

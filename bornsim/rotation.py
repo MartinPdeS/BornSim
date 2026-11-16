@@ -5,7 +5,13 @@ from dataclasses import dataclass
 import numpy as np
 from numpy.typing import NDArray
 from typing import TypeAlias
-from .units import Quantity, validate_units, _dimensionless
+from .units import (
+    Dimensionless,
+    NoUnit,
+    Quantity,
+    validate_annotation,
+    validate_quantity,
+)
 
 
 RotationMatrix: TypeAlias = tuple[
@@ -32,9 +38,15 @@ class Rotation:
     angle: Quantity
 
     def __post_init__(self) -> None:
-        axis = _dimensionless(value=self.axis, name="axis")
+        validate_annotation(
+            self.axis,
+            annotation=Dimensionless | NoUnit,
+            name="axis",
+        )
 
-        validate_units(
+        axis = np.asarray(self.axis, dtype=float)
+
+        validate_quantity(
             self.angle,
             unit="radian",
             name="angle",
@@ -51,7 +63,14 @@ class Rotation:
 
     @property
     def matrix(self) -> NDArray[np.float64]:
-        """Return Rodrigues' active rotation matrix, shape (3, 3)."""
+        """Return Rodrigues' active rotation matrix.
+
+        Returns
+        -------
+        numpy.ndarray
+            Dimensionless matrix of shape ``(3, 3)`` mapping local column
+            coordinates to global coordinates.
+        """
 
         axis = np.asarray(self.axis)
 
@@ -67,7 +86,22 @@ class Rotation:
 
     @staticmethod
     def _matrix(*, rotation: "RotationInput") -> NDArray[np.float64]:
-        matrix = rotation.matrix if isinstance(rotation, Rotation) else _dimensionless(value=rotation, name="rotation")
+        if isinstance(rotation, Rotation):
+            matrix = rotation.matrix
+        else:
+            validate_annotation(
+                rotation,
+                annotation=Dimensionless | NoUnit,
+                name="rotation",
+            )
+
+            if isinstance(rotation, Quantity):
+                matrix = np.asarray(
+                    rotation.to("dimensionless").magnitude,
+                    dtype=float,
+                )
+            else:
+                matrix = np.asarray(rotation, dtype=float)
 
         invalid = (
             matrix.shape != (3, 3)

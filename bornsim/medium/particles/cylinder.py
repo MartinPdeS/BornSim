@@ -1,8 +1,13 @@
 """Finite cylindrical particles for rods and antenna-like scatterers."""
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 from ..base import Medium
+from ...grid import Grid
 from ...units import Quantity
+
+if TYPE_CHECKING:
+    from ...volume import Volume
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -59,12 +64,32 @@ class CylinderMedium(Medium):
         return medium
 
     @property
-    def metadata(self):
-        """Return cylinder geometry in SI units."""
+    def metadata(self) -> dict[str, object]:
+        """Return cylinder geometry in SI units.
+
+        Returns
+        -------
+        dict of str to object
+            Refractive indices, axis, centre, radius, and height in metres.
+        """
         return {**self._composite().metadata, "model": "cylinder"}
 
-    def to_volume(self, *, grid, seed=0):
-        """Voxelize the finite cylinder on the supplied grid."""
+    def to_volume(self, *, grid: Grid, seed: int = 0) -> "Volume":
+        """Voxelize the finite cylinder on the supplied grid.
+
+        Parameters
+        ----------
+        grid : Grid
+            Explicit voxel grid.
+        seed : int, default=0
+            Accepted for the common Medium interface; this deterministic
+            particle does not use it.
+
+        Returns
+        -------
+        Volume
+            Voxelized cylinder contrast and geometry provenance.
+        """
         from ...volume import Volume
 
         volume = self._composite().to_volume(grid=grid, seed=seed)

@@ -2,12 +2,14 @@
 
 from dataclasses import dataclass
 from types import SimpleNamespace
-from typing import ClassVar
+from typing import Any, ClassVar, Literal
 import json
+from pathlib import Path
 import numpy as np
 from .source import Source
 from .angular_data import AngularData
-from .units import Quantity, _dimensionless, _integer, validate_units, ureg
+from .units import Quantity, validate_quantity, ureg
+from . import plotting
 
 _ANGULAR_FIELDS = (
     "differential",
@@ -174,10 +176,11 @@ class Result:
                 if unit == "dimensionless" and not isinstance(value, Quantity):
                     value = np.array(value, copy=True) * ureg.dimensionless
 
-                validate_units(
+                validate_quantity(
                     value,
                     unit=unit,
                     name=name,
+                    finite=False,
                 )
 
                 if not np.issubdtype(np.asarray(value.magnitude).dtype, np.number):
@@ -237,7 +240,14 @@ class Result:
         orders, observations = result.differential.shape[:2]
 
         if result.kind == "ensemble":
-            result.realizations = _integer(value=result.realizations, name="realizations", low=1, high=32)
+            if (
+                isinstance(result.realizations, bool)
+                or not isinstance(result.realizations, (int, np.integer))
+                or not 1 <= result.realizations <= 32
+            ):
+                raise ValueError("realizations must be an integer between 1 and 32.")
+
+            result.realizations = int(result.realizations)
         elif result.realizations is not None:
             raise ValueError("realizations is only available for an ensemble.")
 
@@ -328,87 +338,197 @@ class Result:
             raise ValueError("integrated coefficients are unavailable for a single-volume angular cut.")
 
     @property
-    def differential(self):
-        """Read-only angular data owned by angular."""
+    def differential(self) -> Quantity:
+        """Return read-only differential scattering data.
+
+        Returns
+        -------
+        Quantity
+            Differential intensity in inverse metres per steradian, shaped
+            ``(order, observation)`` or ``(order, polar, azimuth)``.
+        """
 
         return self.angular.differential
 
     @property
-    def angles(self):
-        """Read-only angular data owned by angular."""
+    def angles(self) -> Quantity | None:
+        """Return read-only polar-angle coordinates in radians.
+
+        Returns
+        -------
+        Quantity or None
+            Polar angles for the observation axis, when available.
+        """
 
         return self.angular.angles
 
     @property
-    def azimuths(self):
-        """Read-only angular data owned by angular."""
+    def azimuths(self) -> Quantity | None:
+        """Return read-only sampled azimuth coordinates in radians.
+
+        Returns
+        -------
+        Quantity or None
+            Azimuth coordinates for full angular data.
+        """
 
         return self.angular.azimuths
 
     @property
-    def amplitudes(self):
-        """Read-only angular data owned by angular."""
+    def amplitudes(self) -> Quantity | None:
+        """Return read-only complex scattering amplitudes.
+
+        Returns
+        -------
+        Quantity or None
+            Amplitudes in metres, with polarization and Cartesian vector axes.
+        """
 
         return self.angular.amplitudes
 
     @property
-    def mu_s(self):
-        """Read-only angular data owned by angular."""
+    def mu_s(self) -> Quantity | None:
+        """Return integrated scattering coefficients.
+
+        Returns
+        -------
+        Quantity or None
+            Finite-sample coefficients in inverse metres, one per Born order.
+        """
 
         return self.angular.mu_s
 
     @property
-    def sample_volume(self):
-        """Read-only angular data owned by angular."""
+    def sample_volume(self) -> Quantity | None:
+        """Return the finite-sample voxel-box volume.
+
+        Returns
+        -------
+        Quantity or None
+            Sample volume in cubic metres.
+        """
 
         return self.angular.sample_volume
 
     @property
-    def stderr(self):
-        """Read-only angular data owned by angular."""
+    def stderr(self) -> Quantity | None:
+        """Return pointwise ensemble standard errors.
+
+        Returns
+        -------
+        Quantity or None
+            Standard errors in inverse metres per steradian.
+        """
 
         return self.angular.stderr
 
     @property
-    def azimuth_stderr(self):
-        """Read-only angular data owned by angular."""
+    def azimuth_stderr(self) -> Quantity | None:
+        """Return standard errors for azimuth-averaged intensities.
+
+        Returns
+        -------
+        Quantity or None
+            Errors in inverse metres per steradian, shaped by order and polar angle.
+        """
 
         return self.angular.azimuth_stderr
 
     @property
-    def term_differential(self):
-        """Read-only angular data owned by angular."""
+    def term_differential(self) -> Quantity | None:
+        """Return read-only isolated Born-term intensities.
+
+        Returns
+        -------
+        Quantity or None
+            Isolated term intensities in inverse metres per steradian.
+        """
 
         return self.angular.term_differential
 
     @property
-    def azimuth_averaged(self):
-        """Read-only angular data owned by angular."""
+    def azimuth_averaged(self) -> bool:
+        """Whether intensities were explicitly averaged over azimuth.
+
+        Returns
+        -------
+        bool
+            True for azimuth-averaged angular data.
+        """
 
         return self.angular.azimuth_averaged
 
     @property
-    def directions(self):
-        """Explicit cut coordinates; full-grid vectors are angular.directions."""
+    def directions(self) -> Quantity | None:
+        """Return explicit Cartesian observation directions when stored.
+
+        Returns
+        -------
+        Quantity or None
+            Unit vectors for cut data. Full-grid vectors are available through
+            ``angular.directions``.
+        """
 
         return self.angular.directions if self.angular.azimuths is None and self.kind == "volume" else None
 
     @property
-    def provenance(self):
-        """Return a fresh metadata copy; edits cannot change this result."""
+    def provenance(self) -> dict[str, Any]:
+        """Return a fresh copy of provenance metadata.
+
+        Returns
+        -------
+        dict of str to object
+            JSON-compatible provenance. Mutating the returned object does not
+            change this result.
+        """
 
         return json.loads(self._provenance_json)
 
-    def meridian(self, *, azimuth, method="exact"):
-        """Select a physical azimuth from full data without interpolation."""
+    def meridian(
+        self,
+        *,
+        azimuth: Quantity,
+        method: Literal["exact", "nearest"] = "exact",
+    ) -> AngularData:
+        """Select one sampled azimuth from full data without interpolation.
+
+        Parameters
+        ----------
+        azimuth : Quantity
+            Requested scalar azimuth with explicit angular units.
+        method : {'exact', 'nearest'}, default='exact'
+            Require a matching sample or select the closest sample.
+
+        Returns
+        -------
+        AngularData
+            Selected meridian data, available independently of the Result wrapper.
+
+        Raises
+        ------
+        ValueError
+            If angular sampling is incomplete or the requested sample is absent.
+        """
 
         return self.angular.meridian(
             azimuth=azimuth,
             method=method,
         )
 
-    def azimuth_average(self):
-        """Return explicit averaged intensities with covariance-correct errors."""
+    def azimuth_average(self) -> "Result":
+        """Average intensities and their realization-level errors over azimuth.
+
+        Returns
+        -------
+        Result
+            New result marked as azimuth-averaged. Coherent amplitudes are not
+            averaged; covariance-correct ensemble errors are retained.
+
+        Raises
+        ------
+        ValueError
+            If the result has no full azimuth grid.
+        """
 
         angular = self.angular.azimuth_average()
 
@@ -433,12 +553,18 @@ class Result:
         )
 
     @property
-    def diffuse_differential(self):
+    def diffuse_differential(self) -> Quantity | None:
         """Finite-ensemble mean intensity minus squared mean amplitude (m⁻¹ sr⁻¹).
 
         The coherent estimate includes the ensemble-mean scattered field, not
         the direct incident beam. With N samples, this uncorrected diffuse
         estimate has factor (N-1)/N finite-sample bias; it is zero for N=1.
+
+        Returns
+        -------
+        Quantity or None
+            Nonnegative diffuse differential intensity in inverse metres per
+            steradian, or None when the coherent estimate is unavailable.
         """
         if self.coherent_differential is None:
             return None
@@ -448,23 +574,43 @@ class Result:
         return values
 
     @property
-    def absorption_cross_section(self):
-        """Absorbed power divided by incident irradiance, in area units."""
+    def absorption_cross_section(self) -> Quantity | None:
+        """Return absorbed-power cross sections for the finite sample.
+
+        Returns
+        -------
+        Quantity or None
+            Absorption cross section in square metres, or None if absorption
+            coefficients or sample volume are unavailable.
+        """
         if self.mu_a is None or self.sample_volume is None:
             return None
 
         return self.mu_a * self.sample_volume
 
     @property
-    def differential_cross_section(self):
-        """Finite-sample d-sigma/d-Omega in square metres per steradian."""
+    def differential_cross_section(self) -> Quantity:
+        """Return finite-sample differential cross sections.
+
+        Returns
+        -------
+        Quantity
+            ``dσ/dΩ`` in square metres per steradian, with the shape of
+            ``differential``.
+
+        Raises
+        ------
+        ValueError
+            If the result does not include a finite sample volume.
+        """
 
         if self.sample_volume is None:
             raise ValueError("sample_volume is unavailable; this result has no finite-sample cross section.")
 
         return (getattr(self, "differential") * self.sample_volume).to("meter**2 / steradian")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
+        """Return a concise summary of result kind, orders, and available data."""
         shape = self.differential.shape
 
         available = [
@@ -473,7 +619,7 @@ class Result:
 
         return f"Result(kind={self.kind!r}, orders={shape[0]}, angular_shape={shape[1:]}, available={available}, azimuth_averaged={self.azimuth_averaged})"
 
-    def save(self, *, path):
+    def save(self, *, path: str | Path) -> Path:
         """Save data, units, warnings, and provenance in a versioned NPZ archive.
 
         Parameters
@@ -503,8 +649,6 @@ class Result:
         Generated volumes also record their medium and seed. Exact seeded
         reproduction depends on the recorded implementation versions.
         """
-
-        from pathlib import Path
 
         arrays = {}
 
@@ -541,7 +685,7 @@ class Result:
         return path
 
     @classmethod
-    def load(cls, *, path):
+    def load(cls, *, path: str | Path) -> "Result":
         """Load and validate a BornSim result archive without using pickle.
 
         Parameters
@@ -607,17 +751,34 @@ class Result:
             raise ValueError("Invalid or incomplete result archive metadata.") from error
 
     @property
-    def phase_function(self):
+    def phase_function(self) -> Quantity:
         """Return directional phase density per steradian.
 
         Full solves retain (order, polar angle, azimuth). Explicitly averaged
         results retain (order, polar angle). Cuts have no normalization.
         Every order uses its own full solid-angle scattering coefficient.
+
+        Returns
+        -------
+        Quantity
+            Phase density in inverse steradians. Shape matches ``differential``.
+
+        Raises
+        ------
+        ValueError
+            If normalization is unavailable, as for a directional cut.
         """
 
         return self.angular.phase_function
 
-    def plot(self, *, terms=False, log_y=False, title=None, azimuth=0):
+    def plot(
+        self,
+        *,
+        terms: bool = False,
+        log_y: bool = False,
+        title: str | None = None,
+        azimuth: int = 0,
+    ) -> Any:
         """Build a Matplotlib figure of differential scattering curves.
 
         Parameters
@@ -654,7 +815,7 @@ class Result:
         are shown. This method plots differential scattering, not a normalized
         phase function."""
 
-        return self._plot_differential(
+        return plotting.plot_differential(
             result=self,
             terms=terms,
             log_y=log_y,
@@ -663,8 +824,15 @@ class Result:
         )
 
     def plot_cross_section(
-        self, *, volume=None, area_unit="nanometer**2", terms=False, log_y=False, title=None, azimuth=0
-    ):
+        self,
+        *,
+        volume: Any = None,
+        area_unit: str = "nanometer**2",
+        terms: bool = False,
+        log_y: bool = False,
+        title: str | None = None,
+        azimuth: int = 0,
+    ) -> Any:
         """Build differential cross-section curves for a finite sample.
 
         Parameters
@@ -707,7 +875,7 @@ class Result:
         Stored scattering data and its SI units remain unchanged.
         """
 
-        return self._plot_cross_section(
+        return plotting.plot_cross_section(
             result=self,
             volume=volume,
             area_unit=area_unit,
@@ -717,7 +885,15 @@ class Result:
             title=title,
         )
 
-    def plot_phase_function(self, *, view="angular", order=None, log_y=False, azimuth=0, backend=None):
+    def plot_phase_function(
+        self,
+        *,
+        view: Literal["angular", "polar", "3d"] = "angular",
+        order: int | None = None,
+        log_y: bool = False,
+        azimuth: int = 0,
+        backend: Literal["matplotlib", "plotly"] | None = None,
+    ) -> Any:
         """Plot normalized phase functions as angular curves, polar cuts, or a surface.
 
         Parameters
@@ -734,8 +910,8 @@ class Result:
             Logarithmic vertical scale for angular curves. Default is False;
             only supported with ``view='angular'``.
         backend : {'plotly', 'matplotlib'}, optional
-            The 3D view defaults to Plotly. Angular and polar views use
-            Matplotlib. Select 'matplotlib' explicitly for a static 3D figure.
+            3D views use Plotly exclusively; angular and polar views use
+            Matplotlib. Omit backend to select the renderer for the view.
 
         Returns
         -------
@@ -764,7 +940,7 @@ class Result:
         Samples are sorted by angle for rendering. Error bars for normalized
         ratios are omitted because the required covariance is not stored."""
 
-        return self._plot_phase_function(
+        return plotting.plot_phase_function(
             result=self,
             view=view,
             order=order,
@@ -773,7 +949,7 @@ class Result:
             backend=backend,
         )
 
-    def plot_field_norms(self, *, log_y=True):
+    def plot_field_norms(self, *, log_y: bool = True) -> Any:
         """Plot relative Born field-term norms for each available realization.
 
         Parameters
@@ -799,448 +975,10 @@ class Result:
         terms do not certify Born convergence or remove discretization error.
         """
 
-        return self._plot_field_norms(
+        return plotting.plot_field_norms(
             result=self,
             log_y=log_y,
         )
-
-    @staticmethod
-    def _pyplot():
-        import matplotlib.pyplot as plt
-
-        return plt
-
-    @staticmethod
-    def _select_azimuth(*, result, azimuth):
-        count = 1 if result.azimuths is None else len(result.azimuths)
-
-        return _integer(value=azimuth, name="azimuth", low=0, high=count - 1)
-
-    @staticmethod
-    def _angular_label(*, result, azimuth):
-        if getattr(result, "meridian_azimuth", None) is not None:
-            degrees = float(np.rad2deg(result.meridian_azimuth.magnitude))
-
-            return f" · meridian phi = {degrees:g} degrees"
-
-        if result.azimuth_averaged:
-            return " · azimuth average"
-
-        if result.azimuths is not None:
-            degrees = float(np.rad2deg(result.azimuths.magnitude[azimuth]))
-
-            return f" · meridian phi = {degrees:g} degrees"
-
-        return ""
-
-    @staticmethod
-    def _plot_differential(
-        *,
-        result,
-        terms,
-        log_y,
-        title,
-        azimuth=0,
-        scale=1.0,
-        ylabel="Differential scattering (m⁻¹ sr⁻¹)",
-    ):
-        """Render curves and uncertainty using one shared display scale."""
-
-        values = result.term_differential if terms else result.differential
-
-        if values is None:
-            raise ValueError("Isolated term curves are unavailable for this result.")
-
-        values = scale * values.to("1 / meter / steradian").magnitude
-
-        selected = Result._select_azimuth(result=result, azimuth=azimuth)
-
-        if values.ndim == 3:
-            values = values[..., selected]
-
-        plt = Result._pyplot()
-
-        x = np.arange(values.shape[1]) if result.angles is None else np.rad2deg(result.angles.to("radian").magnitude)
-
-        figure, axis = plt.subplots(figsize=(8, 5), layout="constrained")
-
-        for index, curve in enumerate(values):
-            errors = None
-
-            if not terms and result.stderr is not None:
-                candidate = result.stderr.to("1 / meter / steradian").magnitude[index]
-
-                if candidate.ndim == 2:
-                    candidate = candidate[:, selected]
-
-                if np.any(np.isfinite(candidate)):
-                    errors = scale * np.ma.masked_invalid(candidate)
-
-            label = f"{'Term' if terms else 'Through order'} {index + 1}"
-
-            style = {"marker": "o", "linestyle": "none"} if result.angles is None else {"linewidth": 2}
-
-            if errors is None:
-                axis.plot(
-                    x,
-                    curve,
-                    label=label,
-                    **style,
-                )
-            else:
-                axis.errorbar(x, curve, yerr=errors, capsize=2, label=label, **style)
-
-        default_title = "Finite-sample scattering"
-
-        default_title += Result._angular_label(result=result, azimuth=selected)
-
-        axis.set(
-            title=default_title if title is None else title,
-            xlabel="Direction index" if result.angles is None else "Laboratory polar angle (degrees)",
-            ylabel=ylabel,
-            yscale="log" if log_y else "linear",
-        )
-
-        axis.grid(alpha=0.25)
-
-        axis.legend(frameon=False)
-
-        return figure
-
-    @staticmethod
-    def _plot_cross_section(
-        *,
-        result,
-        volume=None,
-        area_unit="nanometer**2",
-        terms=False,
-        log_y=False,
-        title=None,
-        azimuth=0,
-    ):
-        """Scale finite-sample curves and uncertainties by their box volume."""
-
-        from .volume import Volume
-        from pint.errors import DimensionalityError, UndefinedUnitError
-
-        if volume is not None:
-            if not isinstance(volume, Volume):
-                raise TypeError("volume must be a Volume.")
-
-            grid = result.provenance.get("grid")
-
-            if grid is not None:
-                recorded_background_refractive_index = grid.get(
-                    "background_refractive_index",
-                    volume.background_refractive_index,
-                )
-
-                incompatible_grid = (
-                    tuple(grid["shape"]) != volume.delta_refractive_index.shape
-                    or grid["spacing_m"] != float(volume.spacing.to("meter").magnitude)
-                    or recorded_background_refractive_index != volume.background_refractive_index
-                )
-
-                if incompatible_grid:
-                    raise ValueError("volume must match the recorded sample grid and background_refractive_index.")
-
-            physical_volume = float(volume.volume.to("meter**3").magnitude)
-
-            recorded = result.sample_volume
-
-            invalid_condition = recorded is not None and not np.isclose(
-                recorded.to("meter**3").magnitude, physical_volume, rtol=1e-10, atol=0
-            )
-
-            if invalid_condition:
-                raise ValueError("volume must match the recorded sample volume.")
-        else:
-            if result.sample_volume is None:
-                raise ValueError(
-                    "sample_volume is unavailable; supply the sample Volume for a result without recorded volume."
-                )
-
-            physical_volume = float(result.sample_volume.to("meter**3").magnitude)
-
-        try:
-            area = (1.0 * ureg.meter**2).to(area_unit)
-        except (DimensionalityError, UndefinedUnitError, TypeError, ValueError) as error:
-            raise ValueError("area_unit must name an area unit.") from error
-
-        return Result._plot_differential(
-            result=result,
-            terms=terms,
-            log_y=log_y,
-            title="Finite-sample differential cross section" if title is None else title,
-            scale=physical_volume * float(area.magnitude),
-            azimuth=azimuth,
-            ylabel=f"Differential cross section ({area.units:~P} sr⁻¹)",
-        )
-
-    @staticmethod
-    def _plot_phase_function(*, result, view="angular", order=None, log_y=False, azimuth=0, backend=None):
-        """Render normalized densities while retaining directional 3D asymmetry."""
-
-        if view != "angular" and getattr(result, "meridian_azimuth", None) is not None:
-            raise ValueError("Use full angular data for polar or 3D plots; a selected meridian has only one side.")
-
-        if view not in ("angular", "polar", "3d"):
-            raise ValueError("view must be angular, polar, or 3d.")
-
-        if backend is None:
-            backend = "plotly" if view == "3d" else "matplotlib"
-
-        if backend not in ("matplotlib", "plotly"):
-            raise ValueError("backend must be matplotlib or plotly.")
-
-        if backend == "plotly" and view != "3d":
-            raise ValueError("The Plotly backend is only supported for the 3D phase view.")
-
-        if log_y and view != "angular":
-            raise ValueError("log_y is only supported for the angular view.")
-
-        phase = result.phase_function.magnitude
-
-        theta = result.angles.to("radian").magnitude
-
-        indices = np.argsort(theta)
-
-        theta, phase = theta[indices], phase[:, indices]
-
-        orders = (
-            range(len(phase))
-            if order is None
-            else [
-                _integer(
-                    value=order,
-                    name="order",
-                    low=1,
-                    high=len(phase),
-                )
-                - 1
-            ]
-        )
-
-        insufficient_angular_coverage = view in ("polar", "3d") and (
-            len(np.unique(theta)) < 3
-            or not np.isclose(theta[0], 0, atol=1e-10, rtol=0)
-            or not np.isclose(theta[-1], np.pi, atol=1e-10, rtol=0)
-        )
-
-        if insufficient_angular_coverage:
-            raise ValueError("Polar and 3D views require at least three distinct angles spanning 0 to pi.")
-
-        title = "Directional finite-sample phase function"
-
-        meridian = Result._select_azimuth(result=result, azimuth=azimuth)
-
-        degrees = np.rad2deg(theta)
-
-        if view == "3d":
-            selected = len(phase) - 1 if order is None else orders[0]
-
-            if phase.ndim == 3:
-                phi = np.concatenate([result.azimuths.magnitude, [2 * np.pi]])
-
-                directional = phase[selected]
-
-                radius = np.concatenate([directional, directional[:, :1]], axis=-1)
-
-                surface_label = "full azimuthal distribution"
-            elif result.azimuth_averaged:
-                phi = np.linspace(0, 2 * np.pi, 97)
-
-                radius = np.broadcast_to(phase[selected, :, None], (len(theta), len(phi)))
-
-                surface_label = "explicit azimuth-average surface"
-
-                title = "Azimuth-averaged finite-sample phase function"
-            else:
-                raise ValueError(
-                    "Directional phase data are unavailable; recompute with Solver.solve using AngularSampling."
-                )
-
-            sine = np.sin(theta)[:, None]
-
-            x = radius * sine * np.cos(phi)
-
-            y = radius * sine * np.sin(phi)
-
-            z = radius * np.cos(theta)[:, None]
-
-            if backend == "plotly":
-                import plotly.graph_objects as go
-
-                figure = go.Figure(
-                    data=[
-                        go.Surface(
-                            x=x,
-                            y=y,
-                            z=z,
-                            surfacecolor=radius,
-                            customdata=radius,
-                            colorscale="Viridis",
-                            cmin=0,
-                            cmax=float(radius.max()),
-                            colorbar={"title": "p (sr⁻¹)"},
-                            hovertemplate="Phase density p=%{customdata:.5g} sr⁻¹<extra></extra>",
-                        )
-                    ],
-                )
-
-                figure.update_layout(
-                    title=f"{title}<br>Through order {selected + 1} · {surface_label}",
-                    scene={
-                        "xaxis_title": "p ŝx (sr⁻¹)",
-                        "yaxis_title": "p ŝy (sr⁻¹)",
-                        "zaxis_title": "p ŝz (sr⁻¹); laboratory z",
-                        "aspectmode": "data",
-                    },
-                )
-
-                return figure
-
-            from matplotlib.cm import ScalarMappable
-            from matplotlib.colors import Normalize
-
-            plt = Result._pyplot()
-
-            norm = Normalize(vmin=0, vmax=float(radius.max()))
-
-            cmap = plt.get_cmap("viridis")
-
-            figure = plt.figure(figsize=(9, 6), layout="constrained")
-
-            axis = figure.add_subplot(projection="3d")
-
-            axis.plot_surface(
-                x,
-                y,
-                z,
-                facecolors=cmap(norm(radius)),
-                rcount=len(theta),
-                ccount=len(phi),
-                linewidth=0,
-                shade=False,
-            )
-
-            extent = np.array([np.ptp(x), np.ptp(y), np.ptp(z)])
-
-            axis.set_box_aspect(extent)
-
-            axis.set(
-                xlabel="p ŝx (sr⁻¹)",
-                ylabel="p ŝy (sr⁻¹)",
-                zlabel="p ŝz (sr⁻¹); laboratory z",
-            )
-
-            axis.set_title(f"{title}\nThrough order {selected + 1} · {surface_label}")
-
-            axis.view_init(elev=20, azim=45)
-
-            figure.colorbar(ScalarMappable(norm=norm, cmap=cmap), ax=axis, label="p (sr⁻¹)", shrink=0.75, pad=0.12)
-        else:
-            plt = Result._pyplot()
-
-            opposite = None
-
-            if phase.ndim == 3:
-                if view == "polar":
-                    count = len(result.azimuths)
-
-                    if count % 2:
-                        raise ValueError("A full polar plane requires an even azimuth sample count.")
-
-                    opposite = phase[..., (meridian + count // 2) % count]
-
-                phase = phase[..., meridian]
-
-            title += Result._angular_label(result=result, azimuth=meridian)
-
-            projection = "polar" if view == "polar" else None
-
-            figure, axis = plt.subplots(figsize=(8, 5), subplot_kw={"projection": projection}, layout="constrained")
-
-            for index in orders:
-                if view == "polar":
-                    axis.plot(
-                        np.concatenate([theta, 2 * np.pi - theta[-2::-1]]),
-                        np.concatenate([phase[index], (phase if opposite is None else opposite)[index, -2::-1]]),
-                        label=f"Through order {index + 1}",
-                        linewidth=2,
-                    )
-                else:
-                    axis.plot(
-                        degrees,
-                        phase[index],
-                        label=f"Through order {index + 1}",
-                        linewidth=2,
-                    )
-
-            if view == "polar":
-                axis.set_theta_zero_location("N")
-
-                axis.set_theta_direction(-1)
-
-                axis.set_ylim(bottom=0)
-
-                axis.set_title(f"{title}\nMeridian cut · incidence at 0° · p (sr⁻¹)", pad=20)
-            else:
-                axis.set(
-                    title=title,
-                    xlabel="Laboratory polar angle θ (degrees)",
-                    ylabel="Phase function p (sr⁻¹)",
-                    yscale="log" if log_y else "linear",
-                )
-
-            axis.grid(alpha=0.25)
-
-            axis.legend(frameon=False)
-
-        return figure
-
-    @staticmethod
-    def _plot_field_norms(*, result, log_y=True):
-        """Draw relative Born field norms for each available realization."""
-
-        if result.field_norms is None:
-            raise ValueError("Field norms are only available for numerical results.")
-
-        norms = np.atleast_2d(
-            _dimensionless(
-                value=result.field_norms,
-                name="field_norms",
-            )
-        )
-
-        plt = Result._pyplot()
-
-        from matplotlib.ticker import MaxNLocator
-
-        figure, axis = plt.subplots(figsize=(8, 5), layout="constrained")
-
-        for index, curve in enumerate(norms):
-            axis.plot(
-                np.arange(1, len(curve) + 1),
-                curve,
-                "o-",
-                label=f"Realization {index + 1}",
-            )
-
-        axis.set(
-            title="Born field terms\nDecreasing terms do not certify convergence",
-            xlabel="Field-term order j",
-            ylabel="‖Ej‖ / ‖Einc‖ (dimensionless)",
-            yscale="log" if log_y else "linear",
-        )
-
-        axis.xaxis.set_major_locator(MaxNLocator(integer=True))
-
-        axis.grid(alpha=0.25)
-
-        axis.legend(frameon=False)
-
-        return figure
 
 
 @dataclass(kw_only=True)

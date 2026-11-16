@@ -16,9 +16,9 @@ does not recenter or rescale each realization to impose its mean or variance.
 Finite voxel resolution and the cropped synthesis box also affect statistics.
 """
 
+import sys
 from bornsim.medium.random_medium import GaussianMedium, ExponentialMedium
 
-import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -74,35 +74,28 @@ for covariance_model in ("gaussian", "exponential"):
     )
 
 # %%
-# Gaussian volume with increasing opacity
-# ---------------------------------------
-# View the full Gaussian sample first. The opacity ramp uses this sample's
-# refractive index range; equal opacity across different samples need not mean equal refractive index.
-# Pass ``--no-browser`` to run without opening tabs, as the docs builder does.
+# Gaussian voxel volume
+# ----------------------
+# View the sampled Gaussian field with Plotly. The contour colors represent
+# absolute refractive index; opacity does not represent material absorption.
 gaussian_volume = volumes_by_covariance["gaussian"]
 
 gaussian_figure = gaussian_volume.plot_3d(
     field="refractive_index",
-    surface_count=16,
-    opacity=0.2,
-    opacity_scale="increasing",
 )
 
 if "--no-browser" not in sys.argv:
     gaussian_figure.show(renderer="browser")
 
 # %%
-# Exponential volume with increasing opacity
-# ------------------------------------------
-# Compare the exponential sample in its own interactive view with the same
+# Exponential voxel volume
+# -------------------------
+# Compare the exponential sample in its own Plotly view with the same
 # rendering settings. Correlation length conventions differ between models.
 exponential_volume = volumes_by_covariance["exponential"]
 
 exponential_figure = exponential_volume.plot_3d(
     field="refractive_index",
-    surface_count=16,
-    opacity=0.2,
-    opacity_scale="increasing",
 )
 
 if "--no-browser" not in sys.argv:

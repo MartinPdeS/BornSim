@@ -4,7 +4,14 @@ from dataclasses import dataclass
 from collections.abc import Sequence
 import numpy as np
 from numpy.typing import NDArray
-from .units import Quantity, _dimensionless, validate_units, ureg
+from .units import (
+    Dimensionless,
+    NoUnit,
+    Quantity,
+    validate_annotation,
+    validate_quantity,
+    ureg,
+)
 
 
 @dataclass(frozen=True, kw_only=True, init=False, eq=False, repr=False)
@@ -29,12 +36,35 @@ class Directions:
     vectors: NDArray[np.float64]
 
     def __init__(self, *, vectors: NDArray[np.float64] | Sequence[Sequence[float]] | Quantity) -> None:
+        """Validate and store Cartesian unit vectors.
+
+        Parameters
+        ----------
+        vectors : array_like or Quantity
+            Real dimensionless vectors with shape ``(n, 3)``. If unitful,
+            units must be dimensionless. Vectors are not normalized.
+
+        Raises
+        ------
+        ValueError
+            If the vectors are complex, dimensional, non-finite, not unit
+            length, or have an invalid shape or count.
+        """
         coordinate_values = vectors.magnitude if isinstance(vectors, Quantity) else vectors
 
         if np.iscomplexobj(coordinate_values):
             raise ValueError("directions.vectors must contain real Cartesian coordinates.")
 
-        vectors = _dimensionless(value=vectors, name="directions.vectors")
+        validate_annotation(
+            vectors,
+            annotation=Dimensionless | NoUnit,
+            name="directions.vectors",
+        )
+
+        if isinstance(vectors, Quantity):
+            vectors = vectors.to("dimensionless").magnitude
+
+        vectors = np.asarray(vectors, dtype=float)
 
         if vectors.ndim != 2 or vectors.shape[1] != 3 or not 1 <= len(vectors) <= 16384:
             raise ValueError("directions.vectors must contain 1–16384 unit 3-vectors.")
@@ -59,15 +89,33 @@ class Directions:
         angles are measured from positive x toward positive y and are periodic.
         Both inputs require explicit angular units. Broadcast coordinates are
         flattened in row-major order, preserving polar/azimuth grid ordering.
+
+        Parameters
+        ----------
+        polar_angles : Quantity
+            Polar angles in explicit angular units, in the inclusive range
+            from zero to pi.
+        azimuth_angles : Quantity
+            Finite azimuth angles in explicit angular units.
+
+        Returns
+        -------
+        Directions
+            Cartesian unit vectors in row-major broadcast order.
+
+        Raises
+        ------
+        ValueError
+            If units or angle values are invalid.
         """
 
-        validate_units(
+        validate_quantity(
             polar_angles,
             unit="radian",
             name="polar_angles",
         )
 
-        validate_units(
+        validate_quantity(
             azimuth_angles,
             unit="radian",
             name="azimuth_angles",
@@ -93,7 +141,9 @@ class Directions:
         return cls(vectors=np.stack(cartesian_components, axis=-1).reshape(-1, 3))
 
     def __len__(self) -> int:
+        """Return the number of observation directions."""
         return len(self.vectors)
 
     def __repr__(self) -> str:
+        """Return a concise representation with the vector count."""
         return f"Directions(n_vectors={len(self)})"

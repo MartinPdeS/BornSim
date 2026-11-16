@@ -5,7 +5,7 @@ longitudinal contact term, with time convention exp(-i omega t).
 """
 
 import numpy as np
-from .units import _refractive_index_values, validate_units, Quantity
+from .units import NoUnit, Quantity, Scalar, validate_annotation, validate_quantity
 
 
 class GreenOperator:
@@ -53,14 +53,14 @@ class GreenOperator:
         wavelength: Quantity,
         background_refractive_index: float,
     ) -> None:
-        validate_units(
+        validate_quantity(
             spacing,
             unit="meter",
             name="spacing",
             scalar=True,
         )
 
-        validate_units(
+        validate_quantity(
             wavelength,
             unit="meter",
             name="wavelength",
@@ -72,11 +72,13 @@ class GreenOperator:
 
         vacuum_wavelength_m = float(wavelength.to("meter").magnitude)
 
-        background_refractive_index = _refractive_index_values(
-            value=background_refractive_index,
+        validate_annotation(
+            background_refractive_index,
+            annotation=NoUnit[Scalar],
             name="background_refractive_index",
-            scalar=True,
         )
+
+        background_refractive_index = float(background_refractive_index)
 
         if not np.isfinite(vacuum_wavelength_m) or vacuum_wavelength_m <= 0:
             raise ValueError("wavelength must be finite and positive.")

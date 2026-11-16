@@ -1,0 +1,18 @@
+Generated with the built-in image-generation tool.
+Approved reference: v2-02-refractive-volume.png
+
+Use case: logo-brand. Asset finalization from the provided APPROVED BornSim identity board. Preserve its exact design language and proportions: translucent faceted blue/cyan refractive prism, a thick flowing cyan wave crossing the center, tiny warm golden scattering core, clean polished scientific software identity. This is an extraction/finalization of the chosen design, NOT a redesign. Crisp smooth edges, subtle depth, controlled gradients. No concept board, no extra variants, no labels, no presentation layout. True transparent background outside the artwork.
+
+logo
+Output ONLY the complete horizontal logo from the TOP of the reference, symbol on left and wordmark on right, on a wide tightly framed transparent canvas. Exact text "BornSim" with capital B and S, fully visible including final m, no cropped letters. Preserve the angular custom B with diagonal cuts, deep navy "Born", turquoise-to-cobalt gradient "Sim", and the exact stylish geometric typography shown. Align optical centers with a balanced gap. The prism is approximately 1.3 times the text height. The wave entering from the left fades cleanly into transparency. Modest outer transparent padding, no white rectangle, no shadow outside the logo. Wide 3.5:1 horizontal lockup.
+
+icon
+Output ONLY the large standalone prism-and-wave symbol from the LOWER LEFT of the reference. No wordmark, letters or background tile. Centered square transparent canvas with about 8 percent padding, entire wave and prism visible. Preserve the open isometric prism planes, translucent blue left and cyan right faces, incoming wave bending smoothly upward on the right, and single small golden core at their crossing. Faithful shape and lighting; polished high-resolution app/documentation icon.
+
+favicon
+Output ONLY the rounded dark navy square icon from the LOWER RIGHT of the reference, on a square transparent canvas. Preserve the blue/cyan prism, crossing wave, warm golden dot, and dark navy rounded-square backdrop. Simplify delicate transparent edges slightly so the silhouette reads when reduced to 16–32 px. Bold contrast, center the prism and golden dot. Even tiny transparent padding around the rounded square, transparent corners outside it. No text or other artwork.
+
+Dark-theme logo edit:
+Preserve the finalized horizontal logo's exact geometry, typography, prism,
+wave, golden core, layout, and Sim gradient. Change only navy Born lettering
+to icy white #F0F7FF. Keep genuine transparency and add no backdrop.

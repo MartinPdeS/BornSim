@@ -9,22 +9,9 @@ from dataclasses import dataclass, field, replace
 import numpy as np
 from numpy.typing import NDArray
 from typing import Any
-from .units import _refractive_index_values, Quantity, validate_units, ureg
+from .units import Quantity, validate_quantity, ureg
 from .rotation import Rotation, RotationInput, RotationMatrix
 from .material import Material
-
-
-def _refractive_index(*, value: float) -> float:
-    refractive_index = _refractive_index_values(
-        value=value,
-        name="refractive_index",
-        scalar=True,
-    )
-
-    if not np.isfinite(refractive_index) or refractive_index <= 0:
-        raise ValueError("refractive_index must be finite and positive.")
-
-    return float(refractive_index)
 
 
 def _axis(*, value):
@@ -60,7 +47,7 @@ class _Transformable:
 
         object.__setattr__(self, "refractive_index", material.refractive_index)
 
-        validate_units(
+        validate_quantity(
             self.centre,
             unit="meter",
             name="centre",
@@ -92,9 +79,25 @@ class _Transformable:
         return replace(self, **settings)
 
     def translated(self, *, offset: Quantity) -> "_Transformable":
-        """Return a translated shape; offset uses metres or length quantities."""
+        """Return a translated shape.
 
-        validate_units(
+        Parameters
+        ----------
+        offset : Quantity
+            Finite displacement vector of shape ``(3,)`` with length units.
+
+        Returns
+        -------
+        _Transformable
+            New shape with its centre displaced; the original is unchanged.
+
+        Raises
+        ------
+        ValueError
+            If offset has invalid units, shape, or values.
+        """
+
+        validate_quantity(
             offset,
             unit="meter",
             name="offset",
@@ -120,6 +123,25 @@ class _Transformable:
         """Return a rotated shape around its centre or an explicit global point.
 
         See :class:`bornsim.rotation.Rotation` for the rotation convention.
+
+        Parameters
+        ----------
+        rotation : Rotation, array_like, or Quantity
+            Proper active rotation represented by a Rotation or dimensionless
+            orthonormal 3-by-3 matrix.
+        about : Quantity or None, default=None
+            Global point to rotate around. If omitted, rotates around the shape
+            centre. Requires three length coordinates.
+
+        Returns
+        -------
+        _Transformable
+            New shape with its orientation and centre transformed.
+
+        Raises
+        ------
+        ValueError
+            If the rotation or pivot point is invalid.
         """
 
         matrix = Rotation._matrix(rotation=rotation)
@@ -127,7 +149,7 @@ class _Transformable:
         centre = self.centre
 
         if about is not None:
-            validate_units(
+            validate_quantity(
                 about,
                 unit="meter",
                 name="about",
@@ -199,9 +221,35 @@ class Layer(_RotatableTransformable):
         axis: int = 2,
         rotation: RotationInput = ((1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0)),
     ) -> "Layer":
-        """Create a slab from its centre and full thickness along ``axis``."""
+        """Create a slab from its centre and full thickness along ``axis``.
 
-        validate_units(
+        Parameters
+        ----------
+        thickness : Quantity
+            Positive full slab thickness with explicit length units.
+        centre : Quantity
+            Global centre position with shape ``(3,)`` and length units.
+        refractive_index : float or None, default=None
+            Plain positive refractive index, unless ``material`` is supplied.
+        material : Material or None, default=None
+            Material assigned to the slab.
+        axis : int, default=2
+            Local normal axis, where 0, 1, and 2 denote x, y, and z.
+        rotation : Rotation, array_like, or Quantity
+            Optional proper orientation of the local axes.
+
+        Returns
+        -------
+        Layer
+            Slab with bounds at plus and minus half the requested thickness.
+
+        Raises
+        ------
+        ValueError
+            If thickness, centre, axis, material, or rotation is invalid.
+        """
+
+        validate_quantity(
             thickness,
             unit="meter",
             name="thickness",
@@ -222,7 +270,7 @@ class Layer(_RotatableTransformable):
         )
 
     def __post_init__(self) -> None:
-        validate_units(
+        validate_quantity(
             self.lower,
             unit="meter",
             name="lower",
@@ -232,7 +280,7 @@ class Layer(_RotatableTransformable):
         if np.any(~np.isfinite(self.lower)):
             raise ValueError("lower must be finite.")
 
-        validate_units(
+        validate_quantity(
             self.upper,
             unit="meter",
             name="upper",
@@ -250,9 +298,21 @@ class Layer(_RotatableTransformable):
             raise ValueError("lower must be smaller than upper.")
 
     def mask(self, *, positions: Quantity) -> np.ndarray:
-        """Return membership at unit-bearing voxel positions, shape (..., 3)."""
+        """Return voxel-centre membership in this shape.
 
-        validate_units(
+        Parameters
+        ----------
+        positions : Quantity
+            Cartesian positions with final axis length three and explicit
+            length units.
+
+        Returns
+        -------
+        numpy.ndarray of bool
+            Membership mask matching the leading position dimensions.
+        """
+
+        validate_quantity(
             positions,
             unit="meter",
             name="positions",
@@ -277,7 +337,7 @@ class Sphere(_Transformable):
     centre: Quantity = field(default_factory=lambda: np.zeros(3) * ureg.meter)
 
     def __post_init__(self) -> None:
-        validate_units(
+        validate_quantity(
             self.radius,
             unit="meter",
             name="radius",
@@ -290,9 +350,21 @@ class Sphere(_Transformable):
         self._validate_transform()
 
     def mask(self, *, positions: Quantity) -> np.ndarray:
-        """Return membership at unit-bearing voxel positions, shape (..., 3)."""
+        """Return voxel-centre membership in this shape.
 
-        validate_units(
+        Parameters
+        ----------
+        positions : Quantity
+            Cartesian positions with final axis length three and explicit
+            length units.
+
+        Returns
+        -------
+        numpy.ndarray of bool
+            Membership mask matching the leading position dimensions.
+        """
+
+        validate_quantity(
             positions,
             unit="meter",
             name="positions",
@@ -316,7 +388,7 @@ class Ellipsoid(_RotatableTransformable):
     rotation: RotationInput = ((1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0))
 
     def __post_init__(self) -> None:
-        validate_units(
+        validate_quantity(
             self.radii,
             unit="meter",
             name="radii",
@@ -332,9 +404,21 @@ class Ellipsoid(_RotatableTransformable):
         self._validate_transform(rotation=self.rotation)
 
     def mask(self, *, positions: Quantity) -> np.ndarray:
-        """Return membership at unit-bearing voxel positions, shape (..., 3)."""
+        """Return voxel-centre membership in this shape.
 
-        validate_units(
+        Parameters
+        ----------
+        positions : Quantity
+            Cartesian positions with final axis length three and explicit
+            length units.
+
+        Returns
+        -------
+        numpy.ndarray of bool
+            Membership mask matching the leading position dimensions.
+        """
+
+        validate_quantity(
             positions,
             unit="meter",
             name="positions",
@@ -360,7 +444,7 @@ class Box(_RotatableTransformable):
     rotation: RotationInput = ((1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0))
 
     def __post_init__(self) -> None:
-        validate_units(
+        validate_quantity(
             self.size,
             unit="meter",
             name="size",
@@ -376,9 +460,21 @@ class Box(_RotatableTransformable):
         self._validate_transform(rotation=self.rotation)
 
     def mask(self, *, positions: Quantity) -> np.ndarray:
-        """Return membership at unit-bearing voxel positions, shape (..., 3)."""
+        """Return voxel-centre membership in this shape.
 
-        validate_units(
+        Parameters
+        ----------
+        positions : Quantity
+            Cartesian positions with final axis length three and explicit
+            length units.
+
+        Returns
+        -------
+        numpy.ndarray of bool
+            Membership mask matching the leading position dimensions.
+        """
+
+        validate_quantity(
             positions,
             unit="meter",
             name="positions",
@@ -407,7 +503,7 @@ class Cylinder(_RotatableTransformable):
     rotation: RotationInput = ((1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0))
 
     def __post_init__(self) -> None:
-        validate_units(
+        validate_quantity(
             self.radius,
             unit="meter",
             name="radius",
@@ -417,7 +513,7 @@ class Cylinder(_RotatableTransformable):
         if np.any(~np.isfinite(self.radius)) or np.any(self.radius <= 0):
             raise ValueError("radius must be finite and positive.")
 
-        validate_units(
+        validate_quantity(
             self.height,
             unit="meter",
             name="height",
@@ -432,9 +528,21 @@ class Cylinder(_RotatableTransformable):
         self._validate_transform(rotation=self.rotation)
 
     def mask(self, *, positions: Quantity) -> np.ndarray:
-        """Return membership at unit-bearing voxel positions, shape (..., 3)."""
+        """Return voxel-centre membership in this shape.
 
-        validate_units(
+        Parameters
+        ----------
+        positions : Quantity
+            Cartesian positions with final axis length three and explicit
+            length units.
+
+        Returns
+        -------
+        numpy.ndarray of bool
+            Membership mask matching the leading position dimensions.
+        """
+
+        validate_quantity(
             positions,
             unit="meter",
             name="positions",

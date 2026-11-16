@@ -266,12 +266,9 @@ def test_full_solve_retains_coherent_directional_amplitudes_normalization_and_ar
 
     assert restored.provenance["sampling"] == sampling.metadata
 
-    figure = restored.plot_phase_function(
-        view="3d",
-        backend="matplotlib",
-    )
+    figure = restored.plot_phase_function(view="3d")
 
-    figure.canvas.draw()
+    assert figure.data[0].type == "surface"
 
 
 def test_default_solve_is_full_and_explicit_cuts_remain_unnormalized():

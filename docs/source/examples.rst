@@ -75,8 +75,8 @@ spatial covariance at the same length parameter, showing both covariance
 profiles and their numerical ensemble phase functions. These length parameters have
 different definitions; equal values do not describe identical statistics.
 
-:doc:`auto_examples/random_media/random_medium` leads with interactive Gaussian
-and exponential volumes whose higher refractive index regions are more opaque. Central
+:doc:`auto_examples/random_media/random_medium` leads with interactive Plotly volumes of Gaussian
+and exponential random samples. Central
 slices and voxel histograms follow as diagnostic checks. It distinguishes the
 Gaussian one-point probability distribution from the choice of spatial
 covariance, and explains why a finite correlated sample need not have
@@ -142,8 +142,8 @@ A zero scattering coefficient has no normalized phase function. This example
 uses the analytical infinite-medium model. A single random volume's angular
 cut is insufficient to normalize a phase function over solid angle.
 
-Result plots and interactive 3D directions
-------------------------------------------
+Result plots and three-dimensional directions
+---------------------------------------------
 
 The medium occupies three spatial dimensions. Scattering directions lie on
 the unit sphere and are described by polar angle ``theta`` and azimuth
@@ -195,9 +195,9 @@ mean total coefficient: uncertainty in a ratio also depends on numerator-
 denominator covariance, which is not retained in the result.
 
 See :doc:`auto_examples/results/result_plots` for direct result plotting calls and
-Matplotlib angular figures and an interactive 3D phase-function surface.
-Sphinx Gallery executes the examples and embeds interactive Plotly volumes
-and surfaces alongside their cells when the documentation is built.
+Matplotlib angular figures and a Plotly 3D phase-function surface. Sphinx
+Gallery embeds interactive 3D views alongside their plotting cells. See
+:doc:`medium_visualization`.
 
 Coherent terms and reusable results
 -----------------------------------

@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 from TypedUnit import ureg as typedunit_registry
 from bornsim import Result, Source
-from bornsim.units import Length, ureg, validate_units
+from bornsim.units import Length, ureg, validate_quantity
 
 
 def test_shared_registry_and_scalar_source():
@@ -19,7 +19,7 @@ def test_shared_registry_and_scalar_source():
         Source(wavelength=6.33e-07 * ureg.meter).wavelength.to("nanometer").magnitude, source.wavelength.magnitude
     )
 
-    with pytest.raises(ValueError, match="scalar"):
+    with pytest.raises(ValueError, match="shape"):
         Source(wavelength=[500, 600] * ureg.nanometer)
 
 
@@ -46,15 +46,15 @@ def test_incompatible_dimensions_are_rejected(operation, name):
 @pytest.mark.parametrize(
     "value, unit, scalar, message",
     [
-        (2, "meter", True, "units"),
+        (2, "meter", True, "quantity"),
         (2 * ureg.second, "meter", True, "compatible"),
         ([1, 2] * ureg.meter, "meter", True, "scalar"),
         (1 * ureg.dimensionless, "radian", True, "angular units"),
     ],
 )
-def test_validate_units_rejects_invalid_inputs(value, unit, scalar, message):
+def test_validate_quantity_rejects_invalid_inputs(value, unit, scalar, message):
     with pytest.raises(ValueError, match=message):
-        validate_units(
+        validate_quantity(
             value,
             unit=unit,
             name="physical_value",
@@ -68,7 +68,7 @@ def test_validation_preserves_supplied_quantities():
     length = 60 * ureg.nanometer
 
     assert (
-        validate_units(
+        validate_quantity(
             length,
             unit="meter",
             name="length",

@@ -3,14 +3,14 @@
 from bornsim.medium.random_medium import RandomFieldMedium
 
 import numpy as np
-from bornsim.units import Quantity, validate_units, ureg
+from bornsim.units import Quantity, validate_quantity, ureg
 
 
 def infinite_medium_scattering(*, medium: RandomFieldMedium, wavelength: Quantity, theta: Quantity) -> Quantity:
     if not isinstance(medium, RandomFieldMedium):
         raise TypeError("Analytical scattering requires an RandomFieldMedium.")
 
-    validate_units(
+    validate_quantity(
         wavelength,
         unit="meter",
         name="wavelength",
@@ -20,7 +20,7 @@ def infinite_medium_scattering(*, medium: RandomFieldMedium, wavelength: Quantit
     if not np.isfinite(wavelength) or wavelength <= 0:
         raise ValueError("wavelength must be finite and positive.")
 
-    validate_units(
+    validate_quantity(
         theta,
         unit="radian",
         name="theta",

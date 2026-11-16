@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from collections.abc import Sequence
-from .units import _integer
+import numpy as np
 
 
 @dataclass(frozen=True, kw_only=True, init=False)
@@ -32,16 +32,35 @@ class EnsembleSampling:
 
             values = tuple(seeds)
 
-            _integer(value=len(values), name="realizations", low=1, high=32)
+            if not 1 <= len(values) <= 32:
+                raise ValueError("realizations must be an integer between 1 and 32.")
 
-            seeds = tuple(_integer(value=value, name="seed", low=0, high=2**32 - 1) for value in values)
+            normalized_seeds = []
+
+            for value in values:
+                if isinstance(value, bool) or not isinstance(value, (int, np.integer)) or not 0 <= value <= 2**32 - 1:
+                    raise ValueError("seed must be an integer between 0 and 4294967295.")
+
+                normalized_seeds.append(int(value))
+
+            seeds = tuple(normalized_seeds)
 
             if len(set(seeds)) != len(seeds):
                 raise ValueError("seeds must be distinct for independent realizations.")
         else:
-            count = _integer(value=4 if realizations is None else realizations, name="realizations", low=1, high=32)
+            count = 4 if realizations is None else realizations
 
-            first = _integer(value=0 if seed is None else seed, name="seed", low=0, high=2**32 - 1)
+            if isinstance(count, bool) or not isinstance(count, (int, np.integer)) or not 1 <= count <= 32:
+                raise ValueError("realizations must be an integer between 1 and 32.")
+
+            count = int(count)
+
+            first = 0 if seed is None else seed
+
+            if isinstance(first, bool) or not isinstance(first, (int, np.integer)) or not 0 <= first <= 2**32 - 1:
+                raise ValueError("seed must be an integer between 0 and 4294967295.")
+
+            first = int(first)
 
             if first + count - 1 > 2**32 - 1:
                 raise ValueError("seed range exceeds the supported maximum.")

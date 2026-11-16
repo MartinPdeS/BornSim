@@ -12,7 +12,7 @@ The plotted medium samples material at voxel centres. Choose a spacing fine enou
 to resolve each sphere, and use small refractive index contrast for Born scattering.
 """
 
-import matplotlib.pyplot as plt
+import sys
 from bornsim import Grid
 from bornsim.medium.random_spheres import RandomSphereMedium
 from bornsim.units import ureg
@@ -36,11 +36,12 @@ volume = medium.to_volume(
 )
 
 figure = volume.plot_3d(
-    backend="matplotlib",
-    mode="voxels",
+    backend="plotly",
+    mode="volume",
     field="refractive_index",
 )
 
 print(f"Generated {medium.sphere_count} nonoverlapping spheres with radius {medium.radius:~P}.")
 
-plt.show()
+if "--no-browser" not in sys.argv:
+    figure.show(renderer="browser")

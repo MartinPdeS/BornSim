@@ -11,11 +11,35 @@ import math
 import numpy as np
 
 
-def sphere_reference(*, radius_m, wavelength_m, host, refractive_index, cosine):
+def sphere_reference(*, radius_m, wavelength_m, host, refractive_index, cosine, multipole_terms=10):
+    """Evaluate sphere cross sections using independent Mie coefficients.
+
+    Parameters
+    ----------
+    radius_m, wavelength_m : float
+        Nominal radius and vacuum wavelength in metres.
+    host : float
+        Real, positive background refractive index.
+    refractive_index : complex
+        Sphere refractive index, with positive imaginary part for passive loss.
+    cosine : numpy.ndarray
+        Observation scattering cosines, shape (observations,).
+    multipole_terms : int, optional
+        Truncation order, default 10. This reference requires size parameter
+        below two; increasing the truncation checks its numerical stability.
+
+    Returns
+    -------
+    scattering, absorption : float
+        Cross sections in square metres.
+    angular : numpy.ndarray
+        Unpolarized differential cross section in square metres per steradian.
+    """
+
     x = 2 * np.pi * host * radius_m / wavelength_m
     assert 0 < x < 2
     m = refractive_index / host
-    count = 10
+    count = multipole_terms
 
     def bessel(z):
         values = []

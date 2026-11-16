@@ -14,18 +14,7 @@ from .directions import Directions
 from .sampling import AngularSampling
 from .ensemble_sampling import EnsembleSampling
 from .source import Source
-from .units import Quantity, _integer, validate_units, ureg
-
-
-def _provenance(*, order, **settings):
-    return {
-        "bornsim_version": __version__,
-        "numpy_version": np.__version__,
-        "order": int(order),
-        "dielectric_contrast": "2 * background_refractive_index * delta_refractive_index",
-        "green_self_cell": "equal-volume sphere with longitudinal contact term",
-        **settings,
-    }
+from .units import Quantity, validate_quantity, ureg
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -49,17 +38,23 @@ class Solver:
         if not isinstance(self.source, Source):
             raise TypeError("source must be a Source.")
 
-        _integer(
-            value=self.order,
-            name="order",
-            low=1,
-            high=12,
-        )
+        if isinstance(self.order, bool) or not isinstance(self.order, (int, np.integer)) or not 1 <= self.order <= 12:
+            raise ValueError("order must be an integer between 1 and 12.")
 
     def __repr__(self):
         wavelength = getattr(self.source, "wavelength").to("nanometer")
 
         return f"Solver(wavelength={wavelength.magnitude:g} nm, order={self.order}, sampling={self.sampling!r})"
+
+    def _provenance(self, *, order, **settings):
+        return {
+            "bornsim_version": __version__,
+            "numpy_version": np.__version__,
+            "order": int(order),
+            "dielectric_contrast": "2 * background_refractive_index * delta_refractive_index",
+            "green_self_cell": "equal-volume sphere with longitudinal contact term",
+            **settings,
+        }
 
     def solve(
         self,
@@ -72,6 +67,24 @@ class Solver:
         Pass AngularSampling for solid-angle integration, or Directions for an
         unnormalized set of observation directions. The target is an explicit
         voxelized Volume; random statistics use ensemble instead.
+
+        Parameters
+        ----------
+        target : Volume
+            Voxelized finite scattering sample.
+        sampling : AngularSampling, Directions, or None, default=None
+            Angular integration grid or explicit Cartesian observation vectors.
+            None uses the solver's configured angular sampling.
+
+        Returns
+        -------
+        Result
+            Numerical Born scattering data and available diagnostics.
+
+        Raises
+        ------
+        TypeError
+            If target is not a Volume.
         """
 
         if not isinstance(target, Volume):
@@ -103,6 +116,28 @@ class Solver:
         intensities retain every requested direction. A cut alone cannot
         determine a solid-angle integral; integrated coefficients and normalized
         phase functions are unavailable.
+
+        Parameters
+        ----------
+        target : Volume
+            Voxelized finite scattering sample.
+        angles : Quantity or None, default=None
+            Polar angles with explicit angular units; defaults to 121 samples
+            spanning zero to pi.
+        directions : Directions or None, default=None
+            Explicit Cartesian observations. Supply instead of ``angles``.
+
+        Returns
+        -------
+        Result
+            Unnormalized scattering data for the requested cut.
+
+        Raises
+        ------
+        TypeError
+            If target is not a Volume.
+        ValueError
+            If both angle and direction configurations are supplied.
         """
 
         if not isinstance(target, Volume):
@@ -112,7 +147,7 @@ class Solver:
             raise ValueError("Supply angles or directions, not both.")
 
         if angles is not None:
-            validate_units(
+            validate_quantity(
                 angles,
                 unit="radian",
                 name="angles",
@@ -166,7 +201,7 @@ class Solver:
             mu_a=result.mu_a * (1 / ureg.meter),
             residual_norms=result.residual_norms,
             warnings=result.warnings,
-            provenance=_provenance(
+            provenance=self._provenance(
                 order=self.order,
                 source=self.source.metadata,
                 grid={
@@ -235,7 +270,7 @@ class Solver:
             mu_a=born.mu_a * (1 / ureg.meter),
             residual_norms=born.residual_norms,
             warnings=born.warnings,
-            provenance=_provenance(
+            provenance=self._provenance(
                 order=self.order,
                 source=self.source.metadata,
                 grid={
@@ -277,7 +312,33 @@ class Solver:
         Intensities are averaged after coherent summation within each realization.
         Standard errors quantify realization uncertainty, not discretization or
         finite-size error. One realization has unknown (NaN) uncertainty. Integrated
-        coefficients are finite-sample cross sections divided by voxel-box volume."""
+        coefficients are finite-sample cross sections divided by voxel-box volume.
+
+        Parameters
+        ----------
+        medium : Medium
+            Medium sampled independently for each realization.
+        grid : Grid
+            Explicit finite voxel domain.
+        sampling : AngularSampling or None, default=None
+            Observation grid and integration quadrature; defaults to the solver's
+            configured sampling.
+        ensemble_sampling : EnsembleSampling or None, default=None
+            Ordered random seeds and realization count; defaults to four seeds
+            beginning at zero.
+
+        Returns
+        -------
+        Result
+            Ensemble mean intensities, uncertainty estimates, and diagnostics.
+
+        Raises
+        ------
+        TypeError
+            If ``medium`` is not a Medium.
+        ValueError
+            If grid, sampling, or ensemble settings are invalid.
+        """
 
         if not isinstance(medium, Medium):
             raise TypeError("medium must be a Medium.")
@@ -321,7 +382,7 @@ class Solver:
             coherent_differential=result["coherent_differential"] * (1 / ureg.meter / ureg.steradian),
             warnings=result["warnings"],
             realizations=result["realizations"],
-            provenance=_provenance(
+            provenance=self._provenance(
                 order=self.order,
                 source=self.source.metadata,
                 medium=medium.metadata,

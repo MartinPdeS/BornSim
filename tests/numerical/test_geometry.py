@@ -397,16 +397,12 @@ def test_single_structured_sample_phase_matches_unpolarized_dipole(centre):
 
     figure = result.plot_phase_function(
         view="3d",
-        backend="matplotlib",
     )
 
-    figure.canvas.draw()
-
-    assert figure.axes[0].name == "3d"
+    assert figure.data[0].type == "surface"
 
 
-def test_two_sphere_directional_phase_preserves_interference_and_3d_surface(monkeypatch, tmp_path):
-    from mpl_toolkits.mplot3d import Axes3D
+def test_two_sphere_directional_phase_preserves_interference_and_3d_surface(tmp_path):
     from bornsim import Result
 
     spacing = 5e-08
@@ -492,26 +488,16 @@ def test_two_sphere_directional_phase_preserves_interference_and_3d_surface(monk
 
     np.testing.assert_array_equal(restored.phase_function.magnitude, result.phase_function.magnitude)
 
-    captured = {}
-
-    original = Axes3D.plot_surface
-
-    def capture_surface(self, x, y, z, **kwargs):
-        captured["radius"] = np.sqrt(x**2 + y**2 + z**2)
-
-        return original(self, x, y, z, **kwargs)
-
-    monkeypatch.setattr(Axes3D, "plot_surface", capture_surface)
-
     figure = restored.plot_phase_function(
         view="3d",
-        backend="matplotlib",
     )
 
-    figure.canvas.draw()
+    trace = figure.data[0]
 
-    np.testing.assert_allclose(captured["radius"][:, :-1], expected, rtol=1e-12)
+    radius = np.sqrt(trace.x**2 + trace.y**2 + trace.z**2)
 
-    np.testing.assert_allclose(captured["radius"][:, -1], expected[:, 0], rtol=1e-12)
+    np.testing.assert_allclose(radius[:, :-1], expected, rtol=1e-12)
 
-    assert "full azimuthal distribution" in figure.axes[0].get_title()
+    np.testing.assert_allclose(radius[:, -1], expected[:, 0], rtol=1e-12)
+
+    assert "full azimuthal distribution" in figure.layout.title.text

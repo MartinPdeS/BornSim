@@ -104,3 +104,34 @@ volume errors from propagation errors. Grid refinement and nominal geometry
 validation remain necessary. BornSim still omits the quadratic dielectric
 contrast at every order; these weak-contrast tests do not validate high-index
 particles or optically thick transport.
+
+Nominal-geometry sphere refinement
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Additional tests hold the nominal sphere radius, material, wavelength, and
+physical box extent fixed while refining cubic grids from 8 to 16 to 32 cells
+per axis. The box width is three nominal radii. Reference radii are not fitted
+to occupied voxel counts. This checks staircase geometry together with wave
+propagation, complementing the equal-occupied-volume comparisons above.
+
+These cases use a 633 nm vacuum wavelength, background refractive index 1.33,
+sphere refractive index 1.34, radii of 40, 100 and 140 nm, and extinction
+coefficients of zero or 0.0002. The background size parameter
+:math:`x=2\pi n_0 a/\lambda` spans approximately 0.53 to 1.85. On the finest
+tested grid, scattering cross sections agree with nominal-radius Mie values
+within 3%, absorption within 2%, and the sampled azimuth-averaged differential
+cross sections within 5%. The tested mesh sequence reduces cross-section
+errors; arbitrary staircase refinements need not converge monotonically.
+
+At the largest absorbing size, independent increases in polar and azimuthal
+quadrature check integrated scattering and anisotropy. Third- and fourth-order
+results also check Born truncation separately from the mesh errors. The Mie
+reference is checked by increasing its multipole truncation and integrating its
+angular cross section at the largest tested size. Cross sections use square
+metres, angular values square metres per steradian, and passive loss follows
+:math:`\exp(-i\omega t)`.
+
+These tests extend the optical size covered at weak contrast. They do not
+validate high-index particles, size parameters above two, or optically thick
+transport. The dielectric linearization remains unchanged and can leave
+systematic error after numerical refinement.

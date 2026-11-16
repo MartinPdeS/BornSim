@@ -14,7 +14,7 @@ from .results import BornResult
 from .source import Source
 from numpy.typing import ArrayLike
 from .polarization import PolarizationState
-from .units import Quantity, _integer, validate_units
+from .units import Quantity, validate_quantity
 from .volume import Volume
 
 
@@ -93,7 +93,7 @@ class BornSeries:
 
         wavelength = self.wavelength
 
-        validate_units(
+        validate_quantity(
             self.wavelength,
             unit="meter",
             name="wavelength",
@@ -103,12 +103,10 @@ class BornSeries:
         if not np.isfinite(wavelength) or wavelength <= 0:
             raise ValueError("wavelength must be finite and positive.")
 
-        order = _integer(
-            value=self.order,
-            name="order",
-            low=1,
-            high=12,
-        )
+        if isinstance(self.order, bool) or not isinstance(self.order, (int, np.integer)) or not 1 <= self.order <= 12:
+            raise ValueError("order must be an integer between 1 and 12.")
+
+        order = int(self.order)
 
         if not isinstance(self.directions, Directions):
             raise TypeError("directions must be a Directions instance.")

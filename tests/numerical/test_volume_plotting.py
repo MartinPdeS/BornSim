@@ -1,6 +1,5 @@
 from bornsim.medium.random_medium import WhittleMaternMedium
 from bornsim import Grid
-import builtins
 import unicodedata
 import numpy as np
 import pytest
@@ -110,12 +109,13 @@ def test_invalid_matplotlib_slice_settings(settings):
 
 
 @pytest.mark.parametrize("mode, trace_type", [("volume", "volume"), ("isosurface", "isosurface")])
-def test_default_plotly_values_coordinates_units_and_levels(mode, trace_type):
+def test_explicit_plotly_values_coordinates_units_and_levels(mode, trace_type):
     volume = sample()
 
     before = volume.delta_refractive_index.copy()
 
     figure = volume.plot_3d(
+        backend="plotly",
         mode=mode,
         field="permittivity",
         length_unit="micrometer",
@@ -140,7 +140,15 @@ def test_default_plotly_values_coordinates_units_and_levels(mode, trace_type):
 
     assert trace.surface.count == 5
 
-    assert trace.isomin < trace.isomax
+    assert trace.isomin == expected.min()
+
+    assert trace.isomax == expected.max()
+
+    density_slider = figure.layout.sliders[0]
+
+    assert density_slider.steps[density_slider.active].args == ({"surface.count": 5}, (0,))
+
+    assert trace.opacity == (0.12 if mode == "volume" else 0.5)
 
     assert figure.layout.scene.xaxis.title.text == "x (micrometer)"
 
@@ -179,6 +187,10 @@ def test_increasing_volume_opacity_preserves_absolute_refractive_index_and_sampl
 
     assert trace.opacity == 0.2
 
+    opacity_slider = figure.layout.sliders[1]
+
+    assert opacity_slider.steps[opacity_slider.active].args == ({"opacity": 0.2}, (0,))
+
     assert trace.colorbar.title.text == "Refractive index n"
 
 
@@ -186,7 +198,6 @@ def test_increasing_volume_opacity_preserves_absolute_refractive_index_and_sampl
     "settings",
     [
         {"opacity_scale": "unknown"},
-        {"backend": "matplotlib", "opacity_scale": "increasing"},
         {"backend": "plotly", "mode": "isosurface", "opacity_scale": "increasing"},
     ],
 )
@@ -299,94 +310,18 @@ def test_invalid_visualization_settings(settings):
         )
 
 
-def test_matplotlib_backend_does_not_import_plotly(monkeypatch):
-    original = builtins.__import__
+def test_default_3d_medium_is_plotly():
+    """The default renderer retains the material samples and physical aspect."""
 
-    def without_plotly(name, globals=None, locals=None, fromlist=(), level=0):
-        if name.startswith("plotly"):
-            raise ImportError("not installed")
+    volume = sample()
 
-        return original(name, globals, locals, fromlist, level)
+    figure = volume.plot_3d()
 
-    monkeypatch.setattr(builtins, "__import__", without_plotly)
+    assert figure.data[0].type == "volume"
 
-    figure = sample().plot_3d(backend="matplotlib")
+    np.testing.assert_array_equal(figure.data[0].value, volume.delta_refractive_index.ravel())
 
-    figure.canvas.draw()
-
-    assert figure.axes[0].name == "3d"
-
-
-def test_matplotlib_voxels_show_the_sampled_sphere_mask(monkeypatch):
-    from mpl_toolkits.mplot3d import Axes3D
-
-    calls = []
-
-    original = Axes3D.voxels
-
-    def record_voxels(self, *args, **kwargs):
-        calls.append((args, kwargs))
-
-        return original(self, *args, **kwargs)
-
-    monkeypatch.setattr(Axes3D, "voxels", record_voxels)
-
-    medium = StructuredMedium(background_refractive_index=1.33)
-
-    sphere = Sphere(
-        radius=2e-08 * ureg.meter,
-        refractive_index=1.34,
-    )
-
-    medium.add_structures(sphere)
-
-    volume = medium.to_volume(
-        grid=Grid(
-            shape=(3, 3, 3),
-            spacing=5e-08 * ureg.meter,
-        )
-    )
-
-    figure = volume.plot_3d(
-        backend="matplotlib",
-        mode="voxels",
-        field="refractive_index",
-    )
-
-    figure.canvas.draw()
-
-    coordinates, options = calls[0]
-
-    expected = np.zeros((3, 3, 3), dtype=bool)
-
-    expected[1, 1, 1] = True
-
-    np.testing.assert_array_equal(options["filled"], expected)
-
-    np.testing.assert_allclose(coordinates[0][:, 0, 0], [-75, -25, 25, 75])
-
-    assert options["alpha"] == 1
-
-    assert len(figure.axes[0].collections) == 1
-
-
-def test_matplotlib_uniform_medium_defaults_to_visible_voxels_and_single_color_tick():
-    volume = Volume(
-        delta_refractive_index=np.zeros((2, 3, 4)),
-        background_refractive_index=1.33,
-        grid=Grid(
-            shape=np.shape(np.zeros((2, 3, 4))),
-            spacing=5e-08 * ureg.meter,
-        ),
-    )
-
-    figure = volume.plot_3d(backend="matplotlib")
-
-    figure.canvas.draw()
-
-    assert figure.axes[0].collections
-
-    np.testing.assert_array_equal(figure.axes[1].get_yticks(), [0])
+    assert figure.layout.scene.aspectmode == "data"
 
 
 @pytest.mark.parametrize(

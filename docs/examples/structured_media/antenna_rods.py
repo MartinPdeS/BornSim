@@ -8,6 +8,7 @@ appropriate. Conducting currents, complex permittivity, and metal boundary
 conditions require a different electromagnetic solver.
 """
 
+import sys
 import matplotlib.pyplot as plt
 import numpy as np
 from bornsim import CylinderMedium, Grid, Rotation, Solver, Source
@@ -41,14 +42,15 @@ volume = rod.to_volume(grid=grid)
 # The cylinder has a circular cross-section and a finite end face. Rotation
 # changes the geometry coordinates before voxel-centre sampling.
 figure = volume.plot_3d(
-    backend="matplotlib",
-    mode="voxels",
+    backend="plotly",
+    mode="volume",
     field="refractive_index",
 )
 
-figure.suptitle("Tilted finite dielectric rod")
+figure.update_layout(title="Tilted finite dielectric rod")
 
-plt.show()
+if "--no-browser" not in sys.argv:
+    figure.show(renderer="browser")
 
 # %%
 # Inspect the central slice

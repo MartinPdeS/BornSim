@@ -12,6 +12,7 @@ It is a finite sample with edges and coherent interference, without periodic
 boundary conditions or an effective metamaterial constitutive model.
 """
 
+import sys
 import matplotlib.pyplot as plt
 import numpy as np
 from bornsim import Grid, PeriodicMedium, Solver, Source, Sphere
@@ -52,27 +53,29 @@ single_volume = single.to_volume(grid=grid)
 # Each site receives the same motif, preserving its orientation. Geometry
 # outside the voxel box is clipped; these spheres fit completely inside it.
 array_figure = array_volume.plot_3d(
-    backend="matplotlib",
-    mode="voxels",
+    backend="plotly",
+    mode="volume",
     field="refractive_index",
 )
 
-array_figure.suptitle("Three dielectric spheres, 175 nm centre spacing")
+array_figure.update_layout(title="Three dielectric spheres, 175 nm centre spacing")
 
-plt.show()
+if "--no-browser" not in sys.argv:
+    array_figure.show(renderer="browser")
 
 # %%
 # Inspect the single-site reference
 # ---------------------------------
 single_figure = single_volume.plot_3d(
-    backend="matplotlib",
-    mode="voxels",
+    backend="plotly",
+    mode="volume",
     field="refractive_index",
 )
 
-single_figure.suptitle("Single sphere on the same voxel grid")
+single_figure.update_layout(title="Single sphere on the same voxel grid")
 
-plt.show()
+if "--no-browser" not in sys.argv:
+    single_figure.show(renderer="browser")
 
 # %%
 # Coherent interference along the x-z meridian

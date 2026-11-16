@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 import numpy as np
-from .units import Quantity, _integer, validate_units
+from .units import Quantity, validate_quantity
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -35,20 +35,43 @@ class Grid:
     def from_extent(cls, *, shape: tuple[int, int, int], extent: Quantity) -> "Grid":
         """Create an isotropic voxel grid from its full physical extent.
 
-        ``extent`` gives the full voxel-box width along x, y, and z. Each
-        axis extent must imply the same cubic voxel spacing.
+        Parameters
+        ----------
+        shape : tuple of int
+            Voxel counts along x, y, and z; each must be between 2 and 32.
+        extent : Quantity
+            Full voxel-box lengths along x, y, and z, with explicit length
+            units. All three lengths must imply the same voxel spacing.
+
+        Returns
+        -------
+        Grid
+            Grid with spacing derived from the first extent component.
+
+        Raises
+        ------
+        ValueError
+            If shape, units, extent values, or implied spacings are invalid.
         """
 
         if not isinstance(shape, (tuple, list)) or len(shape) != 3:
             raise ValueError("shape must have three axes.")
 
+        normalized_shape_values: list[int] = []
+
+        for axis_size in shape:
+            if isinstance(axis_size, bool) or not isinstance(axis_size, (int, np.integer)) or not 2 <= axis_size <= 32:
+                raise ValueError("axis size must be an integer between 2 and 32.")
+
+            normalized_shape_values.append(int(axis_size))
+
         normalized_shape = (
-            _integer(value=shape[0], name="axis size", low=2, high=32),
-            _integer(value=shape[1], name="axis size", low=2, high=32),
-            _integer(value=shape[2], name="axis size", low=2, high=32),
+            normalized_shape_values[0],
+            normalized_shape_values[1],
+            normalized_shape_values[2],
         )
 
-        validate_units(
+        validate_quantity(
             extent,
             unit="meter",
             name="extent",
@@ -74,12 +97,27 @@ class Grid:
         )
 
     def __post_init__(self) -> None:
+        """Validate grid dimensions and explicit positive voxel spacing.
+
+        Raises
+        ------
+        ValueError
+            If shape is not three valid voxel counts or spacing is invalid.
+        """
         if not isinstance(self.shape, (tuple, list)) or len(self.shape) != 3:
             raise ValueError("shape must have three axes.")
 
-        shape = tuple(_integer(value=n, name="axis size", low=2, high=32) for n in self.shape)
+        shape_values: list[int] = []
 
-        validate_units(
+        for axis_size in self.shape:
+            if isinstance(axis_size, bool) or not isinstance(axis_size, (int, np.integer)) or not 2 <= axis_size <= 32:
+                raise ValueError("axis size must be an integer between 2 and 32.")
+
+            shape_values.append(int(axis_size))
+
+        shape = (shape_values[0], shape_values[1], shape_values[2])
+
+        validate_quantity(
             self.spacing,
             unit="meter",
             name="spacing",
@@ -92,11 +130,19 @@ class Grid:
         object.__setattr__(self, "shape", shape)
 
     def __repr__(self) -> str:
+        """Return a concise representation including shape and spacing."""
         return f"Grid(shape={self.shape}, spacing={self.spacing:~g})"
 
     @property
     def positions(self) -> Quantity:
-        """Unit-bearing voxel-centre coordinates, shape ``(*shape, 3)``."""
+        """Return unit-bearing voxel-centre coordinates.
+
+        Returns
+        -------
+        Quantity
+            Cartesian coordinates with shape ``(*shape, 3)`` and the spacing's
+            length units. The returned array is newly computed.
+        """
 
         axes = [np.arange(n) - (n - 1) / 2 for n in self.shape]
 
@@ -104,18 +150,48 @@ class Grid:
 
     @property
     def volume(self) -> Quantity:
-        """Physical voxel-box volume in cubic metres."""
+        """Return the physical voxel-box volume.
+
+        Returns
+        -------
+        Quantity
+            Box volume in cubic metres, including one full voxel per grid
+            element.
+        """
 
         return np.prod(self.shape) * self.spacing**3
 
     @property
     def metadata(self) -> dict[str, object]:
-        """Fresh JSON-compatible grid settings in SI units."""
+        """Return fresh JSON-compatible grid settings in SI units.
+
+        Returns
+        -------
+        dict of str to object
+            Voxel shape and spacing in metres.
+        """
 
         return {"shape": list(self.shape), "spacing_m": float(self.spacing.to("meter").magnitude)}
 
     @classmethod
     def _resolve(cls, *, grid: "Grid") -> "Grid":
+        """Validate and return an existing Grid.
+
+        Parameters
+        ----------
+        grid : Grid
+            Grid instance to validate.
+
+        Returns
+        -------
+        Grid
+            The same instance.
+
+        Raises
+        ------
+        TypeError
+            If ``grid`` is not a Grid.
+        """
         if not isinstance(grid, cls):
             raise TypeError("grid must be a Grid.")
 

@@ -2,14 +2,16 @@
 
 from dataclasses import asdict, dataclass, field, replace
 from copy import deepcopy
+from typing import Any
 import warnings
 import numpy as np
 from ..base import Medium
 from ..random.fields import RandomFieldMedium
-from ...geometry import Layer, Sphere, Ellipsoid, Box, Cylinder, _refractive_index
+from ...geometry import Layer, Sphere, Ellipsoid, Box, Cylinder
 from ...material import Material
 from ...grid import Grid
 from ...volume import Volume
+from ...units import NoUnit, Scalar, validate_annotation
 
 
 @dataclass(kw_only=True)
@@ -72,9 +74,26 @@ class StructuredMedium(Medium):
         self.regions = regions
 
         if self.background_refractive_index is not None:
-            self.background_refractive_index = _refractive_index(value=self.background_refractive_index)
+            validate_annotation(
+                self.background_refractive_index,
+                annotation=NoUnit[Scalar],
+                name="background_refractive_index",
+            )
 
-    def add_background(self, *, refractive_index=None, medium=None, material=None):
+            background_refractive_index = float(self.background_refractive_index)
+
+            if not np.isfinite(background_refractive_index) or background_refractive_index <= 0:
+                raise ValueError("background_refractive_index must be finite and positive.")
+
+            self.background_refractive_index = background_refractive_index
+
+    def add_background(
+        self,
+        *,
+        refractive_index: float | None = None,
+        medium: RandomFieldMedium | None = None,
+        material: Material | None = None,
+    ) -> None:
         """Set the background in place, retaining all existing structures.
 
         Supply exactly one of ``refractive_index`` (a positive uniform refractive index)
@@ -84,6 +103,23 @@ class StructuredMedium(Medium):
         Replacing a background changes the reference n0, not structures'
         absolute refractive indices. Validation precedes any state change.
         Returns None. Random statistics are copied when added.
+
+        Parameters
+        ----------
+        refractive_index : float or None, optional
+            Positive uniform background refractive index.
+        medium : RandomFieldMedium or None, optional
+            Random-field statistics used as a random background.
+        material : Material or None, optional
+            Background material including its extinction coefficient.
+
+        Raises
+        ------
+        TypeError
+            If the random medium or material has the wrong type.
+        ValueError
+            If the inputs conflict or are incompatible with configured
+            fluctuations.
         """
 
         extinction = 0.0
@@ -106,7 +142,19 @@ class StructuredMedium(Medium):
         else:
             background = None
 
-            background_refractive_index = _refractive_index(value=refractive_index)
+            if refractive_index is None:
+                raise ValueError("Supply exactly one of refractive_index or medium.")
+
+            validate_annotation(
+                refractive_index,
+                annotation=NoUnit[Scalar],
+                name="refractive_index",
+            )
+
+            background_refractive_index = float(refractive_index)
+
+            if not np.isfinite(background_refractive_index) or background_refractive_index <= 0:
+                raise ValueError("refractive_index must be finite and positive.")
 
         if (
             self._fluctuations is not None
@@ -122,13 +170,26 @@ class StructuredMedium(Medium):
         self._background = background
         self._background_extinction = extinction
 
-    def add_fluctuations(self, *, medium):
+    def add_fluctuations(self, *, medium: RandomFieldMedium) -> None:
         """Set an additive random field applied over the background and all structures.
 
         The statistical medium must share the configured uniform background.
         This replaces any previously configured additive fluctuation field.
         Random backgrounds and additive fluctuations are mutually exclusive.
         Returns None. Generated volumes record the medium and seed as provenance.
+
+        Parameters
+        ----------
+        medium : RandomFieldMedium
+            Statistical field added over the configured background and regions.
+
+        Raises
+        ------
+        TypeError
+            If ``medium`` is not a RandomFieldMedium.
+        ValueError
+            If there is no uniform background, the background indices differ,
+            or a random background is already configured.
         """
 
         if not isinstance(medium, RandomFieldMedium):
@@ -147,7 +208,7 @@ class StructuredMedium(Medium):
 
         self._fluctuations = fluctuations
 
-    def add_structures(self, *structures):
+    def add_structures(self, *structures: Any) -> None:
         """Append material regions in argument order; return None.
 
         Accepts any number of positional Layer, Sphere, Ellipsoid, Box, or
@@ -156,6 +217,21 @@ class StructuredMedium(Medium):
         additive fluctuations remain present over every region. All arguments
         are validated before editing the builder; an empty call is a no-op.
         Existing voxel samples are independent snapshots.
+
+        Returns
+        -------
+        None
+            The builder is updated in place.
+
+        Parameters
+        ----------
+        *structures
+            Positional shape objects to append in replacement order.
+
+        Raises
+        ------
+        TypeError
+            If any argument is not a supported geometry shape.
         """
 
         if any(not isinstance(structure, (Layer, Sphere, Ellipsoid, Box, Cylinder)) for structure in structures):
@@ -164,13 +240,19 @@ class StructuredMedium(Medium):
         self.regions = (*self.regions, *structures)
 
     @property
-    def is_random(self):
-        """Random backgrounds or additive fluctuations supply independent realizations."""
+    def is_random(self) -> bool:
+        """Whether the background or additive fluctuations are random.
+
+        Returns
+        -------
+        bool
+            True if a random background or fluctuation field is configured.
+        """
 
         return self._background is not None or self._fluctuations is not None
 
     @property
-    def metadata(self):
+    def metadata(self) -> dict[str, object]:
         """Return independent SI geometry descriptions in application order.
 
         Region type, absolute refractive index, axis where applicable, and dimensions are
@@ -179,6 +261,11 @@ class StructuredMedium(Medium):
         Configured additive fluctuation statistics are recorded under
         ``fluctuations``. Generated volumes with fluctuations retain a snapshot
         of this metadata and their seed.
+
+        Returns
+        -------
+        dict of str to object
+            Independent JSON-compatible description of the configured medium.
         """
 
         length_fields = {"lower", "upper", "radius", "height", "centre", "radii", "size"}
@@ -232,7 +319,26 @@ class StructuredMedium(Medium):
         An explicit background is required. Ordered shapes set absolute refractive
         indices; overlap follows replace, preserve, or error. A random background
         uses the supplied seed and is replaced by structures inside their masks.
-        Additive fluctuations use the same seed and are applied over all regions."""
+        Additive fluctuations use the same seed and are applied over all regions.
+
+        Parameters
+        ----------
+        grid : Grid
+            Explicit cubic voxel grid.
+        seed : int, default=0
+            Seed for random backgrounds or additive fluctuations.
+
+        Returns
+        -------
+        Volume
+            Refractive-index contrast sampled at voxel centres.
+
+        Raises
+        ------
+        ValueError
+            If no background has been configured or voxelization settings are
+            invalid.
+        """
 
         if self.background_refractive_index is None:
             raise ValueError("Set a background with add_background before generating a volume.")
@@ -297,7 +403,7 @@ class StructuredMedium(Medium):
         )
 
     @staticmethod
-    def _is_clipped(*, region, grid):
+    def _is_clipped(*, region: Any, grid: Grid) -> bool:
         half_box = np.asarray(grid.shape) * grid.spacing / 2
 
         centre = region.centre
