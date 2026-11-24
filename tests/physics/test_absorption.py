@@ -6,7 +6,7 @@ import pytest
 from bornsim import Directions, Grid, Result, Solver, Source, Volume
 from bornsim.units import ureg
 from bornsim.series import BornSeries
-from tests.numerical.test_series import independent_matrix
+from tests.numerics.test_series import independent_matrix
 
 
 def test_absorption_limit_and_archive(tmp_path):

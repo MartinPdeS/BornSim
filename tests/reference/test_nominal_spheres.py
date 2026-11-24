@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from bornsim import AngularSampling, Grid, Material, Solver, Source, Sphere, StructuredMedium
 from bornsim.units import ureg
-from tests.analytical.mie_reference import sphere_reference
+from tests.reference.mie_reference import sphere_reference
 
 
 @pytest.mark.parametrize("extinction_coefficient", [0.0, 0.0002])

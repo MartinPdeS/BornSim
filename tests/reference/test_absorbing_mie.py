@@ -5,7 +5,7 @@ import pytest
 
 from bornsim import AngularSampling, Directions, Grid, Material, Solver, Source, Sphere, StructuredMedium
 from bornsim.units import ureg
-from tests.analytical.mie_reference import sphere_reference
+from tests.reference.mie_reference import sphere_reference
 
 
 def test_mie_reference_normalization_and_rayleigh_limit():

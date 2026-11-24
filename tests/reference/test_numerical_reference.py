@@ -7,7 +7,7 @@ import pytest
 
 from bornsim import AngularSampling, Grid, Solver, Source
 from bornsim.units import ureg
-from .reference import infinite_medium_scattering, infinite_medium_properties
+from tests.physics.reference import infinite_medium_scattering, infinite_medium_properties
 
 
 @pytest.mark.parametrize("correlation", ["gaussian", "exponential"])

@@ -5,7 +5,7 @@ import pytest
 
 from bornsim import AngularSampling, ConvergenceReport, EnsembleSampling, GaussianMedium, Grid, Result, Solver, Source
 from bornsim.units import ureg
-from tests.numerical.test_series import independent_matrix
+from tests.numerics.test_series import independent_matrix
 from bornsim import Box, Material, StructuredMedium
 
 
