@@ -1,208 +1,198 @@
-.. image:: docs/source/_static/logo.png
-   :alt: BornSim — vector wave scattering in refractive media
-   :width: 280
-   :align: center
-
 BornSim
-=======
+========
 
-**Simulate how light scatters through three-dimensional refractive media.**
-
-.. list-table:: BornSim status
-   :widths: 50 50
+.. image:: https://raw.githubusercontent.com/MartinPdeS/BornSim/HEAD/docs/source/_static/logo.svg
+   :alt: BornSim logo
    :width: 100%
-   :header-rows: 0
-   :class: badge-table
 
-   * - Python
-     - |python|
-   * - Release
-     - |release|
-   * - License
-     - |license|
-   * - Tests
-     - |tests|
+.. list-table::
+   :width: 100%
+   :widths: 35 65
+   :header-rows: 1
+
+   * - Badge
+     - Status
+   * - Python versions
+     - |mps-python|
    * - Documentation
-     - |docs|
+     - |mps-docs|
+   * - Tests
+     - |mps-ci| |mps-coverage|
+   * - PyPI
+     - |mps-pypi| |mps-downloads|
+   * - Conda
+     - |mps-conda| |mps-conda-downloads| |mps-conda-release|
 
-BornSim is a Python toolkit for finite-volume, vector Born-series calculations.
-Build random or structured samples, calculate their scattering response, and
-inspect results with BornSim's interactive Plotly 3D plotting methods.
+Vector Born-series scattering from continuous random dielectric media
 
-.. list-table:: A sample and its calculated directional scattering
-   :widths: 50 50
-   :width: 100%
-   :header-rows: 0
-   :class: image-table
+Construct a refractive-index volume and calculate its vector scattering field order
+by order. Compare successive Born terms and check the integral-equation residual
+before interpreting the angular distribution.
 
-   * - .. image:: docs/images/bornsim_medium_isosurfaces_3d.png
-          :alt: Plotly isosurfaces of a seeded three-dimensional refractive-index sample.
-          :width: 100%
-     - .. image:: docs/images/bornsim_phase_function_3d.png
-          :alt: Directional phase-function density rendered radially on a three-dimensional surface.
-          :width: 100%
-   * - **Real-space medium**
-       Plotly isosurfaces show the refractive-index field in physical coordinates.
-     - **Angular scattering**
-       Surface radius and color show the phase density in each observation direction.
+See the `usage guide <https://github.com/MartinPdeS/BornSim/blob/HEAD/USAGE.rst>`__ for further examples and implementation details.
 
-These figures are static exports of BornSim's own Plotly figures, generated
-from a seeded calculation. Regenerate them with
-``docs/images/generate_readme_plots.py``. Static image export requires
-Kaleido; the checked-in figures were generated with Kaleido 0.2.1. Volume
-opacity is a display setting, not a measure of material absorption.
+.. figure:: https://raw.githubusercontent.com/MartinPdeS/BornSim/HEAD/docs/images/bornsim_phase_function_3d.png
 
-What you can model
-------------------
+   Directional scattering phase density from a seeded refractive-index volume.
 
-* Gaussian, exponential, and Whittle–Matérn random fields.
-* Seeded random sphere collections and structured particle geometries.
-* Arbitrary incident directions and linear, circular, elliptical, or
-  unpolarized illumination.
-* Finite-volume vector scattering through configurable Born order.
-* Directional phase functions, differential scattering, cross sections,
-  anisotropy, absorption, ensemble uncertainty, and saved provenance.
-* Grid, angular, ensemble, and integral-equation residual diagnostics.
+Installation
+------------
 
-Quick start
------------
-
-Install BornSim and run a seeded calculation:
+Requires Python ``>=3.11``.
 
 .. code-block:: console
 
    $ python -m pip install BornSim
 
+Install from the ``martinpdes`` Conda channel:
+
+.. code-block:: console
+
+   $ conda install -c martinpdes bornsim
+
+For an editable source installation:
+
+.. code-block:: console
+
+   $ git clone https://github.com/MartinPdeS/BornSim.git
+   $ cd BornSim
+   $ python -m pip install -e .
+
+Normalize a phase function
+--------------------------
+
 .. code-block:: python
 
-   from bornsim import AngularSampling, Grid, Solver, Source
-   from bornsim.medium.random_medium import GaussianMedium
+   """
+   Phase density and polar-angle probability
+   =========================================
+
+   A phase function is a density per steradian. After explicit azimuth averaging,
+   2*pi*p(theta)*sin(theta) is the polar-angle probability density per radian.
+   Full solid-angle sampling supplies normalization separately at each Born order.
+   An angular cut alone cannot provide this normalization.
+   """
+
+   # sphinx_gallery_thumbnail_path = "_static/gallery_thumbnails/phase_normalization.png"
+
+   import matplotlib.pyplot as plt
+   import numpy as np
+
+   from bornsim import Grid, Solver, Source, Sphere, StructuredMedium
    from bornsim.units import ureg
 
    grid = Grid(
-       shape=(14, 14, 14),
-       spacing=35 * ureg.nanometer,
+       shape=(12, 12, 12),
+       spacing=20 * ureg.nanometer,
    )
 
-   medium = GaussianMedium(
-       background_refractive_index=1.33,
-       refractive_index_std=0.018,
-       correlation_length=70 * ureg.nanometer,
+   sphere = Sphere(
+       radius=70 * ureg.nanometer,
+       refractive_index=1.35,
    )
 
-   volume = medium.to_volume(
-       grid=grid,
-       seed=42,
-   )
+   medium = StructuredMedium()
 
-   source = Source(
-       wavelength=532 * ureg.nanometer,
-   )
+   medium.add_background(refractive_index=1.33)
 
-   sampling = AngularSampling(
-       n_points=61,
-       azimuth_samples=16,
-   )
+   medium.add_structures(sphere)
 
-   solver = Solver(
-       source=source,
-       sampling=sampling,
-       order=2,
-   )
+   volume = medium.to_volume(grid=grid)
 
-   result = solver.solve(
-       target=volume,
-   )
-
-   print(f"Scattering coefficients: {result.mu_s.to('1 / millimeter')}")
-
-   medium_figure = volume.plot_3d(
+   volume_figure = volume.plot_3d(
        field="refractive_index",
    )
 
-   phase_figure = result.plot_phase_function(
-       order=2,
+   # %%
+   source = Source(wavelength=633 * ureg.nanometer)
+
+   solver = Solver(
+       source=source,
+       order=3,
    )
 
-   medium_figure.show()
+   result = solver.solve(target=volume)
 
-   phase_figure.show()
+   averaged = result.azimuth_average()
 
-For random-medium statistics across independent realizations, use
-``solver.ensemble(medium=..., grid=..., ensemble_sampling=...)``. For a fixed
-geometry, compose shapes with ``StructuredMedium`` and pass its voxelized
-volume to ``solver.solve``.
+   theta = averaged.angles.to("radian").magnitude
 
-Plotting
---------
+   phase_density = averaged.phase_function.to("1 / steradian").magnitude
 
-BornSim uses Plotly exclusively to render three-dimensional media and
-directional phase functions. Rotate, zoom, and hover to inspect values. 2D
-plots are reserved for curves and diagnostics, never spatial views of a 3D
-sample. Plotly figures open no window during construction and can be saved as
-self-contained HTML:
+   figure, axes = plt.subplots(1, 2, figsize=(10, 4), layout="constrained")
 
-.. code-block:: python
+   for order in (1, 2, 3):
+       polar_density = 2 * np.pi * phase_density[order - 1] * np.sin(theta)
 
-   phase_figure.write_html(
-       file="phase-function.html",
-       include_plotlyjs=True,
-   )
+       axes[0].plot(theta, phase_density[order - 1], label=f"Order {order}")
 
-Use ``result.plot()`` for a Matplotlib curve of differential scattering, or
-``result.plot_phase_function()`` for its default directional 3D phase surface.
-Choose ``view="angular"`` or ``view="polar"`` for 2D Matplotlib phase views.
-Spatial media are always shown as Plotly 3D figures; inspect voxelization
-effects through 3D views and grid refinement.
+       axes[1].plot(theta, polar_density, label=f"Order {order}")
 
-Model and interpretation
-------------------------
+   axes[0].set(ylabel="Phase density (sr⁻¹)")
 
-BornSim solves a finite-sample volume-integral model with the linearized
-dielectric contrast
-:math:`\delta\varepsilon \approx 2 n_0 \delta n`. It does not include the
-quadratic :math:`\delta n^2` term. Decreasing successive field terms do not
-prove convergence of the Born series.
+   axes[1].set(ylabel="Polar-angle density (rad⁻¹)")
 
-Reported scattering coefficients are finite-sample cross sections divided by
-the simulated voxel-box volume. They are not automatically intrinsic,
-infinite-medium transport coefficients. Check grid, angular, sample-size,
-synthesis-box, and ensemble convergence before quantitative interpretation.
-Wavelengths, lengths, angles, and dimensional outputs carry explicit units;
-refractive indices are plain numbers.
+   for axis in axes:
+       axis.set(xlabel="Polar angle (radians)")
 
-Learn more
-----------
+       axis.legend()
 
-* `Documentation <https://martinpdes.github.io/BornSim/docs/latest/>`_ —
-  theory, API reference, model conventions, and visualization guidance.
-* `Examples <https://martinpdes.github.io/BornSim/gallery/index.html>`_ —
-  runnable studies of random media, structures, ensembles, and Born orders.
-* `Reliability guide <https://martinpdes.github.io/BornSim/docs/latest/reliability.html>`_ —
-  numerical validation and convergence checks.
-* `Source and issues <https://github.com/MartinPdeS/BornSim>`_ — code,
-  questions, and contributions.
+   plt.show()
 
-BornSim requires Python 3.11 or newer. For development, install the testing and
-documentation extras with ``python -m pip install -e ".[testing,documentation]"``.
+Documentation
+-------------
+
+Use the `BornSim documentation <https://martinpdes.github.io/BornSim/docs/latest/>`__ to work through
+examples and look up the inputs and return values of individual functions.
+
+Contributing
+------------
+
+Bug reports, worked examples, and documentation corrections are welcome.
+To set up a development checkout and run the tests, follow the `contributing guide <https://github.com/MartinPdeS/BornSim/blob/HEAD/CONTRIBUTING.md>`__.
+
+Contact
+-------
+
+For questions, contact `Martin Poinsinet de Sivry-Houle <mailto:martin.poinsinet.de.sivry@gmail.com?subject=BornSim>`__.
 
 License
 -------
 
-BornSim is released under the MIT License. See `LICENSE <https://github.com/MartinPdeS/BornSim/blob/master/LICENSE>`_.
+BornSim is licensed under `MIT <https://github.com/MartinPdeS/BornSim/blob/HEAD/LICENSE>`__.
 
-.. |python| image:: https://img.shields.io/badge/Python-3.11%2B-3776AB.svg
-   :alt: Python 3.11 or newer
-   :target: https://www.python.org/
-.. |release| image:: https://img.shields.io/github/v/tag/MartinPdeS/BornSim.svg
-   :alt: Latest release tag
-   :target: https://github.com/MartinPdeS/BornSim/tags
-.. |license| image:: https://img.shields.io/github/license/MartinPdeS/BornSim.svg
-   :alt: MIT License
-   :target: https://github.com/MartinPdeS/BornSim/blob/master/LICENSE
-.. |tests| image:: https://github.com/MartinPdeS/BornSim/actions/workflows/tests.yml/badge.svg
-   :alt: Test status
-   :target: https://github.com/MartinPdeS/BornSim/actions/workflows/tests.yml
-.. |docs| image:: https://github.com/MartinPdeS/BornSim/actions/workflows/deploy_documentation.yml/badge.svg
-   :alt: Documentation build status
+.. |mps-python| image:: https://img.shields.io/pypi/pyversions/bornsim.svg
+   :alt: Supported Python versions
+   :target: https://pypi.org/project/bornsim/
+
+.. |mps-pypi| image:: https://img.shields.io/pypi/v/bornsim.svg
+   :alt: PyPI version
+   :target: https://pypi.org/project/bornsim/
+
+.. |mps-downloads| image:: https://img.shields.io/pypi/dm/bornsim.svg
+   :alt: Monthly PyPI downloads
+   :target: https://pypistats.org/packages/bornsim
+
+.. |mps-docs| image:: https://github.com/MartinPdeS/BornSim/actions/workflows/deploy_documentation.yml/badge.svg
+   :alt: Documentation
    :target: https://martinpdes.github.io/BornSim/docs/latest/
+
+.. |mps-ci| image:: https://github.com/MartinPdeS/BornSim/actions/workflows/tests.yml/badge.svg
+   :alt: Tests
+   :target: https://github.com/MartinPdeS/BornSim/actions/workflows/tests.yml
+
+.. |mps-coverage| image:: https://raw.githubusercontent.com/MartinPdeS/BornSim/python-coverage-comment-action-data/badge.svg
+   :alt: Test coverage
+   :target: https://htmlpreview.github.io/?https://github.com/MartinPdeS/BornSim/blob/python-coverage-comment-action-data/htmlcov/index.html
+
+.. |mps-conda| image:: https://anaconda.org/martinpdes/bornsim/badges/version.svg
+   :alt: Anaconda version
+   :target: https://anaconda.org/martinpdes/bornsim
+
+.. |mps-conda-downloads| image:: https://anaconda.org/martinpdes/bornsim/badges/downloads.svg
+   :alt: Anaconda downloads
+   :target: https://anaconda.org/martinpdes/bornsim
+
+.. |mps-conda-release| image:: https://anaconda.org/martinpdes/bornsim/badges/latest_release_relative_date.svg
+   :alt: Latest Anaconda release
+   :target: https://anaconda.org/martinpdes/bornsim

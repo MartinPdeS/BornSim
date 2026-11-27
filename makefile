@@ -69,3 +69,8 @@ major minor patch:
 
 clean:
 	$(PYTHON) -c "import shutil; [shutil.rmtree(path, ignore_errors=True) for path in ('build', 'dist', 'docs/build', 'htmlcov', '.pytest_cache', '.mypy_cache', '.ruff_cache')]"
+
+# Install the generator with: python -m pip install --group readme
+.PHONY: readme
+readme:
+	$(PYTHON) -m martinpdes_maintenance.cli readme

@@ -1,0 +1,12 @@
+introduction: |-
+  Construct a refractive-index volume and calculate its vector scattering field order
+  by order. Compare successive Born terms and check the integral-equation residual
+  before interpreting the angular distribution.
+
+  See the `usage guide <https://github.com/MartinPdeS/BornSim/blob/HEAD/USAGE.rst>`__ for further examples and implementation details.
+figure:
+  path: docs/images/bornsim_phase_function_3d.png
+  caption: Directional scattering phase density from a seeded refractive-index volume.
+quickstart:
+  title: Normalize a phase function
+  source: docs/examples/results/phase_normalization.py
